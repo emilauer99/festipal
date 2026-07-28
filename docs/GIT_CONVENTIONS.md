@@ -99,8 +99,9 @@ Beispiel: `feat(api): add tenant-scoped booking guard`
 - **PR-Beschreibung:** Was, Warum, wie getestet; ggf. Screenshots (UI) und verlinkte Issues.
 - **Klein halten** — idealerweise < ~400 geänderte Zeilen; sonst aufteilen.
 - **Merge erst wenn grün:** Lint, Typecheck, Tests, Build müssen in CI durchlaufen.
-- **Review:** Mindestens ein Approve (sobald das Team > 1 Person ist). Solo-Phase: PR
-  trotzdem anlegen, selbst gegenlesen, `/code-review` laufen lassen, dann mergen.
+- **Review:** Kein verpflichtendes Code-Review. PR dient der grünen CI und einer sauberen,
+  squash-baren Historie; nach grünen Checks kann direkt gemergt werden. (Wenn das Team
+  später wächst, kann optional ein Approve-Zwang aktiviert werden.)
 - **Branch nach Merge löschen** (remote automatisch, lokal `git branch -d`).
 
 ---
