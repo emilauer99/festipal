@@ -28,6 +28,7 @@ before making architectural changes.
 - **Hosting:** Neon (DB) · Railway (backend + Redis)
 - **Offline:** Expo SQLite/MMKV + Drizzle + TanStack Query (persisted) + mutation queue
 - **Cashless:** per-festival embedded URL (WebView in app / iframe in admin) — no own payment system
+- **i18n** (`packages/i18n`): Lingui (UI strings, ICU + type-safe) shared by app & admin; `Intl` for date/number formatting; dynamic content translated via DB translation tables with per-festival locales
 - **Maps:** MapLibre
 - **Tests:** Vitest (unit) · Playwright (web E2E) · Maestro/Detox (app E2E)
 
@@ -35,7 +36,7 @@ before making architectural changes.
 
 ```
 apps/       mobile (Expo) · admin (Next.js) · api (NestJS)
-packages/   contracts (ts-rest+Zod) · db (Drizzle) · ui (tokens/primitives) · config (eslint/tsconfig)
+packages/   contracts (ts-rest+Zod) · db (Drizzle) · ui (tokens/primitives) · i18n (Lingui catalogs) · config (eslint/tsconfig)
 docs/       DEVELOPMENT_DECISIONS.md and other design docs
 ```
 
@@ -59,10 +60,11 @@ All commands run from the repo root via pnpm + Turborepo (exact scripts finalize
 3. **End-to-end type safety** — no untyped API boundaries. API shape changes go through `packages/contracts`; both server and clients derive their types from it.
 4. **Security** — never store or process card/payment data. Cashless is a per-festival embedded URL: load the festival's own cashless page over HTTPS in a sandboxed WebView (app) / iframe (admin), restricted to the configured domain; hide the section when no URL is set. No secrets in the repo. Auth must be tenant-aware.
 5. **Design fidelity** — the frontend follows the designs the user creates in Claude Design (claude.ai/design); match them precisely.
+6. **i18n from day 1** — app and admin are multilingual. No hardcoded user-facing strings: UI text goes through Lingui catalogs in `packages/i18n`; dynamic content is stored per-locale (translation tables) with a per-festival default/fallback locale. Keep layouts RTL-safe.
 
 ## Conventions
 
-- **Language:** TypeScript everywhere, `strict` mode on. No untyped `any` at API boundaries.
+- **Language:** TypeScript everywhere, `strict` mode on. No untyped `any` at API boundaries. Pinned to **TypeScript 6.0.x** (ecosystem compat; TS 7 native pending typescript-eslint support — see ADR-013).
 - **Validation:** Zod schemas in `packages/contracts` are the source of truth; reuse them, don't re-declare shapes.
 - **Shared code:** cross-app logic/types belong in `packages/*`, never copy-pasted between apps.
 - **Git:** Trunk-based, short-lived feature branches, Conventional Commits, squash-merge via PR — **never commit directly to `main`**. Full rules in `docs/GIT_CONVENTIONS.md`.

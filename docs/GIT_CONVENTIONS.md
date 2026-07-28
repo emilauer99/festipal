@@ -149,7 +149,6 @@ nicht nur dokumentiert sein:
 
 - **Commit/Push nur auf ausdrückliche Aufforderung** des Nutzers.
 - **Nie auf `main` committen** — immer erst Feature-Branch nach §2 anlegen.
-- Commit-Messages nach diesem Dokument; jede Message endet mit dem
-  `Co-Authored-By: Claude`-Trailer.
+- Commit-Messages nach diesem Dokument; **kein** `Co-Authored-By`-Trailer.
 - **Hooks nie umgehen** (`--no-verify` verboten), außer der Nutzer verlangt es explizit.
 - Vor „fertig": Lint, Typecheck und relevante Tests laufen lassen, Fehler ehrlich melden.
