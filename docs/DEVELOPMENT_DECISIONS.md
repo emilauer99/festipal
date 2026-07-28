@@ -80,6 +80,10 @@ implementiert die getypten Contracts, App und Admin bekommen automatisch getypte
 Clients. Ergebnis: end-to-end Typsicherheit über REST, ohne Doppel-Definitionen.
 **Alternative:** OpenAPI-Codegen oder tRPC-NestJS-Adapter — verworfen zugunsten von ts-rest.
 
+**Version-Constraint (2026-07-28):** ts-rest 3.52 verlangt als Peer **zod v3** (nicht zod 4).
+Daher workspace-weit **zod 3.x** (aktuell 3.25.76) pinnen. zod 3 ist voll unterstützt und
+stabil; Upgrade auf zod 4, sobald ts-rest v4 mit zod-4-Support erscheint.
+
 ### ADR-007 — Offline-first Strategie · **ENTSCHIEDEN**
 Festivals = schlechtes Netz. Lageplan, Timetable, News, Ticket/Wallet müssen offline laufen.
 **Entscheidung:** pragmatischer Layered-Cache, KEIN bidirektionaler Sync-Engine.
@@ -125,6 +129,143 @@ eine **Cashless-URL** hinterlegt werden, die in der App eingebettet angezeigt wi
 So bleibt PCI-DSS komplett draußen. Tiefergehende Integrationen (Guthaben in-App etc.) nur,
 falls ein späterer Kooperationspartner das explizit anbietet.
 
+**Konkretisierung nach Design-Abgleich (2026-07-28) — Screen 12:** Der erste Designentwurf
+zeigt ein *natives* Wallet (Guthaben, Aufladen per Apple Pay, Bezahl-QR, Buchungsliste,
+Auto-Aufladung). Das wird **bewusst nicht gebaut** — Sicherheit (dieses ADR) schlägt
+Design-Treue (Prinzip 5). Verbindliche Auslegung: **strikt eingebettete URL**.
+- **Cashless-Screen = reine WebView** auf die Cashless-Seite des Festivals. Kein natives
+  Guthaben-Element, keine native Buchungsliste, kein Bezahl-QR, kein Aufladen in der App.
+- festipal **speichert kein Guthaben und keine Buchungen**; alles lebt beim Anbieter. Am
+  Festival-(Tenant-)Datensatz liegt nur die Cashless-URL (+ optional ein Deep-Link-Parameter,
+  um den User in sein Anbieter-Konto zu leiten — **nie** Zahlungsdaten).
+- **Ripple-Effekte im Design** (in Konzept-Doc `concept/02` als „B1 gelöst" vermerkt): die
+  Dashboard-Cashless-Kachel und der Settings-Eintrag zeigen **kein** Guthaben mehr, sondern
+  sind ein reiner „Cashless öffnen"-Einstieg; die Settings-Option **Auto-Aufladung entfällt**.
+- **Verworfen:** Hybrid (native Read-only-Anzeige via Anbieter-API) und volles natives Wallet —
+  Ersteres bringt pro Anbieter einen API-Adapter und uneinheitliche UX, Letzteres PCI-Scope.
+
+### ADR-012 — Mehrsprachigkeit (i18n) · **ENTSCHIEDEN**
+App **und** Admin müssen mehrsprachig sein. Bei einem Multi-Festival-Produkt mit
+internationalen Besuchern ist i18n von Tag 1 einzuplanen. Zwei klar getrennte Ebenen:
+
+**(A) UI-Strings (Entwickler-Texte: Buttons, Labels, Fehler) → Lingui**
+- **Lingui** (ICU MessageFormat) — korrekte Plurale/Genus/Datums-/Zahlformate je Sprache,
+  Compile-time-Extraktion + **Typsicherheit** auf Message-Keys, funktioniert in React Native
+  *und* Next.js (App Router, SWC-Plugin). Kataloge liegen geteilt in `packages/i18n`.
+- **Formatierung** (Datum/Zahl/Währung) über die JS-**`Intl`-API** (Hermes hat Intl in Expo aktiv).
+- **Locale-Erkennung:** App via `expo-localization` + persistiertem Nutzer-Override;
+  Admin via Next.js Locale-Routing (`/[locale]/…`) bzw. Cookie.
+- **Verworfen:** i18next (reif, aber ohne ICU/Typsicherheit out-of-the-box) und Paraglide
+  (schlanker/typsicher, aber jünger und RN/Metro-Integration weniger erprobt).
+
+**(B) Dynamischer Content (Festival-Daten: News, Timetable, Marketplace) → Übersetzungstabellen**
+- Übersetzbare Entities bekommen eine Companion-Tabelle `*_translation(entity_id, locale, …felder)`.
+  Sauber indexier- und filterbar, zeigt dem Admin, welche Übersetzungen **fehlen**.
+- **Server-seitige Locale-Resolution:** angefragte Locale → Festival-Default-Locale → Fallback.
+  API liefert Clients bereits lokalisierten Content; dem Admin **alle** Übersetzungen zum Pflegen.
+- **Verworfen:** JSONB-Feld `{de,en}` pro Spalte — einfacher, aber schlecht für „fehlende
+  Übersetzung finden", Indexierung und Locale-Filterung.
+
+**Multi-Tenant-i18n:** Jedes Festival deklariert `supportedLocales` + `defaultLocale`. Nutzer
+sehen ihre bevorzugte Locale, sonst den Festival-Default. `LocalizedText` wird in
+`packages/contracts` einheitlich modelliert.
+
+**RTL:** Layout von Anfang an RTL-fähig halten (RN `I18nManager`, CSS logical properties),
+auch wenn initial nur LTR-Sprachen ausgeliefert werden.
+
+**Sprachen (Start):** Deutsch + Englisch; globaler App-Default = **Englisch** (neutral
+international), jederzeit erweiterbar; jedes Festival wählt eine Teilmenge.
+
+**Content-Vollständigkeit (pragmatisch, ENTSCHIEDEN):** Nur die Festival-**Default-Sprache**
+ist beim Anlegen Pflicht; weitere Sprachen optional. Fehlt eine Übersetzung, greift der
+Fallback auf den Festival-Default; der Admin sieht ein **„Übersetzung fehlt"-Badge**.
+(Optionaler Per-Festival-Schalter „alle Übersetzungen erzwingen" erst bei Bedarf.)
+System-Tags (globale Kategorien) übersetzen wir zentral, nicht je Festival.
+
+**Locale-Resolution — zwei unabhängige Achsen:**
+1. *App-UI-Sprache* (Lingui-Strings): persistierter Nutzer-Override → sonst **System-/Gerätesprache**
+   (`expo-localization`), falls von uns unterstützt (DE/EN) → sonst globaler App-Default (EN).
+   → Bei Neuinstallation gewinnt die Systemsprache, **nicht** unser Default.
+2. *Festival-Content-Sprache*: effektive App-UI-Sprache, falls das Festival sie unterstützt →
+   sonst Festival-`defaultLocale`. Die Achsen sind unabhängig: engl. App-UI + reines DE-Festival
+   → UI englisch, Content deutsch (Fallback).
+
+### ADR-013 — TypeScript-Version: 6.0.x (vorerst) · **ENTSCHIEDEN**
+TypeScript 7.0 ist der neue native (Go-)Compiler `tsgo`; das Tooling-Ökosystem braucht aber
+noch die TS-**6.0**-API (u. a. typescript-eslint — Tracking: typescript-eslint#10940). TS 6.0
+ist derselbe Sprachstand als API-kompatibler JS-Compiler und voll unterstützt.
+**Entscheidung:** projektweit **TypeScript 6.0.x** pinnen (aktuell 6.0.3). Migration auf TS 7
+(nativ) als reines Performance-Upgrade ohne Sprachänderung, sobald typescript-eslint und die
+Build-Tools (Nest/Next/Expo) es tragen.
+
+### ADR-014 — Mandantengrenze & Datenklassen (Global ↔ Festival) · **ENTSCHIEDEN**
+Abgeleitet aus dem ersten Designentwurf (zwei Navigationskontexte) und der Multi-Tenancy-Regel.
+Konkretisiert, *wie* „Multi-Tenancy von Tag 1" fachlich geschnitten ist.
+
+**Entscheidung:**
+1. **Global ↔ Festival ist die Mandantengrenze.** Ein User gehört keinem Festival; er *betritt*
+   ein Festival (`openFestival` = „Tenant betreten"). Der Festival-Kontext ist genau ein Mandant.
+   Jeder festival-scoped Request/Query trägt eine geprüfte `festivalId` (nie cross-tenant ohne
+   expliziten Kontext).
+2. **Zwei Datenklassen:**
+   - *User-global (kein Tenant):* Konto/Profil, Einstellungen, Festival-Liste (angemeldet/
+     empfohlen/vorbei), **gefolgte Artists**, **Freundschaften**, globale News.
+   - *Festival-scoped (Tenant = Festival):* Timetable/Acts/Stages, Lageplan/Vendors,
+     Tauschbörse-Listings, Aktivitäten, Festival-News, **Präsenz/Standort der Crew**.
+3. **Freundes-Graph:** Freundschaften sind **user-global** (bleiben über Festivals bestehen).
+   **Präsenz, Standort, Distanz und „wer ist hier" sind strikt festival-scoped** und existieren
+   **nur während des Events**. „Crew" = die eigenen Freunde, die auf *diesem* Festival sind
+   (globale Freundesliste ∩ Anwesende). Datenschutz: Standortdaten sind nie global, nur pro
+   Festival und zeitlich begrenzt.
+4. **Cashless-Guthaben** ist **keine** unserer Datenklassen (lebt beim Anbieter, ADR-011).
+
+**Begründung:** Deckt sich 1:1 mit dem Design, minimiert Standort-/Präsenz-Datenhaltung (DSGVO),
+und gibt API + Drizzle-Schema eine klare Scoping-Regel (jede Tabelle ist entweder user- oder
+festival-scoped; festival-scoped Tabellen haben `festivalId` + Tenant-Guard).
+
+**Konsequenz:** Auth/Session müssen den aktiven Festival-Kontext führen; `packages/contracts`
+trennt user- und festival-scoped Endpunkte; Präsenz-/Standortdaten bekommen eine Retention-/
+Sichtbarkeitsregel (nur aktives Festival, nur Freunde, nur mit aktiviertem Teilen).
+
+**MVP-Scope (2026-07-28, Design-Abgleich):**
+- **Fassade (Global Shell) = 3 Tabs: Festivals · Friends · Profil/Mehr.** Festivals ist die
+  Landing (gespeicherte / angelegte / entdeckbare Festivals); der „Home"-Overview des Designs
+  entfällt und geht in die Festival-Liste auf. Globale News über Glocken-Icon (Push-Screen).
+- **Artists werden im MVP weggelassen** (kein Tab, kein Screen). Festivalübergreifendes
+  Artist-Favorisieren ist ein möglicher späterer Schritt (eigene Entscheidung).
+- **SafeNow** ist nicht im MVP (zurückgestellt).
+- **Cashless** existiert nur *im* Festival-Kontext als ein eingebetteter Link pro Festival
+  (ADR-011); in der Fassade kommt Cashless nicht vor.
+
+### ADR-015 — Design-System-Fundament & Festival-Theming-Vertrag · **ENTSCHIEDEN**
+Basis: der **festipal Brand Guide** (Juli 2026) + die Token-Datei. Details in
+`docs/concept/03-design-system.md`.
+
+**Entscheidung:**
+1. **Brand Guide ist das verbindliche visuelle + sprachliche Fundament** (Prinzip 5, Design-Treue)
+   und wird als `packages/ui` (Tokens + Komponenten, auf React Native portiert) umgesetzt. Tokens
+   sind Single Source of Truth; **Komponenten nutzen nur semantische Aliase**, nie rohe Rampenwerte.
+2. **Voice/Tone ist bindender Content-Style-Guide** und Quelle der i18n-Basis-Strings (Deutsch,
+   Du-Form, „Freundin mit Plan", Satz-Schreibweise, keine Emoji, Numerisches in Mono). Koppelt an
+   ADR-012; Formatierung über `Intl`.
+3. **Festival-Theming-Vertrag:** Ein Festival darf **die 4 CI-Farbtokens** (`--ci-primary`,
+   `--ci-secondary`, `--ci-tint`, `--ci-on-primary`), **ein optionales Logo** (Kopfzeile, Fallback =
+   Name als Text) und den **Festival-Namen** anpassen. **Nicht** änderbar: Schrift, Layout, Radien,
+   Motion, Komponenten, Wortmarke-Systematik. Tenant-Datensatz speichert die 4 CI-Werte + `logoAsset?`
+   + `name`. **Kontrast-Validierung** (`--ci-on-primary` vs. `--ci-primary`, WCAG) erzwingt der Admin.
+   Fehlende Werte → Fallback auf festipal-Basis (grün/violett); fehlendes Logo → Name als Text.
+4. **Platzhalter/Ersetzungen** (produktionsreife Defaults, austauschbar): Schriften Outfit /
+   Plus Jakarta Sans / JetBrains Mono (Google Fonts, **OFL**, via `expo-font` gebündelt); Icons
+   Lucide (`<Icon name>`, Ein-Datei-Tausch); Logo/Fotos = Platzhalter (`Photo` → Initialen-Kachel);
+   Lageplan = Blockschema bis MapLibre (ADR-008).
+
+**Divergenzen zum Brand Guide** (durch Scope-Beschlüsse überschrieben): `BalanceCard`/natives Wallet
+entfällt (ADR-011); `SafeNowCard` zurückgestellt (B2); Artists-Komponenten zurückgestellt (ADR-014).
+
+**Konsequenz:** RN-Portierungsstrategie (Styling-Ansatz, Theme-Provider für CI-Tokens, Font-Loading)
+ist beim Scaffolding zu entscheiden (Konzept-Punkt C8). Admin braucht einen Theming-Editor mit
+Kontrast-Check.
+
 ---
 
 ## Tech-Stack (Kurzüberblick)
@@ -143,6 +284,7 @@ falls ein späterer Kooperationspartner das explizit anbietet.
 | Datenbank | PostgreSQL + Drizzle ORM (Neon) |
 | Hosting | Neon (DB) + Railway (Backend/Redis) |
 | Cashless | pro Festival hinterlegte URL, eingebettet (WebView/iframe) |
+| i18n | Lingui (UI-Strings) + Intl (Formatierung) + DB-Übersetzungstabellen (Content) |
 | Monorepo | Turborepo + pnpm |
 | Tests | Vitest (Unit) + Playwright (E2E Web) + Maestro/Detox (App-E2E) |
 | CI/CD | GitHub Actions |
@@ -161,6 +303,7 @@ festipal/
 │  ├─ contracts/       # ts-rest + Zod API-Contracts (single source of truth)
 │  ├─ db/              # Drizzle Schema + Migrationen
 │  ├─ ui/              # geteilte Design-Tokens / Primitives
+│  ├─ i18n/            # Lingui-Kataloge, Locale-Config, LocalizedText-Helfer
 │  └─ config/          # geteilte eslint/tsconfig/prettier
 ├─ docs/
 │  ├─ DEVELOPMENT_DECISIONS.md   # dieses Dokument
@@ -175,6 +318,7 @@ festipal/
 ## Querschnittsprinzipien
 
 - **Multi-Tenancy von Tag 1** — jedes fachliche Modell und jede Query ist festival-scoped.
+- **Mehrsprachigkeit von Tag 1** — App & Admin i18n-fähig; keine hartkodierten UI-Strings; Content pro Festival-Locale.
 - **Offline-first von Tag 1** — nicht nachträglich draufsetzen.
 - **End-to-end Typsicherheit** — keine untypisierten API-Grenzen; Contracts sind Vertrag.
 - **Sicherheit** — keine Kartendaten im eigenen System; Secrets nie im Repo; Auth mandantenfähig.
@@ -217,7 +361,7 @@ festipal/
 ## Nächste Schritte
 
 Alle Kern-ADRs sind entschieden. Als Nächstes:
-1. Monorepo-Scaffolding (Turborepo + pnpm; `apps/mobile`, `apps/admin`, `apps/api`; `packages/contracts`, `db`, `ui`, `config`).
+1. Monorepo-Scaffolding (Turborepo + pnpm; `apps/mobile`, `apps/admin`, `apps/api`; `packages/contracts`, `db`, `ui`, `i18n`, `config`).
 2. Claude-Code-Setup vervollständigen (Subagents, Hooks, Permissions-Allowlist).
 3. Datenmodell v1 (festival-scoped) + erste ts-rest-Contracts.
 4. Design-Tokens aus Claude Design übernehmen, sobald erste Designs vorliegen.
