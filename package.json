@@ -1,0 +1,23 @@
+{
+  "name": "festipal",
+  "private": true,
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,yaml,yml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,cjs,mjs,json,md,yaml,yml}\""
+  },
+  "devDependencies": {
+    "eslint": "10.8.0",
+    "prettier": "3.9.6",
+    "turbo": "2.10.7",
+    "typescript": "6.0.3"
+  }
+}

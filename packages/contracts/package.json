@@ -1,0 +1,31 @@
+{
+  "name": "@festipal/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@ts-rest/core": "^3.52.1",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@festipal/config": "workspace:*",
+    "tsup": "^8.5.1",
+    "typescript": "6.0.3"
+  }
+}
