@@ -1,0 +1,47 @@
+# ─── Dependencies ───────────────────────────────────────────────
+node_modules/
+.pnpm-store/
+
+# ─── Build-Output / Caches ──────────────────────────────────────
+dist/
+build/
+out/
+.next/
+.expo/
+.turbo/
+*.tsbuildinfo
+coverage/
+playwright-report/
+test-results/
+
+# ─── Environment / Secrets ──────────────────────────────────────
+.env
+.env.*
+!.env.example
+*.local
+
+# ─── Native / EAS ───────────────────────────────────────────────
+ios/
+android/
+*.keystore
+*.p8
+*.p12
+*.mobileprovision
+
+# ─── Logs ───────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Editor / OS ────────────────────────────────────────────────
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.DS_Store
+Thumbs.db
+
+# ─── Claude Code (lokale, nutzerspezifische Einstellungen) ───────
+.claude/settings.local.json
