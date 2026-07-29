@@ -232,7 +232,9 @@ Konkretisiert, *wie* „Multi-Tenancy von Tag 1" fachlich geschnitten ist.
    **keinen Standort/GPS** und keine Präsenz-Retention (Datenschutz-Gewinn). „Crew" ist nur der
    *interne* Begriff für diese Schnittmenge (globale Freundesliste ∩ „hat dieses Festival
    gespeichert"); **als UI-Label entfällt „Crew"** (heißt „Friends"). `camp`/Stellplatz ist ein
-   optionales, **manuell eingegebenes** Festival-Feld, kein Ortungswert.
+   optionales, **manuell eingegebenes** Festival-Feld, kein Ortungswert. (Eine **einmalige,
+   opt-in Standort-Erfassung** für den *Ort einer Aktivität* — nur für „Route öffnen" via externe
+   Maps — ist davon unberührt erlaubt, ADR-017; das ist **kein** kontinuierliches Präsenz-Tracking.)
    *Spätere Ausbaustufe (post-MVP, bewusst nicht wegarchitekten):* interaktiver Lageplan mit
    **opt-in Standort-Sharing → Freunde auf der Karte**; erst dann kommen Standort, Sichtbarkeits-
    und Retention-Regeln dazu.
@@ -329,6 +331,41 @@ Anzeige-Feature (`FestivalTicket`, ADR-014), nicht als Gate.
 
 **Konsequenz:** `packages/contracts` trennt Account-/Visitor-/Staff-Endpunkte; das Drizzle-Schema
 setzt `VisitorProfile`/`FestivalStaff`/`PlatformAdmin` als getrennte Tabellen am `Account` an.
+
+### ADR-017 — Aktivitäten, Tags (global + festival) & Social-Interest · **ENTSCHIEDEN**
+Das Kern-Differenzierungsfeature (Aktivitäten/Freunde) + die Timetable-Sozialschicht + der
+Dashboard-Aufbau. Aus dem Team-Meeting (2026-07-28). Detail-Entwurf: `docs/concept/05-activities-social.md`.
+
+**Entscheidung:**
+1. **`Activity` (festival-scoped):** `creatorId`, optional `tagId`, `title` (Pflicht **nur ohne
+   Tag**), optional `subtitle`, `location`, `startTime`, `capacity` (Plätze), optional
+   `description`, `attendees[]` (Beitreten/Verlassen bis `capacity`, Creator automatisch dabei).
+   **Auto-Titel:** mit Tag = `tag.label` (+ optional `subtitle`); ohne Tag ist `title` Pflicht.
+   **Klonen** ist eine reine UI-Aktion (neue `Activity` mit übernommenen Feldern, nur Zeit+Ort ändern).
+2. **`location` = Freitext + optionaler Geo-Punkt** via „aktueller Standort"-Button. Der Geo-Punkt
+   dient **nur** „Route öffnen" über externe Maps (kein eigener interaktiver Plan im MVP). Das ist
+   eine **einmalige, opt-in Punkt-Erfassung** — ausdrücklich abgegrenzt vom deaktivierten
+   Präsenz-/„wer ist hier"-GPS (ADR-014).
+3. **Tag-Modell (multi-tenant):** `ActivityTag` mit **nullable `festivalId`** — `null` = **globaler
+   Katalog** (vom Platform-Admin gepflegt), gesetzt = **festival-eigener Custom-Tag**. Ein Festival
+   **aktiviert/deaktiviert** globale Tags über `FestivalActivityTag(festivalId, tagId, enabled)` und
+   legt eigene an. **Effektive Tag-Liste = aktivierte globale ∪ festival-eigene.** Optional `guide`
+   (Text + Link/YouTube) je Tag; `category` optional.
+4. **Social-Interest getrennt vom Beitreten:** `ActInterest(visitorId, actId)` markiert Interesse an
+   einem **Timetable-Act** (keine Kapazität) → treibt „meine Picks" + „Freunde gehen hin"
+   (`ActInterest` ∩ Freunde), **inline** im Timetable ohne Connect-Schritt. **`Activity`** dagegen
+   hat **Kapazität + Beitreten**. Zwei bewusst getrennte Konzepte.
+5. **Dashboard-Aufbau:** `FestivalAnnouncement` (admin-gesetzt, zeitlich planbar) als **Hero** oben;
+   Reihenfolge **Hero → Cashless-Einstieg → Now-Playing (Stages) → News → Aktivitäten**. Cashless
+   bewusst weit oben (ADR-011, kein Guthaben), nicht im Profil versteckt.
+
+**Begründung:** Tags global zu pflegen hält die Katalogqualität hoch; das per-Festival-Opt-in +
+Custom passt zur Multi-Tenancy (jedes Festival kuratiert seine Aktivitätsarten). Interesse (Act)
+und Beitreten (Activity) haben unterschiedliche Semantik (Kapazität ja/nein) → getrennte Tabellen.
+
+**Konsequenz:** festival-scoped Tabellen mit `festivalId` + Tenant-Guard; `ActivityTag` ist der
+einzige Tag-Store mit globaler/lokaler Doppelrolle; der Festival-Admin (ADR-016) verwaltet Tag-
+Aktivierung + Custom-Tags + Announcements (Cluster 3, Admin-Scope).
 
 ---
 
