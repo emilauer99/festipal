@@ -21,7 +21,14 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 01 | `01-design-analysis.md` | Präzise Extraktion des Designs: Screens, Navigation, Domänenmodell, Design-System, Interaktionsmuster | ✅ Entwurf |
 | 02 | `02-open-questions.md` | Abgeleitete Konzept-Bereiche, Widersprüche zu bestehenden ADRs, Reihenfolge der Abstimmung + **Abstimmungs-Log** | ✅ laufend |
 | 03 | `03-design-system.md` | Design-System-Fundament aus dem Brand Guide: Tokens, Voice/Tone, Theming-Vertrag (→ ADR-015) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Domänenmodell v1, Feature-Scope MVP, Offline-Matrix, Multi-Tenancy-Mechanik, fehlende Flows, … | offen |
+| 04 | `04-domain-identity.md` | Identität & Profil (Account → Visitor/Staff/Admin), Festival-Beitritt, Ticket-Anzeige, „wer ist hier" — Cluster 1 (→ ADR-009/014/016) | ✅ Entwurf |
+| 05 | `05-activities-social.md` | Aktivitäten (Tags global+festival, Klonen), Timetable-Social, Dashboard — Cluster 2 (→ ADR-017) | ✅ Entwurf |
+| 06 | `06-admin.md` | Admin zweistufig (Platform + Festival), Rollen, Tenant-Workspace, Einladung, Login-Methoden — Cluster 3 (→ ADR-018) | ✅ Entwurf |
+| 07 | `07-lageplan.md` | Lageplan-MVP (Bild + DB-Marker-Typen mit Icon-String), Route via Geo, offline — Cluster 4 (→ ADR-019) | ✅ Entwurf |
+| 08 | `08-scope-notes.md` | Hilfe-Börse (post-MVP), Aktivitäts-Lobby-Chat (kein 1:1-DM), User-Content ohne Übersetzung, Light+Dark — Cluster 5 (→ ADR-020) | ✅ Entwurf |
+| 09 | `09-onboarding-auth.md` | Onboarding & Auth: login-first, Visitor-OTP + Profil, Staff Passwort+OTP, Einladung, Session (→ ADR-009/016) | ✅ Entwurf |
+| 10 | `10-offline-matrix.md` | Offline-Matrix (offline-kritisch/Cache/online), Mutation-Queue, Prefetch-Bundle, Offline-UX (→ ADR-007) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Domänenmodell → contracts/db, Safety/Recht (Birgit), … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -31,8 +38,17 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | A1/A2/B3 Tenant-Grenze & Datenklassen | Global↔Festival; Freundschaft global, Präsenz festival-scoped | ADR-014 |
 | MVP-Scope | Fassade = Festivals·Friends·Profil; Artists/SafeNow/Wallet raus | ADR-014 |
 | A3 Design-System | Brand Guide als Fundament; Theming = 4 Farben + Logo + Name | ADR-015 |
-| B2 SafeNow | zurückgestellt | — |
+| B2 SafeNow | zurückgestellt (Meeting: Recht/Jugendschutz → Birgit) | — |
 | A4 MVP-Schnitt | bestätigt (Fundament → Read-only-Kern → Differenzierer → Integrationen) | — |
+| **C1** Auth passwortlos | E-Mail-OTP, E-Mail-Verifizierung, SSO→2027, App-User vs. Staff-Org | ADR-009 |
+| **C1** Festival-Nav/Beitritt/Ticket | 5 Tabs; gate-loser Beitritt; Ticket = Anzeige-QR; „wer ist hier" ohne GPS | ADR-014 |
+| **C2a** Identität & Profil | Account → Visitor/Staff/Admin; Ticket/Band raus (Ticket nur Anzeige) | ADR-016 |
+| **C2** Aktivitäten/Timetable/Dashboard | Tags global+festival, Klonen, Standort→Route, Act-Interest, Announcement-Hero | ADR-017 |
+| **C3** Admin zweistufig | Platform + Festival-Admin, eine Manager-Rolle (granular später), Staff-Login Passwort+OTP, Einladung per E-Mail | ADR-018 |
+| **C4** Lageplan-MVP | Bild-Upload + Admin-Marker (Typen in DB, Icon-String), Route via Geo/externe Maps, offline; MapLibre später | ADR-019 |
+| **C5** Scope-Notizen | Hilfe-Börse post-MVP; Aktivitäts-Lobby-Chat (kein 1:1-DM); User-Content nicht übersetzt; **Light+Dark** beide | ADR-020 |
+| **Flows** Onboarding/Auth | **login-first**; Visitor-OTP + Profil (username/displayName Pflicht, **Avatar optional**); Staff Passwort+OTP; Einladung/Reset | ADR-009/016 |
+| **Offline** Matrix | Ticket/Timetable/Lageplan/Meine Festivals offline; Queue (Merken/Like/Profil/Ticket); Prefetch beim Speichern | ADR-007 |
 
 ## Quelle
 
