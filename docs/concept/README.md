@@ -24,7 +24,8 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 04 | `04-domain-identity.md` | Identität & Profil (Account → Visitor/Staff/Admin), Festival-Beitritt, Ticket-Anzeige, „wer ist hier" — Cluster 1 (→ ADR-009/014/016) | ✅ Entwurf |
 | 05 | `05-activities-social.md` | Aktivitäten (Tags global+festival, Klonen), Timetable-Social, Dashboard — Cluster 2 (→ ADR-017) | ✅ Entwurf |
 | 06 | `06-admin.md` | Admin zweistufig (Platform + Festival), Rollen, Tenant-Workspace, Einladung, Login-Methoden — Cluster 3 (→ ADR-018) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Lageplan-MVP, Offline-Matrix, Tausch-Reframe, Safety/Recht, … | offen |
+| 07 | `07-lageplan.md` | Lageplan-MVP (Bild + DB-Marker-Typen mit Icon-String), Route via Geo, offline — Cluster 4 (→ ADR-019) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Tausch-Reframe, kein Chat, i18n-Disclaimer, Offline-Matrix, Safety/Recht, … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -41,6 +42,7 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | **C2a** Identität & Profil | Account → Visitor/Staff/Admin; Ticket/Band raus (Ticket nur Anzeige) | ADR-016 |
 | **C2** Aktivitäten/Timetable/Dashboard | Tags global+festival, Klonen, Standort→Route, Act-Interest, Announcement-Hero | ADR-017 |
 | **C3** Admin zweistufig | Platform + Festival-Admin, eine Manager-Rolle (granular später), Staff-Login Passwort+OTP, Einladung per E-Mail | ADR-018 |
+| **C4** Lageplan-MVP | Bild-Upload + Admin-Marker (Typen in DB, Icon-String), Route via Geo/externe Maps, offline; MapLibre später | ADR-019 |
 
 ## Quelle
 

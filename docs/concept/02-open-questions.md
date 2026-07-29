@@ -138,4 +138,7 @@ das Modell, dann den Schnitt:
 > **Cluster 3** (2026-07-29) entschieden → ADR-018 + `06-admin.md`: Admin zweistufig
 > (Platform + Festival), eine Manager-Rolle, Staff-Login Passwort+OTP, Einladung per E-Mail,
 > News im Festival + Admin-editierbar, Analytics vertagt.
-> **Nächster Schritt:** Cluster 4 — Lageplan-MVP (Bild-Upload + Marker; GPS/Route; MapLibre später).
+> **Cluster 4** (2026-07-29) entschieden → ADR-019 + `07-lageplan.md`: Bild-Lageplan + DB-gestützte
+> Marker-Typen (Icon-String), Route via Geo/externe Maps, offline; MapLibre = spätere Stufe.
+> **Nächster Schritt:** Cluster 5 — Scope-Notizen (Tausch als Hilfe-Börse & post-MVP, kein
+> In-App-Chat, i18n-Disclaimer für User-Content) + offene Themen (Birgit: Alter/Safety; Light/Dark).
