@@ -135,5 +135,7 @@ das Modell, dann den Schnitt:
 > **Cluster 2** (2026-07-29) entschieden → ADR-017 + `05-activities-social.md`: Aktivitäten
 > (Tags global+festival, Klonen, Standort→Route), Timetable-Social (Act-Interest), Dashboard
 > (Announcement-Hero, Cashless oben).
-> **Nächster Schritt:** Cluster 3 — Admin zweistufig (Super-Admin + Festival-Management,
-> Rollen, Tag-/Announcement-Verwaltung, Analytics später).
+> **Cluster 3** (2026-07-29) entschieden → ADR-018 + `06-admin.md`: Admin zweistufig
+> (Platform + Festival), eine Manager-Rolle, Staff-Login Passwort+OTP, Einladung per E-Mail,
+> News im Festival + Admin-editierbar, Analytics vertagt.
+> **Nächster Schritt:** Cluster 4 — Lageplan-MVP (Bild-Upload + Marker; GPS/Route; MapLibre später).

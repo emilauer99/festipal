@@ -23,7 +23,8 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 03 | `03-design-system.md` | Design-System-Fundament aus dem Brand Guide: Tokens, Voice/Tone, Theming-Vertrag (→ ADR-015) | ✅ Entwurf |
 | 04 | `04-domain-identity.md` | Identität & Profil (Account → Visitor/Staff/Admin), Festival-Beitritt, Ticket-Anzeige, „wer ist hier" — Cluster 1 (→ ADR-009/014/016) | ✅ Entwurf |
 | 05 | `05-activities-social.md` | Aktivitäten (Tags global+festival, Klonen), Timetable-Social, Dashboard — Cluster 2 (→ ADR-017) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Admin-Scope (zweistufig), Lageplan-MVP, Offline-Matrix, Tausch-Reframe, … | offen |
+| 06 | `06-admin.md` | Admin zweistufig (Platform + Festival), Rollen, Tenant-Workspace, Einladung, Login-Methoden — Cluster 3 (→ ADR-018) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Lageplan-MVP, Offline-Matrix, Tausch-Reframe, Safety/Recht, … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -39,6 +40,7 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | **C1** Festival-Nav/Beitritt/Ticket | 5 Tabs; gate-loser Beitritt; Ticket = Anzeige-QR; „wer ist hier" ohne GPS | ADR-014 |
 | **C2a** Identität & Profil | Account → Visitor/Staff/Admin; Ticket/Band raus (Ticket nur Anzeige) | ADR-016 |
 | **C2** Aktivitäten/Timetable/Dashboard | Tags global+festival, Klonen, Standort→Route, Act-Interest, Announcement-Hero | ADR-017 |
+| **C3** Admin zweistufig | Platform + Festival-Admin, eine Manager-Rolle (granular später), Staff-Login Passwort+OTP, Einladung per E-Mail | ADR-018 |
 
 ## Quelle
 
