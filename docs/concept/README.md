@@ -22,7 +22,8 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 02 | `02-open-questions.md` | Abgeleitete Konzept-Bereiche, Widersprüche zu bestehenden ADRs, Reihenfolge der Abstimmung + **Abstimmungs-Log** | ✅ laufend |
 | 03 | `03-design-system.md` | Design-System-Fundament aus dem Brand Guide: Tokens, Voice/Tone, Theming-Vertrag (→ ADR-015) | ✅ Entwurf |
 | 04 | `04-domain-identity.md` | Identität & Profil (Account → Visitor/Staff/Admin), Festival-Beitritt, Ticket-Anzeige, „wer ist hier" — Cluster 1 (→ ADR-009/014/016) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Aktivitäten-Modell, Dashboard, Admin-Scope, Lageplan-MVP, Offline-Matrix, … | offen |
+| 05 | `05-activities-social.md` | Aktivitäten (Tags global+festival, Klonen), Timetable-Social, Dashboard — Cluster 2 (→ ADR-017) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Admin-Scope (zweistufig), Lageplan-MVP, Offline-Matrix, Tausch-Reframe, … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -37,6 +38,7 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | **C1** Auth passwortlos | E-Mail-OTP, E-Mail-Verifizierung, SSO→2027, App-User vs. Staff-Org | ADR-009 |
 | **C1** Festival-Nav/Beitritt/Ticket | 5 Tabs; gate-loser Beitritt; Ticket = Anzeige-QR; „wer ist hier" ohne GPS | ADR-014 |
 | **C2a** Identität & Profil | Account → Visitor/Staff/Admin; Ticket/Band raus (Ticket nur Anzeige) | ADR-016 |
+| **C2** Aktivitäten/Timetable/Dashboard | Tags global+festival, Klonen, Standort→Route, Act-Interest, Announcement-Hero | ADR-017 |
 
 ## Quelle
 

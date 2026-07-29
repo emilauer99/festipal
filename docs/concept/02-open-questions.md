@@ -132,5 +132,8 @@ das Modell, dann den Schnitt:
 > **Stand 2026-07-29:** Cluster 1 (Fundament) nach Team-Meeting entschieden → ADR-009 (Auth
 > passwortlos), ADR-014 (Festival-Nav / Beitritt / Ticket / „wer ist hier" ohne GPS),
 > ADR-016 (Identität) + `04-domain-identity.md`.
-> **Nächster Schritt:** Cluster 2 — Aktivitäten-Modell (Tags/Klonen), Dashboard-Redesign,
-> Timetable-Social.
+> **Cluster 2** (2026-07-29) entschieden → ADR-017 + `05-activities-social.md`: Aktivitäten
+> (Tags global+festival, Klonen, Standort→Route), Timetable-Social (Act-Interest), Dashboard
+> (Announcement-Hero, Cashless oben).
+> **Nächster Schritt:** Cluster 3 — Admin zweistufig (Super-Admin + Festival-Management,
+> Rollen, Tag-/Announcement-Verwaltung, Analytics später).
