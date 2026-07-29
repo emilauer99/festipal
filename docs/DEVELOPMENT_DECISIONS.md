@@ -113,6 +113,9 @@ zehntausenden Festival-Nutzern).
 - **E-Mail ist Pflicht-Identifier für *jeden* Login-Typ** (App-Nutzer, Festival-Staff,
   Platform-Admin) — gemeinsame `Account`-Basis, siehe **ADR-016**.
 - **Session langlebig** (mobil): Refresh-Token, User bleibt eingeloggt.
+- **Login-Methoden je Kontotyp:** App-Nutzer (Visitor) = **nur passwortloses OTP**. **Festival-Staff
+  + Platform-Admin = E-Mail+Passwort *und* OTP** (beides möglich); das Passwort ist eine optionale
+  Credential am `Account`, primär für den Admin-Login. better-auth trägt beide Strecken.
 - **Social-Login (Google/Apple) → 2027.** Schema von Anfang an account-linking-fähig halten
   (nachrüstbar ohne Migration). **Passkeys** nicht im MVP.
 - **Org-Membership nur für Staff/Admin:** better-auth „Organizations = Festivals" gilt
@@ -366,6 +369,40 @@ und Beitreten (Activity) haben unterschiedliche Semantik (Kapazität ja/nein) �
 **Konsequenz:** festival-scoped Tabellen mit `festivalId` + Tenant-Guard; `ActivityTag` ist der
 einzige Tag-Store mit globaler/lokaler Doppelrolle; der Festival-Admin (ADR-016) verwaltet Tag-
 Aktivierung + Custom-Tags + Announcements (Cluster 3, Admin-Scope).
+
+### ADR-018 — Admin zweistufig: Platform- & Festival-Admin · **ENTSCHIEDEN**
+Erweitert **ADR-003** (Next.js-Admin) um die konkrete Zwei-Ebenen-Struktur, Rollen und den
+Tenant-Workspace. Aus dem Team-Meeting (2026-07-28). Detail-Entwurf: `docs/concept/06-admin.md`.
+
+**Entscheidung:**
+1. **Zwei Ebenen in *einem* Next.js-Admin (ADR-003):**
+   - **Platform-Admin (nur wir, `PlatformAdmin`):** Festivals anlegen, **Staff per E-Mail einladen**,
+     **globalen Tag-Katalog** pflegen, festivalübergreifende Insights. **Superset:** kann alles, was
+     ein Festival-Admin kann — **für jedes Festival**.
+   - **Festival-Admin (`FestivalStaff`):** verwaltet *sein* Festival. Festival auswählen → **tenant-
+     gescopte Arbeitsfläche**. better-auth „Organizations = Festivals" greift hier (ADR-009).
+2. **Login Admin/Staff:** E-Mail **+ Passwort** *und* **OTP** (beides, ADR-009). App-Nutzer bleiben
+   OTP-only.
+3. **Festival-Admin-Scope:** Branding/Stammdaten (Name, Logo, **4 CI-Farben + Kontrast-Check**,
+   Infos, Social Media), **Cashless-Link** (+ iframe-Vorschau, ADR-011), **Timetable** (Stages/Acts),
+   **Lageplan-Upload** (Detail Cluster 4), **Aktivitäts-Tags** (globale aus-/abwählen + eigene,
+   ADR-017), **Announcements** (Dashboard-Hero, ADR-017), **News/Blog**. **Analytics** (User-Zahl,
+   Nutzung, angelegte Events) ist **vertagt** (Platzhalter).
+4. **Rollen MVP = eine „Festival-Manager"-Rolle** (darf alles fürs Festival). Das `role[]`-Modell
+   (ADR-016) trägt **granulare Rollen** (nur News, nur Event-Moderation) später **ohne Migration**
+   (2027/28).
+5. **Einladungs-Flow:** Platform-Admin lädt Staff per E-Mail → `Account` (OTP oder Passwort) +
+   `FestivalStaff`-Rolle am jeweiligen Festival.
+6. **News** ist festival-scoped Content: **im App-Festival sichtbar** (Dashboard/News) **und im Admin
+   editierbar**.
+
+**Begründung:** Ein Admin-Frontend mit rollenbasiertem Zugriff hält den Betrieb schlank; der
+Platform-Admin als Superset vermeidet Sonderfälle im Support. Passwort *und* OTP für Staff, weil
+Admin-Arbeit am Desktop mit Passwort bequemer ist, OTP aber als Fallback/passwortlos bleibt.
+
+**Konsequenz:** Admin-Routen tenant-gescopt mit Permission-Guard; `packages/contracts` bekommt
+getrennte Admin-Endpunkte (platform vs. festival-scoped); der Theming-Editor (ADR-015) und die
+Tag-/Announcement-/News-Verwaltung (ADR-017) leben hier.
 
 ---
 
