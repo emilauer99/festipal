@@ -47,7 +47,7 @@ Staff-Account hat **keinen** `username`/`avatar` — diese Felder sind Besucher-
 |---|---|---|---|
 | `username` | ✅ | string, **unique** | Leute suchen / als Freund adden / teilen — „vergisst man nicht" |
 | `displayName` | ✅ | string | Anzeigename / „wie du angesprochen werden willst" (≠ echter Vorname) |
-| `avatar` | ✅ | Bild | **Upload *oder* Kamera** (beides erlaubt) |
+| `avatar` | – (optional) | Bild | Upload *oder* Kamera; Fallback = Initialen-Kachel |
 | `socials[]` | – | `{platform, handle}` | Insta / Snap / TikTok / … beliebig erweiterbar |
 | `socialsVisibility` | ✅ | `everyone` \| `friends` | Wer meine Socials sieht |
 | `birthDate?` / `gender?` | **OFFEN** | — | → Birgits Safety-/Jugendschutz-Konzept; **nicht** finalisiert, migrationssicher offen |

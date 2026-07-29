@@ -143,5 +143,7 @@ das Modell, dann den Schnitt:
 > **Cluster 5** (2026-07-29) → ADR-020 + `08-scope-notes.md`: Hilfe-Börse (post-MVP),
 > Aktivitäts-Lobby-Chat (kein 1:1-DM), User-Content ohne Übersetzung, **Light+Dark** beide.
 > **→ Die Meeting-Runde ist durchgearbeitet.** Offen/zugewiesen: **Birgit** (Alter/Geschlecht/
-> Safety-Konzept + Anmelde-Disclaimer, B2). **Nächster sinnvoller Schritt:** Onboarding-/Auth-Flow
-> + Offline-Matrix ausarbeiten, oder Scaffolding starten.
+> Safety-Konzept + Anmelde-Disclaimer, B2).
+> **Onboarding-/Auth-Flow** ausgearbeitet → `09-onboarding-auth.md` (login-first, Avatar optional).
+> **Nächster sinnvoller Schritt:** Offline-Matrix, oder Domänenmodell → `packages/contracts`+`db`,
+> oder Scaffolding.
