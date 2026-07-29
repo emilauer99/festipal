@@ -99,6 +99,10 @@ nicht gibt; würden nur Komplexität und Betriebslast draufpacken.
 Eigene Festival-Geländekarte statt Google-Weltkarte; keine Lizenzkosten, volle Kontrolle
 über Custom-Tiles. RN: `@maplibre/maplibre-react-native`.
 
+**MVP-Konkretisierung (2026-07-29, → ADR-019):** MapLibre ist das **Ziel** (Vektor-Tileset, GPS,
+**Freunde auf der Karte** — ADR-014-Ausbaustufe). Der **Lageplan-MVP ist bild-basiert** (hoch-
+geladenes Kartenbild + bildpositionierte Marker, **kein** GPS-Overlay). Siehe ADR-019.
+
 ### ADR-009 — Auth: better-auth · **ENTSCHIEDEN**
 TS-nativ, integriert mit Drizzle/Postgres, mandantenfähig (Organizations = Festivals),
 Social-Login + Passkeys, self-hosted → keine Per-MAU-Kosten (entscheidend bei stoßweise
@@ -403,6 +407,37 @@ Admin-Arbeit am Desktop mit Passwort bequemer ist, OTP aber als Fallback/passwor
 **Konsequenz:** Admin-Routen tenant-gescopt mit Permission-Guard; `packages/contracts` bekommt
 getrennte Admin-Endpunkte (platform vs. festival-scoped); der Theming-Editor (ADR-015) und die
 Tag-/Announcement-/News-Verwaltung (ADR-017) leben hier.
+
+### ADR-019 — Lageplan-MVP: Bild + Marker (Typen in DB) · **ENTSCHIEDEN**
+Der Lageplan startet **bild-basiert**, nicht als MapLibre (ADR-008 = Ziel). Aus dem
+Team-Meeting (2026-07-28). Detail-Entwurf: `docs/concept/07-lageplan.md`.
+
+**Entscheidung:**
+1. **MVP = hochgeladenes Kartenbild + Marker.** Der Festival-Admin lädt ein Kartenbild hoch und
+   setzt **Marker** darauf (Bild-Koordinaten, **kein GPS-Overlay** — im Meeting als „unmöglich"
+   fürs MVP eingestuft). Nutzer zoomen/schieben das Bild, tippen Marker an → Info. **Offline-fähig**
+   (ADR-007): Bild + Marker gecached.
+2. **Marker-Typen liegen in der DB, nicht hardcoded.** `MarkerType` = **globaler, seed-barer
+   Katalog** (fester Startsatz, später erweiter-/festival-anpassbar), je Typ ein **`icon`-String**
+   (Lucide-Name, ADR-015) + lokalisierbares `label` (zentral übersetzt, ADR-012). Startsatz u. a.:
+   Stage, Wasser, Food/Stand, Merch, Eingang, Notausgang, WC, Sanitäter, Info, Landmark, Camping,
+   Cashless-Aufladung.
+3. **Modell:** `FestivalMap` (festival-scoped: `image`, `width/height`; **eine Karte pro Festival**
+   im MVP, mehrere Bereiche später) · `MapMarker` (festival-scoped: `typeId`→MarkerType, `label`,
+   `description?`, normierte `x`/`y` 0–1, optional `geo?`).
+4. **„Route öffnen" läuft über echte Geo-Punkte, nicht über das Bild:** Aktivitäten haben optional
+   `location.geo` (ADR-017) → externe Maps; Marker können optional einen `geo`-Punkt tragen. Das Bild
+   selbst ist nicht geo-referenziert.
+5. **Marker im MVP nur vom Admin** (offizielle Karte). **Persönliche Pins** („mein Zelt") und
+   **Freunde auf der Karte** sind die spätere GPS/MapLibre-Stufe (ADR-008/ADR-014).
+
+**Begründung:** Ein Bild + Marker ist sofort lieferbar, offline trivial cachebar und deckt den
+Kernnutzen (Orientierung) ab, ohne die Komplexität von Geo-Referenzierung/Tiling. Marker-Typen in
+der DB (statt Enum) halten den Katalog pflegbar und später festival-anpassbar.
+
+**Konsequenz:** `packages/db` bekommt `MarkerType` (global) + `FestivalMap`/`MapMarker`
+(festival-scoped, Tenant-Guard); Icons rendern über `<Icon name=marker.type.icon>` (ADR-015);
+Admin-Editor zum Bild-Upload + Marker-Setzen (ADR-018).
 
 ---
 
