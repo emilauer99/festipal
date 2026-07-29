@@ -27,7 +27,8 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 07 | `07-lageplan.md` | Lageplan-MVP (Bild + DB-Marker-Typen mit Icon-String), Route via Geo, offline — Cluster 4 (→ ADR-019) | ✅ Entwurf |
 | 08 | `08-scope-notes.md` | Hilfe-Börse (post-MVP), Aktivitäts-Lobby-Chat (kein 1:1-DM), User-Content ohne Übersetzung, Light+Dark — Cluster 5 (→ ADR-020) | ✅ Entwurf |
 | 09 | `09-onboarding-auth.md` | Onboarding & Auth: login-first, Visitor-OTP + Profil, Staff Passwort+OTP, Einladung, Session (→ ADR-009/016) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Offline-Matrix, Domänenmodell → contracts/db, Safety/Recht (Birgit), … | offen |
+| 10 | `10-offline-matrix.md` | Offline-Matrix (offline-kritisch/Cache/online), Mutation-Queue, Prefetch-Bundle, Offline-UX (→ ADR-007) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Domänenmodell → contracts/db, Safety/Recht (Birgit), … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -47,6 +48,7 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | **C4** Lageplan-MVP | Bild-Upload + Admin-Marker (Typen in DB, Icon-String), Route via Geo/externe Maps, offline; MapLibre später | ADR-019 |
 | **C5** Scope-Notizen | Hilfe-Börse post-MVP; Aktivitäts-Lobby-Chat (kein 1:1-DM); User-Content nicht übersetzt; **Light+Dark** beide | ADR-020 |
 | **Flows** Onboarding/Auth | **login-first**; Visitor-OTP + Profil (username/displayName Pflicht, **Avatar optional**); Staff Passwort+OTP; Einladung/Reset | ADR-009/016 |
+| **Offline** Matrix | Ticket/Timetable/Lageplan/Meine Festivals offline; Queue (Merken/Like/Profil/Ticket); Prefetch beim Speichern | ADR-007 |
 
 ## Quelle
 

@@ -145,5 +145,6 @@ das Modell, dann den Schnitt:
 > **→ Die Meeting-Runde ist durchgearbeitet.** Offen/zugewiesen: **Birgit** (Alter/Geschlecht/
 > Safety-Konzept + Anmelde-Disclaimer, B2).
 > **Onboarding-/Auth-Flow** ausgearbeitet → `09-onboarding-auth.md` (login-first, Avatar optional).
-> **Nächster sinnvoller Schritt:** Offline-Matrix, oder Domänenmodell → `packages/contracts`+`db`,
+> **Offline-Matrix** ausgearbeitet → `10-offline-matrix.md` (ADR-007 konkretisiert).
+> **Nächster sinnvoller Schritt:** Domänenmodell → `packages/contracts`+`db` (erster Code),
 > oder Scaffolding.
