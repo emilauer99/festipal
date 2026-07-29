@@ -63,8 +63,9 @@ nach Design-Abgleich). Sicherheit schlägt Design-Treue.
   **Switch „Auto-Aufladung" entfällt** (Zahlungsfunktion).
 - **Domänenmodell:** keine `balance`/`chip`/`Transaction`-Felder bei uns; am Festival-Tenant
   nur `cashlessUrl` (+ optional Deep-Link-Parameter). Fehlt die URL → Bereich ausgeblendet.
-- **Ticket ≠ Cashless:** Der „2 Tickets in der Wallet"-Hinweis (MyFestivals) gehört zum
-  **Ticket-Flow** (C5), nicht zu Cashless — bleibt vorerst offen.
+- **Ticket ≠ Cashless:** ✅ geklärt (2026-07-29, Cluster 1) — Ticket ist ein **Anzeige-Feature**
+  (QR pro Nutzer/Festival, manuell hinterlegt, offline), **kein Beitritts-Gate** und getrennt von
+  Cashless (ADR-011). Details: ADR-014 / ADR-016 + `04-domain-identity.md`.
 
 **Verworfen:** Hybrid (Read-only nativ via Anbieter-API), volles natives Wallet.
 
@@ -104,8 +105,9 @@ Scope-Regel jetzt präzise. Cashless-Guthaben ist gar keine unserer Datenklassen
 4. **Offline-Matrix** — pro Screen: was muss offline funktionieren (Timetable/Map/Ticket/Wallet
    laut ADR-007), was ist Cache, was braucht Netz. Mutation-Queue für welche Writes (Merken,
    Tausch-Entwurf, Aktivität, Anfrage)?
-5. **Fehlende Screens/Flows** — Onboarding, Auth (better-auth, tenant-aware), Ticket-Einlösung
-   (Code/QR → Festival betreten), Artist-Detail, globale Suche, expliziter Offline-Zustand.
+5. **Fehlende Screens/Flows** — ✅ tlw. geklärt (Cluster 1): Onboarding + **Auth passwortlos**
+   (E-Mail-OTP, ADR-009), Ticket **hinterlegen/anzeigen** (QR, kein Beitritts-Gate — ADR-014/016).
+   Offen: Artist-Detail (post-MVP), globale Suche, expliziter Offline-Zustand.
 6. **Multi-Tenancy-Mechanik** — Festival als Tenant, CI-Theming (4 Variablen), festivalspezifische
    Inhalte (Vendors, Lageplan-Tileset, Cashless-URL) und Feature-Flags pro Festival.
 7. **Cashless- & SafeNow-Konzept** — abhängig von B1/B2, dann eigene ADR(s).
@@ -127,5 +129,8 @@ das Modell, dann den Schnitt:
 6. **B2 SafeNow** + **C7** (kann warten, bis MVP-Scope steht)
 7. **A3/C8 Design-System-Portierung** (begleitend, sobald Scaffolding startet)
 
-> **Nächster Schritt:** Bitte die Reihenfolge bestätigen (oder umsortieren) und mit **Punkt 1
-> (Cashless-Richtung B1)** starten — das ist die folgenreichste Einzelentscheidung.
+> **Stand 2026-07-29:** Cluster 1 (Fundament) nach Team-Meeting entschieden → ADR-009 (Auth
+> passwortlos), ADR-014 (Festival-Nav / Beitritt / Ticket / „wer ist hier" ohne GPS),
+> ADR-016 (Identität) + `04-domain-identity.md`.
+> **Nächster Schritt:** Cluster 2 — Aktivitäten-Modell (Tags/Klonen), Dashboard-Redesign,
+> Timetable-Social.
