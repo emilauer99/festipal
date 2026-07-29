@@ -1,7 +1,7 @@
 # festipal — Entwicklungsentscheidungen (ADR)
 
 > Lebendes Dokument. Jede wesentliche technische Entscheidung wird hier mit Status,
-> Begründung, Alternativen und Konsequenzen festgehalten. Stand: 2026-07-28.
+> Begründung, Alternativen und Konsequenzen festgehalten. Stand: 2026-07-29.
 
 ## Vision & Scope
 
@@ -85,7 +85,7 @@ Daher workspace-weit **zod 3.x** (aktuell 3.25.76) pinnen. zod 3 ist voll unters
 stabil; Upgrade auf zod 4, sobald ts-rest v4 mit zod-4-Support erscheint.
 
 ### ADR-007 — Offline-first Strategie · **ENTSCHIEDEN**
-Festivals = schlechtes Netz. Lageplan, Timetable, News, Ticket/Wallet müssen offline laufen.
+Festivals = schlechtes Netz. Lageplan, Timetable, News, Ticket-QR (Anzeige) müssen offline laufen.
 **Entscheidung:** pragmatischer Layered-Cache, KEIN bidirektionaler Sync-Engine.
 - Read-mostly Daten via **TanStack Query mit Persistenz** (Expo SQLite/MMKV als Cache);
   Updates via Push, Refetch bei Reconnect.
@@ -105,6 +105,21 @@ Social-Login + Passkeys, self-hosted → keine Per-MAU-Kosten (entscheidend bei 
 zehntausenden Festival-Nutzern).
 **Verworfen:** Clerk — würde Security auslagern, aber Vendor-Lock-in + MAU-Kosten.
 **Konsequenz:** Security-Verantwortung liegt bei uns; Auth-Flows sorgfältig reviewen.
+
+**Konkretisierung (2026-07-29, nach Team-Meeting):**
+- **Primärmethode = passwortloses E-Mail-OTP.** E-Mail eingeben → 6-stelliger Code → verifiziert
+  → eingeloggt. **Kein Passwort** wird je gespeichert; die E-Mail ist durch den Code inhärent
+  verifiziert. better-auth Email-OTP-Plugin. Registrierungshürde bewusst minimal.
+- **E-Mail ist Pflicht-Identifier für *jeden* Login-Typ** (App-Nutzer, Festival-Staff,
+  Platform-Admin) — gemeinsame `Account`-Basis, siehe **ADR-016**.
+- **Session langlebig** (mobil): Refresh-Token, User bleibt eingeloggt.
+- **Social-Login (Google/Apple) → 2027.** Schema von Anfang an account-linking-fähig halten
+  (nachrüstbar ohne Migration). **Passkeys** nicht im MVP.
+- **Org-Membership nur für Staff/Admin:** better-auth „Organizations = Festivals" gilt
+  **ausschließlich** für Festival-Staff/Platform-Admin (Rollen pro Festival). **App-Nutzer sind
+  global und keine Org-Member** — ihr Festival-Bezug ist reine Daten-Zugehörigkeit (`festivalId`
+  am Content, ADR-014), keine Auth-Mitgliedschaft. Kein User wird versehentlich als Org-Member
+  modelliert.
 
 ### ADR-010 — Hosting/Infra: Neon + Railway · **ENTSCHIEDEN**
 - **DB:** Neon (serverless Postgres, Branching für Preview/CI, skaliert auf null),
@@ -213,10 +228,14 @@ Konkretisiert, *wie* „Multi-Tenancy von Tag 1" fachlich geschnitten ist.
    - *Festival-scoped (Tenant = Festival):* Timetable/Acts/Stages, Lageplan/Vendors,
      Tauschbörse-Listings, Aktivitäten, Festival-News, **Präsenz/Standort der Crew**.
 3. **Freundes-Graph:** Freundschaften sind **user-global** (bleiben über Festivals bestehen).
-   **Präsenz, Standort, Distanz und „wer ist hier" sind strikt festival-scoped** und existieren
-   **nur während des Events**. „Crew" = die eigenen Freunde, die auf *diesem* Festival sind
-   (globale Freundesliste ∩ Anwesende). Datenschutz: Standortdaten sind nie global, nur pro
-   Festival und zeitlich begrenzt.
+   **„Wer ist hier" = eigene Freunde, die dasselbe Festival gespeichert haben** — das MVP nutzt
+   **keinen Standort/GPS** und keine Präsenz-Retention (Datenschutz-Gewinn). „Crew" ist nur der
+   *interne* Begriff für diese Schnittmenge (globale Freundesliste ∩ „hat dieses Festival
+   gespeichert"); **als UI-Label entfällt „Crew"** (heißt „Friends"). `camp`/Stellplatz ist ein
+   optionales, **manuell eingegebenes** Festival-Feld, kein Ortungswert.
+   *Spätere Ausbaustufe (post-MVP, bewusst nicht wegarchitekten):* interaktiver Lageplan mit
+   **opt-in Standort-Sharing → Freunde auf der Karte**; erst dann kommen Standort, Sichtbarkeits-
+   und Retention-Regeln dazu.
 4. **Cashless-Guthaben** ist **keine** unserer Datenklassen (lebt beim Anbieter, ADR-011).
 
 **Begründung:** Deckt sich 1:1 mit dem Design, minimiert Standort-/Präsenz-Datenhaltung (DSGVO),
@@ -236,6 +255,21 @@ Sichtbarkeitsregel (nur aktives Festival, nur Freunde, nur mit aktiviertem Teile
 - **SafeNow** ist nicht im MVP (zurückgestellt).
 - **Cashless** existiert nur *im* Festival-Kontext als ein eingebetteter Link pro Festival
   (ADR-011); in der Fassade kommt Cashless nicht vor.
+
+**Konkretisierung (2026-07-29, Team-Meeting) — Festival-Kontext, Beitritt & Ticket:**
+- **Festival-Bottom-Nav = 5 Tabs: Dashboard · Aktivitäten · Friends · Timetable · Lageplan.**
+  Aktivitäten und Friends sind **getrennte** Tabs (kein „Crew"-Label mehr). **Cashless ist kein
+  Tab**, sondern ein prominenter Einstieg oben im Dashboard (ADR-011); News leben im Dashboard.
+- **Beitritt ist gate-los:** ein Festival **speichern** (aus „Alle", geteiltem Link/QR) legt es in
+  „Meine Festivals". „Festival betreten" = ein (gespeichertes oder durchstöbertes) Festival öffnen.
+  **Kein Ticket-Gate.** `MyFestival` ist eine einfache Speicher-Relation `user↔festival`.
+- **Fassade-Tab „Festivals":** Segment **„Meine / Alle"**, Default *Meine*; Festivals sind
+  speicherbar (auch neu angelegte, entdeckbare).
+- **Ticket zurück — als reines Anzeige-Feature:** pro Nutzer **pro Festival optional** ein Ticket
+  hinterlegen (QR/Barcode **scannen** · Code **einfügen** · Bild **hochladen**); die App zeigt den
+  QR (offline-fähig, ADR-007). **Kein** Bezahl-/Beitritts-Gate, getrennt von Cashless (ADR-011).
+  Eine echte Ticketing-Anbieter-Integration wäre eine spätere Stufe. Modell: `FestivalTicket`
+  (ADR-016).
 
 ### ADR-015 — Design-System-Fundament & Festival-Theming-Vertrag · **ENTSCHIEDEN**
 Basis: der **festipal Brand Guide** (Juli 2026) + die Token-Datei. Details in
@@ -265,6 +299,36 @@ entfällt (ADR-011); `SafeNowCard` zurückgestellt (B2); Artists-Komponenten zur
 **Konsequenz:** RN-Portierungsstrategie (Styling-Ansatz, Theme-Provider für CI-Tokens, Font-Loading)
 ist beim Scaffolding zu entscheiden (Konzept-Punkt C8). Admin braucht einen Theming-Editor mit
 Kontrast-Check.
+
+### ADR-016 — Identitäts- & Profilmodell (Account → Visitor/Staff/Admin) · **ENTSCHIEDEN**
+Aus dem Team-Meeting (2026-07-28) und der Auth-Konkretisierung (ADR-009). Trennt die gemeinsame
+Login-Basis von den typ-spezifischen Profilen. Detail-Entwurf: `docs/concept/04-domain-identity.md`.
+
+**Entscheidung:**
+1. **`Account` = gemeinsame Login-Basis** für *jede:n*, der sich einloggt (App-Nutzer,
+   Festival-Staff, Platform-Admin): `email` (verifiziert, Pflicht), OTP-Login (ADR-009), `id`,
+   Timestamps. Ein Account trägt **eine oder mehrere** der folgenden Rollen/Profile.
+2. **`VisitorProfile` (nur App-Nutzer/Festivalbesucher), 1:1 optional am Account:**
+   `username` (unique, zum Suchen/Adden, Pflicht), `displayName` (Anzeigename, Pflicht, ≠ Vorname
+   nötig), `avatar` (Pflicht, **Upload *oder* Kamera**), `socials[]` + `socialsVisibility`
+   (`everyone`/`friends`, optional). **`birthDate?`/`gender?` bewusst offen** (→ Birgits Safety-/
+   Jugendschutz-Konzept), migrationssicher offengehalten.
+3. **`FestivalStaff` (Festival-Personal):** `accountId` + `festivalId` + `role[]` — hier greift
+   better-auth „Organizations = Festivals" (ADR-009). **Keine** Visitor-Felder nötig.
+4. **`PlatformAdmin` (nur wir):** `accountId` + Super-Admin-Rolle.
+5. **Pro Festival (Visitor):** `MyFestival` (= gespeichert: `visitorId` + `festivalId` + `savedAt`,
+   optional `camp`) treibt „wer ist hier" (ADR-014); `FestivalTicket` (optional, Anzeige-QR,
+   offline) hält das hinterlegte Ticket.
+
+**Begründung:** Ein Staff-Account braucht keinen `username`/`avatar`, ein App-Nutzer schon. Die
+gemeinsame `Account`-Basis hält den Login einheitlich (eine E-Mail-OTP-Strecke für alle), ohne
+App-Nutzer als Org-Member zu modellieren.
+
+**Gestrichen:** `band`, natives `balance`/Wallet (ADR-011). **Ticket** existiert nur als
+Anzeige-Feature (`FestivalTicket`, ADR-014), nicht als Gate.
+
+**Konsequenz:** `packages/contracts` trennt Account-/Visitor-/Staff-Endpunkte; das Drizzle-Schema
+setzt `VisitorProfile`/`FestivalStaff`/`PlatformAdmin` als getrennte Tabellen am `Account` an.
 
 ---
 
