@@ -6,8 +6,9 @@
 ## Vision & Scope
 
 festipal ist eine Festival-App für das ganze Wochenende: Übersicht, Lageplan,
-Timetable, News/Updates und Cashless-Integration — plus zwei Alleinstellungs-Features:
-eine **Festival- & Campingplatz-Tauschbörse** und **Aktivitäten / Freunde connecten**.
+Timetable, News/Updates und Cashless-Integration — plus die Alleinstellungs-Features
+**Aktivitäten / Freunde connecten** (MVP-Fokus) und eine **Festival-/Camping-Hilfe-Börse**
+(biete/suche Hilfe, kein Handel — **post-MVP**, ADR-020).
 
 **Langfristiges Ziel:** *Eine* App für alle künftigen Festivals des Nutzers, sofern das
 Festival mit festipal kooperiert. Daraus folgt der wichtigste Architekturtreiber:
@@ -212,6 +213,10 @@ System-Tags (globale Kategorien) übersetzen wir zentral, nicht je Festival.
    sonst Festival-`defaultLocale`. Die Achsen sind unabhängig: engl. App-UI + reines DE-Festival
    → UI englisch, Content deutsch (Fallback).
 
+**Konkretisierung (2026-07-29):** **User-generierter Content** (z. B. Aktivitäts-Titel/-Beschreibung)
+wird **nicht übersetzt** — auch **nicht automatisch/per AI**. Übersetzungstabellen gelten nur für
+**kuratierten** Festival-Content (News, Timetable, …). **Kein Disclaimer** nötig (ADR-020).
+
 ### ADR-013 — TypeScript-Version: 6.0.x (vorerst) · **ENTSCHIEDEN**
 TypeScript 7.0 ist der neue native (Go-)Compiler `tsgo`; das Tooling-Ökosystem braucht aber
 noch die TS-**6.0**-API (u. a. typescript-eslint — Tracking: typescript-eslint#10940). TS 6.0
@@ -305,6 +310,11 @@ Basis: der **festipal Brand Guide** (Juli 2026) + die Token-Datei. Details in
 **Divergenzen zum Brand Guide** (durch Scope-Beschlüsse überschrieben): `BalanceCard`/natives Wallet
 entfällt (ADR-011); `SafeNowCard` zurückgestellt (B2); Artists-Komponenten zurückgestellt (ADR-014).
 
+**Light + Dark Mode (2026-07-29):** Die App unterstützt **beide** Modi vollwertig (System-Folge +
+manueller Umschalter) — **nicht** nur dark-first. Tokens liefern für beide Modi lesbare Werte; die
+**Navigations-Kontraste** müssen in *beiden* Modi WCAG erfüllen (Nav trägt **keine** Markenfarb-
+fläche — der im Meeting bemängelte unlesbare „Home"-Text darf nicht auftreten). Details `03` §2.
+
 **Konsequenz:** RN-Portierungsstrategie (Styling-Ansatz, Theme-Provider für CI-Tokens, Font-Loading)
 ist beim Scaffolding zu entscheiden (Konzept-Punkt C8). Admin braucht einen Theming-Editor mit
 Kontrast-Check.
@@ -349,6 +359,9 @@ Dashboard-Aufbau. Aus dem Team-Meeting (2026-07-28). Detail-Entwurf: `docs/conce
    `description`, `attendees[]` (Beitreten/Verlassen bis `capacity`, Creator automatisch dabei).
    **Auto-Titel:** mit Tag = `tag.label` (+ optional `subtitle`); ohne Tag ist `title` Pflicht.
    **Klonen** ist eine reine UI-Aktion (neue `Activity` mit übernommenen Feldern, nur Zeit+Ort ändern).
+   **Lobby-Chat:** beigetretene `attendees` erhalten einen **Gruppen-Chat pro Aktivität**
+   (`ActivityMessage`: `activityId`, `senderId`, `body`, `ts`) über das WebSocket-Gateway (ADR-010).
+   **Kein** 1:1-/DM-Chat zwischen Usern (ADR-020).
 2. **`location` = Freitext + optionaler Geo-Punkt** via „aktueller Standort"-Button. Der Geo-Punkt
    dient **nur** „Route öffnen" über externe Maps (kein eigener interaktiver Plan im MVP). Das ist
    eine **einmalige, opt-in Punkt-Erfassung** — ausdrücklich abgegrenzt vom deaktivierten
@@ -438,6 +451,22 @@ der DB (statt Enum) halten den Katalog pflegbar und später festival-anpassbar.
 **Konsequenz:** `packages/db` bekommt `MarkerType` (global) + `FestivalMap`/`MapMarker`
 (festival-scoped, Tenant-Guard); Icons rendern über `<Icon name=marker.type.icon>` (ADR-015);
 Admin-Editor zum Bild-Upload + Marker-Setzen (ADR-018).
+
+### ADR-020 — MVP-Scope-Präzisierungen: Hilfe-Börse, Chat, User-Content-i18n · **ENTSCHIEDEN**
+Drei Scope-Klarstellungen aus dem Team-Meeting (2026-07-28). Detail: `docs/concept/08-scope-notes.md`.
+
+**Entscheidung:**
+1. **Tauschbörse → „Hilfe-/Leih-Börse", post-MVP.** Kein Handel/Verkauf/Bezahlen, sondern
+   **biete/suche Hilfe** (Werkzeug leihen etc.). **Nicht im MVP** (kein Tausch-Tab; Aktivitäten +
+   Friends sind getrennt, ADR-014). Wenn es kommt: festival-scoped „Angebot | Gesuch"-Board ohne Geld.
+2. **Chat:** **kein 1:1-/DM-Chat** zwischen Usern/Freunden. **Aber:** **Gruppen-Chat-Lobby pro
+   Aktivität** für beigetretene Teilnehmer (`ActivityMessage`, ADR-017, über WebSocket-Gateway
+   ADR-010). Kontakt außerhalb einer Aktivität läuft über Profil-Socials (ADR-016).
+3. **User-Content wird nicht übersetzt** (auch nicht automatisch/per AI) — z. B. Aktivitäts-
+   Beschreibungen. Übersetzung nur für kuratierten Content (ADR-012). **Kein Disclaimer** nötig.
+
+**Konsequenz:** Der Realtime-Scope umfasst **Aktivitäts-Lobbies** (nicht nur Präsenz/Live-Daten);
+die Hilfe-Börse ist als spätere festival-scoped Entität vorgemerkt und blockiert das MVP nicht.
 
 ---
 

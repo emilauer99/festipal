@@ -32,8 +32,10 @@ Screens/Komponenten, die wir bewusst weggelassen haben (Wallet, Artists, SafeNow
   Beere `#E8559F` nur für Data-Viz.
 - **Nur semantische Aliase in Komponenten** (`--surface-card`, `--text-secondary`, `--border-subtle`).
   Rohe Rampenwerte (`--green-500`) stehen nur in Tokens/Specimen.
-- **Dark-first.** Light-Mode existiert als Scope `[data-theme="light"]` (Tag/Print/Marketing) — die
-  App ist dunkel.
+- **Light + Dark Mode — beide vollwertig** (Team-Beschluss 2026-07-29): die App folgt der System-
+  einstellung und bietet einen manuellen Umschalter. Tokens definieren **beide** Modi; **Navigations-
+  Kontraste** müssen in *beiden* Modi WCAG erfüllen (die Nav trägt **keine** Markenfarbfläche — der
+  im Meeting bemängelte unlesbare „Home"-Text darf nicht auftreten).
 - **Regeln:** Statusfarben immer als 16%-Tint hinter farbigem Text, nie als Vollfläche. Max. zwei
   Hintergrundtöne pro Screen (`--bg-app` + `--surface-card`).
 

@@ -37,6 +37,11 @@ Tag/Titel/Beschreibung/Kapazität; der Nutzer ändert nur **Zeit + Ort**. Kein e
 **Beitreten:** Teilnehmer treten bei bis `capacity` erreicht ist; darüber kein Beitritt (kein
 Waitlist im MVP). Creator ist automatisch dabei.
 
+**Lobby-Chat (pro Aktivität):** beigetretene `attendees` erhalten einen **Gruppen-Chat** —
+`ActivityMessage` = `{ activityId, senderId, body, ts }`, sichtbar nur für Teilnehmer, über das
+WebSocket-Gateway (ADR-010). **Kein** 1:1-/DM-Chat zwischen Usern (ADR-020) — Kontakt außerhalb
+einer Aktivität läuft über Profil-Socials (ADR-016).
+
 ---
 
 ## 2. Standort einer Aktivität
