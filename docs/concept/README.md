@@ -25,7 +25,8 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 05 | `05-activities-social.md` | Aktivitäten (Tags global+festival, Klonen), Timetable-Social, Dashboard — Cluster 2 (→ ADR-017) | ✅ Entwurf |
 | 06 | `06-admin.md` | Admin zweistufig (Platform + Festival), Rollen, Tenant-Workspace, Einladung, Login-Methoden — Cluster 3 (→ ADR-018) | ✅ Entwurf |
 | 07 | `07-lageplan.md` | Lageplan-MVP (Bild + DB-Marker-Typen mit Icon-String), Route via Geo, offline — Cluster 4 (→ ADR-019) | ✅ Entwurf |
-| … | (folgen beim Durcharbeiten) | Tausch-Reframe, kein Chat, i18n-Disclaimer, Offline-Matrix, Safety/Recht, … | offen |
+| 08 | `08-scope-notes.md` | Hilfe-Börse (post-MVP), Aktivitäts-Lobby-Chat (kein 1:1-DM), User-Content ohne Übersetzung, Light+Dark — Cluster 5 (→ ADR-020) | ✅ Entwurf |
+| … | (folgen beim Durcharbeiten) | Onboarding-/Auth-Flow, Offline-Matrix, Safety/Recht (Birgit), … | offen |
 
 ## Abstimmungs-Stand (Kurz)
 
@@ -43,6 +44,7 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | **C2** Aktivitäten/Timetable/Dashboard | Tags global+festival, Klonen, Standort→Route, Act-Interest, Announcement-Hero | ADR-017 |
 | **C3** Admin zweistufig | Platform + Festival-Admin, eine Manager-Rolle (granular später), Staff-Login Passwort+OTP, Einladung per E-Mail | ADR-018 |
 | **C4** Lageplan-MVP | Bild-Upload + Admin-Marker (Typen in DB, Icon-String), Route via Geo/externe Maps, offline; MapLibre später | ADR-019 |
+| **C5** Scope-Notizen | Hilfe-Börse post-MVP; Aktivitäts-Lobby-Chat (kein 1:1-DM); User-Content nicht übersetzt; **Light+Dark** beide | ADR-020 |
 
 ## Quelle
 

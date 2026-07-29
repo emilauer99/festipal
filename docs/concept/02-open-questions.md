@@ -69,9 +69,10 @@ nach Design-Abgleich). Sicherheit schlägt Design-Treue.
 
 **Verworfen:** Hybrid (Read-only nativ via Anbieter-API), volles natives Wallet.
 
-### B2. ⏸️ ZURÜCKGESTELLT (2026-07-28) — SafeNow (Sicherheit/Notruf)
-Vorerst unwichtig, wird ignoriert. Nicht im MVP. Später ggf. eigene ADR (Datenschutz/Recht).
-SafeNow-Elemente im Design werden zunächst weggelassen.
+### B2. ⏸️ OFFEN & ZUGEWIESEN (Update 2026-07-29) — Safety/Jugendschutz (inkl. SafeNow)
+Nicht im MVP, aber **rechtlich relevant** (Meeting): **Birgit** erarbeitet ein Safety-/Jugendschutz-
+Konzept — Alter/Geschlecht/Flinta-Filter, **Disclaimer bei Anmeldung**, SafeNow nur *empfehlen*
+(echte Integration TBD). SafeNow-Elemente im Design bleiben zunächst weg. Pitch beim nächsten Meeting.
 
 ### B3. ✅ GELÖST (2026-07-28) — Festivalübergreifende User-Daten
 **Entscheidung** (Teil von **ADR-014**): Zwei Datenklassen (user-global vs. festival-scoped);
@@ -138,7 +139,9 @@ das Modell, dann den Schnitt:
 > **Cluster 3** (2026-07-29) entschieden → ADR-018 + `06-admin.md`: Admin zweistufig
 > (Platform + Festival), eine Manager-Rolle, Staff-Login Passwort+OTP, Einladung per E-Mail,
 > News im Festival + Admin-editierbar, Analytics vertagt.
-> **Cluster 4** (2026-07-29) entschieden → ADR-019 + `07-lageplan.md`: Bild-Lageplan + DB-gestützte
-> Marker-Typen (Icon-String), Route via Geo/externe Maps, offline; MapLibre = spätere Stufe.
-> **Nächster Schritt:** Cluster 5 — Scope-Notizen (Tausch als Hilfe-Börse & post-MVP, kein
-> In-App-Chat, i18n-Disclaimer für User-Content) + offene Themen (Birgit: Alter/Safety; Light/Dark).
+> **Cluster 4** (2026-07-29) → ADR-019 + `07-lageplan.md`: Bild-Lageplan + DB-Marker-Typen.
+> **Cluster 5** (2026-07-29) → ADR-020 + `08-scope-notes.md`: Hilfe-Börse (post-MVP),
+> Aktivitäts-Lobby-Chat (kein 1:1-DM), User-Content ohne Übersetzung, **Light+Dark** beide.
+> **→ Die Meeting-Runde ist durchgearbeitet.** Offen/zugewiesen: **Birgit** (Alter/Geschlecht/
+> Safety-Konzept + Anmelde-Disclaimer, B2). **Nächster sinnvoller Schritt:** Onboarding-/Auth-Flow
+> + Offline-Matrix ausarbeiten, oder Scaffolding starten.
