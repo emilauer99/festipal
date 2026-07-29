@@ -83,13 +83,30 @@ Which phases cover which requirements. Populated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| (to be filled by roadmap) | — | Pending |
+| AUTH-01 | Phase 4 | Pending |
+| AUTH-02 | Phase 4 | Pending |
+| AUTH-03 | Phase 4 | Pending |
+| AUTH-04 | Phase 4 | Pending |
+| AUTH-05 | Phase 4 | Pending |
+| FEST-01 | Phase 5 | Pending |
+| FEST-02 | Phase 5 | Pending |
+| FEST-03 | Phase 5 | Pending |
+| FEST-04 | Phase 5 | Pending |
+| HOME-01 | Phase 5 | Pending |
+| HOME-02 | Phase 5 | Pending |
+| HOME-03 | Phase 6 | Pending |
+| PROF-01 | Phase 6 | Pending |
+| FRND-01 | Phase 6 | Pending |
+| PLAT-01 | Phase 1 | Pending |
+| PLAT-02 | Phase 3 | Pending |
+| SEC-01 | Phase 2 | Pending |
+| I18N-01 | Phase 3 | Pending |
 
 **Coverage:**
 - v1 requirements: 18 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 18 ⚠️
+- Mapped to phases: 18 ✓
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-07-29*
-*Last updated: 2026-07-29 after initial definition*
+*Last updated: 2026-07-29 after roadmap creation (traceability populated)*
