@@ -121,6 +121,8 @@ zehntausenden Festival-Nutzern).
 - **Login-Methoden je Kontotyp:** App-Nutzer (Visitor) = **nur passwortloses OTP**. **Festival-Staff
   + Platform-Admin = E-Mail+Passwort *und* OTP** (beides möglich); das Passwort ist eine optionale
   Credential am `Account`, primär für den Admin-Login. better-auth trägt beide Strecken.
+- **Zugang login-first:** die App erfordert **Anmeldung vor Nutzung** (kein anonymes Browsen).
+  Anmeldung bleibt niederschwellig (OTP). Onboarding-Flow: `docs/concept/09-onboarding-auth.md`.
 - **Social-Login (Google/Apple) → 2027.** Schema von Anfang an account-linking-fähig halten
   (nachrüstbar ohne Migration). **Passkeys** nicht im MVP.
 - **Org-Membership nur für Staff/Admin:** better-auth „Organizations = Festivals" gilt
@@ -329,7 +331,7 @@ Login-Basis von den typ-spezifischen Profilen. Detail-Entwurf: `docs/concept/04-
    Timestamps. Ein Account trägt **eine oder mehrere** der folgenden Rollen/Profile.
 2. **`VisitorProfile` (nur App-Nutzer/Festivalbesucher), 1:1 optional am Account:**
    `username` (unique, zum Suchen/Adden, Pflicht), `displayName` (Anzeigename, Pflicht, ≠ Vorname
-   nötig), `avatar` (Pflicht, **Upload *oder* Kamera**), `socials[]` + `socialsVisibility`
+   nötig), `avatar` (**optional**, Upload *oder* Kamera; Fallback = Initialen-Kachel), `socials[]` + `socialsVisibility`
    (`everyone`/`friends`, optional). **`birthDate?`/`gender?` bewusst offen** (→ Birgits Safety-/
    Jugendschutz-Konzept), migrationssicher offengehalten.
 3. **`FestivalStaff` (Festival-Personal):** `accountId` + `festivalId` + `role[]` — hier greift
