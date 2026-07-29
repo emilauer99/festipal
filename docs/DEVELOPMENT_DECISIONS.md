@@ -90,11 +90,22 @@ Festivals = schlechtes Netz. Lageplan, Timetable, News, Ticket-QR (Anzeige) müs
 **Entscheidung:** pragmatischer Layered-Cache, KEIN bidirektionaler Sync-Engine.
 - Read-mostly Daten via **TanStack Query mit Persistenz** (Expo SQLite/MMKV als Cache);
   Updates via Push, Refetch bei Reconnect.
-- Die wenigen Offline-Writes (Favoriten, Tauschbörsen-Entwurf) über eine kleine
+- Die wenigen Offline-Writes (**Merken, Act-Like, Profil-Edit, Ticket lokal**) über eine kleine
   **Mutation-Queue**, die bei Reconnect abgearbeitet wird.
 
 **Verworfen:** PowerSync/ElectricSQL — lohnen erst bei vielen Offline-*Writes*, die es hier
 nicht gibt; würden nur Komplexität und Betriebslast draufpacken.
+
+**Konkretisierung (2026-07-29) — Offline-Matrix (`docs/concept/10-offline-matrix.md`):**
+- **Offline-kritisch** (voll offline): Ticket-QR, Timetable, Lageplan (Bild+Marker), „Meine Festivals".
+- **Cache** (letzter Stand, Refetch bei Reconnect): Dashboard, News, Aktivitäten-/Friends-Liste,
+  Profil, Discovery.
+- **Online** (kein Offline): Aktivität anlegen/beitreten (Kapazität), Lobby-Chat senden, Friend
+  add/accept, Cashless (WebView), Login/OTP.
+- **Prefetch:** beim **Speichern** eines Festivals wird sein Offline-Bundle vorgeladen (Timetable,
+  Lageplan, Meta, letzte News).
+- **Ticket** ist offline erfassbar (lokal gespeichert, Upload bei Reconnect).
+- **Offline-UX:** expliziter Offline-Zustand + Stale-/Queue-Status.
 
 ### ADR-008 — Karten: MapLibre · **VORGESCHLAGEN**
 Eigene Festival-Geländekarte statt Google-Weltkarte; keine Lizenzkosten, volle Kontrolle
