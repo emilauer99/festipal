@@ -81,6 +81,24 @@ Pin the Expo client setup to the documented pattern: `expoClient({ scheme, stora
 
 ### Pitfall 3: NestJS's better-auth integration protects routes globally by default — new endpoints "inherit" auth silently, but existing/new public ones need an explicit opt-out
 
+> **Update (2026-07-30) — body-parser conflict de-risked to MEDIUM after verifying current docs:**
+> The `bodyParser: false` × ts-rest ordering worry below is largely handled by the current wrapper.
+> `@thallesp/nestjs-better-auth` (requires `better-auth >= 1.5.0`) **automatically re-applies**
+> `express.json()`/`urlencoded` for all non-auth routes once the global parser is disabled — no manual
+> `app.use(express.json())` with path exclusion is needed. ts-rest is the *easy* case here: unlike
+> oRPC/`@orpc/nest` (which parse bodies themselves per procedure, like better-auth wants raw),
+> `@ts-rest/nest` handlers are plain NestJS controllers that just consume the re-applied `req.body`.
+> Recommended wiring: `NestFactory.create(AppModule, { bodyParser: false })` +
+> `AuthModule.forRoot({ auth, bodyParser: { json: { limit: '2mb' }, urlencoded: { limit: '2mb', extended: true } } })`.
+> The spike now **confirms** rather than **designs** — verify three things: (1) the 2-request proof
+> (OTP-verify POST to `/api/auth/*` AND a ts-rest `save` POST both receive their body); (2) **global-prefix
+> collision** — ts-rest is on `/api/v1` but better-auth mounts at `/api/auth`; either exclude auth from
+> `setGlobalPrefix('api/v1')` or set better-auth `basePath` to `/api/v1/auth` and align the Expo client;
+> (3) pin `better-auth >= 1.5.0` when the CLI-generated auth tables land in `packages/db` (Phase 1).
+> The hand-rolled `@All('auth/*path')` catch-all drops from Plan B to **Plan C** — only if the wrapper
+> clashes with this specific NestJS × ts-rest × global-prefix combo. Sources: better-auth NestJS docs,
+> ThallesP/nestjs-better-auth README (verified 2026-07-30).
+
 **What goes wrong:**
 The standard NestJS integration (`@thallesp/nestjs-better-auth`'s `AuthModule.forRoot()`) registers a **global** `AuthGuard`, flipping the current "everything public" state to "everything protected unless marked `@AllowAnonymous()`." This is good for closing the CONCERNS.md "all endpoints public" gap, but two failure modes are common: (1) genuinely public routes (health check, the OTP request/verify endpoints themselves) break because nobody added `@AllowAnonymous()`, causing a confusing chicken-and-egg where you can't request a sign-in code because requesting a code requires being signed in; (2) the reverse — a route the team *intends* to protect gets `@AllowAnonymous()` copy-pasted onto it during debugging and never removed, silently reopening it. The integration also requires `bodyParser: false` in `NestFactory.create()`; forgetting this breaks all body-parsing app-wide, not just for auth routes, in a way that's non-obvious to diagnose.
 
