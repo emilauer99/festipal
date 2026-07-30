@@ -15,6 +15,13 @@
       "when": 1785440805646,
       "tag": "0001_groovy_skin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1785441353728,
+      "tag": "0002_skinny_susan_delgado",
+      "breakpoints": true
     }
   ]
 }
