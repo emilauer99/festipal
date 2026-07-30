@@ -47,10 +47,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. `drizzle-zod` derives base Zod schemas from the Drizzle tables so that renaming a DB column surfaces as a compile error rather than silent drift.
   4. The identity/membership model is decided in writing (Account→VisitorProfile as a **separate** profile table; visitors modeled as gate-less `my_festival` saves, NOT better-auth's `organization` plugin and NOT its built-in `username` plugin — which would force a username onto staff-only accounts) and recorded as a plan/ADR note.
 
-**Plans**: 3 plans
+**Plans**: 1/3 plans executed
 **Wave 1**
 
-- [ ] 01-01-PLAN.md — Confirm D-01..D-04, verify better-auth legitimacy, vendor `schema/auth.ts` + drizzle-zod bases, record identity-model ADR note
+- [x] 01-01-PLAN.md — Confirm D-01..D-04, verify better-auth legitimacy, vendor `schema/auth.ts` + drizzle-zod bases, record identity-model ADR note
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
@@ -152,7 +152,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Identity Schema & Auth Foundation | 0/3 | Not started | - |
+| 1. Identity Schema & Auth Foundation | 1/3 | In Progress|  |
 | 2. OTP Auth & Festival Backend API | 0/TBD | Not started | - |
 | 3. Mobile App Shell & i18n Foundation | 0/TBD | Not started | - |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
