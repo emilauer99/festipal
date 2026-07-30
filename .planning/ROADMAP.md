@@ -26,7 +26,7 @@ lands only after a live backend exists behind it.
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Identity Schema & Auth Foundation** - `Account` + `VisitorProfile` + `MyFestival` schema, better-auth (OTP) tables, username uniqueness, drizzle-zod, identity-model decision
+- [x] **Phase 1: Identity Schema & Auth Foundation** - `Account` + `VisitorProfile` + `MyFestival` schema, better-auth (OTP) tables, username uniqueness, drizzle-zod, identity-model decision (completed 2026-07-30)
 - [ ] **Phase 2: OTP Auth & Festival Backend API** - better-auth email-OTP in NestJS, profile-completion + festival browse/save endpoints, login-first guard + `festivalId` data isolation
 - [ ] **Phase 3: Mobile App Shell & i18n Foundation** - `apps/mobile` Expo scaffold, auth/api clients, `Stack.Protected` navigation, Lingui + lint
 - [ ] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors
@@ -152,7 +152,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Identity Schema & Auth Foundation | 3/3 | In Progress|  |
+| 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
 | 2. OTP Auth & Festival Backend API | 0/TBD | Not started | - |
 | 3. Mobile App Shell & i18n Foundation | 0/TBD | Not started | - |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
