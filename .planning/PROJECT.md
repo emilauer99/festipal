@@ -33,18 +33,21 @@ path must work.
 ### Active
 
 <!-- This build cycle: the "Visitor Shell" — a navigable, online vertical slice of the mobile app.
+     Reconciled 2026-07-30 with the binding concept phase (docs/concept/04–10, ADR-009/014/016/020).
      Hypotheses until shipped and validated. -->
 
-- [ ] A visitor can register and log in with email/password (better-auth, global/non-tenant user)
-- [ ] A visitor's session persists so they land logged-in on reopen (online-assumed)
-- [ ] A visitor can browse a list of festivals and select/join one
-- [ ] After joining, a visitor lands on a main menu / home for the selected festival
+- [ ] A visitor logs in **passwordlessly via email OTP** (enter email → 6-digit code → in); a new email creates an `Account` (better-auth, global/non-tenant)
+- [ ] On first login the visitor completes a **VisitorProfile**: required unique `username` (live availability check) + `displayName` (avatar optional)
+- [ ] A returning visitor (email already has a VisitorProfile) goes straight in, skipping profile setup
+- [ ] The visitor's session is long-lived and auto-renews (stays logged-in across restarts; re-auth via OTP on expiry)
+- [ ] A visitor can browse **all** festivals and **save** ones to "Meine Festivals" (Meine/Alle segment, default Meine)
+- [ ] A visitor can **enter** a festival **gate-lessly** (no ticket/approval) and land on that festival's home / main menu
 - [ ] The home shows a basic festival **overview** the visitor can click into
-- [ ] The home exposes a **Profile** screen (placeholder — navigable, basic info, no editing yet)
-- [ ] The home exposes a **Friends** screen (placeholder — navigable, no real connections yet)
+- [ ] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email)
+- [ ] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet)
 - [ ] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts`
-- [ ] The API exposes the auth + user + festival-list endpoints this slice needs (contract-first)
-- [ ] A `user` table + better-auth are wired into the NestJS API (currently absent)
+- [ ] The API exposes the OTP-auth + profile + festival browse/save endpoints this slice needs (contract-first)
+- [ ] An `Account` + `VisitorProfile` + `MyFestival` schema and better-auth (email-OTP) are wired into the NestJS API (currently absent)
 
 ### Out of Scope
 
@@ -53,18 +56,28 @@ path must work.
 - Deep content features — timetable, site map (MapLibre), news/updates — deferred to later phases; the shell only shows basic overview info
 - Cashless integration (embedded per-festival WebView) — later phase; not needed for entry/home
 - Swap marketplace (camping-spot / ticket swaps) — differentiator, later milestone
-- Real Friends/social (search, requests, presence/"who's here") — placeholder only this cycle
-- Profile editing — view-only placeholder this cycle
-- Join via code / ticket / QR scanning — list-only selection this cycle (camera/scanner work deferred)
+- Real Friends/social (search, requests, presence/map location) — placeholder only this cycle; "who's here" (friends ∩ saved festival) has no GPS ever
+- Profile editing + `socials[]` — first-login creation only; editing and socials deferred
+- Save via shared link / QR — list-based save this cycle (camera/scanner deferred)
+- `FestivalTicket` (display-only QR) and `MyFestival.camp` text UI — schema may reserve fields, no UI this cycle
 - Full offline-first behavior — online-assumed this cycle; use offline-capable tech now, implement caching/mutation-queue when content features land
-- Admin web (`apps/admin`) — organizer side deferred; visitor app is the priority
-- Social login / OAuth — email/password only for v1
+- Admin web (`apps/admin`), `FestivalStaff`/`PlatformAdmin` flows, staff password login — organizer side deferred; visitor app is the priority
+- Social login / SSO (Google/Apple) — 2027 (ADR-009); keep schema account-linking-ready
+- Password login for visitors — visitors are OTP-only (password is a staff/admin-only credential, deferred with admin)
+- `birthDate` / `gender` / Flinta + safety/youth-protection — pending Birgit's concept; kept migration-safe open
 
 ## Context
 
 - **Greenfield-for-product, brownfield-for-repo.** The monorepo is ~⅓ scaffolded: `apps/api` runs
   with a festival module; `packages/*` exist at varying completeness. `apps/mobile` and `apps/admin`
-  do **not** exist yet. Auth, the `user` table, and any tests are absent (see `.planning/codebase/CONCERNS.md`).
+  do **not** exist yet. Auth, identity tables, and any tests are absent (see `.planning/codebase/CONCERNS.md`).
+- **Binding concept phase (2026-07-28 meeting → docs/concept/04–10, ADRs to 020).** These decisions
+  are authoritative and this planning set was reconciled to them on 2026-07-30: login-first;
+  passwordless email-OTP for visitors (password+OTP is staff/admin only); identity = `Account` →
+  `VisitorProfile` / `FestivalStaff[]` / `PlatformAdmin`; gate-less festival join modeled as
+  `MyFestival` (saved festival, optional `camp` text); "who's here" = friends who saved the same
+  festival (no GPS); activities/social, two-tier admin, lageplan, help-board, activity chat all
+  post-shell; light+dark both; user-generated content is never translated.
 - **Design fidelity matters.** The frontend must follow designs the user creates in Claude Design
   (claude.ai/design). `docs/concept/` holds design analysis, open questions, and a design system.
 - **Known blockers this cycle must clear:** no auth implementation, no `user`/global-relationship
@@ -85,10 +98,13 @@ path must work.
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Build the visitor mobile app first (before admin) | It's the primary user-facing product and the core-value entry path | — Pending |
-| First cut is a navigable "shell" (auth + festival join + home), not full features | Get an end-to-end usable slice fast; add content features slice-by-slice (vertical MVP) | — Pending |
-| Email/password auth only for v1 (no social login) | Simplest path via better-auth; OAuth deferrable | — Pending |
-| Profile & Friends are placeholders this cycle | Real social/profile is meaningful scope; defer to keep the first slice lean | — Pending |
-| Festival selection is list-only this cycle | Avoids native camera/QR work; code/QR join added later | — Pending |
+| First cut is a navigable "shell" (auth + festival save/enter + home), not full features | Get an end-to-end usable slice fast; add content features later (horizontal layers roadmap) | — Pending |
+| **Passwordless email-OTP** for visitors (ADR-009) | Login-first needs a low-friction gate; no password stored; email inherently verified by the code | ✓ Concept-binding |
+| Identity = `Account` → `VisitorProfile` (ADR-016); visitors are global, **not** org-members | One login base for all person types; visitor fields (`username`/`avatar`) live on VisitorProfile, not Account | ✓ Concept-binding |
+| First-login **profile completion** (unique `username` + `displayName`) is in the shell | Concept makes it mandatory at first login; more than a placeholder | ✓ Concept-binding |
+| Festival join is **gate-less "save"** (`MyFestival`), not a membership/access gate (ADR-014) | No ticket/approval to enter; tenant isolation is data-scoping by `festivalId`, not auth membership | ✓ Concept-binding |
+| Profile & Friends: Profile view-only, Friends placeholder this cycle | Real social/editing is meaningful scope; keep the first slice lean | — Pending |
+| Festival browse/save is list-based this cycle (no QR) | Avoids native camera/QR work; shared-link/QR save added later | — Pending |
 | Online-assumed for this slice (offline architected, not implemented) | Login needs network anyway; no cacheable content yet | — Pending |
 
 ## Evolution
@@ -109,4 +125,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-29 after initialization*
+*Last updated: 2026-07-30 after reconciliation with the binding concept phase (docs/concept/04–10, ADRs 016–020)*
