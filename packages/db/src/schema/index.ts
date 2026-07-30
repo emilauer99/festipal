@@ -4,3 +4,4 @@ export * from './tag';
 export * from './auth';
 export * from './auth-schemas';
 export * from './visitor-profile';
+export * from './my-festival';
