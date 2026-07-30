@@ -8,6 +8,13 @@
       "when": 1785266720944,
       "tag": "0000_short_odin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1785440805646,
+      "tag": "0001_groovy_skin",
+      "breakpoints": true
     }
   ]
 }
