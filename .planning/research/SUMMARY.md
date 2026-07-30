@@ -5,6 +5,18 @@
 **Researched:** 2026-07-29
 **Confidence:** HIGH (architecture/patterns verified against official docs; MEDIUM on community NestJS wrapper integration specifics)
 
+## Reconciliation note (2026-07-30)
+
+This summary was originally written against an **email/password** auth assumption. The binding concept
+phase (docs/concept/04, 09; ADR-009/014/016) changed that. Where this document says "email/password,"
+read the corrected model — the authoritative details are in the reconciled `STACK.md` and `PITFALLS.md`:
+
+- **Auth = passwordless email-OTP for visitors** (better-auth `emailOTP` plugin; 6-digit, ~5-min expiry, built-in rate-limit). No password stored. Staff/admin (password+OTP) are out of this milestone.
+- **Session** is one better-auth **sliding-window session token** auto-persisted to `expo-secure-store` — *not* a separate refresh token; do **not** build a `/auth/refresh` endpoint (Pitfall 10).
+- **Identity** = `Account` → `VisitorProfile` (a **separate** `visitor_profile` table keyed by `accountId`; NOT better-auth's `username` plugin). First-login profile completion (unique `username` + `displayName`) is in the shell.
+- **Festival join = gate-less `MyFestival` "save"** — any authenticated visitor can enter any festival. The tenant guard is **data isolation by `festivalId`**, NOT a membership/403 access gate. The earlier "cross-tenant-denial (403)" framing is superseded by a **cross-festival data-isolation** test.
+- Still valid and carried forward unchanged: ts-rest + TanStack Query v5 wiring, Expo Router `Stack.Protected` gating, `expo-secure-store`, and the NestJS `bodyParser:false` caveat.
+
 ## Executive Summary
 
 The visitor-shell slice is a brownfield effort on a locked, well-documented stack: the monorepo is ~⅓ scaffolded (API + contracts + Drizzle baseline exist), and this slice fills the core gap — auth, global-user data, and tenant selection — to unblock the mobile app's first screens. The approach is straightforward: better-auth for auth (already ADR-decided), a plain `user_festival` bridge table to model "visitor joins festival" (avoiding the organization plugin), and Expo Router's built-in `Stack.Protected` for auth gating. **The single highest-priority risk** is enforcing real per-request tenant membership checks on festival-scoped endpoints from the very start — it's easy to ship "authenticated users can see any festival's home" this cycle, then inherit that hole across all later features (timetable, map, marketplace). A secondary risk unique to native auth is session persistence: better-auth's Expo client requires explicit `expo-secure-store` configuration to survive app restarts.
