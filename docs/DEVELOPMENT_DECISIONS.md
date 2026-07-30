@@ -481,6 +481,35 @@ Drei Scope-Klarstellungen aus dem Team-Meeting (2026-07-28). Detail: `docs/conce
 **Konsequenz:** Der Realtime-Scope umfasst **Aktivitäts-Lobbies** (nicht nur Präsenz/Live-Daten);
 die Hilfe-Börse ist als spätere festival-scoped Entität vorgemerkt und blockiert das MVP nicht.
 
+### ADR-021 — Identitäts-Schema-Umsetzung: Account → VisitorProfile als getrennte Tabelle, keine org-/username-Plugins · **ENTSCHIEDEN**
+Setzt das Identitätsmodell (ADR-016) und die passwortlose OTP-Auth (ADR-009) im Drizzle-Schema
+konkret um (Phase 1, Plan 01-01, Success Criterion 4). Zitiert ADR-009, ADR-014, ADR-016.
+
+**Entscheidung:**
+1. **`user`/Account = globale Identität**, von better-auth's CLI (`auth generate`) erzeugt und als
+   `packages/db/src/schema/auth.ts` **vendored** (Provenance-Header, `text`-ids, nicht handeditiert;
+   Regenerate-Befehl in-file). Die vier Kern-Tabellen: `user`, `session`, `account`, `verification`.
+2. **`VisitorProfile` ist eine SEPARATE Tabelle** (1:1 am Account via `accountId`), **nicht** Felder
+   auf dem geteilten `user`. `username`/`displayName`/`avatar`/`socials` leben dort — ein
+   Staff-/Admin-Account trägt sie nie (ADR-016).
+3. **Festival-Mitgliedschaft = gate-loser `my_festival`-Save** (`visitorId` + `festivalId` +
+   `savedAt`), **kein** Rollen-/Invite-/Org-Konstrukt (ADR-014).
+4. **Das better-auth `organization`-Plugin wird bewusst NICHT deklariert** — es brächte Invite-/
+   Rollen-/`activeOrganization`-Semantik, die eine gate-lose Save-Relation nicht braucht (reserviert
+   für echte `FestivalStaff`/`PlatformAdmin` im Admin-Milestone, ADR-018).
+5. **Das better-auth `username`-Plugin wird bewusst NICHT deklariert** — es würde
+   `username`/`displayUsername` auf den geteilten `user` legen und den Account/VisitorProfile-Split
+   auflösen (ADR-016).
+6. **drizzle-zod-Basisschemas** (insert/select) für alle vier Auth-Tabellen liegen in der Geschwister-
+   Datei `auth-schemas.ts` (handgeschrieben, damit ein Regenerate von `auth.ts` sie nie überschreibt);
+   `packages/contracts` komponiert in Phase 2 darauf (Drift = Compile-Fehler, SC-3).
+
+**Konsequenz:** `user` trägt **kein** `festivalId` (globale Identität, ADR-014) und **keine**
+`username`/`displayUsername`-Spalten; der einzige globale↔Festival-Link ist `my_festival`. Runtime-
+Auth-Wiring (Handler, Guard, OTP-Versand, E-Mail-Provider) bleibt Phase 2 (ADR-009). Der `auth
+generate`-Spike bestätigte: Schema-Generierung braucht **keine** Live-DB-Verbindung und **kein**
+`BETTER_AUTH_SECRET`.
+
 ---
 
 ## Tech-Stack (Kurzüberblick)
