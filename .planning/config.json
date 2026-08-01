@@ -1,4 +1,5 @@
 {
+  "response_language": "de",
   "model_profile": "adaptive",
   "commit_docs": true,
   "parallelization": true,
