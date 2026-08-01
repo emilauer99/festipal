@@ -45,3 +45,6 @@ Thumbs.db
 
 # ─── Claude Code (lokale, nutzerspezifische Einstellungen) ───────
 .claude/settings.local.json
+
+# ─── GSD Planning (lokale Research-Fetch-Caches) ────────────────
+.planning/research/.cache/
