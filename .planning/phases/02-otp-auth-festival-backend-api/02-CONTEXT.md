@@ -46,6 +46,13 @@ all behind a global login-first `AuthGuard` with correct `festivalId` data isola
 > All four gray areas below were selected by the user and answered directly on
 > 2026-08-01. They are **user-locked**, not "confirm at plan review" defaults.
 
+**Decision index** (parser-readable summary; full rationale in the sections below):
+
+- **D-01 — Email/OTP delivery:** dev transport (console/Mailpit) active now; Resend adapter implemented but env-optional/dormant. No Resend account this phase.
+- **D-02 — Session lifetime:** 90-day sliding session (`expiresIn ≈ 90d`, `updateAge ≈ 1d`); no refresh-token grant — expiry routes back to OTP sign-in.
+- **D-03 — Festival test/seed data:** idempotent seed with ONE user-defined festival (`frequency-2026`); SEC-02 isolation test provisions its own two throwaway fixtures.
+- **D-04 — `GET /festivals` shape:** minimal, unpaginated, current `festival` fields only; date/place deferred to Phase 5; contract kept additive.
+
 ### D-01: Email/OTP delivery for this phase — Dev transport now, Resend wired-but-deferred
 The OTP email send goes through a **provider abstraction** with a **dev transport**
 (console log and/or Mailpit) as the active path this phase. The `RESEND_API_KEY` /
