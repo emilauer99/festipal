@@ -29,11 +29,15 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "better-auth": "1.6.25",
     "drizzle-orm": "^0.45.2",
-    "postgres": "^3.4.9"
+    "drizzle-zod": "0.7.1",
+    "postgres": "^3.4.9",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@festipal/config": "workspace:*",
+    "auth": "1.6.25",
     "drizzle-kit": "^0.31.10",
     "tsup": "^8.5.1",
     "typescript": "6.0.3"

@@ -40,7 +40,7 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 ### Platform & Security
 
-- [ ] **PLAT-01**: A single global `Account` underpins identity (`Account` → `VisitorProfile`); app users are global and NOT festival org-members
+- [x] **PLAT-01**: A single global `Account` underpins identity (`Account` → `VisitorProfile`); app users are global and NOT festival org-members
 - [ ] **PLAT-02**: The Expo mobile app (`apps/mobile`) exists and consumes the real API via `packages/contracts`
 - [ ] **SEC-01**: Login-first — all app functionality requires authentication (no anonymous browsing)
 - [ ] **SEC-02**: Festival-scoped data is isolated by `festivalId` (one festival's data never leaks into another's context); saving/entering a festival is gate-less, not an access gate
@@ -93,7 +93,7 @@ Which phases cover which requirements.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 1 | Pending |
+| PLAT-01 | Phase 1 | Complete |
 | SEC-01 | Phase 2 | Pending |
 | SEC-02 | Phase 2 | Pending |
 | PLAT-02 | Phase 3 | Pending |
@@ -115,6 +115,7 @@ Which phases cover which requirements.
 | FRND-01 | Phase 6 | Pending |
 
 **Coverage:**
+
 - v1 requirements: 20 total
 - Mapped to phases: 20 ✓
 - Unmapped: 0

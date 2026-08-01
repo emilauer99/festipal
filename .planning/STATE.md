@@ -1,12 +1,19 @@
 ---
-gsd_state_version: '1.0'
-status: planning
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+current_phase: 2
+current_phase_name: OTP Auth & Festival Backend API
+status: "Phase 01 shipped — PR #4"
+stopped_at: Completed 01-03-PLAN.md (phase 01 all plans done — ready for verification)
+last_updated: "2026-08-01T10:08:03.672Z"
+last_activity: 2026-08-01
 progress:
-  total_phases: 6
-  completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
-  percent: 0
+  total_phases: 1
+  completed_phases: 1
+  total_plans: 3
+  completed_plans: 3
+last_activity_desc: Phase 01 complete, transitioned to Phase 2
 ---
 
 # Project State
@@ -16,21 +23,22 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 1 — Identity Schema & Auth Foundation
+**Current focus:** Phase 01 — Identity Schema & Auth Foundation
 
 ## Current Position
 
-Phase: 1 of 6 (Identity Schema & Auth Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-07-30 — Planning docs reconciled with the binding concept phase (OTP auth, Account/VisitorProfile identity, gate-less save-festival); 20/20 requirements mapped
+Phase: 2 — OTP Auth & Festival Backend API
+Plan: Not started
+Status: Phase 01 shipped — PR #4
+Last activity: 2026-08-01
 
-Progress: [░░░░░░░░░░] 0%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 0
+
+- Total plans completed: 3
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -38,13 +46,21 @@ Progress: [░░░░░░░░░░] 0%
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
-| - | - | - | - |
+| 01 | 3 | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: -
 - Trend: -
 
 *Updated after each plan completion*
+**Per-Plan Metrics:**
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 01 P01 | 12min | 3 tasks | 7 files |
+| Phase 01 P02 | ~18min | 2 tasks | 9 files |
+| Phase 01 P03 | ~15min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -57,6 +73,11 @@ Recent decisions affecting current work:
 - Roadmap: Dependency-ordered horizontal layers — schema → backend API → mobile shell → screens; every UI phase lands only behind a live backend.
 - Phase 1: Model visitor↔festival as gate-less `my_festival` saves and `VisitorProfile` as a SEPARATE table keyed by accountId — NOT better-auth's organization plugin, NOT its username plugin (would force a username onto staff accounts).
 - Phase 1: Adopt `drizzle-zod` up front so contracts derive from Drizzle schema (prevents drift as table count grows).
+- [Phase ?]: 01-01: Vendored better-auth core schema via the auth CLI (text ids, provenance header); drizzle-zod bases colocated in auth-schemas.ts; identity model recorded as ADR-021 (org/username plugins rejected).
+- [Phase ?]: drizzle-zod pinned to 0.7.1 (last classic-zod release); 0.8.x imports zod/v4 and breaks the workspace Zod v3 pin (ADR-006) in packages/contracts
+- [Phase ?]: visitor_profile username uniqueness enforced by a Postgres lower(username) functional UNIQUE INDEX, not an app-layer check (race-proof, D-04)
+- [Phase ?]: 01-03: my_festival is the single global<->tenant bridge — composite PK (visitorId, festivalId), text visitorId FK -> visitor_profile.accountId (encodes profile-before-save), uuid festivalId FK -> festival.id; gate-less save, no role/invite columns (ADR-014/016, D-04)
+- [Phase ?]: 01-03: lower(username) unique index proven LIVE in Neon — case-variant duplicate visitor_profile insert rejected with Postgres 23505 from visitor_profile_username_lower_unq; full schema (auth+visitor_profile+my_festival) migrated cleanly (migration 0002)
 
 ### Pending Todos
 
@@ -82,6 +103,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30
-Stopped at: Planning docs (PROJECT/REQUIREMENTS/ROADMAP/STATE + research STACK/PITFALLS/SUMMARY) reconciled with the binding concept phase
+Last session: 2026-07-30T20:01:01.754Z
+Stopped at: Completed 01-03-PLAN.md (phase 01 all plans done — ready for verification)
 Resume file: None
