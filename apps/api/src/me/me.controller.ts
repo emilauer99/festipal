@@ -21,4 +21,36 @@ export class MeController {
       };
     });
   }
+
+  // First-login profile completion (Pitfall 11). `completeProfile` is the
+  // TOCTOU-safe source of truth — a duplicate username maps to a clean 409,
+  // never a thrown 500 (see me.service.ts).
+  @TsRestHandler(contract.completeProfile)
+  completeProfile(@Session() session: UserSession) {
+    return tsRestHandler(contract.completeProfile, async ({ body }) => {
+      const result = await this.me.completeProfile(session.user.id, body);
+      if (result.status === 'conflict') {
+        return { status: 409, body: { message: 'Username already taken' } };
+      }
+      return { status: 200, body: result.profile };
+    });
+  }
+
+  // Advisory only (Pitfall 11) — `completeProfile`'s DB unique index is authoritative.
+  @TsRestHandler(contract.usernameAvailability)
+  usernameAvailability() {
+    return tsRestHandler(contract.usernameAvailability, async ({ query }) => {
+      const available = await this.me.checkUsernameAvailability(query.username);
+      return { status: 200, body: { available } };
+    });
+  }
+
+  // SEC-02: scope comes only from the session — never a request param.
+  @TsRestHandler(contract.listMyFestivals)
+  listMyFestivals(@Session() session: UserSession) {
+    return tsRestHandler(contract.listMyFestivals, async () => {
+      const festivals = await this.me.listMyFestivals(session.user.id);
+      return { status: 200, body: festivals };
+    });
+  }
 }
