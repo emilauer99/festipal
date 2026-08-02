@@ -30,6 +30,8 @@ path must work.
 - ✓ i18n locale constants + `resolveUiLocale` / `resolveLocalized` helpers (`packages/i18n`) — existing
 - ✓ 15 ADRs recording stack and architecture decisions (`docs/DEVELOPMENT_DECISIONS.md`) — existing
 - ✓ Identity/membership schema in `packages/db`: vendored better-auth OTP tables (`user`/`session`/`account`/`verification`) + `visitor_profile` (accountId PK, `lower(username)` unique index) + gate-less `my_festival` save join; drizzle-zod bases surfaced drift-safely through `packages/contracts`; applied to Neon; identity model recorded as ADR-021 — **Validated in Phase 1: Identity Schema & Auth Foundation** (PLAT-01). Runtime auth wiring is Phase 2.
+- ✓ The API exposes the OTP-auth + profile + festival browse/save endpoints this slice needs (contract-first): better-auth email-OTP behind a global login-first `AuthGuard`, `GET/POST /api/v1/me*` (profile completion, username availability, my festivals), `GET /api/v1/festivals`, gate-less `POST /api/v1/festivals/:festivalId/save` (409 profile-required guard), `festivalId` data isolation proven by tests — **Validated in Phase 2: OTP Auth & Festival Backend API** (SEC-01, SEC-02)
+- ✓ An `Account` + `VisitorProfile` + `MyFestival` schema and better-auth (email-OTP) are wired into the NestJS API (env-configured Resend provider with dev console fallback; bodyParser smoke-tested; auth-annotation table reviewed) — **Validated in Phase 2: OTP Auth & Festival Backend API**
 
 ### Active
 
@@ -47,8 +49,6 @@ path must work.
 - [ ] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email)
 - [ ] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet)
 - [ ] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts`
-- [ ] The API exposes the OTP-auth + profile + festival browse/save endpoints this slice needs (contract-first)
-- [ ] An `Account` + `VisitorProfile` + `MyFestival` schema and better-auth (email-OTP) are wired into the NestJS API (currently absent)
 
 ### Out of Scope
 
@@ -126,4 +126,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-07-30 — Phase 1 (Identity Schema & Auth Foundation) complete: Account/VisitorProfile/MyFestival + better-auth OTP schema live in Neon, drift-safe contracts, ADR-021.*
+*Last updated: 2026-08-02 — Phase 2 (OTP Auth & Festival Backend API) complete: email-OTP auth + login-first guard live in NestJS, profile completion + festival browse/gate-less save endpoints, `festivalId` isolation test-proven (SEC-01, SEC-02).*
