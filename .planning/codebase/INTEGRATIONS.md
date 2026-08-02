@@ -1,3 +1,7 @@
+---
+last_mapped_commit: 8f64c0de99ee77e01a818edd005386ede4310b30
+last_mapped_at: 2026-08-02T17:17:40Z
+---
 # External Integrations
 
 **Analysis Date:** 2026-08-02
@@ -5,6 +9,7 @@
 ## APIs & External Services
 
 **Email OTP Delivery (Optional):**
+
 - **Resend** - Email API for passwordless OTP delivery
   - SDK/Client: `resend` v6.18.1 (`apps/api` dependency)
   - Auth: `RESEND_API_KEY` environment variable (optional)
@@ -16,6 +21,7 @@
 ## Data Storage
 
 **Databases:**
+
 - **PostgreSQL 18** via Neon (serverless, managed)
   - Type: Postgres 18 (latest stable, version fixed per Neon project)
   - Provider: Neon (`https://neon.tech`)
@@ -29,9 +35,11 @@
   - Tables: `festival`, `user`, `session`, `account`, `verification` (auth schema from better-auth), `tag`, `tag_translation`, `visitor_profile`, `my_festival`, `locale` (enum)
 
 **File Storage:**
+
 - Not yet integrated — placeholder for future feature storage (avatars, event images, etc.)
 
 **Caching:**
+
 - **Redis** (planned for Realtime per ADR-010)
   - Status: Not yet scaffolded
   - Purpose: WebSocket adapter for NestJS realtime features (planned post-MVP)
@@ -40,6 +48,7 @@
 ## Authentication & Identity
 
 **Auth Provider:**
+
 - **better-auth** 1.6.25 - Self-hosted TypeScript authentication system
   - Implementation: NestJS module via `@thallesp/nestjs-better-auth` v2.7.0
   - Database: Drizzle adapter pointing to PostgreSQL (Neon)
@@ -62,15 +71,18 @@
   - Secret: `BETTER_AUTH_SECRET` environment variable (required at runtime, never optional)
 
 **Planned Auth Extensions (Post-MVP):**
+
 - Social Login: Google + Apple (ADR-009, nachrüstbar without migration via account linking)
 - Passkeys: Not in MVP, schema prepared for future addition
 
 ## Monitoring & Observability
 
 **Error Tracking:**
+
 - Not yet integrated — no error tracking service configured
 
 **Logs:**
+
 - Console-based: `console.log()` for startup info, `console.error()` for errors
 - Structured logging: Planned for production (bunyan/pino) but not yet implemented
 - Test Log Capture: Vitest integration test suite captures OTP codes in `.otp-dev-transport.local.json`
@@ -78,6 +90,7 @@
 ## CI/CD & Deployment
 
 **Hosting:**
+
 - **Backend API:** Railway (NestJS container)
   - Region: EU (co-located with Neon Frankfurt DB)
   - Port: 8081 (configurable via `PORT` env var)
@@ -97,11 +110,13 @@
 - **Admin Web:** TBD (planned Next.js 15, deployment platform TBD — Vercel or Railway)
 
 **CI Pipeline:**
+
 - GitHub Actions (workflows planned, not yet created)
 - Turbo orchestration: `pnpm lint`, `pnpm typecheck`, `pnpm test` via Turbo on PR
 - No automated deploy on PR merge yet
 
 **Build Artifacts:**
+
 - Backend: `apps/api/dist/` (compiled NestJS, .gitignored)
 - Packages: `packages/*/dist/` (bundled ESM/CJS, .gitignored)
 - Database Migrations: `packages/db/drizzle/` (SQL files, committed)
@@ -111,23 +126,27 @@
 ## Environment Configuration
 
 **Required Environment Variables:**
+
 - `DATABASE_URL` - Neon pooled Postgres connection string (required)
 - `BETTER_AUTH_SECRET` - Email OTP signing secret (required)
 - `PORT` - API listen port (optional, default: 8081)
 
 **Optional Environment Variables:**
+
 - `BETTER_AUTH_URL` - Auth callback URL (default: http://localhost:8081)
 - `DATABASE_URL_UNPOOLED` - Neon direct connection for migrations (recommended for production CI)
 - `RESEND_API_KEY` - Resend API key (optional, enables production email delivery)
 - `OTP_EMAIL_TRANSPORT` - Transport selection ('dev' or 'resend', default: 'dev')
 
 **Secrets Location:**
+
 - Development: Root `.env` file (git-ignored, not in repo)
 - Railway: Railway environment variables dashboard (secure, not in code)
 - CI/CD: GitHub Actions secrets (planned, not yet configured)
 - **No secrets in repo** - enforced via .gitignore and ADR-010
 
 **Load Strategy:**
+
 - Backend: `apps/api/src/config/env.ts` loads and validates via Zod schema at startup
 - Database: `packages/db/drizzle.config.ts` reads `DATABASE_URL_UNPOOLED` or fallback `DATABASE_URL` for migrations
 - Fail-fast: Missing required env vars throw during bootstrap, preventing silent failures
@@ -135,14 +154,17 @@
 ## Webhooks & Callbacks
 
 **Incoming:**
+
 - None yet configured
 - **Planned:** Festival event updates, Cashless payment confirmations (post-MVP)
 
 **Outgoing:**
+
 - None yet configured
 - **Planned:** Push notifications to offline queues, external analytics (post-MVP)
 
 **Cashless Integration (Planned):**
+
 - Per-festival embedded URL (WebView in app / iframe in admin), no direct API integration
 - Each festival configures its own cashless provider (e.g., Tiketti, Monevo)
 - festipal acts as URL container, never processes payments (PCI-DSS compliant by design)
@@ -151,11 +173,13 @@
 ## API Contracts & Client Generation
 
 **Contract Definition:**
+
 - `packages/contracts/src/router.ts` - ts-rest router definition (single source of truth)
 - Zod schemas: `packages/contracts/src/schemas.ts` - Request/response shapes
 - **Tooling:** ts-rest v3.52.1 automatically generates typed clients for mobile/admin (not yet used, apps not scaffolded)
 
 **Endpoints:**
+
 - `GET /api/v1/health` - Liveness probe (anonymous, no auth required)
 - Festival endpoints: Scaffolded via contract but implementation status varies (see `/api/v1/festivals/...` in contracts)
 - Auth routes: `/api/auth/*` (managed by better-auth, not in ts-rest contract)
@@ -163,11 +187,13 @@
 ## Rate Limiting & Abuse Prevention
 
 **Email OTP:**
+
 - better-auth default rate limiter: 3 OTP requests per 60 seconds per source (IP/email)
 - Strategy: Fire-and-forget (never reveal rate limit to client, always report success)
 - Test Impact: Integration tests serialized (fileParallelism: false) to avoid concurrent OTP requests tripping rate limiter
 
 **Database Connections:**
+
 - Neon connection pool: Limited concurrent connections (auto-scales to zero when idle)
 - Pooler: pgBouncer (30-second idle timeout typical) — test setup includes reconnect resilience
 
