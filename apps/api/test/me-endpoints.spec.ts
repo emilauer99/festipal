@@ -132,6 +132,24 @@ describe('me endpoints (complete-profile, GET /me, GET /me/festivals)', () => {
     expect(res.status).toBe(409);
   });
 
+  it('GET /me/username-availability reflects the taken username as unavailable', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/v1/me/username-availability')
+      .query({ username: username.toUpperCase() })
+      .set('cookie', cookie);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ available: false });
+  });
+
+  it('GET /me/username-availability reports an unused username as available', async () => {
+    const res = await request(app.getHttpServer())
+      .get('/api/v1/me/username-availability')
+      .query({ username: `unused-${randomUUID().slice(0, 8)}` })
+      .set('cookie', cookie);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ available: true });
+  });
+
   it('GET /me after profile completion returns the populated profile', async () => {
     const res = await request(app.getHttpServer()).get('/api/v1/me').set('cookie', cookie);
     expect(res.status).toBe(200);
