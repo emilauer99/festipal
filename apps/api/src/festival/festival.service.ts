@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { eq, inArray } from 'drizzle-orm';
 import {
   festival,
   festivalLocale,
+  myFestival,
   tag,
   tagTranslation,
   type Database,
@@ -79,5 +80,56 @@ export class FestivalService {
       slug: entry.slug,
       title: resolveLocalized(entry.titles, locale, fest.defaultLocale),
     }));
+  }
+
+  /**
+   * Browse: ALL currently-seeded festivals, no pagination, D-04 minimal
+   * shape (id/slug/name/defaultLocale/supportedLocales/cashlessUrl). Distinct
+   * from `MeService.listMyFestivals` (caller-scoped) — never one endpoint +
+   * client-side `.filter()` (Pitfall 4).
+   */
+  async listAll(): Promise<Festival[]> {
+    const rows = await this.db.select().from(festival);
+    if (rows.length === 0) return [];
+
+    const festivalIds = rows.map((r) => r.id);
+    const locales = await this.db
+      .select({ festivalId: festivalLocale.festivalId, locale: festivalLocale.locale })
+      .from(festivalLocale)
+      .where(inArray(festivalLocale.festivalId, festivalIds));
+
+    const localesByFestival = new Map<string, Locale[]>();
+    for (const l of locales) {
+      const arr = localesByFestival.get(l.festivalId) ?? [];
+      arr.push(l.locale);
+      localesByFestival.set(l.festivalId, arr);
+    }
+
+    return rows.map((row) => ({
+      id: row.id,
+      slug: row.slug,
+      name: row.name,
+      defaultLocale: row.defaultLocale,
+      supportedLocales: localesByFestival.get(row.id) ?? [],
+      cashlessUrl: row.cashlessUrl,
+    }));
+  }
+
+  /**
+   * Gate-less save (ADR-014): the only gate is the global AuthGuard (must be
+   * logged in) — no membership/ticket check before writing `my_festival`.
+   * Idempotent via `onConflictDoNothing()` on the (visitorId, festivalId)
+   * composite PK; a repeat save is a no-op, never an error.
+   */
+  async save(visitorId: string, festivalId: string): Promise<{ status: 'ok' } | { status: 'not-found' }> {
+    const [fest] = await this.db
+      .select({ id: festival.id })
+      .from(festival)
+      .where(eq(festival.id, festivalId))
+      .limit(1);
+    if (!fest) return { status: 'not-found' };
+
+    await this.db.insert(myFestival).values({ visitorId, festivalId }).onConflictDoNothing();
+    return { status: 'ok' };
   }
 }
