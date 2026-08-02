@@ -19,6 +19,9 @@ test-results/
 .env.*
 !.env.example
 *.local
+# Dev-only OTP capture file (D-01) — never commit even though it doesn't
+# match *.local (extension is .local.json, not .local).
+.otp-dev-transport.local.json
 
 # ─── Native / EAS ───────────────────────────────────────────────
 ios/
