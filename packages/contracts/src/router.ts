@@ -73,8 +73,9 @@ export const contract = c.router(
       path: '/festivals/:festivalId/save',
       pathParams: z.object({ festivalId: z.string().uuid() }),
       body: z.object({}),
-      responses: { 200: z.object({ saved: z.literal(true) }), 404: errorSchema },
-      summary: 'Gate-less festival save (ADR-014) — idempotent, no membership/role',
+      responses: { 200: z.object({ saved: z.literal(true) }), 404: errorSchema, 409: errorSchema },
+      summary:
+        'Gate-less festival save (ADR-014) — idempotent, no membership/role; 409 if the caller has not completed their visitor profile yet',
     },
     listMyFestivals: {
       method: 'GET',

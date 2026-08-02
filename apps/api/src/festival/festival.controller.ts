@@ -48,6 +48,9 @@ export class FestivalController {
       if (result.status === 'not-found') {
         return { status: 404, body: { message: 'Festival not found' } };
       }
+      if (result.status === 'profile-required') {
+        return { status: 409, body: { message: 'Complete your profile before saving a festival' } };
+      }
       return { status: 200, body: { saved: true } };
     });
   }

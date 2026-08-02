@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
+import { PostgresError } from 'postgres';
 import {
   festival,
   festivalLocale,
@@ -121,7 +122,10 @@ export class FestivalService {
    * Idempotent via `onConflictDoNothing()` on the (visitorId, festivalId)
    * composite PK; a repeat save is a no-op, never an error.
    */
-  async save(visitorId: string, festivalId: string): Promise<{ status: 'ok' } | { status: 'not-found' }> {
+  async save(
+    visitorId: string,
+    festivalId: string,
+  ): Promise<{ status: 'ok' } | { status: 'not-found' } | { status: 'profile-required' }> {
     const [fest] = await this.db
       .select({ id: festival.id })
       .from(festival)
@@ -129,7 +133,20 @@ export class FestivalService {
       .limit(1);
     if (!fest) return { status: 'not-found' };
 
-    await this.db.insert(myFestival).values({ visitorId, festivalId }).onConflictDoNothing();
-    return { status: 'ok' };
+    try {
+      await this.db.insert(myFestival).values({ visitorId, festivalId }).onConflictDoNothing();
+      return { status: 'ok' };
+    } catch (err) {
+      // my_festival.visitorId FKs to visitor_profile.accountId — a caller who
+      // has not completed their profile yet (GET /me profile: null, a
+      // reachable first-login state) trips a Postgres 23503 FK violation on
+      // insert. Mirror me.service.completeProfile's 23505 idiom: check
+      // `error.cause instanceof PostgresError`, never `error` itself.
+      const cause = (err as { cause?: unknown }).cause;
+      if (cause instanceof PostgresError && cause.code === '23503') {
+        return { status: 'profile-required' };
+      }
+      throw err;
+    }
   }
 }
