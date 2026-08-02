@@ -1,391 +1,358 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-07-29
+**Analysis Date:** 2026-08-02
 
 ## Directory Layout
 
 ```
 festipal/
-├── apps/                          # Applications (currently API only; mobile and admin planned)
-│   ├── api/                       # NestJS REST backend server
+├── apps/
+│   ├── api/                    # NestJS backend (REST API)
 │   │   ├── src/
-│   │   │   ├── main.ts            # Bootstrap entry point
-│   │   │   ├── app.module.ts      # Root NestJS module
-│   │   │   ├── config/            # Environment and configuration
-│   │   │   │   ├── config.module.ts
-│   │   │   │   └── env.ts         # Zod env loader
-│   │   │   ├── db/                # Database module (Drizzle DI setup)
-│   │   │   │   └── db.module.ts
-│   │   │   ├── festival/          # Festival module (tenant root)
+│   │   │   ├── main.ts         # Bootstrap entry point (load env, create app)
+│   │   │   ├── app.module.ts   # Root NestJS module (imports all feature modules)
+│   │   │   ├── config/         # Environment loading & validation
+│   │   │   │   ├── config.module.ts    # NestJS Global Module for env vars
+│   │   │   │   └── env.ts              # Zod schema for env validation
+│   │   │   ├── db/             # Database client provisioning
+│   │   │   │   └── db.module.ts        # NestJS Global Module (provides DB token)
+│   │   │   ├── auth/           # Authentication & OTP
+│   │   │   │   ├── auth.module.ts       # better-auth NestJS wrapper
+│   │   │   │   ├── auth.instance.ts     # better-auth config & instance
+│   │   │   │   └── email/               # Email provider implementations
+│   │   │   ├── health/         # Liveness probe
+│   │   │   │   └── health.controller.ts # GET /api/v1/health
+│   │   │   ├── festival/       # Festival entity & queries
 │   │   │   │   ├── festival.module.ts
-│   │   │   │   ├── festival.controller.ts
-│   │   │   │   └── festival.service.ts
-│   │   │   └── health/            # Health check (liveness probe)
-│   │   │       └── health.controller.ts
-│   │   ├── dist/                  # Compiled output (NestJS build)
-│   │   ├── tsconfig.json          # App TypeScript config (extends base)
-│   │   ├── tsconfig.build.json    # Build-only config
-│   │   ├── nest-cli.json          # NestJS CLI config
-│   │   ├── package.json           # App dependencies
-│   │   └── node_modules/          # Local deps (pnpm)
-│   │
-│   ├── mobile/                    # React Native + Expo [PLANNED]
-│   └── admin/                     # Next.js 15 admin web [PLANNED]
+│   │   │   │   ├── festival.controller.ts   # Routes: getFestival, listTags, listFestivals, saveFestival
+│   │   │   │   └── festival.service.ts      # Business logic: queries, locale resolution, tenant scoping
+│   │   │   └── me/             # Visitor identity & profile
+│   │   │       ├── me.module.ts
+│   │   │       ├── me.controller.ts   # Routes: getMe, completeProfile, usernameAvailability, listMyFestivals
+│   │   │       └── me.service.ts      # Profile completion, username check, saved festivals
+│   │   ├── test/               # Integration & smoke tests
+│   │   ├── dist/               # Compiled output (gitignored)
+│   │   ├── tsconfig.json       # TypeScript config (extends base)
+│   │   ├── eslint.config.mjs   # ESLint config (extends base, disables type imports for DI)
+│   │   ├── package.json        # Workspace package with @festipal/* dependencies
+│   │   └── nest-cli.json       # NestJS CLI config (for `npm run dev` watch mode)
+│   └── mobile/                 # [Placeholder] React Native + Expo app
 │
-├── packages/                      # Shared monorepo packages
-│   ├── contracts/                 # REST API contracts (ts-rest + Zod)
+├── packages/
+│   ├── contracts/              # API contract layer (ts-rest + Zod)
 │   │   ├── src/
-│   │   │   ├── index.ts           # Main export
-│   │   │   ├── router.ts          # API endpoint definitions (single source of truth)
-│   │   │   ├── schemas.ts         # Zod validation schemas (Festival, Tag, etc.)
-│   │   │   └── locale.ts          # Locale types, DEFAULT_LOCALE, LocalizedText
-│   │   ├── dist/                  # Compiled output (ESM + CJS)
-│   │   ├── tsconfig.json
-│   │   ├── tsup.config.ts         # Bundler config
-│   │   ├── package.json
-│   │   └── node_modules/
+│   │   │   ├── index.ts        # Barrel export of router & types
+│   │   │   ├── router.ts       # ts-rest contract definition (single source of truth)
+│   │   │   ├── schemas.ts      # Zod schemas for Festival, Tag, Me, VisitorProfile, etc.
+│   │   │   └── locale.ts       # Supported locales, DEFAULT_LOCALE, resolveLocalized()
+│   │   ├── dist/               # Compiled output (ESM + CJS via tsup)
+│   │   ├── tsup.config.ts      # Bundle config (source: src/, entry: index.ts)
+│   │   ├── tsconfig.json       # TypeScript config (extends base)
+│   │   ├── eslint.config.mjs   # ESLint config (extends base)
+│   │   └── package.json        # @festipal/contracts (exports router, types, schemas)
 │   │
-│   ├── db/                        # Database schema + Drizzle ORM client
+│   ├── db/                     # Database layer (Drizzle ORM + schema)
 │   │   ├── src/
-│   │   │   ├── index.ts           # Main export (client factory, types)
-│   │   │   ├── client.ts          # Drizzle client factory (createDatabase)
-│   │   │   └── schema/            # Drizzle schema definitions
-│   │   │       ├── index.ts       # Schema exports
-│   │   │       ├── _shared.ts     # Shared column builders (idColumn, timestamps)
-│   │   │       ├── locale.ts      # Locale enum (SUPPORTED_LOCALES)
-│   │   │       ├── festival.ts    # Festival table (tenant root) + festival_locale
-│   │   │       └── tag.ts         # Tag entity + tag_translation table
-│   │   ├── drizzle/               # Database migrations (auto-generated)
-│   │   │   └── meta/              # Migration metadata
-│   │   ├── dist/                  # Compiled output
-│   │   ├── drizzle.config.ts      # Drizzle Kit configuration
-│   │   ├── tsconfig.json
-│   │   ├── tsup.config.ts
-│   │   ├── package.json           # DB scripts: db:generate, db:migrate, db:push, db:studio
-│   │   └── node_modules/
+│   │   │   ├── index.ts        # Barrel export of client factory & schema
+│   │   │   ├── client.ts       # createDatabase(connectionString) — Drizzle client factory
+│   │   │   └── schema/
+│   │   │       ├── index.ts    # Barrel export of all tables
+│   │   │       ├── _shared.ts  # Helpers: idColumn(), timestamps, lower() for uniqueness
+│   │   │       ├── locale.ts   # Postgres enum: localeEnum()
+│   │   │       ├── festival.ts # Table: festival (tenant root) + festivalLocale junction
+│   │   │       ├── tag.ts      # Tables: tag (tenant-scoped) + tag_translation (translatable)
+│   │   │       ├── visitor-profile.ts  # Table: visitor_profile (1:1 with user via accountId)
+│   │   │       ├── my-festival.ts      # Table: my_festival (gate-less save, visitorId FK)
+│   │   │       ├── auth.ts     # Tables: user, session, account, verification (better-auth generated)
+│   │   │       └── auth-schemas.ts     # Zod schemas for auth tables (hand-written overrides)
+│   │   ├── drizzle/            # Migrations (auto-generated by drizzle-kit)
+│   │   ├── scripts/            # Seed scripts
+│   │   ├── drizzle.config.ts   # Drizzle kit config (schema: src/schema, migrations: drizzle/)
+│   │   ├── auth.config.ts      # better-auth Drizzle adapter config (vendored schema generation)
+│   │   ├── dist/               # Compiled output (ESM + CJS via tsup)
+│   │   ├── tsup.config.ts      # Bundle config
+│   │   ├── tsconfig.json       # TypeScript config (extends base)
+│   │   ├── eslint.config.mjs   # ESLint config (extends base)
+│   │   └── package.json        # @festipal/db (exports createDatabase, schema tables, Zod schemas)
 │   │
-│   ├── i18n/                      # i18n configuration + locale resolution
+│   ├── i18n/                   # Internationalization (Lingui catalogs + locale helpers)
 │   │   ├── src/
-│   │   │   ├── index.ts           # Main export
-│   │   │   ├── locales.ts         # Locale labels, isSupportedLocale helper
-│   │   │   ├── resolve.ts         # resolveUiLocale function
-│   │   │   └── i18n.ts            # Lingui integration [future: catalogs]
-│   │   ├── dist/
-│   │   ├── tsconfig.json
-│   │   ├── tsup.config.ts
-│   │   ├── package.json
-│   │   └── node_modules/
+│   │   │   ├── index.ts        # Barrel export of locale enum & resolvers
+│   │   │   ├── locales.ts      # SUPPORTED_LOCALES, DEFAULT_LOCALE, isSupportedLocale()
+│   │   │   └── resolve.ts      # resolveUiLocale(override, systemLocales) — ADR-012 axis 1
+│   │   ├── catalogs/           # [Placeholder] Lingui message catalogs (de, en, etc.)
+│   │   ├── dist/               # Compiled output
+│   │   ├── tsup.config.ts      # Bundle config
+│   │   ├── tsconfig.json       # TypeScript config (extends base)
+│   │   ├── eslint.config.mjs   # ESLint config (extends base)
+│   │   └── package.json        # @festipal/i18n (exports locales, resolveUiLocale)
 │   │
-│   ├── ui/                        # Design tokens + component primitives
+│   ├── ui/                     # Design tokens & UI primitives
 │   │   ├── src/
-│   │   │   └── index.ts           # Placeholder (future: token exports)
-│   │   ├── dist/
-│   │   ├── tsconfig.json
-│   │   ├── tsup.config.ts
-│   │   ├── package.json
-│   │   └── node_modules/
+│   │   │   ├── index.ts        # Barrel export of tokens
+│   │   │   └── tokens.ts       # [Placeholder] Color, typography, spacing tokens
+│   │   ├── dist/               # Compiled output
+│   │   ├── tsup.config.ts      # Bundle config
+│   │   ├── tsconfig.json       # TypeScript config (extends base)
+│   │   ├── eslint.config.mjs   # ESLint config (extends base)
+│   │   └── package.json        # @festipal/ui (exports design tokens)
 │   │
-│   └── config/                    # Shared build config (ESLint, TypeScript)
-│       ├── tsconfig.base.json     # Base TypeScript config (strict mode)
-│       ├── package.json           # Config-only package
-│       └── node_modules/
+│   └── config/                 # Shared ESLint, Prettier, TypeScript configs
+│       ├── tsconfig.base.json  # Base TypeScript config (strict: true, ES2023)
+│       ├── eslint.config.base.mjs # Base ESLint config (flat config format, typescript-eslint)
+│       ├── prettier.config.mjs # Base Prettier config (semi: true, singleQuote: true, etc.)
+│       └── package.json        # @festipal/config (exports configs for all packages/apps)
 │
-├── docs/                          # Documentation
-│   ├── DEVELOPMENT_DECISIONS.md   # ADRs (architectural decisions log)
-│   └── concept/                   # Design docs, UX flows [future]
+├── docs/                       # Design decisions & documentation
+│   ├── DEVELOPMENT_DECISIONS.md # ADR-001 through ADR-021 (architectural decisions)
+│   ├── concept/                # Phase 1 concept docs (D-01 through D-10, merged to main)
+│   └── [Other guides]
 │
-├── .planning/
-│   └── codebase/                  # Generated codebase analysis docs
-│       ├── ARCHITECTURE.md
-│       └── STRUCTURE.md           # ← You are here
+├── .planning/                  # GSD phase planning & codebase maps
+│   ├── codebase/               # This file + ARCHITECTURE.md, CONVENTIONS.md, etc.
+│   │   ├── STRUCTURE.md        # Directory layout & naming conventions (this file)
+│   │   └── ARCHITECTURE.md     # System layers, data flow, entry points
+│   ├── phases/                 # Per-phase plans & reports
+│   │   ├── 01-identity-schema-auth-foundation/
+│   │   └── 02-otp-auth-festival-backend-api/
+│   └── research/               # Research artifacts, decision justifications
 │
-├── .claude/                       # Claude Code settings + skills
-│   └── settings.json
+├── .claude/                    # Claude Code configuration
+│   ├── CLAUDE.md               # Project instructions
+│   └── skills/                 # Project-specific skills
+│       ├── nestjs-best-practices/
+│       ├── react-native-architecture/
+│       └── [Other skills]
 │
-├── .git/                          # Git repo
-├── .gitignore
-├── .mcp.json                      # MCP server configuration
-├── .npmrc                         # pnpm config
-├── CLAUDE.md                      # Project guidance for Claude Code
-├── README.md                      # Project overview
-├── package.json                   # Root workspace manifest
-├── pnpm-workspace.yaml            # Workspace config (apps/*, packages/*)
-├── pnpm-lock.yaml                 # Lock file (commit to repo)
-├── turbo.json                     # Turborepo task configuration
-├── prettier.config.mjs            # Code formatter config
-└── node_modules/                  # Root node_modules (pnpm)
+├── .github/                    # GitHub Actions & CI/CD (TBD)
+│
+├── .env                        # [Not in repo] Environment variables (gitignored)
+├── .env.example                # [Example] Environment template (should exist if needed)
+├── pnpm-workspace.yaml         # pnpm monorepo config (apps/*, packages/*)
+├── package.json                # Root Turborepo config + pnpm scripts
+├── turbo.json                  # Turbo task graph (build, dev, lint, typecheck, test)
+├── prettier.config.mjs         # Root Prettier config (re-exports from packages/config)
+├── tsconfig.json               # [Not present] Use tsconfig.base.json in packages/config
+├── eslint.config.mjs           # [Not present] Use eslint.config.base.mjs in packages/config
+├── pnpm-lock.yaml              # pnpm lockfile (committed)
+└── .gitignore                  # Excludes: node_modules/, dist/, .next/, .env*, etc.
 ```
 
 ## Directory Purposes
 
-**apps/api:**
-- Purpose: NestJS REST backend server (ADR-002)
-- Contains: Controllers, services, modules, bootstrap logic
-- Key files: `src/main.ts` (entry), `src/app.module.ts` (root module), `src/festival/` (first domain module)
-- Output: Runs on port 8081 (or PORT env var)
-- Dev mode: `pnpm --filter api dev` (NestJS watch via CLI)
+**apps/api/**
+- Purpose: NestJS REST API server (core backend)
+- Contains: Controllers (HTTP handlers), services (business logic), modules (DI), config (env)
+- Key patterns: Dependency injection, Global modules (DbModule, ConfigModule), ts-rest handlers
+- Entry point: `src/main.ts` (bootstrap)
 
-**packages/contracts:**
-- Purpose: Defines API shape once (ADR-006); single source of truth for endpoint definitions and Zod validation schemas
-- Contains: ts-rest router definition, request/response schemas, type exports
-- Key files: `src/router.ts` (endpoints), `src/schemas.ts` (Zod types), `src/locale.ts` (locale enum + LocalizedText)
-- Output: Bundled ESM + CJS for consumption by API (implements), mobile/admin (derive clients)
-- Consumed by: `@festipal/api`, `@festipal/admin`, `@festipal/mobile` via workspace:*
-- No implementation here; pure specification
+**packages/contracts/**
+- Purpose: API contract layer & single source of truth
+- Contains: ts-rest router definition, Zod schemas, TypeScript types, locale enum
+- Exported: `contract`, schemas (Festival, Tag, Me, etc.), types, `resolveLocalized()`
+- Used by: NestJS API (implements), admin/mobile (derives typed clients)
 
-**packages/db:**
-- Purpose: Database schema, migrations, and Drizzle client factory (ADR-005, ADR-012)
-- Contains: Drizzle schema files, migration metadata, client setup
-- Key files: `src/client.ts` (createDatabase factory), `src/schema/*.ts` (table definitions)
-- Pattern: Every tenant-scoped table includes `festivalId: uuid FK → festival.id`
-- Migrations: Auto-generated by `pnpm --filter db db:generate`; apply with `db:migrate` or `db:push` (Neon)
-- Version Constraint: Uses zod@3 (ts-rest 3.52 peer requirement; upgrade when ts-rest v4 ships)
+**packages/db/**
+- Purpose: Database access layer (Drizzle ORM & schema)
+- Contains: Table definitions (festival, tag, user, visitorProfile, myFestival, auth tables), migrations, client factory
+- Exported: `createDatabase()`, all tables, Zod schemas (from drizzle-zod)
+- Migrations: `drizzle/` directory (auto-generated by drizzle-kit)
 
-**packages/i18n:**
-- Purpose: Locale constants, locale detection, LocalizedText resolution helpers (ADR-012)
-- Contains: SUPPORTED_LOCALES, DEFAULT_LOCALE, resolveUiLocale, LOCALE_LABELS
-- Key files: `src/locales.ts`, `src/resolve.ts`
-- Future: Lingui catalogs (when design phase provides UI strings)
-- Version constraint: Must stay synchronized with `packages/contracts/src/locale.ts` (same SUPPORTED_LOCALES)
+**packages/i18n/**
+- Purpose: Internationalization setup (locales, UI locale resolution)
+- Contains: Locale enum (de, en), DEFAULT_LOCALE, resolveUiLocale(), Lingui catalogs (future)
+- Exported: SUPPORTED_LOCALES, DEFAULT_LOCALE, isSupportedLocale(), resolveUiLocale()
 
-**packages/ui:**
-- Purpose: Design tokens and component primitives (ADR-015)
-- Status: Placeholder only (no tokens/components yet)
-- Future: Token exports + React Native components, shared by mobile + admin
+**packages/ui/**
+- Purpose: Design tokens & UI primitives (shared across apps)
+- Contains: Color, typography, spacing constants (future)
+- Exported: Token objects for theming
 
-**packages/config:**
-- Purpose: Shared ESLint + TypeScript configuration for all apps/packages
-- Contains: `tsconfig.base.json` (strict mode, ES2023, path aliases)
-- Used by: Every package extends `tsconfig.base.json` in its own `tsconfig.json`
+**packages/config/**
+- Purpose: Shared configuration (ESLint, Prettier, TypeScript)
+- Contains: Base configs for all packages & apps
+- Usage: Each package/app `tsconfig.json` extends `@festipal/config/tsconfig.base.json`, etc.
 
-**docs/:**
-- Purpose: Decision logs, design documents, architecture rationale
-- Key file: `DEVELOPMENT_DECISIONS.md` (ADRs 001–015 with decision rationale and consequences)
-- Read before: Making architectural changes
+**docs/**
+- Purpose: Architecture decisions & design documentation
+- Contains: ADRs (DEVELOPMENT_DECISIONS.md), concept phase docs, guides
+- Link in code: Comments reference ADRs (e.g., "// ADR-014: gate-less save")
+
+**.planning/codebase/**
+- Purpose: Codebase maps (STRUCTURE.md, ARCHITECTURE.md, CONVENTIONS.md, TESTING.md, CONCERNS.md)
+- Created by: `/gsd-map-codebase` commands
+- Used by: `/gsd-plan-phase`, `/gsd-execute-phase` to understand code organization & patterns
 
 ## Key File Locations
 
 **Entry Points:**
-- `apps/api/src/main.ts` — Bootstrap NestJS app, start server on port 8081
+- `apps/api/src/main.ts` — Application bootstrap (load env, create app, listen)
+- `apps/api/src/app.module.ts` — Root NestJS module (imports ConfigModule, DbModule, AuthModule, etc.)
+- `packages/contracts/src/index.ts` — Contract barrel export (contract router & types)
+- `packages/db/src/index.ts` — DB barrel export (createDatabase, schema tables)
 
 **Configuration:**
-- `turbo.json` — Monorepo task graph (build, dev, lint, typecheck, test)
-- `pnpm-workspace.yaml` — Workspace definition (apps/*, packages/*)
-- `tsconfig.base.json` — Shared TypeScript config (strict: true, ES2023)
-- `prettier.config.mjs` — Code formatter rules
-- `.npmrc` — pnpm-specific options
-- `CLAUDE.md` — Claude Code project instructions
+- `apps/api/src/config/env.ts` — Environment variable schema & loader (Zod)
+- `apps/api/src/config/config.module.ts` — NestJS Global Module for env
+- `packages/db/drizzle.config.ts` — Drizzle kit config (migrations, schema paths)
+- `packages/db/auth.config.ts` — better-auth adapter config
+- `turbo.json` — Turbo task definitions (build, dev, lint, typecheck, test)
+- `pnpm-workspace.yaml` — pnpm monorepo configuration
 
 **Core Logic:**
-- `packages/contracts/src/router.ts` — API endpoint definitions (single source of truth)
-- `apps/api/src/festival/festival.service.ts` — Festival queries + locale resolution
-- `packages/db/src/schema/festival.ts` — Festival table (tenant root)
+- `apps/api/src/festival/festival.service.ts` — Festival queries, tags, locale resolution
+- `apps/api/src/festival/festival.controller.ts` — Festival endpoints (HTTP handlers)
+- `apps/api/src/me/me.service.ts` — Visitor profile, username check, saved festivals
+- `apps/api/src/me/me.controller.ts` — Me endpoints (account + profile)
+- `apps/api/src/auth/auth.instance.ts` — better-auth configuration & instance
+- `packages/contracts/src/router.ts` — API contract definition (ts-rest router)
+- `packages/contracts/src/schemas.ts` — Zod schemas for all request/response types
+- `packages/contracts/src/locale.ts` — Locale enum, resolveLocalized(), LocalizedText type
 
-**Testing/Linting:**
-- Tests not yet scaffolded; will be added per framework
-- ESLint config via `packages/config`
+**Database Schema:**
+- `packages/db/src/schema/festival.ts` — Festival table + festivalLocale junction
+- `packages/db/src/schema/tag.ts` — Tag + tag_translation (translatable pattern example)
+- `packages/db/src/schema/visitor-profile.ts` — Visitor profile (1:1 with user)
+- `packages/db/src/schema/my-festival.ts` — Gate-less save membership (visitorId + festivalId)
+- `packages/db/src/schema/auth.ts` — better-auth tables (generated, don't hand-edit)
+- `packages/db/src/schema/_shared.ts` — Helpers (idColumn, timestamps, lower function)
+
+**Testing:**
+- `apps/api/test/` — Integration tests, smoke tests (TBD)
+- `apps/api/package.json` — `npm run test` runs Vitest
 
 ## Naming Conventions
 
 **Files:**
-- `.ts` — TypeScript source
-- `.module.ts` — NestJS modules (e.g., `festival.module.ts`)
-- `.controller.ts` — NestJS HTTP handlers
-- `.service.ts` — NestJS business logic
-- `*.schema.ts` — Data validation schemas (e.g., `packages/contracts/src/schemas.ts`)
-- `tsconfig*.json` — TypeScript config files
+- Controllers: `{entity}.controller.ts` (e.g., `festival.controller.ts`)
+- Services: `{entity}.service.ts` (e.g., `festival.service.ts`)
+- Modules: `{entity}.module.ts` (e.g., `festival.module.ts`)
+- Schemas: `{table}.ts` (e.g., `festival.ts`, `tag.ts`)
+- Config: `{concern}.ts` (e.g., `env.ts`, `auth.instance.ts`)
+- Compiled: `dist/` (built artifacts, gitignored)
 
 **Directories:**
-- `src/` — Source code (all packages and apps)
-- `dist/` — Compiled output (built via tsup or NestJS CLI)
-- `drizzle/` — Database migrations (generated, do not edit manually)
-- `[domain]/` — NestJS modules grouped by domain (e.g., `festival/`, future: `vendor/`, `act/`)
+- Lowercase with hyphens: `festival`, `health`, `auth`, `config`, `db`, `contracts`
+- No underscores in directory names (TypeScript files use underscores: `_shared.ts`)
+- One entity per directory (e.g., `apps/api/src/festival/` contains festival-related code)
 
-**Identifiers:**
-- Package names: `@festipal/{package}` (e.g., `@festipal/api`, `@festipal/db`)
-- App names: `apps/{name}` (e.g., `apps/api`, `apps/mobile`, `apps/admin`)
-- Exports: `export const contract`, `export type Festival`, `export function resolveLocalized`
+**TypeScript:**
+- Functions: `camelCase`, async functions return `Promise<T>` (e.g., `async getBySlug(): Promise<Festival | null>`)
+- Prefixes: `get*` (single item), `list*` (collection), `load*` (initialization), `create*`, `save*`, `delete*`
+- Classes: `PascalCase` (NestJS services, controllers)
+- Constants: `SCREAMING_SNAKE_CASE` (SUPPORTED_LOCALES, DEFAULT_LOCALE)
+- Types/Interfaces: `PascalCase` (Festival, Tag, Locale, LocalizedText)
+- Enums: `PascalCase` with SCREAMING_SNAKE_CASE members (e.g., `socialsVisibilityEnum` with values `'everyone'`, `'friends'`)
+- Use const by default; `let` rarely needed
+- Destructuring preferred over dot notation
+- Type imports explicit: `import type { Festival } from '@festipal/contracts'`
 
-**Table Names (Drizzle schema):**
-- Snake_case in database (`festival`, `festival_locale`, `tag_translation`)
-- `casing: 'snake_case'` in Drizzle config (`packages/db/src/client.ts`), so Drizzle auto-converts camelCase field names
+**Zod Schemas:**
+- Name: `{entity}Schema` or `{entity}{operation}Schema` (e.g., `festivalSchema`, `completeProfileBodySchema`)
+- Infer types: `export type Festival = z.infer<typeof festivalSchema>`
+- Drizzle integration: Use `createInsertSchema`, `createSelectSchema` for DB tables
+
+**Database Tables:**
+- Lowercase with underscores: `festival`, `tag`, `tag_translation`, `visitor_profile`, `my_festival`, `festival_locale`
+- Tenant-scoped tables: Include `festivalId` FK
+- Translation tables: Named `{entity}_translation` with `(entityId, locale)` primary key
+- Enums: Named after the column type (e.g., `localeEnum()` for locale columns)
 
 ## Where to Add New Code
 
-### New API Endpoint
+**New Feature (e.g., events endpoint):**
+1. **Contract:**
+   - Add endpoint to `packages/contracts/src/router.ts` (method, path, params/body/query, responses)
+   - Add Zod schema to `packages/contracts/src/schemas.ts` (EventSchema, etc.)
+   - Export from `packages/contracts/src/index.ts` (barrel)
 
-1. **Define contract** in `packages/contracts/src/router.ts`:
-   ```typescript
-   newEndpoint: {
-     method: 'GET',
-     path: '/festivals/:festivalId/endpoint',
-     pathParams: z.object({ festivalId: z.string().uuid() }),
-     responses: { 200: newSchema, /* 400, 404, etc */ },
-   }
-   ```
+2. **Database:**
+   - Add table definition to `packages/db/src/schema/event.ts` (new file)
+   - Export from `packages/db/src/schema/index.ts`
+   - Generate migration: `pnpm --filter @festipal/db db:generate`
+   - Push to Neon: `pnpm --filter @festipal/db db:push` (dev only)
 
-2. **Add Zod schema** in `packages/contracts/src/schemas.ts`:
-   ```typescript
-   export const newSchema = z.object({ /* fields */ });
-   export type New = z.infer<typeof newSchema>;
-   ```
+3. **Service:**
+   - Create `apps/api/src/event/event.service.ts` with methods (getById, list, create, etc.)
+   - Inject `@Inject(DB) private readonly db: Database` in constructor
+   - Enforce multi-tenancy: all queries filter by `festivalId`
+   - Resolve locales server-side if content is translatable
 
-3. **Implement in API controller** in `apps/api/src/[domain]/[domain].controller.ts`:
-   ```typescript
-   @TsRestHandler(contract.newEndpoint)
-   newEndpoint() {
-     return tsRestHandler(contract.newEndpoint, async ({ params, query }) => {
-       const result = await this.service.newMethod(params.festivalId);
-       return { status: 200, body: result };
-     });
-   }
-   ```
+4. **Controller:**
+   - Create `apps/api/src/event/event.controller.ts`
+   - Import contract from `@festipal/contracts`
+   - Use `@TsRestHandler(contract.methodName)` decorator
+   - Invoke service, map responses to status/body tuples
 
-4. **Implement in API service** in `apps/api/src/[domain]/[domain].service.ts`:
-   ```typescript
-   async newMethod(festivalId: string): Promise<New> {
-     const rows = await this.db
-       .select()
-       .from(newTable)
-       .where(eq(newTable.festivalId, festivalId));
-     return rows.map(r => ({ /* transform */ }));
-   }
-   ```
+5. **Module:**
+   - Create `apps/api/src/event/event.module.ts`
+   - Import DbModule (implicit, global)
+   - Declare controller and service
+   - Add to `apps/api/src/app.module.ts` imports
 
-5. **Add database schema** (if needed) in `packages/db/src/schema/[entity].ts`:
-   ```typescript
-   export const newTable = pgTable('new_table', {
-     id: idColumn(),
-     festivalId: uuid().notNull().references(() => festival.id),
-     // ... fields
-     ...timestamps,
-   });
-   ```
+6. **Testing:**
+   - Add tests to `apps/api/test/` (e.g., `event.e2e.spec.ts`)
+   - Test happy path, not-found, unauthorized, validation errors
 
-6. **Generate migration** (after schema change):
-   ```bash
-   pnpm --filter db db:generate
-   pnpm --filter db db:migrate  # or pnpm --filter db db:push (Neon)
-   ```
+**New Translatable Entity (e.g., venue names):**
+1. Follow "New Feature" steps above
+2. Database: Create base table (`venue`) + translation table (`venue_translation`)
+3. Schema: Use translation-table pattern from `packages/db/src/schema/tag.ts`
+4. Service: Query base + translation, rebuild map, resolve with `resolveLocalized()`
+5. Example: `apps/api/src/festival/festival.service.ts:50-84` (listTags)
 
-### New NestJS Module
+**New Package:**
+1. Create directory: `packages/{name}/`
+2. Add `package.json` with name `@festipal/{name}`, version `0.0.0`, private: false
+3. Add `tsconfig.json` (extends `@festipal/config/tsconfig.base.json`)
+4. Add `eslint.config.mjs` (extends `@festipal/config/eslint`)
+5. Add `tsup.config.ts` (ESM + CJS output to `dist/`)
+6. Create `src/index.ts` (barrel export)
+7. Update root `package.json` if adding new dependencies
+8. Reference from other packages via `@festipal/{name}` (workspace:* protocol in package.json)
 
-1. **Create module directory** under `apps/api/src/[domain]/`:
-   ```bash
-   mkdir apps/api/src/newdomain
-   ```
+**New Test:**
+- Location: `apps/api/test/` (for API tests) or per-package `src/**/*.spec.ts` (for unit tests)
+- Framework: Vitest (via `npm run test`)
+- Command: `pnpm --filter @festipal/api test` (run API tests only)
 
-2. **Create `.module.ts`**:
-   ```typescript
-   import { Module } from '@nestjs/common';
-   import { NewController } from './new.controller';
-   import { NewService } from './new.service';
-
-   @Module({
-     controllers: [NewController],
-     providers: [NewService],
-   })
-   export class NewModule {}
-   ```
-
-3. **Register in AppModule** (`apps/api/src/app.module.ts`):
-   ```typescript
-   @Module({
-     imports: [ConfigModule, DbModule, FestivalModule, NewModule],
-   })
-   ```
-
-### New Shared Type/Utility
-
-1. **Create in appropriate package** (e.g., `packages/i18n`, `packages/contracts`):
-   - If it's a type used by both API and clients → `packages/contracts`
-   - If it's locale-specific → `packages/i18n`
-   - If it's a design token → `packages/ui`
-
-2. **Export from package's `src/index.ts`**:
-   ```typescript
-   export { myFunction } from './myFunction';
-   export type { MyType } from './types';
-   ```
-
-3. **Build and depend on it** via workspace:* in consuming app's package.json:
-   ```json
-   "dependencies": { "@festipal/contracts": "workspace:*" }
-   ```
-
-### New Database Table
-
-1. **Create schema file** in `packages/db/src/schema/[entity].ts`:
-   ```typescript
-   import { pgTable, uuid, text } from 'drizzle-orm/pg-core';
-   import { idColumn, timestamps } from './_shared';
-   import { festival } from './festival';
-
-   export const myEntity = pgTable('my_entity', {
-     id: idColumn(),
-     festivalId: uuid().notNull().references(() => festival.id, { onDelete: 'cascade' }),
-     name: text().notNull(),
-     ...timestamps,
-   });
-   ```
-
-2. **Export from schema index** in `packages/db/src/schema/index.ts`:
-   ```typescript
-   export * from './my-entity';
-   ```
-
-3. **Generate migration**:
-   ```bash
-   pnpm --filter db db:generate
-   ```
-
-4. **Review and apply**:
-   ```bash
-   pnpm --filter db db:push  # Neon
-   # or
-   pnpm --filter db db:migrate  # Local Postgres
-   ```
-
-5. **Use in service** (e.g., `apps/api/src/myfeature/myfeature.service.ts`):
-   ```typescript
-   import { myEntity } from '@festipal/db';
-
-   async getEntity(festivalId: string) {
-     return this.db
-       .select()
-       .from(myEntity)
-       .where(eq(myEntity.festivalId, festivalId));
-   }
-   ```
+**Documentation (ADR, decision log):**
+- Location: `docs/DEVELOPMENT_DECISIONS.md` (ADR-001 through ADR-N)
+- Format: Title, Context, Decision, Consequences, Alternatives
+- Link in code: Add comment referencing ADR number (e.g., "// ADR-014: gate-less save")
 
 ## Special Directories
 
 **dist/ (Compiled Output):**
-- Generated: Yes
-- Committed: No (in .gitignore)
-- Purpose: Compiled TypeScript output from tsup or NestJS CLI
-- Per-package: Each app/package builds to its own `dist/` directory
-- Cleanup: `pnpm clean` or `rm -rf dist/` in each package
+- Purpose: Built JavaScript (ESM + CJS from tsup, CommonJS from tsc/nest)
+- Generated: By `pnpm build` or per-app build script
+- Committed: No (gitignored)
+- Regenerate: `pnpm build` (Turbo runs all build tasks in dependency order)
 
-**drizzle/ (Database Migrations):**
-- Generated: Yes (by `pnpm --filter db db:generate`)
-- Committed: Yes (migrations are part of schema history)
-- Purpose: SQL migration files (auto-generated from schema changes)
-- Manual editing: Never edit migration files; always regenerate from schema
-- Application: Via `db:migrate` (local) or `db:push` (Neon)
+**drizzle/ (Migrations):**
+- Purpose: SQL migrations (auto-generated by drizzle-kit)
+- Location: `packages/db/drizzle/`
+- Generated: By `pnpm --filter @festipal/db db:generate`
+- Committed: Yes (migrations are versioned)
+- Apply: `pnpm --filter @festipal/db db:migrate` (via env DATABASE_URL_UNPOOLED or DATABASE_URL)
 
 **node_modules/ (Dependencies):**
-- Generated: Yes (by pnpm install)
-- Committed: No (in .gitignore)
-- Purpose: Installed packages for each workspace member
-- Pnpm specific: Uses hardlinks from `.pnpm` cache for disk efficiency
+- Purpose: Installed packages (pnpm managed)
+- Location: Root and per-package (pnpm symlinks, not duplicates)
+- Committed: No (gitignored)
+- Update: `pnpm install` (install all), `pnpm update` (upgrade versions)
 
-**.turbo/ (Build Cache):**
-- Generated: Yes (by Turbo during build/dev)
-- Committed: No (in .gitignore)
-- Purpose: Incremental build cache (speeds up rebuilds)
-- Invalidation: Turbo auto-invalidates on file changes
+**.turbo/ (Cache):**
+- Purpose: Turbo build cache (speeds up `pnpm build`, `pnpm lint`, etc.)
+- Location: Root `.turbo/cache/`
+- Committed: No (gitignored; regenerated on first build)
+
+**.env Files:**
+- Purpose: Environment variables (secrets, DB URLs, API keys)
+- Location: Root `.env` (not committed), `.env.example` (template, committed if needed)
+- Gitignored: Yes (never commit secrets)
+- Validation: `apps/api/src/config/env.ts` (Zod schema enforces required vars)
 
 ---
 
-*Structure analysis: 2026-07-29*
+*Structure analysis: 2026-08-02*
