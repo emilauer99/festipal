@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 02
 current_phase_name: otp-auth-festival-backend-api
 status: executing
-stopped_at: Completed 02-03-PLAN.md
-last_updated: "2026-08-02T11:41:13.279Z"
+stopped_at: Completed 02-04-PLAN.md
+last_updated: "2026-08-02T11:51:34.110Z"
 last_activity: 2026-08-02
 last_activity_desc: Phase 02 execution resumed (wave continue)
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 02 (otp-auth-festival-backend-api) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-02 — Phase 02 execution resumed (wave continue)
 
-Progress: [████████░░] 75%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -64,6 +64,7 @@ Progress: [████████░░] 75%
 | Phase 02 P01 | 25min | 3 tasks | 8 files |
 | Phase 02 P02 | 16min | 2 tasks | 15 files |
 | Phase 02 P03 | 40min | 2 tasks | 7 files |
+| Phase 02 P04 | 24min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 02-02: better-auth requires an Origin header on state-changing /api/auth/* POSTs (CSRF check) — smoke script sends one explicitly; no production code change needed since real clients send it naturally
 - [Phase 02]: 02-03: Fixed a drizzle-orm/drizzle-zod text()-column TS-inference bug at its source (visitor-profile.ts .extend()) — VisitorProfilePublic/CompleteProfileBody/Me are now genuinely concrete types instead of all-unknown
 - [Phase 02]: 02-03: postgres added as a direct apps/api dependency (PostgresError import for 23505->409 mapping); drizzle-zod added as a direct packages/contracts dependency (needed for its own dts build)
+- [Phase ?]: 02-04: save() returns a discriminated {status:'ok'}|{status:'not-found'} result instead of throwing, matching the codebase's service-returns-signal/controller-maps-to-status pattern
+- [Phase ?]: 02-04: packages/db one-shot scripts must explicitly close the postgres.js connection (db.$client.end()) and load env via dotenv/config — otherwise the script hangs forever after its last query with no env source when run standalone via tsx
 
 ### Pending Todos
 
@@ -113,6 +116,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-02T11:41:13.269Z
-Stopped at: Completed 02-03-PLAN.md
+Last session: 2026-08-02T11:51:34.099Z
+Stopped at: Completed 02-04-PLAN.md
 Resume file: None

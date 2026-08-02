@@ -76,7 +76,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. `username-availability` is advisory (debounced check) while `complete-profile` is the source of truth, catching the unique-index violation as a TOCTOU-safe race guard; email OTP delivery uses an env-configured provider (e.g. Resend via `RESEND_API_KEY`) with a dev console/nodemailer fallback — no secrets committed.
   6. The app endpoints derive their Zod shapes from `packages/contracts` (composed on Phase 1's drizzle-zod base); better-auth's own OTP routes are deliberately excluded from the contract.
 
-**Plans**: 3/5 plans executed
+**Plans**: 4/5 plans executed
 
 **Wave 1**
 
@@ -89,7 +89,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Wave 3** *(blocked on Wave 2, parallel)*
 
 - [x] 02-03-PLAN.md — me expansion: complete-profile (23505→409 TOCTOU guard), username-availability, caller-scoped my-festivals
-- [ ] 02-04-PLAN.md — festival browse (D-04 shape) + gate-less idempotent save + frequency-2026 seed
+- [x] 02-04-PLAN.md — festival browse (D-04 shape) + gate-less idempotent save + frequency-2026 seed
 
 **Wave 4** *(blocked on Wave 3)*
 
@@ -171,7 +171,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
-| 2. OTP Auth & Festival Backend API | 3/5 | In Progress|  |
+| 2. OTP Auth & Festival Backend API | 4/5 | In Progress|  |
 | 3. Mobile App Shell & i18n Foundation | 0/TBD | Not started | - |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
 | 5. Festival Selection & Home | 0/TBD | Not started | - |
