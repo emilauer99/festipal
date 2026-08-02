@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 2
-current_phase_name: OTP Auth & Festival Backend API
-status: "Phase 01 shipped — PR #4"
-stopped_at: Phase 2 context gathered
-last_updated: "2026-08-01T13:00:18.239Z"
-last_activity: 2026-08-01
-last_activity_desc: Phase 02 planning complete
+current_phase: 02
+current_phase_name: otp-auth-festival-backend-api
+status: executing
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-08-02T11:01:39.039Z"
+last_activity: 2026-08-02
+last_activity_desc: Phase 02 execution resumed (wave continue)
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 8
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 01 — Identity Schema & Auth Foundation
+**Current focus:** Phase 02 — otp-auth-festival-backend-api
 
 ## Current Position
 
-Phase: 2 — OTP Auth & Festival Backend API
-Plan: Not started
-Status: Phase 01 shipped — PR #4
-Last activity: 2026-08-01 — Phase 02 planning complete
+Phase: 02 (otp-auth-festival-backend-api) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-02 — Phase 02 execution resumed (wave continue)
 
-Progress: [██████████] 100%
+Progress: [█████░░░░░] 50%
 
 ## Performance Metrics
 
@@ -61,6 +61,7 @@ Progress: [██████████] 100%
 | Phase 01 P01 | 12min | 3 tasks | 7 files |
 | Phase 01 P02 | ~18min | 2 tasks | 9 files |
 | Phase 01 P03 | ~15min | 2 tasks | 5 files |
+| Phase 02 P01 | 25min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,8 @@ Recent decisions affecting current work:
 - [Phase ?]: visitor_profile username uniqueness enforced by a Postgres lower(username) functional UNIQUE INDEX, not an app-layer check (race-proof, D-04)
 - [Phase ?]: 01-03: my_festival is the single global<->tenant bridge — composite PK (visitorId, festivalId), text visitorId FK -> visitor_profile.accountId (encodes profile-before-save), uuid festivalId FK -> festival.id; gate-less save, no role/invite columns (ADR-014/016, D-04)
 - [Phase ?]: 01-03: lower(username) unique index proven LIVE in Neon — case-variant duplicate visitor_profile insert rejected with Postgres 23505 from visitor_profile_username_lower_unq; full schema (auth+visitor_profile+my_festival) migrated cleanly (migration 0002)
+- [Phase ?]: GET /me response locked to { accountId, email, profile: VisitorProfilePublic | null } (RESEARCH.md A4, Open Question 1 resolved)
+- [Phase ?]: listFestivals/listMyFestivals both return z.array(festivalSchema), not myFestivalSelectSchema-derived shapes
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-01T12:24:17.079Z
-Stopped at: Phase 2 context gathered
-Resume file: .planning/phases/02-otp-auth-festival-backend-api/02-CONTEXT.md
+Last session: 2026-08-02T11:01:39.025Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None
