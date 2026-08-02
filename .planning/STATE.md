@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 02
 current_phase_name: otp-auth-festival-backend-api
 status: executing
-stopped_at: Completed 02-05-PLAN.md
-last_updated: "2026-08-02T13:41:53.294Z"
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-08-02T13:49:24.162Z"
 last_activity: 2026-08-02
-last_activity_desc: Phase 02 execution resumed (wave continue)
+last_activity_desc: Phase 02 execution started
 progress:
   total_phases: 2
   completed_phases: 2
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -28,9 +28,9 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 02 (otp-auth-festival-backend-api) — EXECUTING
-Plan: 5 of 5
+Plan: 2 of 6
 Status: Ready to execute
-Last activity: 2026-08-02 — Phase 02 execution resumed (wave continue)
+Last activity: 2026-08-02 — Phase 02 execution started
 
 Progress: [██████████] 100%
 
@@ -66,6 +66,7 @@ Progress: [██████████] 100%
 | Phase 02 P03 | 40min | 2 tasks | 7 files |
 | Phase 02 P04 | 24min | 2 tasks | 5 files |
 | Phase 02 P05 | 30min | 2 tasks | 5 files |
+| Phase 02 P06 | 15min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -94,6 +95,7 @@ Recent decisions affecting current work:
 - [Phase ?]: 02-04: packages/db one-shot scripts must explicitly close the postgres.js connection (db.$client.end()) and load env via dotenv/config — otherwise the script hangs forever after its last query with no env source when run standalone via tsx
 - [Phase 02]: 02-05: Disabled vitest fileParallelism in apps/api after the larger OTP-heavy spec suite proved flaky under parallel-file execution (rate limiter + shared capture-file races) — 3/3 consecutive full-suite runs green afterward — Root-caused via isolation testing (every new spec passed alone, only the full parallel run failed) before applying the fix, avoiding a speculative change
 - [Phase 02]: 02-05: auth-guard.spec.ts covers all eight protected /api/v1 endpoints (plan's six plus getFestival/listTags) to match the objective's whole-endpoint-set language — Closes the annotation table's no-endpoint-untagged prohibition with a passing test, not just manual review
+- [Phase ?]: 02-06: Fixed CR-01 at the service/contract/controller level only (my_festival FK unchanged) — save() catches Postgres 23503 and returns a 409, mirroring me.service.completeProfile's 23505 idiom
 
 ### Pending Todos
 
@@ -119,6 +121,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-02T12:06:59.179Z
-Stopped at: Completed 02-05-PLAN.md
+Last session: 2026-08-02T13:49:24.146Z
+Stopped at: Completed 02-06-PLAN.md
 Resume file: None

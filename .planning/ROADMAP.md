@@ -76,7 +76,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. `username-availability` is advisory (debounced check) while `complete-profile` is the source of truth, catching the unique-index violation as a TOCTOU-safe race guard; email OTP delivery uses an env-configured provider (e.g. Resend via `RESEND_API_KEY`) with a dev console/nodemailer fallback — no secrets committed.
   6. The app endpoints derive their Zod shapes from `packages/contracts` (composed on Phase 1's drizzle-zod base); better-auth's own OTP routes are deliberately excluded from the contract.
 
-**Plans**: 6 plans (5 executed + 1 gap-closure)
+**Plans**: 6/6 plans executed
 
 **Wave 1**
 
@@ -97,7 +97,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Gap closure** *(post-verification, closes CR-01)*
 
-- [ ] 02-06-PLAN.md — Harden gate-less save: catch Postgres 23503 (missing visitor_profile) → clean 409 instead of 500, add contract response + controller branch + regression test
+- [x] 02-06-PLAN.md — Harden gate-less save: catch Postgres 23503 (missing visitor_profile) → clean 409 instead of 500, add contract response + controller branch + regression test
 
 **Notes**: MEDIUM research flag (downgraded 2026-07-30 after verifying current docs) — the community NestJS wrapper (`@thallesp/nestjs-better-auth`, requires `better-auth >= 1.5.0`) **automatically re-applies** body parsing for non-auth routes, so `bodyParser: false` + `AuthModule.forRoot({ auth, bodyParser: {...} })` is the whole wiring; ts-rest handlers (plain NestJS controllers) just consume the re-applied `req.body` — no manual `express.json()` exclusion. The spike now *confirms* rather than *designs*: (1) 2-request body proof (OTP-verify POST to `/api/auth/*` AND ts-rest `save` POST), (2) global-prefix collision — align `/api/v1` (ts-rest) vs `/api/auth` (better-auth) by excluding auth from `setGlobalPrefix` or setting better-auth `basePath`, (3) version-pin `better-auth >= 1.5.0`. Hand-rolled `@All('auth/*path')` catch-all kept as **Plan C** fallback. Addresses Pitfalls 3 (AuthGuard mis-tagging + body-parser), 4 (gate-less entry ≠ dropping `festivalId` isolation), 8 (OTP rate-limit/enumeration), and 11 (username race).
 
@@ -175,7 +175,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
-| 2. OTP Auth & Festival Backend API | 5/5 | In Progress|  |
+| 2. OTP Auth & Festival Backend API | 6/6 | In Progress|  |
 | 3. Mobile App Shell & i18n Foundation | 0/TBD | Not started | - |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
 | 5. Festival Selection & Home | 0/TBD | Not started | - |
