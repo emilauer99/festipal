@@ -94,8 +94,8 @@ Which phases cover which requirements.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | PLAT-01 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Gaps Found |
-| SEC-02 | Phase 2 | Gaps Found |
+| SEC-01 | Phase 2 | Complete |
+| SEC-02 | Phase 2 | Complete |
 | PLAT-02 | Phase 3 | Pending |
 | I18N-01 | Phase 3 | Pending |
 | AUTH-01 | Phase 4 | Pending |

@@ -1,23 +1,17 @@
 ---
 phase: 02-otp-auth-festival-backend-api
-verified: 2026-08-02T12:22:16Z
-status: gaps_found
-score: 15/16 must-haves verified
+verified: 2026-08-02T16:05:00Z
+status: passed
+score: 16/16 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
-gaps:
-  - truth: "POST /api/v1/festivals/:festivalId/save is gate-less: any authenticated visitor can save any festival; it writes a my_festival row and returns 200 (02-04-PLAN.md must_have, touches roadmap SC-3/SEC-02)"
-    status: failed
-    reason: "Reproduced live against the running dev API (2026-08-02): an authenticated visitor whose GET /api/v1/me shows profile:null (the API's own documented, reachable first-login state) gets an unhandled 500 Internal Server Error from POST /api/v1/festivals/:festivalId/save, not a 200 or a clean documented error. Root cause: my_festival.visitorId is a NOT NULL FK into visitor_profile.accountId, but FestivalService.save() never checks for an existing visitor_profile row or catches the resulting Postgres 23503 FK-violation before inserting — it only guards against the festival not existing (23-REVIEW.md CR-01, unresolved as of this verification). No test in the suite exercises this path: save-idempotency.spec.ts, bodyparser-smoke.spec.ts, and festival-isolation.spec.ts all insert/complete a visitor_profile before ever calling save."
-    artifacts:
-      - path: "apps/api/src/festival/festival.service.ts"
-        issue: "save(visitorId, festivalId) at lines 124-134 has no defense against a missing visitor_profile row; the my_festival insert throws an uncaught 23503 that propagates to an unhandled 500"
-      - path: "packages/contracts/src/router.ts"
-        issue: "contract.saveFestival only declares 200/404 responses — no response shape exists for a profile-required rejection even if the service were fixed"
-    missing:
-      - "FestivalService.save() must check for (or catch the FK violation for) a missing visitor_profile before/around the my_festival insert and return a distinct, clean signal (e.g. {status:'profile-required'}) instead of letting a raw Postgres 23503 propagate"
-      - "contract.saveFestival needs an additional response status (e.g. 409/400) for the profile-required case, plus a controller branch mapping it"
-      - "A test exercising 'save called by an authenticated visitor with no completed visitor_profile' — currently absent from the whole suite"
+re_verification:
+  previous_status: gaps_found
+  previous_score: 15/16
+  gaps_closed:
+    - "POST /api/v1/festivals/:festivalId/save is gate-less: any authenticated visitor can save any festival; it writes a my_festival row and returns 200 (CR-01 unhandled-500-on-missing-profile defect)"
+  gaps_remaining: []
+  regressions: []
 deferred: []
 human_verification: []
 ---
@@ -25,111 +19,131 @@ human_verification: []
 # Phase 2: OTP Auth & Festival Backend API Verification Report
 
 **Phase Goal:** The NestJS API authenticates visitors passwordlessly via email-OTP, supports first-login profile completion and festival browse/save, and isolates festival-scoped data by festivalId
-**Verified:** 2026-08-02T12:22:16Z
-**Status:** gaps_found
-**Re-verification:** No — initial verification
+**Verified:** 2026-08-02T16:05:00Z
+**Status:** passed
+**Re-verification:** Yes — after gap closure (plan 02-06)
 
 ## Goal Achievement
 
-### Observable Truths
+### Gap Closure Verification (CR-01 / focus of this re-verification)
+
+The prior verification (2026-08-02T12:22:16Z) found one BLOCKER: `POST /api/v1/festivals/:festivalId/save` threw an unhandled `500` for an authenticated visitor with no completed profile (`GET /me` -> `profile: null`), instead of a clean 200/4xx. Gap-closure plan `02-06` claims this is fixed. Verified directly against the codebase, not the SUMMARY narrative:
+
+| Check | Evidence | Result |
+|-------|----------|--------|
+| Contract declares 409 | `packages/contracts/src/router.ts:76` — `responses: { 200: z.object({ saved: z.literal(true) }), 404: errorSchema, 409: errorSchema }`, reusing the shared `errorSchema` (no bespoke shape) | VERIFIED |
+| Service catches 23503 FK violation | `apps/api/src/festival/festival.service.ts:125-151` — `save()` return type widened to `{status:'ok'}\|{status:'not-found'}\|{status:'profile-required'}`; `try { insert... } catch (err) { const cause = (err as {cause?:unknown}).cause; if (cause instanceof PostgresError && cause.code === '23503') return {status:'profile-required'}; throw err; }` — mirrors `me.service.completeProfile`'s 23505 idiom exactly, as prescribed | VERIFIED |
+| Controller maps signal to 409 | `apps/api/src/festival/festival.controller.ts:51-53` — `if (result.status === 'profile-required') return { status: 409, body: { message: 'Complete your profile before saving a festival' } };` | VERIFIED |
+| Happy-path / 404 path unchanged | Same controller/service — `ok`->200 `{saved:true}` and `not-found`->404 branches untouched, confirmed by reading the full file | VERIFIED |
+| Schema untouched (plan prohibition) | `git show 0151654 --stat` / `7f311bf --stat` — no `packages/db/*` files in either gap-closure commit's diff | VERIFIED |
+| Regression test exists and is substantive | `apps/api/test/save-profile-required.spec.ts` — signs in via OTP, deliberately omits the `visitor_profile` insert, POSTs save, asserts `res.status` is `409` and explicitly `not.toBe(500)`, asserts `myFestival` rows for the caller `toHaveLength(0)` | VERIFIED |
+| Test actually passes (not just claimed) | Ran directly: `pnpm --filter @festipal/api exec vitest run test/save-profile-required.spec.ts` -> `Test Files 1 passed (1)`, `Tests 1 passed (1)` — output confirms the assertion path executed for real (dev-OTP capture, sign-in, 409 response) | VERIFIED (behavioral) |
+| Full suite green, no regression | Ran directly: `pnpm --filter @festipal/api exec vitest run` -> `Test Files 8 passed (8)`, `Tests 31 passed (31)` — matches SUMMARY's claimed 8 files / 31 tests exactly | VERIFIED |
+| Typecheck / contract build clean | Ran directly: `pnpm --filter @festipal/contracts build` (exit 0) then `pnpm --filter @festipal/api exec tsc --noEmit -p tsconfig.json` (exit 0, no output) | VERIFIED |
+| Lint clean | Ran directly: `pnpm --filter @festipal/api lint` -> exit 0, no output | VERIFIED |
+| No debt markers | `grep -n "TBD\|FIXME\|XXX"` across all 4 gap-closure files -> no matches | VERIFIED |
+
+**Gap closed.** The fix is present in source (not stubbed), wired end-to-end (contract -> service -> controller), and behaviorally proven by a real regression test that was executed in this verification session, not merely cited from the SUMMARY.
+
+### Observable Truths (full re-check)
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | better-auth's emailOTP plugin wired into NestJS (6-digit code, ~5-min expiry, resendStrategy 'reuse') behind a global AuthGuard, mounted at `/api/auth/*` | VERIFIED | `apps/api/src/auth/auth.instance.ts` (`emailOTP({ otpLength: 6, expiresIn: 60*5, resendStrategy: 'reuse' })`); `apps/api/src/auth/auth.module.ts` (`BetterAuthModule.forRoot`, global `AuthGuard`) |
-| 2 | OTP send/verify + GET /me, POST /me/complete-profile, GET /me/username-availability, GET /festivals, POST /festivals/:festivalId/save, GET /me/festivals reachable against a live dev API | VERIFIED (with a caveat — see gap below) | Live dev server started and driven directly: OTP request 200, dev-transport code captured, verify 200 + session cookie, `GET /api/v1/me` 200 with `{accountId, email, profile:null}`, `GET /api/v1/festivals` 200 with 1 seeded festival, `POST /api/v1/festivals/:id/save` reachable but returned `500` for a visitor with no completed profile (see gap) |
-| 3 | Every endpoint explicitly tagged public vs protected in one deliberate pass, captured as an endpoint × auth-annotation table reviewed at phase end | VERIFIED | `.planning/phases/02-otp-auth-festival-backend-api/02-AUTH-ANNOTATIONS.md` — 10 rows, matches source decorators (spot-checked against `me.controller.ts`/`festival.controller.ts`/`health.controller.ts`); `apps/api/test/auth-guard.spec.ts` (10 tests, all pass) proves it programmatically |
-| 4 | Festival-scoped reads always constrained by festivalId; automated test proves cross-festival isolation | VERIFIED | `apps/api/test/festival-isolation.spec.ts` — self-provisioned A/B festivals + 2 visitors; visitor 1 (saved A only) sees exactly `[A]`, visitor 2 sees `[]`, browse (`GET /festivals`) stays unscoped — all 3 assertions pass |
-| 5 | Save/enter is gate-less (no 403-on-unsaved); save only writes my_festival | FAILED (partial) | Gate-less w.r.t. membership/ticket is correctly implemented (no such check exists) and idempotent saves work when a profile exists (`save-idempotency.spec.ts` passes) — but "save only writes my_festival" does not hold universally: for an authenticated visitor with no completed profile (a documented reachable state), save throws an unhandled `500` instead of writing the row or returning a clean error. Reproduced live, see gap. |
-| 6 | bodyParser: false plus re-added JSON parsing smoke-tested (OTP verify POST + non-auth ts-rest POST both receive correct bodies) | VERIFIED | `apps/api/test/bodyparser-smoke.spec.ts` (2 tests pass, in-process) + documented one-time live round-trip against `pnpm --filter @festipal/api dev` (02-05-SUMMARY.md); `otp-me-smoke.mjs` re-run live during this verification also confirms the `/api/auth` POST half parses |
-| 7 | username-availability advisory, complete-profile source of truth (TOCTOU-safe unique-index catch) | VERIFIED | `apps/api/src/me/me.service.ts` — `checkUsernameAvailability` is a plain SELECT; `completeProfile` independently catches Postgres `23505` via `err.cause instanceof PostgresError`; `apps/api/test/username-race.spec.ts` + `me-endpoints.spec.ts` prove the 409 path |
-| 8 | Email OTP via env-configured provider (Resend) with dev fallback — no secrets committed | VERIFIED | `apps/api/src/auth/email/otp-email-provider.ts` (transport selector), `resend-otp-email-provider.ts` (dormant, env-gated), `dev-otp-email-provider.ts` (active); `git show HEAD:apps/api/.env.example` contains only empty placeholders, no real secret values |
-| 9 | App endpoints derive Zod shapes from packages/contracts (drizzle-zod base); better-auth's own OTP routes excluded from the contract | VERIFIED | `packages/contracts/src/schemas.ts`/`router.ts` — `completeProfileBodySchema` derived via `visitorProfileInsertSchema.pick(...)`; `grep` of `router.ts` shows no `/auth` path string |
-| 10 | Full ts-rest contract surface (getMe, completeProfile, usernameAvailability, listFestivals, saveFestival, listMyFestivals) exists under one `c.router({...})` call | VERIFIED | `packages/contracts/src/router.ts` — all six endpoints present under a single `c.router` call with `pathPrefix: '/api/v1'` |
-| 11 | `env` is a single memoized module-level export; BETTER_AUTH_SECRET required, RESEND_API_KEY optional | VERIFIED | `apps/api/src/config/env.ts` — `export const env = loadEnv()`; `BETTER_AUTH_SECRET: z.string().min(1)` (required), `RESEND_API_KEY: z.string().optional()` |
-| 12 | vitest + supertest + @nestjs/testing installed and the harness runs | VERIFIED | `pnpm --filter @festipal/api exec vitest run` executed during this verification: **7 files, 30 tests, all pass** |
-| 13 | GET /api/v1/me/festivals returns only the caller's saved festivals, scoped by session.user.id — never a request parameter | VERIFIED | `apps/api/src/me/me.service.ts#listMyFestivals` — `WHERE eq(myFestival.visitorId, visitorId)`, `visitorId` is a method arg, never read from query/params; proven by `festival-isolation.spec.ts` + `me-endpoints.spec.ts` |
-| 14 | An idempotent seed script inserts frequency-2026 and is re-runnable as a no-op/refresh | VERIFIED | `packages/db/scripts/seed.ts` — `onConflictDoUpdate` on `festival.slug`, `onConflictDoNothing` on locale rows; SUMMARY documents two manual runs returning the same festival id |
-| 15 | Concurrent-race backstop truths (OTP double-verify, duplicate-username race, concurrent save race, annotation-table drift) | UNCERTAIN (backstop, no automated coverage) | All four plans mark these `verification: backstop` and each SUMMARY records `human_judgment: true` with a sequential (not genuinely concurrent) proof as the closest available evidence — no gap by itself (structurally implied by unique indexes/composite PKs), documented here for completeness, not blocking |
+| 1 | better-auth's emailOTP plugin wired into NestJS (6-digit code, ~5-min expiry) behind a global AuthGuard, mounted at `/api/auth/*` | VERIFIED | Unchanged since prior verification; `auth-guard.spec.ts` (10/10) still in the green 8-file run |
+| 2 | OTP send/verify + GET /me, POST /me/complete-profile, GET /me/username-availability, GET /festivals, POST /festivals/:festivalId/save, GET /me/festivals reachable | VERIFIED | `save-profile-required.spec.ts` proves the previously-uncertain save path now returns a clean, documented response in-process; all other endpoints unchanged from prior live verification |
+| 3 | Every endpoint tagged public vs protected, captured in an endpoint x auth-annotation table | VERIFIED | `02-AUTH-ANNOTATIONS.md` unchanged; not touched by 02-06 |
+| 4 | Festival-scoped reads always constrained by festivalId; automated test proves cross-festival isolation | VERIFIED | `festival-isolation.spec.ts` still passes as part of the 8-file/31-test green run |
+| 5 | Save/enter is gate-less (no 403-on-unsaved); save only writes my_festival — or returns a clean documented error, never crashes | VERIFIED | Gate-less-ness unchanged (no membership check); the missing-profile edge case now returns a contract-documented 409 and writes zero rows, per `save-profile-required.spec.ts` (passing) — the "never crashes" clause now holds |
+| 6 | bodyParser: false plus re-added JSON parsing smoke-tested | VERIFIED | `bodyparser-smoke.spec.ts` unchanged, still in the green run |
+| 7 | username-availability advisory, complete-profile source of truth (TOCTOU-safe) | VERIFIED | `username-race.spec.ts` / `me-endpoints.spec.ts` unchanged, still green |
+| 8 | Email OTP via env-configured provider (Resend) with dev fallback — no secrets committed | VERIFIED | Unchanged; `.env.example` still placeholder-only |
+| 9 | App endpoints derive Zod shapes from packages/contracts; better-auth's OTP routes excluded from the contract | VERIFIED | `router.ts` still has no `/auth` path; new `409: errorSchema` reuses the existing shared schema, no re-declaration |
+| 10 | Full ts-rest contract surface exists under one `c.router({...})` call | VERIFIED | Confirmed unchanged structurally, `saveFestival` still inside the single router call |
+| 11 | `env` is a single memoized module-level export | VERIFIED | Unchanged |
+| 12 | vitest + supertest + @nestjs/testing harness runs | VERIFIED | Ran directly this session: 8 files, 31 tests, all pass |
+| 13 | GET /api/v1/me/festivals scoped by session.user.id, never a request parameter | VERIFIED | Unchanged |
+| 14 | Idempotent seed script | VERIFIED | Unchanged, not touched by 02-06 |
+| 15 | Concurrent-race backstop truths (documented `verification: backstop` tier) | UNCERTAIN (backstop, no automated coverage) — same as prior verification, non-blocking per plans' own stated tier | Unchanged |
+| 16 | POST /festivals/:festivalId/save returns a clean 409 (not 500) and writes zero rows for a profile-null caller (CR-01 closure, this re-verification's focus) | VERIFIED | See Gap Closure Verification table above — source read + test executed live in this session |
 
-**Score:** 15/16 truths verified (1 failed: gate-less/idempotent save's "only writes my_festival" clause does not hold when the caller has no completed profile)
+**Score:** 16/16 truths at a verifiable status (15 VERIFIED/unchanged + 1 newly VERIFIED for the closed gap); truth #15 remains an explicitly-accepted backstop item, consistent with the prior verification's treatment (not counted as a gap or human-verification item, per the plans' own `verification: backstop` tier and the prior verification's precedent).
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `packages/contracts/src/router.ts` | Full `/api/v1` contract, six new endpoints | ✓ VERIFIED | All six present, single `c.router` call, no `/auth` path |
-| `packages/contracts/src/schemas.ts` | `meSchema`, `completeProfileBodySchema`, `usernameAvailabilitySchema` on drizzle-zod bases | ✓ VERIFIED | Confirmed via source read |
-| `apps/api/src/config/env.ts` | Memoized `env`, required `BETTER_AUTH_SECRET` | ✓ VERIFIED | Confirmed |
-| `apps/api/src/auth/auth.instance.ts` | `betterAuth()` w/ emailOTP + sliding session | ✓ VERIFIED | Confirmed |
-| `apps/api/src/auth/auth.module.ts` | `AuthModule.forRoot` + global guard | ✓ VERIFIED | Confirmed |
-| `apps/api/src/me/{me.controller,me.service}.ts` | getMe/completeProfile/usernameAvailability/listMyFestivals | ✓ VERIFIED | Confirmed, all four handlers present |
-| `apps/api/src/festival/{festival.controller,festival.service}.ts` | listFestivals/saveFestival | ⚠ VERIFIED-BUT-BUGGY | Both endpoints exist and are wired; `save()` has the CR-01 defect (see gap) |
-| `packages/db/scripts/seed.ts` | Idempotent frequency-2026 seed | ✓ VERIFIED | Confirmed |
-| `apps/api/test/{auth-guard,festival-isolation,bodyparser-smoke}.spec.ts` | SEC-01/SEC-02/SC-4 proof specs | ✓ VERIFIED | All exist, all pass |
-| `.planning/phases/02-otp-auth-festival-backend-api/02-AUTH-ANNOTATIONS.md` | Endpoint × auth-annotation table | ✓ VERIFIED | Exists, matches source |
-| `apps/api/test/smoke/otp-me-smoke.mjs` | Live end-to-end smoke script | ✓ VERIFIED | Re-run live during this verification, all 6 checks pass |
+| `packages/contracts/src/router.ts` | `saveFestival` gains `409: errorSchema` | VERIFIED | Confirmed via grep, reuses shared schema |
+| `apps/api/src/festival/festival.service.ts` | `save()` catches 23503, returns `profile-required` | VERIFIED | Confirmed via source read |
+| `apps/api/src/festival/festival.controller.ts` | Maps `profile-required` -> 409 | VERIFIED | Confirmed via source read |
+| `apps/api/test/save-profile-required.spec.ts` | New regression spec | VERIFIED | Exists, substantive (121 lines), passes standalone and in full suite |
+| All artifacts from the original 5 plans (02-01 through 02-05) | Unchanged | VERIFIED | `git status` shows a clean tree apart from an unrelated `.planning/config.json` change; no regressions found |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
-| `packages/contracts` schemas | `@festipal/db/schema` drizzle-zod bases | `visitorProfileInsertSchema.pick(...)` | ✓ WIRED | Confirmed in `schemas.ts` |
-| `auth.instance.ts` | memoized `env` | `import { env } from '../config/env'` | ✓ WIRED | Confirmed |
-| `me.controller.ts` | `@Session()` → `me.service.ts` | session.user.id passed as method arg | ✓ WIRED | Confirmed for all four handlers |
-| `festival.service.ts#save` | `my_festival` (visitorId, festivalId) composite PK | `onConflictDoNothing()` | ✓ WIRED (idempotency only) | Idempotent for the happy path; NOT wired against the FK-violation failure mode (CR-01) |
-| `me.service.ts#listMyFestivals` | `my_festival` → `festival` join | `WHERE eq(myFestival.visitorId, visitorId)` | ✓ WIRED | Confirmed, session-derived only |
-| `AppModule` | `AuthModule` + `MeModule` + `FestivalModule` | module imports | ✓ WIRED | Confirmed in `app.module.ts` |
+| `festival.service.ts#save` catch branch | `postgres` package's `PostgresError` | `cause instanceof PostgresError && cause.code === '23503'` | WIRED | Confirmed; import present at top of file |
+| `festival.controller.ts#saveFestival` | `festival.service.ts#save`'s `profile-required` branch | `result.status === 'profile-required'` conditional | WIRED | Confirmed |
+| `save-profile-required.spec.ts` | live app instance via `createTestApp()` | supertest POST against `/api/v1/festivals/:id/save` | WIRED | Confirmed by running the test — it exercised a real in-process NestJS app + real Postgres insert/FK-violation path |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| Full apps/api test suite | `pnpm --filter @festipal/api exec vitest run` | 7 files, 30 tests, 0 failures | ✓ PASS |
-| Typecheck | `pnpm --filter @festipal/api exec tsc --noEmit -p tsconfig.json` | exits 0, no errors | ✓ PASS |
-| Live OTP → session → GET /me round-trip | Started `pnpm --filter @festipal/api dev`, drove OTP request → capture-file read → verify → `GET /api/v1/me` (200, with cookie) / (401, no cookie) → `GET /api/v1/health` (200, no cookie) | All 6 checks passed against the live dev server | ✓ PASS |
-| **Save without a completed profile** (not covered by any committed test) | Same live session, `GET /me` confirmed `profile:null`, then `POST /api/v1/festivals/:id/save` | **500 `{"statusCode":500,"message":"Internal server error"}`** instead of 200/clean-error | ✗ FAIL — this is the CR-01 gap |
-| `.env.example` contains no real secrets | `git show HEAD:apps/api/.env.example` | Only empty placeholders (`BETTER_AUTH_SECRET=`, `RESEND_API_KEY=`, etc.) | ✓ PASS |
-
-The dev server used for the live checks above was started and stopped as part of this verification and left no residual process running.
+| Contract build | `pnpm --filter @festipal/contracts build` | exit 0, dist emitted | PASS |
+| API typecheck | `pnpm --filter @festipal/api exec tsc --noEmit -p tsconfig.json` | exit 0, no output | PASS |
+| New regression spec, standalone | `pnpm --filter @festipal/api exec vitest run test/save-profile-required.spec.ts` | 1 file, 1 test, passed — log shows real OTP capture + 409 response | PASS |
+| Full apps/api suite | `pnpm --filter @festipal/api exec vitest run` | 8 files, 31 tests, 0 failures | PASS |
+| Lint | `pnpm --filter @festipal/api lint` | exit 0, no output | PASS |
+| Debt-marker scan on gap-closure files | `grep -n "TBD\|FIXME\|XXX"` on the 4 changed files | no matches | PASS |
+| DB schema untouched (plan prohibition) | `git show 0151654 --stat` / `git show 7f311bf --stat` | neither commit touches `packages/db/*` | PASS |
 
 ### Requirements Coverage
 
 | Requirement | Source Plan(s) | Description | Status | Evidence |
 |-------------|-----------------|--------------|--------|----------|
-| SEC-01 | 02-01 through 02-05 | Login-first — all app functionality requires authentication | ✓ SATISFIED | Global `AuthGuard` (`auth.module.ts`); `auth-guard.spec.ts` (10/10 pass) + `02-AUTH-ANNOTATIONS.md`; only `HealthController` and `/api/auth/*` are anonymous |
-| SEC-02 | 02-01, 02-03, 02-04, 02-05 | Festival-scoped data isolated by festivalId; save/enter gate-less, not an access gate | ⚠ PARTIALLY SATISFIED | Isolation itself is proven (`festival-isolation.spec.ts`, 3/3 pass) and gate-less-ness (no membership check) is correctly implemented — but the "save only writes my_festival" clause is violated by the CR-01 unhandled-500 defect for a visitor with no completed profile, which is a reachable, undocumented-in-the-contract failure mode |
+| SEC-01 | 02-01 through 02-06 | Login-first — all app functionality requires authentication | SATISFIED | Unchanged from prior verification; global `AuthGuard`, `auth-guard.spec.ts` 10/10 |
+| SEC-02 | 02-01, 02-03, 02-04, 02-05, 02-06 | Festival-scoped data isolated by festivalId; save/enter gate-less, robust (never crashes) | SATISFIED | Isolation proven (`festival-isolation.spec.ts`); gate-less-ness correct; the "never crashes" robustness clause that was previously violated (CR-01) is now closed by `02-06` — verified by direct test execution in this session, not by SUMMARY claim alone |
 
-REQUIREMENTS.md marks both SEC-01 and SEC-02 as `[x]` Complete for Phase 2 — SEC-01 is fully supported by the evidence above; SEC-02's isolation guarantee holds, but its robustness (save "only writes my_festival", never crashes) does not, per the reproduced CR-01 defect. No orphaned requirement IDs found (only SEC-01/SEC-02 map to Phase 2 in REQUIREMENTS.md's traceability table, both present in every plan's `requirements` frontmatter field).
+Note: `.planning/REQUIREMENTS.md`'s traceability table (lines 97-98) still lists `SEC-01`/`SEC-02` as `Gaps Found` — this is a stale documentation artifact from before the 02-06 gap closure and should be updated to `Complete` to match the checkbox state at line 45-46 (already `[x]`). This is an informational note, not a code-level gap; it does not affect the verified status of the codebase itself.
+
+No orphaned requirement IDs found — only SEC-01/SEC-02 map to Phase 2, both present in every plan's `requirements` frontmatter field (including `02-06-PLAN.md`).
 
 ### Anti-Patterns Found
 
-| File | Line | Pattern | Severity | Impact |
-|------|------|---------|----------|--------|
-| `apps/api/src/festival/festival.service.ts` | 124-134 | Unhandled Postgres FK violation (23503) surfaces as a raw 500 | 🛑 Blocker | Reproduced live — see gap above (CR-01 in 02-REVIEW.md, unresolved) |
-| `packages/contracts/src/schemas.ts` / `packages/db/src/schema/visitor-profile.ts` | 59-64 / 64-75 | No length/format validation on `username`/`displayName`/`avatar` (empty string, unbounded length, no `.url()` on avatar) | ⚠ Warning | Not a stated must-have this phase but weakens IDN-01's "required unique username" intent for Phase 4; flagged by reviewer as WR-01, unresolved |
-| `apps/api/src/me/me.service.ts` | 52-60 | `completeProfile`'s catch treats every `23505` as "username taken", even when the real cause is a duplicate `accountId` (already-completed profile) | ⚠ Warning | Misleading error message on a double-submit/retry; reviewer WR-02, unresolved |
-| `apps/api/src/auth/auth.instance.ts` / `apps/api/src/db/db.module.ts` | 9 / 14 | Two independent `createDatabase()` calls open two separate Postgres connection pools against the same Neon endpoint | ⚠ Warning | Doubles baseline connection footprint against pgBouncer limits; reviewer WR-03, unresolved |
-| `apps/api/src/auth/email/dev-otp-email-provider.ts` | 15-33 | Single shared OTP capture file, unconditionally overwritten — concurrent OTP requests can clobber each other's code | ⚠ Warning | Dev-only; reviewer WR-04, unresolved (worked around at the vitest-config level via `fileParallelism:false`, not fixed at the provider) |
-| `apps/api/test/setup.ts` | 17-25 | Integration tests write/delete against whichever `DATABASE_URL`/`DATABASE_URL_UNPOOLED` is configured, no test-DB guard | ⚠ Warning | Risk of a misconfigured `DATABASE_URL` causing real dev-data mutation from `pnpm test`; reviewer WR-05, unresolved |
-| 4 spec files | various | `readCapturedOtp`/`cookieHeaderFromSetCookie`/`signInWithOtp` duplicated verbatim across `bodyparser-smoke.spec.ts`, `festival-isolation.spec.ts`, `me-endpoints.spec.ts`, `save-idempotency.spec.ts` | ⚠ Warning | Maintenance risk, not a functional gap; reviewer WR-06, unresolved |
+None in the gap-closure files (`festival.service.ts`, `festival.controller.ts`, `router.ts`, `save-profile-required.spec.ts`) — no debt markers, no stubs, no hardcoded empty returns, no orphaned exports.
 
-No `TBD`/`FIXME`/`XXX` debt markers found in any file modified this phase (grep across all `key-files` from the five SUMMARYs came back empty).
+Carried forward from the prior verification (unresolved, but explicitly non-blocking Warning-tier items not in scope for 02-06's fix — same as before):
+
+| File | Pattern | Severity | Impact |
+|------|---------|----------|--------|
+| `packages/contracts/src/schemas.ts` / `packages/db/src/schema/visitor-profile.ts` | No length/format validation on username/displayName/avatar | Warning | WR-01, unresolved, out of scope for this phase's must-haves |
+| `apps/api/src/me/me.service.ts` | `completeProfile`'s catch treats every 23505 as "username taken" even for a duplicate accountId | Warning | WR-02, unresolved |
+| `apps/api/src/auth/auth.instance.ts` / `db.module.ts` | Two independent Postgres pools | Warning | WR-03, unresolved |
+| `apps/api/src/auth/email/dev-otp-email-provider.ts` | Shared OTP capture file, no per-request isolation | Warning | WR-04, dev-only, unresolved |
+| `apps/api/test/setup.ts` | No test-DB guard on `DATABASE_URL` | Warning | WR-05, unresolved |
+| 5 spec files | OTP helper trio duplicated verbatim (now including `save-profile-required.spec.ts`) | Warning | WR-06, unresolved, plan explicitly deferred this dedup |
+
+No `TBD`/`FIXME`/`XXX` debt markers anywhere in the phase's modified files.
 
 ### Human Verification Required
 
-None required to close this verification — the phase's four `backstop`-tier truths (OTP double-verify race, duplicate-username race, concurrent-save race, annotation-table drift) are structurally implied by DB unique indexes / composite PKs and each has a sequential (non-parallel) automated proof already in the suite, matching the plans' own stated verification tier. They are not re-litigated here as blocking; they remain lower-confidence than a true concurrency test would provide but do not gate this verification's outcome, which is instead blocked by the CR-01 defect (a directly reproduced, deterministic bug, not a race condition).
+None. All 16 truths resolve to VERIFIED or the same pre-accepted backstop-tier UNCERTAIN (non-blocking, unchanged from the prior verification's precedent, not newly introduced by this re-verification).
 
 ### Gaps Summary
 
-One BLOCKER: `POST /api/v1/festivals/:festivalId/save` throws an unhandled `500 Internal Server Error` — not a 200, not a clean 4xx — when called by an authenticated visitor who has not yet completed their profile (`GET /me`'s `profile: null` state, which the API's own contract documents as a normal, reachable post-login state). This was independently reproduced live against the running dev API during this verification (not merely inferred from 02-REVIEW.md's static analysis): sign in via OTP → confirm `profile: null` → call save against a real seeded festival → `500`.
+No gaps remain. The single BLOCKER from the prior verification (CR-01: unhandled 500 on `POST /api/v1/festivals/:festivalId/save` for a profile-null caller) is closed:
 
-Root cause: `my_festival.visitorId` is a `NOT NULL` foreign key into `visitor_profile.accountId`, but `FestivalService.save()` only checks that the target festival exists — it never checks for (or catches a Postgres `23503` FK-violation from) a missing `visitor_profile` row before inserting. No existing test exercises this ordering because every save-related spec (`save-idempotency.spec.ts`, `bodyparser-smoke.spec.ts`, `festival-isolation.spec.ts`) completes/inserts a `visitor_profile` before calling save.
+- `packages/contracts/src/router.ts` declares a `409: errorSchema` response for `saveFestival`.
+- `apps/api/src/festival/festival.service.ts#save()` catches the Postgres `23503` FK violation and returns `{ status: 'profile-required' }` instead of letting it propagate.
+- `apps/api/src/festival/festival.controller.ts` maps that signal to a `409 { message }` response.
+- `apps/api/test/save-profile-required.spec.ts` is a real, substantive regression test (not a stub) that signs in via OTP, deliberately skips profile completion, and asserts both the 409 status and zero written rows — executed directly in this verification session and confirmed passing, along with the full 8-file/31-test suite, typecheck, contract build, and lint.
 
-This was already flagged as `02-REVIEW.md`'s single CRITICAL finding (CR-01) and remains unresolved in the codebase as of this verification — no plan or summary after the review documents a fix. It directly falsifies both a Plan 04 must-have truth ("save... writes a my_festival row and returns 200" — for the reachable profile-null case, it does neither) and the roadmap's SC-3 clause "save only writes my_festival" (instead it can crash).
+Phase 2's goal — passwordless email-OTP auth, first-login profile completion, festival browse/save, and festivalId-scoped data isolation — is achieved and its previously-identified robustness defect is closed.
 
-**This looks unintentional**, not a deliberate deviation — no override is suggested. The recommended fix (from 02-REVIEW.md) is to catch the `23503` in `FestivalService.save()`, return a distinct `{status:'profile-required'}` signal, add a corresponding response to `contract.saveFestival`, and add a test exercising this exact path.
+**Minor follow-up (non-blocking):** `.planning/REQUIREMENTS.md`'s traceability table still shows `SEC-01`/`SEC-02` as `Gaps Found` (stale); recommend updating to `Complete` to match the phase's actual state.
 
 ---
 
-_Verified: 2026-08-02T12:22:16Z_
+_Verified: 2026-08-02T16:05:00Z_
 _Verifier: Claude (gsd-verifier)_
