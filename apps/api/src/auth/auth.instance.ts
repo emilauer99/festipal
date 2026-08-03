@@ -22,6 +22,13 @@ export const auth = betterAuth({
     schema: { user, session, account, verification },
   }),
   secret: env.BETTER_AUTH_SECRET,
+  // D-05 — the Expo client's requests originate from the app scheme, not an
+  // HTTP(S) Origin; better-auth's Origin/CSRF check needs these whitelisted.
+  trustedOrigins: [
+    'festipal://', // D-05 working title — keep in sync if scheme changes
+    'exp://', // Expo dev-client (Metro) scheme during `expo run:*`
+    'exp://**', // Metro dev-client wildcard — dev-only, never used in prod builds
+  ],
   session: {
     // D-02: 90-day sliding session, no refresh-token grant (Pitfall 10) —
     // "session expired -> re-authenticate via OTP" is the only expiry path.

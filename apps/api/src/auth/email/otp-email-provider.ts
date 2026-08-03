@@ -1,6 +1,7 @@
 import type { Env } from '../../config/env';
 
 import { createDevOtpEmailProvider } from './dev-otp-email-provider';
+import { createMailpitOtpEmailProvider } from './mailpit-otp-email-provider';
 import { createResendOtpEmailProvider } from './resend-otp-email-provider';
 
 /** OTP delivery types better-auth's `emailOTP` plugin can request (mirrors its own union). */
@@ -24,14 +25,17 @@ export interface OtpEmailProvider {
 
 /**
  * Selects the active transport: the Resend adapter only when explicitly
- * opted in via `OTP_EMAIL_TRANSPORT=resend` AND a key is configured, the dev
- * (console + local capture file) transport otherwise. Dev is the active path
- * for all of Phase 2 (D-01) — no Resend account/domain verification exists
- * yet, so the adapter must stay dormant unless both conditions are met.
+ * opted in via `OTP_EMAIL_TRANSPORT=resend` AND a key is configured, the
+ * Mailpit adapter when opted in via `OTP_EMAIL_TRANSPORT=mailpit` (Phase 3,
+ * D-11 — local device testing over LAN), the dev (console + local capture
+ * file) transport otherwise as the final fallback.
  */
 export function createOtpEmailProvider(env: Env): OtpEmailProvider {
   if (env.OTP_EMAIL_TRANSPORT === 'resend' && env.RESEND_API_KEY) {
     return createResendOtpEmailProvider(env.RESEND_API_KEY);
+  }
+  if (env.OTP_EMAIL_TRANSPORT === 'mailpit') {
+    return createMailpitOtpEmailProvider(env);
   }
   return createDevOtpEmailProvider();
 }
