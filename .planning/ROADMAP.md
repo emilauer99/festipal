@@ -113,7 +113,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Lingui extraction plus a no-literal-string lint rule are configured and passing before any product screen ships, with real (not stubbed) DE/EN catalogs; language follows device/system locale (ADR-012).
   4. A single TanStack Query provider is mounted (without persistence this online-assumed slice) so later cacheable content features need no provider-tree rewiring.
 
-**Plans**: 4/6 plans executed
+**Plans**: 5/6 plans executed
 
 **Wave 1**
 
@@ -130,7 +130,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Wave 4** *(blocked on Wave 3)*
 
-- [ ] 03-05-PLAN.md — festivals list (real `GET /festivals`) + gate-less save→enter + (festival) home placeholder
+- [x] 03-05-PLAN.md — festivals list (real `GET /festivals`) + gate-less save→enter + (festival) home placeholder
 
 **Wave 5** *(blocked on Wave 4)*
 
@@ -198,7 +198,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
-| 3. Mobile App Shell & i18n Foundation | 4/6 | In Progress|  |
+| 3. Mobile App Shell & i18n Foundation | 5/6 | In Progress|  |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
 | 5. Festival Selection & Home | 0/TBD | Not started | - |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
