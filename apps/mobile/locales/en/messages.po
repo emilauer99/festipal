@@ -13,6 +13,64 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+
+#: app/(auth)/verify.tsx
+msgid "Didn't get a code? Resend"
+msgstr "Didn't get a code? Resend"
+
+#: app/(auth)/index.tsx
+msgid "Email"
+msgstr "Email"
+
+#: app/(auth)/verify.tsx
+msgid "Enter the 6-digit code we sent to {email}"
+msgstr "Enter the 6-digit code we sent to {email}"
+
+#: app/(auth)/verify.tsx
+msgid "Enter your code"
+msgstr "Enter your code"
+
+#: app/(auth)/index.tsx
+msgid "Log in"
+msgstr "Log in"
+
+#: app/(auth)/index.tsx
+msgid "Send code"
+msgstr "Send code"
+
+#: app/(auth)/index.tsx
+msgid "Sending…"
+msgstr "Sending…"
+
+#: app/(auth)/verify.tsx
+msgid "That code didn't work — check your email and try again."
+msgstr "That code didn't work — check your email and try again."
+
+#: app/(auth)/verify.tsx
+msgid "That code has expired — request a new one."
+msgstr "That code has expired — request a new one."
+
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+msgid "Too many attempts — try again in a few minutes."
+msgstr "Too many attempts — try again in a few minutes."
+
+#: app/(auth)/verify.tsx
+msgid "Verify"
+msgstr "Verify"
+
+#: app/(auth)/verify.tsx
+msgid "Verifying…"
+msgstr "Verifying…"
+
 #: app/index.tsx
-msgid "Welcome to festipal"
-msgstr "Welcome to festipal"
+#~ msgid "Welcome to festipal"
+#~ msgstr "Welcome to festipal"
+
+#: app/(auth)/index.tsx
+msgid "you@example.com"
+msgstr "you@example.com"
