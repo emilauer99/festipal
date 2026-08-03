@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "festipal",
+    "slug": "festipal",
+    "scheme": "festipal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "at.festipal.app"
+    },
+    "android": {
+      "package": "at.festipal.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-router"],
+    "extra": {
+      "_comment": "D-05 WORKING TITLE: name/slug/scheme/bundleIdentifier/package ('festipal' / 'at.festipal.app') are provisional until the first EAS Submit freezes the bundle ID. The 'scheme' value MUST stay in sync with apps/api's auth.instance.ts trustedOrigins if it ever changes."
+    }
+  }
+}
