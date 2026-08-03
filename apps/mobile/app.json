@@ -35,7 +35,8 @@
             "usesCleartextTraffic": true
           }
         }
-      ]
+      ],
+      "./plugins/with-windows-long-path-fix.js"
     ],
     "extra": {
       "_comment": "D-05 WORKING TITLE: name/slug/scheme/bundleIdentifier/package ('festipal' / 'at.festipal.app') are provisional until the first EAS Submit freezes the bundle ID. The 'scheme' value MUST stay in sync with apps/api's auth.instance.ts trustedOrigins if it ever changes.",
