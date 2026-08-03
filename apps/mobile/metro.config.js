@@ -29,5 +29,12 @@ config.resolver.nodeModulesPaths = [
 // to be wired in as `transformer.babelTransformerPath` (it wraps Expo's own
 // babel transformer internally, delegating non-`.po` files to it unchanged).
 config.transformer.babelTransformerPath = require.resolve('@lingui/metro-transformer/expo');
+// 03-04 addition (Rule 1 — bug): Metro's resolver never even LOOKS for a
+// `.po` file unless its extension is in `resolver.sourceExts` — without this,
+// `import ... from '...messages.po'` fails with "Unable to resolve module"
+// regardless of the transformer above being wired correctly. No screen
+// imported a `.po` file directly until this plan wired real catalog loading
+// (`lib/i18n.ts`'s `i18n.load(...)`), so this gap was latent since 03-02.
+config.resolver.sourceExts = [...config.resolver.sourceExts, 'po'];
 
 module.exports = config;
