@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 3
-current_phase_name: Mobile App Shell & i18n Foundation
-status: "Phase 02 shipped — PR #6"
-stopped_at: Phase 03 UI-SPEC re-verified and approved (unchanged)
-last_updated: "2026-08-03T14:46:21.644Z"
+current_phase: 03
+current_phase_name: mobile-app-shell-i18n-foundation
+status: executing
+stopped_at: Completed 03-01-PLAN.md
+last_updated: "2026-08-03T15:51:00.118Z"
 last_activity: 2026-08-03
-last_activity_desc: "Completed quick task 260803-mz6: UI component strategy anchored in docs (ADR-022 + CLAUDE.md)"
+last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 15
+  completed_plans: 10
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 02 — otp-auth-festival-backend-api
+**Current focus:** Phase 03 — mobile-app-shell-i18n-foundation
 
 ## Current Position
 
-Phase: 3 — Mobile App Shell & i18n Foundation
-Plan: Not started
-Status: Phase 02 shipped — PR #6
-Last activity: 2026-08-03 - Completed quick task 260803-mz6: UI component strategy anchored in docs (ADR-022 + CLAUDE.md)
+Phase: 03 (mobile-app-shell-i18n-foundation) — EXECUTING
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-08-03 — Phase 03 execution started
 
-Progress: [██████████] 100%
+Progress: [███████░░░] 67%
 
 ## Performance Metrics
 
@@ -68,6 +68,7 @@ Progress: [██████████] 100%
 | Phase 02 P04 | 24min | 2 tasks | 5 files |
 | Phase 02 P05 | 30min | 2 tasks | 5 files |
 | Phase 02 P06 | 15min | 2 tasks | 4 files |
+| Phase 03 P01 | 15min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -97,6 +98,7 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-05: Disabled vitest fileParallelism in apps/api after the larger OTP-heavy spec suite proved flaky under parallel-file execution (rate limiter + shared capture-file races) — 3/3 consecutive full-suite runs green afterward — Root-caused via isolation testing (every new spec passed alone, only the full parallel run failed) before applying the fix, avoiding a speculative change
 - [Phase 02]: 02-05: auth-guard.spec.ts covers all eight protected /api/v1 endpoints (plan's six plus getFestival/listTags) to match the objective's whole-endpoint-set language — Closes the annotation table's no-endpoint-untagged prohibition with a passing test, not just manual review
 - [Phase ?]: 02-06: Fixed CR-01 at the service/contract/controller level only (my_festival FK unchanged) — save() catches Postgres 23503 and returns a 409, mirroring me.service.completeProfile's 23505 idiom
+- [Phase 03]: 03-01: Fixed Postgres 18 docker volume mount path (/var/lib/postgresql, not /var/lib/postgresql/data) after a startup crash-loop -- 18+ images use a pg_ctlcluster-compatible data layout.
 
 ### Pending Todos
 
@@ -128,6 +130,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-03T14:46:21.633Z
-Stopped at: Phase 03 UI-SPEC re-verified and approved (unchanged)
-Resume file: .planning/phases/03-mobile-app-shell-i18n-foundation/03-UI-SPEC.md
+Last session: 2026-08-03T15:51:00.106Z
+Stopped at: Completed 03-01-PLAN.md
+Resume file: None
