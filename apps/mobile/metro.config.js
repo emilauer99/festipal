@@ -21,4 +21,13 @@ config.resolver.nodeModulesPaths = [
 ];
 // Do NOT set disableHierarchicalLookups: true — breaks pnpm's store lookup.
 
+// Lingui: compile `.po` catalogs on the fly so `import`/`require` of a
+// locales/*/messages.po file resolves to compiled runtime message data.
+// Deviation (Rule 1 — bug fix): RESEARCH.md's Pattern 4 cited a `withLingui`
+// config-wrapper export that the installed @lingui/metro-transformer@6.6.0
+// does not have — the package instead exports a `transform` function meant
+// to be wired in as `transformer.babelTransformerPath` (it wraps Expo's own
+// babel transformer internally, delegating non-`.po` files to it unchanged).
+config.transformer.babelTransformerPath = require.resolve('@lingui/metro-transformer/expo');
+
 module.exports = config;

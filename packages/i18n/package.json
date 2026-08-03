@@ -17,7 +17,8 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "dependencies": {
     "@festipal/contracts": "workspace:*",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@festipal/config": "workspace:*",
     "tsup": "^8.5.1",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.10"
   }
 }
