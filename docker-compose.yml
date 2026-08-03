@@ -1,0 +1,47 @@
+# Local dev infrastructure only (D-11). Neon (Postgres) + Resend (email) remain
+# the staging/production targets — this stack exists purely so a real device on
+# the LAN can exercise the full auth+festival flow against a fully offline-of-Neon
+# backend during Phase 3 development. The API itself is NOT containerized here;
+# it stays native via `pnpm dev` on the host (D-11).
+#
+# Usage:
+#   docker compose up -d
+#   pnpm --filter @festipal/db db:push
+#   pnpm --filter @festipal/db db:seed
+
+services:
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: festipal
+      POSTGRES_PASSWORD: festipal
+      POSTGRES_DB: festipal
+    ports:
+      - '5432:5432'
+    volumes:
+      # Postgres 18+ images store data under a major-version-specific
+      # subdirectory of /var/lib/postgresql itself (not /var/lib/postgresql/data)
+      # — mounting at /data would collide with that layout and crash-loop the
+      # container on startup (docker-library/postgres#1259).
+      - festipal-postgres-data:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U festipal -d festipal']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit
+    restart: unless-stopped
+    ports:
+      - '1025:1025' # SMTP — the Mailpit OTP email provider sends here
+      - '8025:8025' # Web UI — read OTP codes here (http://<lan-ip>:8025)
+    healthcheck:
+      test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:8025/readyz']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  festipal-postgres-data:
