@@ -113,8 +113,30 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Lingui extraction plus a no-literal-string lint rule are configured and passing before any product screen ships, with real (not stubbed) DE/EN catalogs; language follows device/system locale (ADR-012).
   4. A single TanStack Query provider is mounted (without persistence this online-assumed slice) so later cacheable content features need no provider-tree rewiring.
 
-**Plans**: TBD
-**Notes**: MEDIUM research flags — Lingui in an Expo monorepo, Expo Router async guard behavior, the SecureStore ~2KB size limit, and that better-auth uses one sliding-window session token (no separate refresh endpoint — Pitfall 10). Addresses Pitfalls 5 (auth-flash / deep-link bypass) and 7 (hardcoded strings). Sets up the i18n lint rule Phases 4–6 rely on.
+**Plans**: 6 plans
+
+**Wave 1**
+
+- [ ] 03-01-PLAN.md — Local dev infra + backend wiring: docker-compose (Postgres 18 + Mailpit), Mailpit OTP transport, better-auth `trustedOrigins`
+- [ ] 03-02-PLAN.md — TRACER: Expo app scaffold + Metro/pnpm resolution + Lingui i18n foundation (no-literal-string lint, DE/EN catalogs, D-07 German fallback)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 03-03-PLAN.md — auth-client + api-client (cookie forwarding) + splash-held four-state `Stack.Protected` guard
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 03-04-PLAN.md — (auth) real email-OTP screens + minimal (profile-setup) stub
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 03-05-PLAN.md — festivals list (real `GET /festivals`) + gate-less save→enter + (festival) home placeholder
+
+**Wave 5** *(blocked on Wave 4)*
+
+- [ ] 03-06-PLAN.md — dev-build cleartext config + on-device UAT (kill-and-relaunch, real festival, save→enter, DE/EN)
+
+**Notes**: MEDIUM research flags — Lingui in an Expo monorepo, Expo Router async guard behavior, the SecureStore ~2KB size limit, and that better-auth uses one sliding-window session token (no separate refresh endpoint — Pitfall 10). Addresses Pitfalls 5 (auth-flash / deep-link bypass) and 7 (hardcoded strings). Sets up the i18n lint rule Phases 4–6 rely on. Plan 04 builds a minimal profile-setup stub (RESEARCH Open Question 1) so a first-time OTP account is not a dead-end; D-07 resolved via a `uiFallback` param on `resolveUiLocale` (Plan 02), leaving the shared `DEFAULT_LOCALE` unchanged.
 **UI hint**: yes
 
 ### Phase 4: Visitor Auth & Profile Completion
@@ -176,7 +198,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 |-------|----------------|--------|-----------|
 | 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
-| 3. Mobile App Shell & i18n Foundation | 0/TBD | Not started | - |
+| 3. Mobile App Shell & i18n Foundation | 0/6 | Not started | - |
 | 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
 | 5. Festival Selection & Home | 0/TBD | Not started | - |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
