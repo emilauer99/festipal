@@ -1,4 +1,4 @@
-import { visitorProfileSelectSchema } from '@festipal/db/schema';
+import { visitorProfileInsertSchema, visitorProfileSelectSchema } from '@festipal/db/schema';
 import { z } from 'zod';
 
 import { localeSchema } from './locale';
@@ -35,3 +35,33 @@ export const visitorProfilePublicSchema = visitorProfileSelectSchema.pick({
   avatar: true,
 });
 export type VisitorProfilePublic = z.infer<typeof visitorProfilePublicSchema>;
+
+/**
+ * `GET /me` response (RESEARCH.md A4 default, locked here per Open Question 1):
+ * `profile: null` discriminates "first login, needs complete-profile" from a
+ * returning visitor. Chosen over a separate `status` enum because it's the
+ * simpler shape and the client only ever needs the binary branch (has a
+ * profile vs. doesn't) — a `status` field would just restate this null-check
+ * as a string literal with no extra information.
+ */
+export const meSchema = z.object({
+  accountId: z.string(),
+  email: z.string().email(),
+  profile: visitorProfilePublicSchema.nullable(),
+});
+export type Me = z.infer<typeof meSchema>;
+
+/**
+ * `POST /me/complete-profile` request body — composed on the drizzle-zod
+ * insert base (Pitfall 6), never hand-redeclared. `username`/`displayName`
+ * are required by the table; `avatar` stays optional/nullable as on the base.
+ */
+export const completeProfileBodySchema = visitorProfileInsertSchema.pick({
+  username: true,
+  displayName: true,
+  avatar: true,
+});
+export type CompleteProfileBody = z.infer<typeof completeProfileBodySchema>;
+
+export const usernameAvailabilitySchema = z.object({ available: z.boolean() });
+export type UsernameAvailability = z.infer<typeof usernameAvailabilitySchema>;

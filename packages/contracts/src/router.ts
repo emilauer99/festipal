@@ -2,7 +2,14 @@ import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
 import { localeSchema } from './locale';
-import { festivalSchema, tagSchema } from './schemas';
+import {
+  completeProfileBodySchema,
+  festivalSchema,
+  meSchema,
+  tagSchema,
+  usernameAvailabilitySchema,
+  visitorProfilePublicSchema,
+} from './schemas';
 
 const c = initContract();
 
@@ -34,6 +41,47 @@ export const contract = c.router(
       query: z.object({ locale: localeSchema.optional() }),
       responses: { 200: z.array(tagSchema) },
       summary: 'List a festival’s tags, titles resolved to the requested locale',
+    },
+    getMe: {
+      method: 'GET',
+      path: '/me',
+      responses: { 200: meSchema },
+      summary: 'Fetch the current session’s account + visitor profile (profile is null pre-first-login-completion)',
+    },
+    completeProfile: {
+      method: 'POST',
+      path: '/me/complete-profile',
+      body: completeProfileBodySchema,
+      responses: { 200: visitorProfilePublicSchema, 409: errorSchema },
+      summary: 'First-login profile completion (unique username + displayName, optional avatar)',
+    },
+    usernameAvailability: {
+      method: 'GET',
+      path: '/me/username-availability',
+      query: z.object({ username: z.string() }),
+      responses: { 200: usernameAvailabilitySchema },
+      summary: 'Live case-insensitive username availability check',
+    },
+    listFestivals: {
+      method: 'GET',
+      path: '/festivals',
+      responses: { 200: z.array(festivalSchema) },
+      summary: 'Browse all festivals (D-04 minimal fields, no pagination)',
+    },
+    saveFestival: {
+      method: 'POST',
+      path: '/festivals/:festivalId/save',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      body: z.object({}),
+      responses: { 200: z.object({ saved: z.literal(true) }), 404: errorSchema, 409: errorSchema },
+      summary:
+        'Gate-less festival save (ADR-014) — idempotent, no membership/role; 409 if the caller has not completed their visitor profile yet',
+    },
+    listMyFestivals: {
+      method: 'GET',
+      path: '/me/festivals',
+      responses: { 200: z.array(festivalSchema) },
+      summary: 'List the caller’s saved festivals (SEC-02: festivalId/visitorId-scoped, never client-filtered)',
     },
   },
   { pathPrefix: '/api/v1' },

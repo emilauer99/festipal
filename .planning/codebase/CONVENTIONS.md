@@ -1,240 +1,311 @@
+---
+last_mapped_commit: 8f64c0de99ee77e01a818edd005386ede4310b30
+last_mapped_at: 2026-08-02T17:17:40Z
+---
 # Coding Conventions
 
-**Analysis Date:** 2026-07-29
+**Analysis Date:** 2026-08-02
 
 ## Naming Patterns
 
 **Files:**
-- Lowercase with hyphens for directories: `festival`, `db`, `config`
-- TypeScript files: `.ts` (Node/backend) or `.tsx` (React components)
-- Suffix patterns for NestJS: `.module.ts`, `.service.ts`, `.controller.ts`
-- Example: `festival.controller.ts`, `festival.service.ts`, `festival.module.ts`
+
+- TypeScript source: `.ts` (Node/backend) or `.tsx` (React components)
+- NestJS suffix convention: `.module.ts`, `.service.ts`, `.controller.ts`
+- Example: `festival.service.ts`, `festival.controller.ts`, `festival.module.ts`
+- Configuration files: `.mjs` for ESLint/Prettier configs (ES modules)
 
 **Functions:**
-- camelCase, descriptive, no abbreviations: `loadEnv()`, `resolveLocalized()`, `getBySlug()`
+
+- camelCase, descriptive names without abbreviations
+- Pattern: `get*` for single item queries, `list*` for collections, `load*` for initialization
+- Examples: `resolveLocalized()`, `loadEnv()`, `createDatabase()`, `signInWithOtp()`
 - Async functions return `Promise<T>`: `async getBySlug(): Promise<Festival | null>`
-- Prefix conventions: `get*` for queries, `list*` for collections, `load*` for initialization
 
 **Variables:**
-- camelCase throughout: `festivalId`, `defaultLocale`, `supportedLocales`
-- Use const by default; let rarely needed
-- Destructuring preferred: `const { id, slug, name } = festival`
 
-**Types:**
-- PascalCase for types, interfaces, classes: `Festival`, `Locale`, `LocalizedText`, `Tag`
-- Schema types inferred from Zod: `export type Festival = z.infer<typeof festivalSchema>`
-- Type imports explicit: `import type { Festival } from '@festipal/contracts'`
-- Enum members SCREAMING_SNAKE_CASE: `SUPPORTED_LOCALES = ['de', 'en']`, `DEFAULT_LOCALE = 'en'`
+- camelCase throughout
+- Descriptive, no single letters except loop counters
+- Examples: `festivalId`, `accountId`, `visitorId`, `accountId`, `displayName`
+- Prefix conventions: `is*` for booleans, `*Id` for IDs, `*Url` for URLs
+
+**Types and Interfaces:**
+
+- PascalCase for all types, interfaces, classes
+- Examples: `Festival`, `Database`, `Locale`, `VisitorProfilePublic`, `CompleteProfileBody`
+- Type inference from Zod: `export type Festival = z.infer<typeof festivalSchema>`
+- Always use `type` imports: `import type { Festival } from '@festipal/contracts'`
+
+**Database Columns:**
+
+- snake_case in Postgres, enforced via Drizzle's `casing: 'snake_case'` option
+- Examples: `festival_id`, `created_at`, `display_name`, `visitor_profile`
+- Foreign keys: `{entity}Id` in JavaScript, `{entity}_id` in SQL
+
+**Constants:**
+
+- SCREAMING_SNAKE_CASE for module-level constants
+- Examples: `SUPPORTED_LOCALES`, `DEFAULT_LOCALE`, `CAPTURE_FILE`, `ORIGIN`
+
+**Enum Values:**
+
+- SCREAMING_SNAKE_CASE: `EVERYONE`, `FRIENDS` (for `socials_visibility`)
+
+**Discriminated Unions:**
+
+- Use `status` field for different result shapes in service returns
+- Pattern: `{ status: 'ok' | 'conflict' | 'not-found' | 'profile-required', ... }`
+- Controllers map these to HTTP status codes (200, 409, 404)
 
 ## Code Style
 
 **Formatting:**
+
 - Tool: Prettier 3.9.6
-- Semi: true
-- Single quotes: true
-- Trailing comma: 'all'
-- Print width: 100
-- Tab width: 2
-- Config location: `prettier.config.mjs` (root) → re-exports from `packages/config/prettier.config.mjs`
+- Semi: `true` (require semicolons)
+- Single Quotes: `true`
+- Trailing Comma: `'all'` (trailing commas in multiline constructs)
+- Print Width: `100` (line length limit)
+- Tab Width: `2` (indentation)
+- Config location: `packages/config/prettier.config.mjs` (re-exported from root)
 
 **Linting:**
-- Tool: ESLint 10.8.0 + typescript-eslint
-- Flat config format: `eslint.config.mjs`
-- Shared base: `packages/config/eslint.config.base.mjs`
-- Key rules enforced:
-  - `@typescript-eslint/consistent-type-imports: error` — types must use `import type`
-  - `@typescript-eslint/no-explicit-any: warn` — discouraged at boundaries
-  - `@typescript-eslint/no-unused-vars: error` with `argsIgnorePattern: ^_` (unused params prefixed with `_`)
-  - `@typescript-eslint/noUncheckedIndexedAccess: true` (tsconfig)
-  - `@typescript-eslint/noImplicitOverride: true` (tsconfig)
-  - `@typescript-eslint/noFallthroughCasesInSwitch: true` (tsconfig)
 
-**Example lint configuration location:** `apps/api/eslint.config.mjs`, `packages/contracts/eslint.config.mjs`
+- Tool: ESLint 10.8.0 + typescript-eslint
+- Config Format: Flat config (ESLint v9+)
+- Base config: `packages/config/eslint.config.base.mjs`
+- Per-app overrides: `apps/api/eslint.config.mjs`, etc.
+
+**Key Rules Enforced:**
+
+- `@typescript-eslint/consistent-type-imports: error` — Type imports must use `import type`
+- `@typescript-eslint/no-explicit-any: warn` — Discourage `any`, warn instead of error
+- `@typescript-eslint/no-unused-vars: error` — With `argsIgnorePattern: '^_'` (allow unused `_` params)
+- Ignores: `dist/`, `build/`, `.next/`, `.expo/`, `node_modules/`, `*.config.*`
 
 ## Import Organization
 
 **Order:**
-1. Side effects: `import 'reflect-metadata'`, `import 'dotenv/config'`
-2. Node.js built-ins (rare in app code)
-3. Third-party packages: `import { Module } from '@nestjs/common'`, `import { eq } from 'drizzle-orm'`
-4. Workspace packages: `import { festival } from '@festipal/db'`, `import { contract } from '@festipal/contracts'`
-5. Type imports from same: `import type { Database } from '@festipal/db'`
-6. Local relative imports: `import { DB } from '../db/db.module'`
 
-**Path aliases:**
-- No path aliases configured currently in monorepo
-- Use workspace package names: `@festipal/contracts`, `@festipal/db`, `@festipal/config`
-- Within a package, use relative paths: `./locale`, `../db/db.module`
+1. Standard library imports (e.g., `node:crypto`, `node:fs/promises`)
+2. Third-party packages (e.g., `@nestjs/common`, `drizzle-orm`)
+3. Workspace packages (e.g., `@festipal/db`, `@festipal/contracts`)
+4. Relative imports (e.g., `./service`, `../db/db.module`)
+
+**Path Aliases:**
+
+- No path aliases configured in TypeScript
+- Workspace packages prefixed with `@festipal/`: `@festipal/api`, `@festipal/db`, `@festipal/contracts`, `@festipal/config`, `@festipal/i18n`
+- Use workspace names in all cross-package imports
+- Relative paths only for files within the same package
+
+**Type Imports:**
+
+- Always use `import type` for types, interfaces, and type-only unions
+- Example: `import type { Festival, Locale } from '@festipal/contracts'`
+- Exception: NestJS DI requires runtime class references (see `apps/api/eslint.config.mjs`)
 
 ## Error Handling
 
-**Patterns:**
-- Zod schema validation with safeParse:
-  ```typescript
-  const parsed = envSchema.safeParse(process.env);
-  if (!parsed.success) {
-    console.error('Invalid environment:', parsed.error.flatten().fieldErrors);
-    throw new Error('Invalid environment configuration');
-  }
-  return parsed.data;
-  ```
-- Nullable returns for "not found" cases: `Promise<Festival | null>`
-- ts-rest handler returns tuple: `{ status: 404, body: { message: 'Festival not found' } }`
-- NestJS Guard/Interceptor pattern for cross-cutting concerns (planned, not yet in scaffold)
+**Validation:**
+
+- Zod schemas in `packages/contracts/src/` are the source of truth
+- Use `safeParse()` for runtime validation: `const parsed = schema.safeParse(data)`
+- Invalid input → return typed result with `{ success: false, error }`
+- Controllers receive already-validated data via `tsRestHandler`
+
+**Database Errors:**
+
+- PostgresError checking via the `.cause` pattern (drizzle-orm wraps driver errors)
+- Pattern: `const cause = (err as { cause?: unknown }).cause; if (cause instanceof PostgresError && cause.code === '23505') { ... }`
+- Postgres error codes referenced in comments (e.g., 23505 = unique constraint, 23503 = foreign key)
+- Services catch specific errors and return discriminated union results; unknown errors re-thrown
+
+**Not Found:**
+
+- Services return `null` for "resource not found" cases (not empty object or undefined)
+- Example: `async getBySlug(slug: string): Promise<Festival | null>`
+- Controllers map `null` to 404 responses
+
+**Cross-Tenant Errors:**
+
+- Multi-tenant queries filter by `festivalId` at the WHERE clause layer
+- Never expose cross-tenant data; fail with 404 if caller lacks access
+- Session-derived IDs (`visitorId`, `accountId`) are the source of truth; never accept from request params
 
 ## Logging
 
-**Framework:** console (no dedicated logger in initial scaffold)
+**Framework:** `console` methods (console.log, console.error)
 
 **Patterns:**
-- Use `console.error()` for errors: `console.error('Invalid environment:', ...)`
-- Use `console.log()` for startup info: `console.log('festipal api listening on...')`
+
+- Startup info: `console.log('festipal api listening on http://localhost:${env.PORT}')`
+- Errors: `console.error('Invalid environment:', parsed.error.flatten().fieldErrors)`
+- No structured logging enforced yet; plain console output acceptable
 - Avoid logging in libraries; let callers decide
-- Structured logging (e.g., bunyan, pino) planned for production API, not yet enforced
 
 ## Comments
 
 **When to Comment:**
-- Non-obvious business logic (e.g., locale resolution fallback chain)
-- Cross-cutting concerns (e.g., tenant scoping, ADR references)
-- External contract/API expectations
-- Avoid stating the obvious; let code be self-documenting
+
+- Non-obvious business logic and architectural decisions
+- References to ADRs (Architecture Decision Records): `// ADR-014: Gate-less save...`
+- Cross-cutting concerns and security implications: `// SEC-01: ...`
+- Complex locale resolution and tenant scoping logic
+- Known pitfalls and why a certain pattern was chosen: `// Pitfall 11: ...`
 
 **JSDoc/TSDoc:**
-- Use for public API functions and types:
+
+- Mandatory for exported functions in shared packages (`packages/contracts`)
+- Recommended for public NestJS services and controllers
+- Include purpose, parameters (via JSDoc `@param`), return type, and any side effects
+- Example:
   ```typescript
   /**
+
    * Resolve localized content to one string: requested → festival default → any present.
+   * Falls back through priorities if exact match not found.
    */
   export function resolveLocalized(
     text: LocalizedText,
     requested: Locale,
     festivalDefault: Locale,
-  ): string
+  ): string {
+    ...
+  }
   ```
-- Mandatory for exported functions in `packages/contracts`
-- Not required for private/internal functions unless complex
 
-**ADR References:**
-- When code encodes an architectural decision, cite it: `// ADR-011: Cashless via embedded URL`
-- Links to `docs/DEVELOPMENT_DECISIONS.md` in comments where appropriate
+**Avoid:**
+
+- Stating the obvious (e.g., "increments counter" for `counter++`)
+- Repeating code; let code be self-documenting
+- Outdated comments that drift from implementation
 
 ## Function Design
 
-**Size:** Aim for <40 lines; break multi-step logic into separate functions
-- Example: `loadEnv()` is 8 lines; `resolveLocalized()` is 1 line
-- Example: `getBySlug()` is 6 lines (database + response transform)
+**Size:**
+
+- Prefer small, focused functions (examples: 1–8 lines common)
+- Functions over 30 lines should be refactored into smaller units
+- Readability over one-liners
 
 **Parameters:**
+
+- Max 3–4 parameters before converting to an object
+- Required before optional; use destructuring for objects
 - Prefer typed objects over multiple scalars: `params: { slug: string }` not `slug: string, other: string`
-- Required before optional; use destructuring
-- Max 3-4 parameters before considering an object
 
 **Return Values:**
-- Explicit return types: `Promise<Festival | null>`, not `Promise<any>`
+
+- Explicit return types on all public functions: `Promise<Festival | null>`, not `Promise<any>`
 - Nullable for "not found": return `null` not empty object
-- Never return undefined from functions; use null or throw
-- Use discriminated unions for status/body patterns (ts-rest style)
+- Never return `undefined` from functions; use `null` for nullable returns or throw for errors
+- Discriminated unions for multiple possible outcomes: `{ status: 'ok' | 'conflict' } & { ... }`
+
+**Async:**
+
+- Always annotate async functions: `async function name(): Promise<T>`
+- Use `void` for fire-and-forget fire-and-forget: `void someAsyncWork()`
 
 ## Module Design
 
 **Exports:**
-- Explicit: use named exports, not default exports
-- Barrel files (index.ts) re-export from sibling modules:
+
+- Named exports only (no default exports except for ESLint/Prettier configs)
+- Barrel files (`index.ts`) re-export from sibling modules for cleaner imports
+- Example:
   ```typescript
   // packages/contracts/src/index.ts
-  export * from './locale';
-  export * from './schemas';
-  export * from './router';
+  export { contract } from './router';
+  export type { Festival, Tag, Locale } from './schemas';
   ```
-- Private/internal: use file-scoped (not exported) for internal helpers
 
-**NestJS Module Structure:**
-```typescript
-@Module({
-  imports: [ConfigModule, DbModule],
-  controllers: [HealthController],
-})
-export class AppModule {}
-```
-- Controllers handle HTTP routing (decorators: `@TsRestHandler`)
+**NestJS Modules:**
+
+- `@Module({ imports: [...], controllers: [...], providers: [...] })`
+- Controllers handle HTTP routing (decorators: `@Controller()`, `@TsRestHandler()`)
 - Services handle business logic (decorated with `@Injectable()`)
-- Modules manage dependencies and cross-cutting concerns
+- Modules manage dependencies and import other modules
+- Constructor injection via decorators: `constructor(@Inject(TOKEN) private readonly dep: Type) {}`
+- Global modules: `@Module({ global: true })` for singletons like `DbModule`
 
-**Dependency Injection (NestJS):**
-```typescript
-@Injectable()
-export class FestivalService {
-  constructor(@Inject(DB) private readonly db: Database) {}
-}
-```
-- Constructor injection via decorators
-- Token name in `@Inject()` matches provider registration in module
+**Dependency Injection:**
+
+- Always use constructor injection with `@Inject(token)`
+- Token name in decorator matches provider registration name in module
+- Example: `DbModule` provides token `DB`, services inject via `@Inject(DB)`
+
+**Drizzle:**
+
+- Schema files define tables and relations
+- Shared schema builders: `idColumn()`, `timestamps` from `_shared.ts`
+- Zod schema generation: `createInsertSchema()`, `createSelectSchema()` for DB-to-validation consistency
+- Type inference: `export type Festival = z.infer<typeof festivalSchema>`
 
 ## TypeScript-Specific
 
-**Strict Mode:**
-- Enforced project-wide via `tsconfig.base.json`
-- `strict: true`, `noUncheckedIndexedAccess: true`, `noImplicitOverride: true`
+**Strictness:**
+
+- `strict: true` enforced project-wide via `packages/config/tsconfig.base.json`
+- `noUncheckedIndexedAccess: true` — prevents undefined access on arrays
+- `noImplicitOverride: true` — requires explicit `override` on inherited methods
 - No `any` at public API boundaries; use `unknown` and narrow if needed
 
-**Type Inference:**
-- Leverage Zod's `z.infer<typeof schema>` for runtime validation + types:
-  ```typescript
-  export const festivalSchema = z.object({ ... });
-  export type Festival = z.infer<typeof festivalSchema>;
-  ```
-- Let TypeScript infer where obvious; annotate public signatures
+**Type Safety:**
+
+- Zod schemas in `packages/contracts` are the runtime source of truth
+- Leverage `z.infer<typeof schema>` for compile-time types
+- Explicit type annotations on public function signatures
+- Discriminated unions for multi-branch logic
 
 **Generics:**
+
 - Use sparingly; prefer concrete types when possible
-- Example: `Promise<Festival | null>` not `Promise<T | null>` with `T = Festival`
+- Generic constraint example: `T extends { id: string }`
 
 ## Monorepo (Turborepo + pnpm)
 
-**Workspace packages:**
-- Located in `apps/*` and `packages/*`
-- Prefixed with `@festipal/`: `@festipal/api`, `@festipal/contracts`, `@festipal/db`
-- Internal dependencies via `workspace:*` protocol in package.json
+**Package Structure:**
 
-**Shared configuration:**
-- ESLint base: `packages/config/eslint.config.base.mjs`
-- TypeScript base: `packages/config/tsconfig.base.json`
-- Prettier: `packages/config/prettier.config.mjs` (re-exported from root)
-- Extend, don't override; lint/typecheck must pass on all packages
+- Workspace packages in `packages/*`, prefixed `@festipal/`
+- Apps in `apps/*` (api, mobile, admin)
+- Internal dependencies via `workspace:*` protocol in `package.json`
 
-**Build outputs:**
+**Config Inheritance:**
+
+- Base ESLint: `packages/config/eslint.config.base.mjs` (all packages extend)
+- Base TypeScript: `packages/config/tsconfig.base.json` (all packages extend)
+- Base Prettier: `packages/config/prettier.config.mjs` (root re-exports)
+- Per-app overrides allowed; lint/typecheck must pass on all packages
+
+**Build Outputs:**
+
 - Compiled JS in `dist/` (gitignored)
 - Type declarations (`.d.ts`) generated if `declaration: true` in tsconfig
-- tsup for library builds (packages)
-- nest build for NestJS (apps/api)
+- Tsup for library builds (packages); NestJS CLI for `apps/api`
 
 ## Validation & Schemas
 
-**Zod schema pattern:**
-- Single source of truth in `packages/contracts`
+**Single Source of Truth:**
+
+- `packages/contracts/src/` owns all REST endpoint definitions + Zod schemas
 - Used for:
-  - API request/response types (rest router definitions)
-  - Environment variable validation (config/env.ts)
-  - Runtime validation + type extraction
-- Never re-declare shapes; import and infer types from schemas
+  1. Request/response validation (runtime)
+  2. Type generation for backend and clients (compile-time)
+  3. API documentation (ts-rest introspection)
 
-**Example pattern:**
-```typescript
-// packages/contracts/src/schemas.ts
-export const festivalSchema = z.object({
-  id: z.string().uuid(),
-  slug: z.string(),
-  name: z.string(),
-  ...
-});
-export type Festival = z.infer<typeof festivalSchema>;
+**Never Re-declare:**
 
-// apps/api/src/festival/festival.service.ts
-import type { Festival } from '@festipal/contracts';
-async getBySlug(slug: string): Promise<Festival | null> { ... }
-```
+- Don't hand-write TypeScript interfaces for data that has a Zod schema
+- Infer types from schemas: `export type Festival = z.infer<typeof festivalSchema>`
+- Compose schemas from drizzle-zod base to prevent schema/DB drift
+
+**Drift Detection:**
+
+- Schemas composed on drizzle-zod base (not hand-mirrored)
+- Example: `visitorProfilePublicSchema` uses `.pick()` on drizzle-zod's generated schema
+- Renaming a DB column breaks the schema typecheck (good!)
 
 ---
 
-*Conventions audit: 2026-07-29*
+*Convention analysis: 2026-08-02*

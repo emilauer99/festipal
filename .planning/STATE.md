@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 2
-current_phase_name: OTP Auth & Festival Backend API
-status: "Phase 01 shipped — PR #4"
-stopped_at: Completed 01-03-PLAN.md (phase 01 all plans done — ready for verification)
-last_updated: "2026-08-01T10:08:03.672Z"
-last_activity: 2026-08-01
+current_phase: 3
+current_phase_name: Mobile App Shell & i18n Foundation
+status: "Phase 02 shipped — PR #6"
+stopped_at: Completed 02-06-PLAN.md
+last_updated: "2026-08-02T17:44:11.226Z"
+last_activity: 2026-08-02
 progress:
-  total_phases: 1
-  completed_phases: 1
-  total_plans: 3
-  completed_plans: 3
-last_activity_desc: Phase 01 complete, transitioned to Phase 2
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 9
+  completed_plans: 9
+last_activity_desc: Phase 02 complete, transitioned to Phase 3
 ---
 
 # Project State
@@ -23,14 +23,14 @@ last_activity_desc: Phase 01 complete, transitioned to Phase 2
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 01 — Identity Schema & Auth Foundation
+**Current focus:** Phase 02 — otp-auth-festival-backend-api
 
 ## Current Position
 
-Phase: 2 — OTP Auth & Festival Backend API
+Phase: 3 — Mobile App Shell & i18n Foundation
 Plan: Not started
-Status: Phase 01 shipped — PR #4
-Last activity: 2026-08-01
+Status: Phase 02 shipped — PR #6
+Last activity: 2026-08-02
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 3
+- Total plans completed: 9
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -47,6 +47,7 @@ Progress: [██████████] 100%
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 01 | 3 | - | - |
+| 02 | 6 | - | - |
 
 **Recent Trend:**
 
@@ -61,6 +62,12 @@ Progress: [██████████] 100%
 | Phase 01 P01 | 12min | 3 tasks | 7 files |
 | Phase 01 P02 | ~18min | 2 tasks | 9 files |
 | Phase 01 P03 | ~15min | 2 tasks | 5 files |
+| Phase 02 P01 | 25min | 3 tasks | 8 files |
+| Phase 02 P02 | 16min | 2 tasks | 15 files |
+| Phase 02 P03 | 40min | 2 tasks | 7 files |
+| Phase 02 P04 | 24min | 2 tasks | 5 files |
+| Phase 02 P05 | 30min | 2 tasks | 5 files |
+| Phase 02 P06 | 15min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -78,6 +85,18 @@ Recent decisions affecting current work:
 - [Phase ?]: visitor_profile username uniqueness enforced by a Postgres lower(username) functional UNIQUE INDEX, not an app-layer check (race-proof, D-04)
 - [Phase ?]: 01-03: my_festival is the single global<->tenant bridge — composite PK (visitorId, festivalId), text visitorId FK -> visitor_profile.accountId (encodes profile-before-save), uuid festivalId FK -> festival.id; gate-less save, no role/invite columns (ADR-014/016, D-04)
 - [Phase ?]: 01-03: lower(username) unique index proven LIVE in Neon — case-variant duplicate visitor_profile insert rejected with Postgres 23505 from visitor_profile_username_lower_unq; full schema (auth+visitor_profile+my_festival) migrated cleanly (migration 0002)
+- [Phase ?]: GET /me response locked to { accountId, email, profile: VisitorProfilePublic | null } (RESEARCH.md A4, Open Question 1 resolved)
+- [Phase ?]: listFestivals/listMyFestivals both return z.array(festivalSchema), not myFestivalSelectSchema-derived shapes
+- [Phase ?]: 02-02: main.ts imports the memoized env singleton instead of calling loadEnv() again — closes the 3rd-call-site gap from RESEARCH.md rather than adding a 4th
+- [Phase ?]: 02-02: dev OTP transport writes a gitignored local capture file (apps/api/.otp-dev-transport.local.json) alongside console.log, read by test/smoke/otp-me-smoke.mjs to complete the OTP round-trip without a real inbox
+- [Phase ?]: 02-02: better-auth requires an Origin header on state-changing /api/auth/* POSTs (CSRF check) — smoke script sends one explicitly; no production code change needed since real clients send it naturally
+- [Phase 02]: 02-03: Fixed a drizzle-orm/drizzle-zod text()-column TS-inference bug at its source (visitor-profile.ts .extend()) — VisitorProfilePublic/CompleteProfileBody/Me are now genuinely concrete types instead of all-unknown
+- [Phase 02]: 02-03: postgres added as a direct apps/api dependency (PostgresError import for 23505->409 mapping); drizzle-zod added as a direct packages/contracts dependency (needed for its own dts build)
+- [Phase ?]: 02-04: save() returns a discriminated {status:'ok'}|{status:'not-found'} result instead of throwing, matching the codebase's service-returns-signal/controller-maps-to-status pattern
+- [Phase ?]: 02-04: packages/db one-shot scripts must explicitly close the postgres.js connection (db.$client.end()) and load env via dotenv/config — otherwise the script hangs forever after its last query with no env source when run standalone via tsx
+- [Phase 02]: 02-05: Disabled vitest fileParallelism in apps/api after the larger OTP-heavy spec suite proved flaky under parallel-file execution (rate limiter + shared capture-file races) — 3/3 consecutive full-suite runs green afterward — Root-caused via isolation testing (every new spec passed alone, only the full parallel run failed) before applying the fix, avoiding a speculative change
+- [Phase 02]: 02-05: auth-guard.spec.ts covers all eight protected /api/v1 endpoints (plan's six plus getFestival/listTags) to match the objective's whole-endpoint-set language — Closes the annotation table's no-endpoint-untagged prohibition with a passing test, not just manual review
+- [Phase ?]: 02-06: Fixed CR-01 at the service/contract/controller level only (my_festival FK unchanged) — save() catches Postgres 23503 and returns a 409, mirroring me.service.completeProfile's 23505 idiom
 
 ### Pending Todos
 
@@ -103,6 +122,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-07-30T20:01:01.754Z
-Stopped at: Completed 01-03-PLAN.md (phase 01 all plans done — ready for verification)
+Last session: 2026-08-02T13:49:24.146Z
+Stopped at: Completed 02-06-PLAN.md
 Resume file: None

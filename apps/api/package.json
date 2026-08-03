@@ -7,7 +7,8 @@
     "dev": "nest start --watch",
     "start": "node dist/main.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest run"
   },
   "dependencies": {
     "@festipal/contracts": "workspace:*",
@@ -15,10 +16,14 @@
     "@nestjs/common": "^11.1.28",
     "@nestjs/core": "^11.1.28",
     "@nestjs/platform-express": "^11.1.28",
+    "@thallesp/nestjs-better-auth": "^2.7.0",
     "@ts-rest/nest": "^3.52.1",
+    "better-auth": "1.6.25",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "postgres": "^3.4.9",
     "reflect-metadata": "^0.2.2",
+    "resend": "^6.18.1",
     "rxjs": "^7.8.2",
     "zod": "^3.25.76"
   },
@@ -26,7 +31,11 @@
     "@festipal/config": "workspace:*",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
+    "@nestjs/testing": "^11.1.28",
     "@types/node": "^26.1.2",
-    "typescript": "6.0.3"
+    "@types/supertest": "^7.2.1",
+    "supertest": "^7.2.2",
+    "typescript": "6.0.3",
+    "vitest": "^4.1.10"
   }
 }
