@@ -13,10 +13,19 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/festivals/index.tsx
+msgid "Can't load festivals — check your connection and try again."
+msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
+
 #: app/(auth)/index.tsx
 #: app/(auth)/verify.tsx
+#: app/festivals/index.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
+
+#: app/festivals/index.tsx
+msgid "Check back soon — new festivals will appear here."
+msgstr "Schau bald wieder vorbei — neue Festivals erscheinen hier."
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Continue"
@@ -34,6 +43,10 @@ msgstr "Keinen Code erhalten? Erneut senden"
 msgid "Email"
 msgstr "E-Mail"
 
+#: app/festivals/index.tsx
+msgid "Enter festival"
+msgstr "Festival betreten"
+
 #: app/(auth)/verify.tsx
 msgid "Enter the 6-digit code we sent to {email}"
 msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
@@ -42,13 +55,33 @@ msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
 msgid "Enter your code"
 msgstr "Gib deinen Code ein"
 
+#: app/festivals/index.tsx
+msgid "Festivals"
+msgstr "Festivals"
+
+#: app/festivals/index.tsx
+msgid "Loading festivals…"
+msgstr "Festivals werden geladen…"
+
 #: app/(auth)/index.tsx
 msgid "Log in"
 msgstr "Anmelden"
 
+#: app/festivals/index.tsx
+msgid "No festivals yet"
+msgstr "Noch keine Festivals"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "One more step"
 msgstr "Nur noch ein Schritt"
+
+#: app/festivals/index.tsx
+msgid "Retry"
+msgstr "Erneut versuchen"
+
+#: app/festivals/index.tsx
+msgid "Save"
+msgstr "Speichern"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Saving…"
