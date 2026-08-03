@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 03
 current_phase_name: mobile-app-shell-i18n-foundation
 status: executing
-stopped_at: Completed 03-01-PLAN.md
-last_updated: "2026-08-03T15:51:00.118Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-08-03T16:16:17.770Z"
 last_activity: 2026-08-03
 last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 15
-  completed_plans: 10
+  completed_plans: 11
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 03 (mobile-app-shell-i18n-foundation) — EXECUTING
-Plan: 2 of 6
+Plan: 3 of 6
 Status: Ready to execute
 Last activity: 2026-08-03 — Phase 03 execution started
 
-Progress: [███████░░░] 67%
+Progress: [███████░░░] 73%
 
 ## Performance Metrics
 
@@ -69,6 +69,7 @@ Progress: [███████░░░] 67%
 | Phase 02 P05 | 30min | 2 tasks | 5 files |
 | Phase 02 P06 | 15min | 2 tasks | 4 files |
 | Phase 03 P01 | 15min | 2 tasks | 7 files |
+| Phase 03 P02 | 50min | 2 tasks | 21 files |
 
 ## Accumulated Context
 
@@ -99,6 +100,8 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-05: auth-guard.spec.ts covers all eight protected /api/v1 endpoints (plan's six plus getFestival/listTags) to match the objective's whole-endpoint-set language — Closes the annotation table's no-endpoint-untagged prohibition with a passing test, not just manual review
 - [Phase ?]: 02-06: Fixed CR-01 at the service/contract/controller level only (my_festival FK unchanged) — save() catches Postgres 23503 and returns a 409, mirroring me.service.completeProfile's 23505 idiom
 - [Phase 03]: 03-01: Fixed Postgres 18 docker volume mount path (/var/lib/postgresql, not /var/lib/postgresql/data) after a startup crash-loop -- 18+ images use a pg_ctlcluster-compatible data layout.
+- [Phase ?]: D-07 resolved: resolveUiLocale gains an optional uiFallback param (Option A) - mobile passes 'de' without changing the shared DEFAULT_LOCALE='en' (content-axis default, ADR-012)
+- [Phase ?]: 03-02: Lingui macro babel plugin + lingui.config.ts had to be created already in Task 1 (blocking) - the tracer screen's Trans macro cannot bundle without them
 
 ### Pending Todos
 
@@ -130,6 +133,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-03T15:51:00.106Z
-Stopped at: Completed 03-01-PLAN.md
+Last session: 2026-08-03T16:16:17.756Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
