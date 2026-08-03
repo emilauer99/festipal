@@ -18,8 +18,8 @@ before making architectural changes.
 ## Tech Stack
 
 - **Monorepo:** Turborepo + pnpm
-- **Mobile app** (`apps/mobile`): React Native (New Architecture) + Expo + Expo Router + TypeScript; deploy via EAS (Build/Submit/Update OTA)
-- **Admin web** (`apps/admin`): Next.js 15 + React 19 + shadcn/ui + Tailwind
+- **Mobile app** (`apps/mobile`): React Native (New Architecture) + Expo + Expo Router + TypeScript; deploy via EAS (Build/Submit/Update OTA); custom components built on RN primitives in `packages/ui`, styled exclusively via shared design tokens — NO third-party UI component library (ADR-022)
+- **Admin web** (`apps/admin`): Next.js 15 + React 19 + shadcn/ui + Tailwind; minimize hand-written CSS (Tailwind utilities + shadcn components; custom CSS needs justification) (ADR-022)
 - **Backend** (`apps/api`): NestJS (TypeScript)
 - **API contracts** (`packages/contracts`): ts-rest + Zod — single source of truth for endpoints & types
 - **Database** (`packages/db`): PostgreSQL + Drizzle ORM (Neon)
@@ -67,6 +67,7 @@ All commands run from the repo root via pnpm + Turborepo (exact scripts finalize
 - **Language:** TypeScript everywhere, `strict` mode on. No untyped `any` at API boundaries. Pinned to **TypeScript 6.0.x** (ecosystem compat; TS 7 native pending typescript-eslint support — see ADR-013).
 - **Validation:** Zod schemas in `packages/contracts` are the source of truth; reuse them, don't re-declare shapes.
 - **Shared code:** cross-app logic/types belong in `packages/*`, never copy-pasted between apps.
+- **UI components:** mobile uses owned RN-primitive components in `packages/ui` styled via shared tokens (no third-party UI kit); admin uses shadcn/ui + Tailwind with minimized custom CSS — see ADR-022.
 - **Git:** Trunk-based, short-lived feature branches, Conventional Commits, squash-merge via PR — **never commit directly to `main`**. Full rules in `docs/GIT_CONVENTIONS.md`.
 - **Before finishing a change:** run lint, typecheck and the relevant tests; report failures honestly.
 

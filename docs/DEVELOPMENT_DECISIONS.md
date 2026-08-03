@@ -510,17 +510,46 @@ Auth-Wiring (Handler, Guard, OTP-Versand, E-Mail-Provider) bleibt Phase 2 (ADR-0
 generate`-Spike bestätigte: Schema-Generierung braucht **keine** Live-DB-Verbindung und **kein**
 `BETTER_AUTH_SECRET`.
 
+### ADR-022 — UI-Komponenten-Strategie: eigene RN-Komponenten (Mobile) · shadcn/ui + Tailwind (Admin) · minimaler Custom-CSS · **ENTSCHIEDEN**
+Nutzer-Entscheidung (2026-08-03). Ersetzt die zuvor erwogene Idee, ein Drittanbieter-UI-Framework
+für React Native einzusetzen. Erweitert **ADR-003** (Admin-Web: shadcn/ui + Tailwind) und
+**ADR-015** (`packages/ui` als Tokens-Single-Source-of-Truth, Komponenten nutzen nur semantische
+Aliase) um die konkrete Komponenten-Strategie für beide Frontends.
+
+**Entscheidung:**
+1. **Mobile (`apps/mobile`, Expo/RN): KEINE Drittanbieter-UI-Komponentenbibliothek.** Es werden
+   eigene Komponenten auf RN-Primitiven (`View`, `Text`, `TextInput`, `Pressable`, …) gebaut, die in
+   `packages/ui` leben und ausschließlich über die geteilten Design-Tokens
+   (`packages/ui/src/tokens.ts`) gestylt werden. Kein verstreutes Ad-hoc-`StyleSheet` in Screens —
+   Styling läuft immer über Tokens/geteilte Primitives.
+2. **Admin (`apps/admin`, Next.js 15): shadcn/ui + Tailwind** (bestätigt ADR-003). Custom-CSS wird
+   minimiert — nur Tailwind-Utilities + shadcn-Komponenten; handgeschriebenes CSS braucht eine
+   explizite Begründung.
+
+**Begründung:** Minimaler Custom-CSS-/Styling-Code, Konsistenz über beide Frontends, kein
+UI-Kit-Lock-in bzw. -Churn auf RN (Drittanbieter-Bibliotheken altern schnell und binden an fremde
+Theming-Modelle), und leichtere Design-Treue (Prinzip 5) zu den Claude-Design-Vorlagen (Phasen 4–6)
+mit eigenen, voll kontrollierten Komponenten.
+
+**Verworfen:** Ein Drittanbieter-RN-UI-Framework (z. B. Tamagui/React Native Paper o. ä.) für
+Mobile — verworfen wegen Theming-Lock-in gegen den Festival-Theming-Vertrag (ADR-015) und
+zusätzlichem Abstraktions-Overhead ohne Mehrwert gegenüber eigenen, tokens-basierten Komponenten.
+
+**Konsequenz:** Phase 3's freigegebenes UI-SPEC (reine RN-Primitiven + Tokens) ist bereits
+konsistent mit dieser Entscheidung — keine Nacharbeit nötig. Zukünftige Phasen zitieren ADR-022
+statt die UI-Framework-Frage erneut zu diskutieren.
+
 ---
 
 ## Tech-Stack (Kurzüberblick)
 
 | Ebene | Technologie |
 |---|---|
-| Mobile App | React Native (New Arch) + Expo + Expo Router + TypeScript |
+| Mobile App | React Native (New Arch) + Expo + Expo Router + TypeScript; eigene Komponenten auf RN-Primitiven in `packages/ui`, kein Drittanbieter-UI-Kit (ADR-022) |
 | App-Deployment | EAS Build / Submit / **Update** (OTA) |
 | Offline | Expo SQLite/MMKV + Drizzle + TanStack Query (persistiert) + Mutation-Queue |
 | Karten | MapLibre |
-| Admin-Web | Next.js 15 + React 19 + shadcn/ui + Tailwind |
+| Admin-Web | Next.js 15 + React 19 + shadcn/ui + Tailwind; minimaler Custom-CSS (ADR-022) |
 | Backend | NestJS (TypeScript) |
 | Auth | better-auth (TS, self-hosted, mandantenfähig) |
 | Realtime | NestJS WebSocket-Gateway + Redis-Adapter |
@@ -567,6 +596,8 @@ festipal/
 - **End-to-end Typsicherheit** — keine untypisierten API-Grenzen; Contracts sind Vertrag.
 - **Sicherheit** — keine Kartendaten im eigenen System; Secrets nie im Repo; Auth mandantenfähig.
 - **Design-Treue** — Frontend orientiert sich an den Vorlagen aus Claude Design (claude.ai/design).
+- **UI-Komponenten-Strategie** — Mobile: eigene RN-Primitiven-Komponenten + Tokens, kein
+  Drittanbieter-UI-Kit; Admin: shadcn/ui + Tailwind, Custom-CSS minimieren (ADR-022).
 
 ---
 
