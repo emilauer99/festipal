@@ -18,6 +18,14 @@ msgstr ""
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
 
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Continue"
+msgstr "Weiter"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Couldn't set up your profile — tap Continue to try again."
+msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
+
 #: app/(auth)/verify.tsx
 msgid "Didn't get a code? Resend"
 msgstr "Keinen Code erhalten? Erneut senden"
@@ -37,6 +45,14 @@ msgstr "Gib deinen Code ein"
 #: app/(auth)/index.tsx
 msgid "Log in"
 msgstr "Anmelden"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "One more step"
+msgstr "Nur noch ein Schritt"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Saving…"
+msgstr "Wird gespeichert…"
 
 #: app/(auth)/index.tsx
 msgid "Send code"
@@ -66,6 +82,10 @@ msgstr "Verifizieren"
 #: app/(auth)/verify.tsx
 msgid "Verifying…"
 msgstr "Wird verifiziert…"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "We need a temporary profile to continue."
+msgstr "Wir brauchen ein vorübergehendes Profil, um fortzufahren."
 
 #: app/index.tsx
 #~ msgid "Welcome to festipal"

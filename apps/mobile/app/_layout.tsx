@@ -29,10 +29,31 @@ type AuthState =
   | { status: 'authenticated-no-profile' }
   | { status: 'authenticated' };
 
+// 03-04 addition — `GET /me`'s `profile` field lives entirely outside
+// better-auth's own session atom (it's our own NestJS endpoint, not a
+// better-auth plugin route), so completing a profile via
+// `(profile-setup)/complete-profile` does NOT change `session`/`sessionPending`
+// below and would never re-trigger `resolveAuthState` on its own. This
+// module-level hook lets that screen ask the guard to re-check `GET /me`
+// without introducing a global state library (plan's key_link:
+// "apiClient.completeProfile -> guard re-resolves to authenticated").
+let notifyMeMightHaveChanged: (() => void) | null = null;
+export function refreshAuthState(): void {
+  notifyMeMightHaveChanged?.();
+}
+
 export default function RootLayout() {
   const [localeReady, setLocaleReady] = useState(false);
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
+  const [meRefreshToken, setMeRefreshToken] = useState(0);
   const splashHiddenRef = useRef(false);
+
+  useEffect(() => {
+    notifyMeMightHaveChanged = () => setMeRefreshToken((token) => token + 1);
+    return () => {
+      notifyMeMightHaveChanged = null;
+    };
+  }, []);
 
   // better-auth's React hook surface (verified against the installed
   // @better-auth/expo/better-auth version, RESEARCH.md A2) — NOT a
@@ -78,7 +99,7 @@ export default function RootLayout() {
     return () => {
       cancelled = true;
     };
-  }, [session, sessionPending]);
+  }, [session, sessionPending, meRefreshToken]);
 
   const bootstrapped = localeReady && authState.status !== 'loading';
 

@@ -18,6 +18,14 @@ msgstr ""
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Continue"
+msgstr "Continue"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Couldn't set up your profile — tap Continue to try again."
+msgstr "Couldn't set up your profile — tap Continue to try again."
+
 #: app/(auth)/verify.tsx
 msgid "Didn't get a code? Resend"
 msgstr "Didn't get a code? Resend"
@@ -37,6 +45,14 @@ msgstr "Enter your code"
 #: app/(auth)/index.tsx
 msgid "Log in"
 msgstr "Log in"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "One more step"
+msgstr "One more step"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Saving…"
+msgstr "Saving…"
 
 #: app/(auth)/index.tsx
 msgid "Send code"
@@ -66,6 +82,10 @@ msgstr "Verify"
 #: app/(auth)/verify.tsx
 msgid "Verifying…"
 msgstr "Verifying…"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "We need a temporary profile to continue."
+msgstr "We need a temporary profile to continue."
 
 #: app/index.tsx
 #~ msgid "Welcome to festipal"
