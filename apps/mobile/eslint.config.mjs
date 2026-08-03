@@ -4,6 +4,17 @@ import i18next from 'eslint-plugin-i18next';
 export default [
   ...base,
   {
+    // Expo config plugins (plugins/**) are loaded by Expo via require() and are
+    // CommonJS by convention — they are NOT `*.config.*` (which the base config
+    // ignores), so lint them as CommonJS: enable Node/CJS globals (require,
+    // module) and allow require-style imports here only.
+    files: ['plugins/**/*.js'],
+    languageOptions: { sourceType: 'commonjs' },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
+  {
     // I18N-01 / Pitfall 7 — wire the no-literal-string rule in BEFORE any
     // product screen exists (only the tracer screen does so far), so a
     // hardcoded UI string can never slip past the very first commit that
