@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(festival)/index.tsx
+msgid "Back to festivals"
+msgstr "Zurück zu den Festivals"
+
 #: app/festivals/index.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
@@ -54,6 +58,10 @@ msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
 #: app/(auth)/verify.tsx
 msgid "Enter your code"
 msgstr "Gib deinen Code ein"
+
+#: app/(festival)/index.tsx
+msgid "Festival home"
+msgstr "Festival-Startseite"
 
 #: app/festivals/index.tsx
 msgid "Festivals"
@@ -127,3 +135,7 @@ msgstr "Wir brauchen ein vorübergehendes Profil, um fortzufahren."
 #: app/(auth)/index.tsx
 msgid "you@example.com"
 msgstr "du@beispiel.com"
+
+#: app/(festival)/index.tsx
+msgid "Your festival overview is coming soon."
+msgstr "Deine Festival-Übersicht kommt in Kürze."
