@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 03
 current_phase_name: mobile-app-shell-i18n-foundation
 status: executing
-stopped_at: Completed 03-05-PLAN.md
-last_updated: "2026-08-03T17:20:52.698Z"
-last_activity: 2026-08-03
-last_activity_desc: Phase 03 execution started
+stopped_at: Completed 03-06-PLAN.md
+last_updated: "2026-08-04T00:15:00.000Z"
+last_activity: 2026-08-04
+last_activity_desc: Phase 03 plan 06 complete (Android on-device UAT signed off; iOS deferred)
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 15
-  completed_plans: 14
+  completed_plans: 15
 ---
 
 # Project State
@@ -27,12 +27,12 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 ## Current Position
 
-Phase: 03 (mobile-app-shell-i18n-foundation) — EXECUTING
-Plan: 6 of 6
-Status: Ready to execute
-Last activity: 2026-08-03 — Phase 03 execution started
+Phase: 03 (mobile-app-shell-i18n-foundation) — ALL PLANS COMPLETE (pending phase verification)
+Plan: 6 of 6 — complete
+Status: All 6 plans done; ready for /gsd-verify-work
+Last activity: 2026-08-04 — Phase 03 plan 06 complete (Android on-device UAT signed off; iOS deferred)
 
-Progress: [█████████░] 93%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -73,6 +73,7 @@ Progress: [█████████░] 93%
 | Phase 03 P03 | 25min | 2 tasks | 5 files |
 | Phase 03 P04 | ~24 min | 2 tasks | 11 files |
 | Phase 03 P05 | 20min | 2 tasks | 6 files |
+| Phase 03 P06 | ~3h35m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -112,6 +113,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 03-04: fixed a latent i18n gap from 03-02 -- lib/i18n.ts now calls i18n.load(...) to actually load DE/EN catalogs (activate() alone never rendered translations); also added 'po' to Metro's resolver.sourceExts, without which the catalog import couldn't resolve at all
 - [Phase ?]: 03-05: Save-state tracked client-side per session (local Set<festivalId>), not via a second listMyFestivals query -- saveFestival's own idempotency makes this a UX nicety, not a correctness need.
 - [Phase ?]: 03-05: German 'Save'/'Enter festival' copy uses the binding concept-doc terms verbatim (Speichern / Festival betreten), not 'Merken' from the offline-matrix doc's internal queue-action name.
+- [Phase 03]: 03-06: dev-cleartext to LAN API via expo-build-properties — Android usesCleartextTraffic + iOS NSAllowsLocalNetworking (narrow, not NSAllowsArbitraryLoads); guarded DEV-ONLY by an app.json _devOnlyCleartextComment, no EAS/release profile this phase (T-03-14/15).
+- [Phase 03]: 03-06: full core-value path (OTP → festivals → save → gate-less enter → home, kill-and-relaunch persists, DE/EN + German fallback) signed off on REAL ANDROID; iOS device-verification deferred (Mac/Xcode toolchain not set up) — user-approved deviation.
+- [Phase 03]: 03-06 (env): reverted stray root-level expo pollution (root app.json + expo/react-native deps in root package.json) from an accidental root `expo install`; the pnpm reconcile then hung on Windows due to a lingering Metro file-watcher racing pnpm's atomic temp-dir import — stopping Expo/Metro processes let `pnpm install` complete. Root cause of the ENOENT-on-*_tmp_*/node_modules install failures on this machine.
 
 ### Pending Todos
 
@@ -140,10 +144,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| Phase 03 UAT | iOS on-device verification of the six core-value checks (real iPhone via `npx expo run:ios` on a Mac w/ free Apple-ID provisioning) — Android verified, iOS toolchain not set up | Deferred (user-approved) | 2026-08-04 |
 
 ## Session Continuity
 
-Last session: 2026-08-03T17:20:52.688Z
-Stopped at: Completed 03-05-PLAN.md
+Last session: 2026-08-04T00:15:00.000Z
+Stopped at: Completed 03-06-PLAN.md — all Phase 03 plans done, ready for /gsd-verify-work
 Resume file: None
