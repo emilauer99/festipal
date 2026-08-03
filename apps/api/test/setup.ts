@@ -1,5 +1,8 @@
 import 'reflect-metadata';
 import 'dotenv/config';
+// Must come before any import that (transitively) pulls in config/env.ts —
+// see the comment inside for why this is an import, not a plain statement.
+import './force-otp-dev-transport';
 
 import type { INestApplication } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
