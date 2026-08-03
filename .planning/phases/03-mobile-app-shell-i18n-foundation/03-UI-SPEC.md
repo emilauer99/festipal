@@ -1,7 +1,7 @@
 ---
 phase: 3
 slug: mobile-app-shell-i18n-foundation
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-03
@@ -163,16 +163,17 @@ planner-level, not a copy decision).
 > Empty-state and error-state COPY live in `## Copywriting Contract` above — this section covers
 > state coverage and REFERENCES those rows rather than restating the copy (de-dup).
 
-**Elements classified:**
+**Elements classified** (probe engine run 2026-08-03; `splash` re-run with authored
+`static-content` override after the heuristic returned `unclassified`):
 - `email-entry` (form) — (auth) email input screen
 - `otp-verify` (form) — (auth) 6-digit code entry screen
 - `festivals-list` (list-collection) — festivals tab, `GET /festivals`
 - `festival-home` (static-content) — `(festival)` placeholder landing screen
-- `splash` (static-content) — cold-start splash/wordmark screen
+- `splash` (static-content, authored override) — cold-start splash/wordmark screen
 - `profile-stub` (form) — conditional "authenticated-no-profile" branch screen (RESEARCH.md Open
   Question 1, recommendation (a)) — **only exists if the planner chooses to build it**
 
-Applicable state considerations resolved: 11 covered, 2 backstop, 0 unresolved
+Applicable state considerations: 30 — resolved: 22 covered, 8 backstop, 0 unresolved
 
 | Category | Element(s) | Status | Resolution / Reason |
 |----------|------------|--------|---------------------|
@@ -183,12 +184,18 @@ Applicable state considerations resolved: 11 covered, 2 backstop, 0 unresolved
 | error | email-entry, otp-verify | ✅ covered | See Copywriting Contract error rows (wrong code, expired code, rate-limited) |
 | error | festivals-list | ✅ covered | See Copywriting Contract "Error state — festival list load failure" + "network/LAN unreachable"; both include a next-step ("Retry" / check Wi-Fi) |
 | populated | festivals-list | ✅ covered | Normal state shows one real seeded row ("Frequency 2026") with name, dates, place, and a Save/Enter CTA per the row's saved-state |
-| zero-one-many | festivals-list | ✅ covered | Plain vertical list, no grid — reads correctly at 1 item (today's seed) and scales unchanged to many; no singular/plural copy variance needed since the list has no "N festivals" counter this phase |
-| overflow | festivals-list, festival-home | ✅ covered | Festival name/place `Text` wraps by default in RN (no truncation/ellipsis needed for unstyled placeholders); do not set `numberOfLines` this phase |
-| long-text | email-entry | ✅ covered | RN `TextInput` scrolls/wraps long email addresses by default; no character limit imposed client-side (server validates via existing Zod schema) |
+| partial | email-entry | ✅ covered | Single-field form — no partial-data state exists; "Send code" stays disabled/inert until the email field is non-empty |
 | partial | otp-verify | ✅ covered | A partially-entered code simply leaves "Verify" disabled/inert until 6 digits are present — no partial-submit state to design |
-| empty/populated | profile-stub | 🧪 backstop | Whether this screen is built at all is Claude's Discretion at plan time (RESEARCH.md Open Question 1); IF built, use Copywriting-Contract-equivalent minimal copy: heading "One more step", body "We need a temporary profile to continue.", CTA "Continue" (auto-fills placeholder username/displayName, calls existing `POST /me/complete-profile`). Verification: confirm at plan/execute time whether this screen exists in the shipped route tree — if it does, its copy must match this row; if it doesn't (pre-provisioned test account chosen instead), this row is N/A. |
-| long-text | splash | 🧪 backstop | "festipal" wordmark is a fixed short string (no overflow risk today), but if D-05's working title changes to a longer name before this phase ships, re-check the splash layout doesn't clip it — flag for a visual smoke check, not a hard requirement to build responsive truncation now. |
+| partial | festivals-list | ✅ covered | Rows with a missing optional field (dates/place) omit that line rather than render a blank; festival name is always present (non-optional in the `packages/contracts` schema), so a row can never render nameless |
+| zero-one-many | festivals-list | ✅ covered | Plain vertical list, no grid — reads correctly at 1 item (today's seed) and scales unchanged to many; no singular/plural copy variance needed since the list has no "N festivals" counter this phase |
+| overflow | email-entry | ✅ covered | RN `TextInput` scrolls its content horizontally within a fixed single-line height — long input never breaks the layout |
+| overflow | otp-verify | ✅ covered | Six fixed-width single-digit boxes with `maxLength` per box — content length is fixed by construction, overflow impossible |
+| overflow | festivals-list, festival-home | ✅ covered | List scrolls vertically; festival name/place `Text` wraps by default in RN (no truncation/ellipsis needed for unstyled placeholders); do not set `numberOfLines` this phase |
+| long-text | email-entry | ✅ covered | RN `TextInput` scrolls long email addresses by default; no character limit imposed client-side (server validates via existing Zod schema) |
+| long-text | otp-verify | ✅ covered | Input constrained to exactly 6 digits (`maxLength` + numeric keyboard) — a long-text state cannot occur |
+| long-text | festivals-list, festival-home | ✅ covered | Festival name/place wrap onto multiple lines by default (no `numberOfLines`); layout is single-column so wrapping cannot collide with siblings |
+| overflow, long-text | splash | 🧪 backstop | "festipal" wordmark is a fixed short string (no overflow risk today), but if D-05's working title changes to a longer name before this phase ships, re-check the splash layout doesn't clip it. Verification: visual smoke check of the splash screen at ship time with the final working title — not a requirement to build responsive truncation now. |
+| empty, loading, error, partial, overflow, long-text | profile-stub | 🧪 backstop | Whether this screen is built at all is Claude's Discretion at plan time (RESEARCH.md Open Question 1); IF built, use Copywriting-Contract-equivalent minimal copy: heading "One more step", body "We need a temporary profile to continue.", CTA "Continue" (auto-fills placeholder username/displayName, calls existing `POST /me/complete-profile`), submit states mirroring email-entry (disabled-while-submitting, error copy with retry path). Verification: confirm at plan/execute time whether this screen exists in the shipped route tree — if it does, its copy and states must match this row; if it doesn't (pre-provisioned test account chosen instead), this row is N/A. |
 
 <!-- Status vocabulary (locked by probe-core projectTruths):
      ✅ covered   → a plain truth string lifted into must_haves.truths
@@ -210,11 +217,11 @@ Applicable state considerations resolved: 11 covered, 2 backstop, 0 unresolved
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: FLAG (non-blocking — no focal hierarchy declared; intentional per D-01/D-04 unstyled placeholder scope, designed hierarchy lands Phases 4–6)
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** APPROVED (gsd-ui-checker, 2026-08-03) — 1 non-blocking FLAG

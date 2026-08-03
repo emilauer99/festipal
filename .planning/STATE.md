@@ -5,8 +5,8 @@ milestone_name: milestone
 current_phase: 3
 current_phase_name: Mobile App Shell & i18n Foundation
 status: "Phase 02 shipped — PR #6"
-stopped_at: Phase 3 context gathered
-last_updated: "2026-08-03T13:52:47.963Z"
+stopped_at: Phase 3 UI-SPEC approved
+last_updated: "2026-08-03T14:24:23.340Z"
 last_activity: 2026-08-02
 progress:
   total_phases: 3
@@ -122,6 +122,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-03T13:52:47.945Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-mobile-app-shell-i18n-foundation/03-CONTEXT.md
+Last session: 2026-08-03T14:24:23.327Z
+Stopped at: Phase 3 UI-SPEC approved
+Resume file: C:/Users/Emil/Documents/Privat/Projekte/festipal/.planning/phases/03-mobile-app-shell-i18n-foundation/03-UI-SPEC.md
