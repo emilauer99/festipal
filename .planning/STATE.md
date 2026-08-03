@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 03
 current_phase_name: mobile-app-shell-i18n-foundation
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-08-03T16:42:06.963Z"
+stopped_at: Completed 03-04-PLAN.md
+last_updated: "2026-08-03T17:08:09.956Z"
 last_activity: 2026-08-03
 last_activity_desc: Phase 03 execution started
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 03 (mobile-app-shell-i18n-foundation) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute
 Last activity: 2026-08-03 — Phase 03 execution started
 
-Progress: [████████░░] 80%
+Progress: [█████████░] 87%
 
 ## Performance Metrics
 
@@ -71,6 +71,7 @@ Progress: [████████░░] 80%
 | Phase 03 P01 | 15min | 2 tasks | 7 files |
 | Phase 03 P02 | 50min | 2 tasks | 21 files |
 | Phase 03 P03 | 25min | 2 tasks | 5 files |
+| Phase 03 P04 | ~24 min | 2 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -105,6 +106,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 03-02: Lingui macro babel plugin + lingui.config.ts had to be created already in Task 1 (blocking) - the tracer screen's Trans macro cannot bundle without them
 - [Phase ?]: 03-03: Pinned zod ^3.25.76 directly in apps/mobile (ADR-006) after diagnosing that ts-rest/core's pnpm peer resolution drifted to zod v4 (pulled in by better-auth's own dependency tree) instead of the workspace's zod v3; a workspace-wide override was tried and reverted because it breaks apps/api at runtime (better-auth's own zod-v4-only .meta() call).
 - [Phase ?]: 03-03: Cast expoClient(...) as BetterAuthClientPlugin in auth-client.ts to work around a shipped-type-only incompatibility in @better-auth/expo@1.6.25's createAuthClient plugin-array typing; verified JS shape matches official docs, authClient.getCookie() works correctly.
+- [Phase ?]: 03-04: single 6-digit TextInput for OTP (not six boxes) per the plan's own action text, matching UI-SPEC's overflow-impossible reasoning
+- [Phase ?]: 03-04: better-auth OTP/rate-limit error mapping (OTP_EXPIRED/INVALID_OTP/TOO_MANY_ATTEMPTS + bare 429) read directly from the installed package's dist source, not assumed from RESEARCH.md
+- [Phase ?]: 03-04: fixed a latent i18n gap from 03-02 -- lib/i18n.ts now calls i18n.load(...) to actually load DE/EN catalogs (activate() alone never rendered translations); also added 'po' to Metro's resolver.sourceExts, without which the catalog import couldn't resolve at all
 
 ### Pending Todos
 
@@ -137,6 +141,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-03T16:42:06.947Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-08-03T17:08:09.945Z
+Stopped at: Completed 03-04-PLAN.md
 Resume file: None
