@@ -12,6 +12,14 @@ import { DEFAULT_LOCALE, isSupportedLocale, type Locale } from './locales';
 export function resolveUiLocale(input: {
   override?: string | null;
   systemLocales?: readonly string[];
+  /**
+   * D-07: an optional per-caller UI-axis fallback, used only when neither
+   * `override` nor any `systemLocales` entry resolves. Defaults to
+   * `DEFAULT_LOCALE` (the shared, content-axis-neutral default, ADR-012) so
+   * existing callers are unaffected. The mobile app passes `uiFallback: 'de'`
+   * without changing the shared constant — see 03-02-PLAN.md's Decision note.
+   */
+  uiFallback?: Locale;
 }): Locale {
   if (input.override && isSupportedLocale(input.override)) {
     return input.override;
@@ -24,5 +32,5 @@ export function resolveUiLocale(input: {
     }
   }
 
-  return DEFAULT_LOCALE;
+  return input.uiFallback ?? DEFAULT_LOCALE;
 }

@@ -21,5 +21,14 @@ export default defineConfig({
     // discovered once the full endpoint-set specs pushed concurrent OTP
     // sign-ins past ~3 in the same 60s window).
     fileParallelism: false,
+    // Heavy integration beforeAll hooks (e.g. festival-isolation: two full
+    // OTP sign-in round-trips with 300ms capture-file polling against the
+    // real DB) measure ~13s — the 10s vitest default is permanently
+    // borderline and flakes with DB/network latency variance.
+    hookTimeout: 30_000,
+    // Same rationale for individual tests: an OTP round-trip (send + poll
+    // capture file + verify) against the real DB takes ~1s idle but 5-7s
+    // when turbo runs the whole workspace in parallel (CPU contention).
+    testTimeout: 30_000,
   },
 });

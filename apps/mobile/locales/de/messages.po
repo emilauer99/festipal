@@ -1,0 +1,141 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-03 18:09+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: de\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: app/(festival)/index.tsx
+msgid "Back to festivals"
+msgstr "Zurück zu den Festivals"
+
+#: app/festivals/index.tsx
+msgid "Can't load festivals — check your connection and try again."
+msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
+
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+#: app/festivals/index.tsx
+msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
+
+#: app/festivals/index.tsx
+msgid "Check back soon — new festivals will appear here."
+msgstr "Schau bald wieder vorbei — neue Festivals erscheinen hier."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Continue"
+msgstr "Weiter"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Couldn't set up your profile — tap Continue to try again."
+msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
+
+#: app/(auth)/verify.tsx
+msgid "Didn't get a code? Resend"
+msgstr "Keinen Code erhalten? Erneut senden"
+
+#: app/(auth)/index.tsx
+msgid "Email"
+msgstr "E-Mail"
+
+#: app/festivals/index.tsx
+msgid "Enter festival"
+msgstr "Festival betreten"
+
+#: app/(auth)/verify.tsx
+msgid "Enter the 6-digit code we sent to {email}"
+msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
+
+#: app/(auth)/verify.tsx
+msgid "Enter your code"
+msgstr "Gib deinen Code ein"
+
+#: app/(festival)/index.tsx
+msgid "Festival home"
+msgstr "Festival-Startseite"
+
+#: app/festivals/index.tsx
+msgid "Festivals"
+msgstr "Festivals"
+
+#: app/festivals/index.tsx
+msgid "Loading festivals…"
+msgstr "Festivals werden geladen…"
+
+#: app/(auth)/index.tsx
+msgid "Log in"
+msgstr "Anmelden"
+
+#: app/festivals/index.tsx
+msgid "No festivals yet"
+msgstr "Noch keine Festivals"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "One more step"
+msgstr "Nur noch ein Schritt"
+
+#: app/festivals/index.tsx
+msgid "Retry"
+msgstr "Erneut versuchen"
+
+#: app/festivals/index.tsx
+msgid "Save"
+msgstr "Speichern"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Saving…"
+msgstr "Wird gespeichert…"
+
+#: app/(auth)/index.tsx
+msgid "Send code"
+msgstr "Code senden"
+
+#: app/(auth)/index.tsx
+msgid "Sending…"
+msgstr "Wird gesendet…"
+
+#: app/(auth)/verify.tsx
+msgid "That code didn't work — check your email and try again."
+msgstr "Der Code war falsch — prüfe deine E-Mails und versuche es erneut."
+
+#: app/(auth)/verify.tsx
+msgid "That code has expired — request a new one."
+msgstr "Der Code ist abgelaufen — fordere einen neuen an."
+
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+msgid "Too many attempts — try again in a few minutes."
+msgstr "Zu viele Versuche — versuche es in ein paar Minuten erneut."
+
+#: app/(auth)/verify.tsx
+msgid "Verify"
+msgstr "Verifizieren"
+
+#: app/(auth)/verify.tsx
+msgid "Verifying…"
+msgstr "Wird verifiziert…"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "We need a temporary profile to continue."
+msgstr "Wir brauchen ein vorübergehendes Profil, um fortzufahren."
+
+#: app/index.tsx
+#~ msgid "Welcome to festipal"
+#~ msgstr "Willkommen bei festipal"
+
+#: app/(auth)/index.tsx
+msgid "you@example.com"
+msgstr "du@beispiel.com"
+
+#: app/(festival)/index.tsx
+msgid "Your festival overview is coming soon."
+msgstr "Deine Festival-Übersicht kommt in Kürze."

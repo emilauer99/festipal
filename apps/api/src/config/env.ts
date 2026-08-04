@@ -12,7 +12,11 @@ const envSchema = z.object({
   DATABASE_URL_UNPOOLED: z.string().url().optional(),
   // Optional: unset in dev, where OTP_EMAIL_TRANSPORT falls back to console output.
   RESEND_API_KEY: z.string().optional(),
-  OTP_EMAIL_TRANSPORT: z.enum(['dev', 'resend']).default('dev'),
+  // 'mailpit' (Phase 3, D-11): routes OTP codes to the local docker-compose
+  // Mailpit inbox so a device on the LAN can read them during dev testing.
+  OTP_EMAIL_TRANSPORT: z.enum(['dev', 'resend', 'mailpit']).default('dev'),
+  MAILPIT_SMTP_HOST: z.string().default('127.0.0.1'),
+  MAILPIT_SMTP_PORT: z.coerce.number().default(1025),
 });
 
 export type Env = z.infer<typeof envSchema>;

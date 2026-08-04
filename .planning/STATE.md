@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 3
-current_phase_name: Mobile App Shell & i18n Foundation
-status: "Phase 02 shipped — PR #6"
-stopped_at: Phase 03 UI-SPEC re-verified and approved (unchanged)
-last_updated: "2026-08-03T14:46:21.644Z"
-last_activity: 2026-08-03
-last_activity_desc: "Completed quick task 260803-mz6: UI component strategy anchored in docs (ADR-022 + CLAUDE.md)"
+current_phase: 4
+current_phase_name: Visitor Auth & Profile Completion
+status: "Phase 03 shipped — PR #8"
+stopped_at: Completed 03-06-PLAN.md — all Phase 03 plans done, ready for /gsd-verify-work
+last_updated: "2026-08-04T11:30:30.444Z"
+last_activity: 2026-08-04
 progress:
   total_phases: 3
-  completed_phases: 2
-  total_plans: 9
-  completed_plans: 9
+  completed_phases: 3
+  total_plans: 15
+  completed_plans: 15
+last_activity_desc: Phase 03 complete, transitioned to Phase 4
 ---
 
 # Project State
@@ -23,14 +23,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 02 — otp-auth-festival-backend-api
+**Current focus:** Phase 03 — mobile-app-shell-i18n-foundation
 
 ## Current Position
 
-Phase: 3 — Mobile App Shell & i18n Foundation
+Phase: 4 — Visitor Auth & Profile Completion
 Plan: Not started
-Status: Phase 02 shipped — PR #6
-Last activity: 2026-08-03 - Completed quick task 260803-mz6: UI component strategy anchored in docs (ADR-022 + CLAUDE.md)
+Status: Phase 03 shipped — PR #8
+Last activity: 2026-08-04
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 9
+- Total plans completed: 15
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -48,6 +48,7 @@ Progress: [██████████] 100%
 |-------|-------|-------|----------|
 | 01 | 3 | - | - |
 | 02 | 6 | - | - |
+| 03 | 6 | - | - |
 
 **Recent Trend:**
 
@@ -68,6 +69,12 @@ Progress: [██████████] 100%
 | Phase 02 P04 | 24min | 2 tasks | 5 files |
 | Phase 02 P05 | 30min | 2 tasks | 5 files |
 | Phase 02 P06 | 15min | 2 tasks | 4 files |
+| Phase 03 P01 | 15min | 2 tasks | 7 files |
+| Phase 03 P02 | 50min | 2 tasks | 21 files |
+| Phase 03 P03 | 25min | 2 tasks | 5 files |
+| Phase 03 P04 | ~24 min | 2 tasks | 11 files |
+| Phase 03 P05 | 20min | 2 tasks | 6 files |
+| Phase 03 P06 | ~3h35m | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -97,6 +104,19 @@ Recent decisions affecting current work:
 - [Phase 02]: 02-05: Disabled vitest fileParallelism in apps/api after the larger OTP-heavy spec suite proved flaky under parallel-file execution (rate limiter + shared capture-file races) — 3/3 consecutive full-suite runs green afterward — Root-caused via isolation testing (every new spec passed alone, only the full parallel run failed) before applying the fix, avoiding a speculative change
 - [Phase 02]: 02-05: auth-guard.spec.ts covers all eight protected /api/v1 endpoints (plan's six plus getFestival/listTags) to match the objective's whole-endpoint-set language — Closes the annotation table's no-endpoint-untagged prohibition with a passing test, not just manual review
 - [Phase ?]: 02-06: Fixed CR-01 at the service/contract/controller level only (my_festival FK unchanged) — save() catches Postgres 23503 and returns a 409, mirroring me.service.completeProfile's 23505 idiom
+- [Phase 03]: 03-01: Fixed Postgres 18 docker volume mount path (/var/lib/postgresql, not /var/lib/postgresql/data) after a startup crash-loop -- 18+ images use a pg_ctlcluster-compatible data layout.
+- [Phase ?]: D-07 resolved: resolveUiLocale gains an optional uiFallback param (Option A) - mobile passes 'de' without changing the shared DEFAULT_LOCALE='en' (content-axis default, ADR-012)
+- [Phase ?]: 03-02: Lingui macro babel plugin + lingui.config.ts had to be created already in Task 1 (blocking) - the tracer screen's Trans macro cannot bundle without them
+- [Phase ?]: 03-03: Pinned zod ^3.25.76 directly in apps/mobile (ADR-006) after diagnosing that ts-rest/core's pnpm peer resolution drifted to zod v4 (pulled in by better-auth's own dependency tree) instead of the workspace's zod v3; a workspace-wide override was tried and reverted because it breaks apps/api at runtime (better-auth's own zod-v4-only .meta() call).
+- [Phase ?]: 03-03: Cast expoClient(...) as BetterAuthClientPlugin in auth-client.ts to work around a shipped-type-only incompatibility in @better-auth/expo@1.6.25's createAuthClient plugin-array typing; verified JS shape matches official docs, authClient.getCookie() works correctly.
+- [Phase ?]: 03-04: single 6-digit TextInput for OTP (not six boxes) per the plan's own action text, matching UI-SPEC's overflow-impossible reasoning
+- [Phase ?]: 03-04: better-auth OTP/rate-limit error mapping (OTP_EXPIRED/INVALID_OTP/TOO_MANY_ATTEMPTS + bare 429) read directly from the installed package's dist source, not assumed from RESEARCH.md
+- [Phase ?]: 03-04: fixed a latent i18n gap from 03-02 -- lib/i18n.ts now calls i18n.load(...) to actually load DE/EN catalogs (activate() alone never rendered translations); also added 'po' to Metro's resolver.sourceExts, without which the catalog import couldn't resolve at all
+- [Phase ?]: 03-05: Save-state tracked client-side per session (local Set<festivalId>), not via a second listMyFestivals query -- saveFestival's own idempotency makes this a UX nicety, not a correctness need.
+- [Phase ?]: 03-05: German 'Save'/'Enter festival' copy uses the binding concept-doc terms verbatim (Speichern / Festival betreten), not 'Merken' from the offline-matrix doc's internal queue-action name.
+- [Phase 03]: 03-06: dev-cleartext to LAN API via expo-build-properties — Android usesCleartextTraffic + iOS NSAllowsLocalNetworking (narrow, not NSAllowsArbitraryLoads); guarded DEV-ONLY by an app.json _devOnlyCleartextComment, no EAS/release profile this phase (T-03-14/15).
+- [Phase 03]: 03-06: full core-value path (OTP → festivals → save → gate-less enter → home, kill-and-relaunch persists, DE/EN + German fallback) signed off on REAL ANDROID; iOS device-verification deferred (Mac/Xcode toolchain not set up) — user-approved deviation.
+- [Phase 03]: 03-06 (env): reverted stray root-level expo pollution (root app.json + expo/react-native deps in root package.json) from an accidental root `expo install`; the pnpm reconcile then hung on Windows due to a lingering Metro file-watcher racing pnpm's atomic temp-dir import — stopping Expo/Metro processes let `pnpm install` complete. Root cause of the ENOENT-on-*_tmp_*/node_modules install failures on this machine.
 
 ### Pending Todos
 
@@ -111,6 +131,7 @@ None yet.
 - Phase 2 (MEDIUM, downgraded 2026-07-30): `@thallesp/nestjs-better-auth` × ts-rest body parsing — current wrapper (`better-auth >= 1.5.0`) auto-re-applies `express.json()` for non-auth routes, so no manual exclusion needed; ts-rest controllers just consume `req.body`. Spike = *confirm* (2-request body proof + resolve `/api/v1` vs `/api/auth` global-prefix collision + version-pin), not *design*. Hand-rolled `@All('auth/*path')` catch-all is Plan-C fallback. See PITFALLS.md Pitfall 3 update.
 - Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated and inherited by all later content reads — verify with a cross-festival data-isolation test. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
+- Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 
 ### Quick Tasks Completed
 
@@ -124,10 +145,10 @@ Items acknowledged and carried forward from previous milestone close:
 
 | Category | Item | Status | Deferred At |
 |----------|------|--------|-------------|
-| *(none)* | | | |
+| Phase 03 UAT | iOS on-device verification of the six core-value checks (real iPhone via `npx expo run:ios` on a Mac w/ free Apple-ID provisioning) — Android verified, iOS toolchain not set up | Deferred (user-approved) | 2026-08-04 |
 
 ## Session Continuity
 
-Last session: 2026-08-03T14:46:21.633Z
-Stopped at: Phase 03 UI-SPEC re-verified and approved (unchanged)
-Resume file: .planning/phases/03-mobile-app-shell-i18n-foundation/03-UI-SPEC.md
+Last session: 2026-08-04T00:15:00.000Z
+Stopped at: Completed 03-06-PLAN.md — all Phase 03 plans done, ready for /gsd-verify-work
+Resume file: None

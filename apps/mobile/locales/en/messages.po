@@ -1,0 +1,141 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-08-03 18:09+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: app/(festival)/index.tsx
+msgid "Back to festivals"
+msgstr "Back to festivals"
+
+#: app/festivals/index.tsx
+msgid "Can't load festivals — check your connection and try again."
+msgstr "Can't load festivals — check your connection and try again."
+
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+#: app/festivals/index.tsx
+msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+
+#: app/festivals/index.tsx
+msgid "Check back soon — new festivals will appear here."
+msgstr "Check back soon — new festivals will appear here."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Continue"
+msgstr "Continue"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Couldn't set up your profile — tap Continue to try again."
+msgstr "Couldn't set up your profile — tap Continue to try again."
+
+#: app/(auth)/verify.tsx
+msgid "Didn't get a code? Resend"
+msgstr "Didn't get a code? Resend"
+
+#: app/(auth)/index.tsx
+msgid "Email"
+msgstr "Email"
+
+#: app/festivals/index.tsx
+msgid "Enter festival"
+msgstr "Enter festival"
+
+#: app/(auth)/verify.tsx
+msgid "Enter the 6-digit code we sent to {email}"
+msgstr "Enter the 6-digit code we sent to {email}"
+
+#: app/(auth)/verify.tsx
+msgid "Enter your code"
+msgstr "Enter your code"
+
+#: app/(festival)/index.tsx
+msgid "Festival home"
+msgstr "Festival home"
+
+#: app/festivals/index.tsx
+msgid "Festivals"
+msgstr "Festivals"
+
+#: app/festivals/index.tsx
+msgid "Loading festivals…"
+msgstr "Loading festivals…"
+
+#: app/(auth)/index.tsx
+msgid "Log in"
+msgstr "Log in"
+
+#: app/festivals/index.tsx
+msgid "No festivals yet"
+msgstr "No festivals yet"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "One more step"
+msgstr "One more step"
+
+#: app/festivals/index.tsx
+msgid "Retry"
+msgstr "Retry"
+
+#: app/festivals/index.tsx
+msgid "Save"
+msgstr "Save"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Saving…"
+msgstr "Saving…"
+
+#: app/(auth)/index.tsx
+msgid "Send code"
+msgstr "Send code"
+
+#: app/(auth)/index.tsx
+msgid "Sending…"
+msgstr "Sending…"
+
+#: app/(auth)/verify.tsx
+msgid "That code didn't work — check your email and try again."
+msgstr "That code didn't work — check your email and try again."
+
+#: app/(auth)/verify.tsx
+msgid "That code has expired — request a new one."
+msgstr "That code has expired — request a new one."
+
+#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+msgid "Too many attempts — try again in a few minutes."
+msgstr "Too many attempts — try again in a few minutes."
+
+#: app/(auth)/verify.tsx
+msgid "Verify"
+msgstr "Verify"
+
+#: app/(auth)/verify.tsx
+msgid "Verifying…"
+msgstr "Verifying…"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "We need a temporary profile to continue."
+msgstr "We need a temporary profile to continue."
+
+#: app/index.tsx
+#~ msgid "Welcome to festipal"
+#~ msgstr "Welcome to festipal"
+
+#: app/(auth)/index.tsx
+msgid "you@example.com"
+msgstr "you@example.com"
+
+#: app/(festival)/index.tsx
+msgid "Your festival overview is coming soon."
+msgstr "Your festival overview is coming soon."

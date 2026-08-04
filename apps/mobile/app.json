@@ -1,0 +1,46 @@
+{
+  "expo": {
+    "name": "festipal",
+    "slug": "festipal",
+    "scheme": "festipal",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "at.festipal.app",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        }
+      }
+    },
+    "android": {
+      "package": "at.festipal.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "usesCleartextTraffic": true
+          }
+        }
+      ],
+      "./plugins/with-windows-long-path-fix.js"
+    ],
+    "extra": {
+      "_comment": "D-05 WORKING TITLE: name/slug/scheme/bundleIdentifier/package ('festipal' / 'at.festipal.app') are provisional until the first EAS Submit freezes the bundle ID. The 'scheme' value MUST stay in sync with apps/api's auth.instance.ts trustedOrigins if it ever changes.",
+      "_devOnlyCleartextComment": "DEV-BUILD-ONLY (Pitfall G / D-10 / T-03-14): android.usesCleartextTraffic (via the expo-build-properties plugin) and ios.infoPlist.NSAppTransportSecurity.NSAllowsLocalNetworking exist ONLY to let a local dev build reach the LAN API over plain HTTP (EXPO_PUBLIC_API_URL=http://<lan-ip>:8081). NSAllowsLocalNetworking is Apple's narrowly-scoped local-network ATS exception (RFC1918/.local/loopback only) chosen over NSAllowsArbitraryLoads so public-internet ATS enforcement stays intact. This MUST NOT be carried into any release/EAS build profile — no such profile is configured this phase (JSON has no comment syntax, hence this documented _comment field, matching the _comment convention already used above)."
+    }
+  }
+}

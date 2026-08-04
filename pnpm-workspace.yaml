@@ -2,6 +2,12 @@ packages:
   - "apps/*"
   - "packages/*"
 
+# Windows: RN/Expo native Android builds (CMake/ninja) break on pnpm's isolated
+# store — deep node_modules/.pnpm paths exceed object-path limits and junction
+# resolution makes ninja loop ("manifest still dirty after 100 tries").
+# Hoisted layout = flat npm-style node_modules. See phase 03-06.
+nodeLinker: hoisted
+
 allowBuilds:
   esbuild: true
 
