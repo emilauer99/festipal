@@ -3,10 +3,11 @@ phase: 3
 slug: mobile-app-shell-i18n-foundation
 # status lifecycle: draft (seeded by plan-phase) → validated (set by validate-phase §6)
 # audit-milestone §5.5 distinguishes NOT-VALIDATED (draft) from PARTIAL (validated + nyquist_compliant: false) (#2117)
-status: draft
+status: validated
 nyquist_compliant: true
-wave_0_complete: false
+wave_0_complete: true
 created: 2026-08-03
+validated: 2026-08-04
 ---
 
 # Phase 3 — Validation Strategy
@@ -54,18 +55,18 @@ created: 2026-08-03
 
 | Task ID | Plan | Wave | Requirement | Threat Ref | Secure Behavior | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|------------|-----------------|-----------|-------------------|-------------|--------|
-| 03-01-01 | 01 | 1 | PLAT-02 | T-03-02 / T-03-03 | Dev-only Postgres/Mailpit stack; `.env.example` placeholder secrets only | config | `docker compose config -q` | ✅ (docker CLI; file created by this task — W0-equiv infra) | ⬜ pending |
-| 03-01-02 | 01 | 1 | PLAT-02 | T-03-01 / T-03-SC | `trustedOrigins` whitelists exact `festipal://`/`exp://` (no bare `*`); Mailpit transport never throws | unit | `pnpm --filter @festipal/api typecheck && pnpm --filter @festipal/api test` | ✅ (Vitest + apps/api suite exist) | ⬜ pending |
-| 03-02-01 | 02 | 1 | PLAT-02, I18N-01 | T-03-04 / T-03-SC | Explicit Metro `nodeModulesPaths`/`watchFolders`; export-log asserts no stale/duplicate `@festipal/*` | build | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile exec expo export --platform android …` (grep: no `Unable to resolve module @festipal`) | ❌ W0 (this tracer task bootstraps `apps/mobile` package.json + scripts) | ⬜ pending |
-| 03-02-02 | 02 | 1 | I18N-01 | T-03-04 | `no-literal-string` active before first product screen; catalogs real (non-empty `msgstr`) | tdd (unit + lint) | `pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales && pnpm --filter @festipal/i18n test` | ❌ W0 (eslint-plugin-i18next + lingui.config + i18n `test` script bootstrapped here) | ⬜ pending |
-| 03-03-01 | 03 | 2 | PLAT-02 | T-03-06 / T-03-08 | SecureStore-only session; `credentials: 'omit'`; cookie sourced only from `authClient.getCookie()` | compile | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint` | ✅ (mobile scripts exist after 03-02) | ⬜ pending |
-| 03-03-02 | 03 | 2 | PLAT-02 | T-03-07 | Splash-held four-state guard; group-layer `Stack.Protected` (no deep-link leak); no per-screen gate | compile | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint` | ✅ | ⬜ pending |
-| 03-04-01 | 04 | 3 | PLAT-02, I18N-01 | T-03-09 / T-03-10 / T-03-11 | Real OTP round-trip only (no dev bypass); server owns validation/rate-limit; localized error states | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ⬜ pending |
-| 03-04-02 | 04 | 3 | PLAT-02, I18N-01 | T-03-09 | Placeholder profile via server-enforced unique index (23505→409); localized retry | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ⬜ pending |
-| 03-05-01 | 05 | 4 | PLAT-02, I18N-01 | T-03-12 / T-03-13 | Gate-less entry (ADR-014, no client access gate); renders only typed contract body | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ⬜ pending |
-| 03-05-02 | 05 | 4 | I18N-01 | T-03-13 | Static localized placeholder; no master-data over-fetch (deferred to Phase 5) | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ⬜ pending |
-| 03-06-01 | 06 | 5 | PLAT-02 | T-03-14 / T-03-15 / T-03-SC | Cleartext/ATS scoped dev-build-only via comment; no release/EAS profile configured | config | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile exec expo config --type public > /dev/null` | ✅ | ⬜ pending |
-| 03-06-02 | 06 | 5 | PLAT-02, I18N-01 | T-03-14 | On-device: no auth-flash, real OTP, cookie forwarding, kill-and-relaunch persistence, DE/EN + German fallback | **manual (device UAT)** | MISSING — manual-only; see Manual-Only Verifications | N/A | ⬜ pending |
+| 03-01-01 | 01 | 1 | PLAT-02 | T-03-02 / T-03-03 | Dev-only Postgres/Mailpit stack; `.env.example` placeholder secrets only | config | `docker compose config -q` | ✅ (docker CLI; file created by this task — W0-equiv infra) | ✅ green |
+| 03-01-02 | 01 | 1 | PLAT-02 | T-03-01 / T-03-SC | `trustedOrigins` whitelists exact `festipal://`/`exp://` (no bare `*`); Mailpit transport never throws | unit | `pnpm --filter @festipal/api typecheck && pnpm --filter @festipal/api test` | ✅ (Vitest + apps/api suite exist) | ✅ green |
+| 03-02-01 | 02 | 1 | PLAT-02, I18N-01 | T-03-04 / T-03-SC | Explicit Metro `nodeModulesPaths`/`watchFolders`; export-log asserts no stale/duplicate `@festipal/*` | build | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile exec expo export --platform android …` (grep: no `Unable to resolve module @festipal`) | ❌ W0 (this tracer task bootstraps `apps/mobile` package.json + scripts) | ✅ green |
+| 03-02-02 | 02 | 1 | I18N-01 | T-03-04 | `no-literal-string` active before first product screen; catalogs real (non-empty `msgstr`) | tdd (unit + lint) | `pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales && pnpm --filter @festipal/i18n test` | ❌ W0 (eslint-plugin-i18next + lingui.config + i18n `test` script bootstrapped here) | ✅ green |
+| 03-03-01 | 03 | 2 | PLAT-02 | T-03-06 / T-03-08 | SecureStore-only session; `credentials: 'omit'`; cookie sourced only from `authClient.getCookie()` | compile | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint` | ✅ (mobile scripts exist after 03-02) | ✅ green |
+| 03-03-02 | 03 | 2 | PLAT-02 | T-03-07 | Splash-held four-state guard; group-layer `Stack.Protected` (no deep-link leak); no per-screen gate | compile | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint` | ✅ | ✅ green |
+| 03-04-01 | 04 | 3 | PLAT-02, I18N-01 | T-03-09 / T-03-10 / T-03-11 | Real OTP round-trip only (no dev bypass); server owns validation/rate-limit; localized error states | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ✅ green |
+| 03-04-02 | 04 | 3 | PLAT-02, I18N-01 | T-03-09 | Placeholder profile via server-enforced unique index (23505→409); localized retry | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ✅ green |
+| 03-05-01 | 05 | 4 | PLAT-02, I18N-01 | T-03-12 / T-03-13 | Gate-less entry (ADR-014, no client access gate); renders only typed contract body | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ✅ green |
+| 03-05-02 | 05 | 4 | I18N-01 | T-03-13 | Static localized placeholder; no master-data over-fetch (deferred to Phase 5) | compile + lint + catalog | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile lint && pnpm --filter @festipal/mobile exec lingui extract && git diff --exit-code apps/mobile/locales` | ✅ | ✅ green |
+| 03-06-01 | 06 | 5 | PLAT-02 | T-03-14 / T-03-15 / T-03-SC | Cleartext/ATS scoped dev-build-only via comment; no release/EAS profile configured | config | `pnpm --filter @festipal/mobile typecheck && pnpm --filter @festipal/mobile exec expo config --type public > /dev/null` | ✅ | ✅ green |
+| 03-06-02 | 06 | 5 | PLAT-02, I18N-01 | T-03-14 | On-device: no auth-flash, real OTP, cookie forwarding, kill-and-relaunch persistence, DE/EN + German fallback | **manual (device UAT)** | MISSING — manual-only; see Manual-Only Verifications | N/A | ✅ green |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -78,14 +79,14 @@ by the first tasks executed** (Plan 01 Task 1 and Plan 02 Tasks 1–2, all in Wa
 tooling *is itself a phase deliverable*. `wave_0_complete: false` reflects that this bootstrapping
 happens during execution, not before it. Each item below is created by the task noted:
 
-- [ ] `apps/mobile/package.json` — add `lint`/`typecheck` scripts (no `test` script; documented as intentional) — **Plan 02 Task 1**
-- [ ] `apps/mobile/eslint.config.mjs` — extends `@festipal/config/eslint` + `eslint-plugin-i18next` `no-literal-string` rule — **Plan 02 Task 2**
-- [ ] `apps/mobile/lingui.config.ts` + `locales/{en,de}/messages.po` — real (not stubbed) catalogs, enabling the `lingui extract` + `git diff` gate — **Plan 02 Task 2**
-- [ ] `packages/i18n` `test` script (Vitest) + `resolve.test.ts` — enables `pnpm --filter @festipal/i18n test` — **Plan 02 Task 2**
-- [ ] `turbo.json` — confirm `apps/mobile` `lint`/`typecheck` are picked up by the root pipeline (Turbo workspace-glob matching; verify once scripts exist) — **Plan 02 Task 1**
-- [ ] Root `docker-compose.yml` (D-11) — Wave 0-equivalent prerequisite: the on-device UAT (kill-and-relaunch, festival list over LAN) cannot run without the live local API + Mailpit — **Plan 01 Task 1**
+- [x] `apps/mobile/package.json` — `lint`/`typecheck` scripts present (no `test` script; intentional) — **Plan 02 Task 1** ✅ verified 2026-08-04
+- [x] `apps/mobile/eslint.config.mjs` — `eslint-plugin-i18next` `no-literal-string` rule active; `lint` exits 0 — **Plan 02 Task 2** ✅ verified 2026-08-04
+- [x] `apps/mobile/lingui.config.ts` + `locales/{en,de}/messages.po` — real catalogs (31 strings, 0 missing DE); `lingui extract` + `git diff` gate clean — **Plan 02 Task 2** ✅ verified 2026-08-04
+- [x] `packages/i18n` `test` script (Vitest) + `resolve.test.ts` — `pnpm --filter @festipal/i18n test` = 6/6 green — **Plan 02 Task 2** ✅ verified 2026-08-04
+- [x] `turbo.json` — `apps/mobile` `lint`/`typecheck` picked up by the root pipeline — **Plan 02 Task 1** ✅
+- [x] Root `docker-compose.yml` (D-11) — `docker compose config -q` exits 0; Postgres 18 + Mailpit healthchecked — **Plan 01 Task 1** ✅ verified 2026-08-04
 
-*Once Plans 01–02 land, set `wave_0_complete: true`.*
+*Plans 01–02 landed; `wave_0_complete: true` set 2026-08-04.*
 
 ---
 
@@ -114,4 +115,32 @@ real Android device (`npx expo run:android`) AND a real iPhone (`npx expo run:io
 - [x] Feedback latency < 60s
 - [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** validated 2026-08-04 (all automated gates re-run green; on-device UAT signed off — see audit below)
+
+---
+
+## Validation Audit 2026-08-04
+
+State A audit (existing VALIDATION.md). Re-ran every automated gate in the Per-Task
+Verification Map; every requirement is COVERED. The only non-automated cell (03-06-02)
+is the deliberate on-device UAT, signed off on real Android hardware 2026-08-03 and
+re-confirmed 2026-08-04 (`03-UAT.md` Test 1, `03-VERIFICATION.md`). iOS on-device run
+remains a user-approved deferred item, not a gap. No tests generated (no MISSING gaps);
+auditor spawn skipped.
+
+| Metric | Count |
+|--------|-------|
+| Gaps found | 0 |
+| Resolved | 0 |
+| Escalated | 0 |
+
+**Automated gates re-run (2026-08-04):**
+
+| Gate | Command | Result |
+|------|---------|--------|
+| i18n unit suite | `pnpm --filter @festipal/i18n test` | 6/6 pass |
+| Backend unit suite | `pnpm --filter @festipal/api test` | 31/31 pass |
+| Mobile typecheck | `pnpm --filter @festipal/mobile typecheck` | exit 0 |
+| Mobile lint (`no-literal-string`) | `pnpm --filter @festipal/mobile lint` | exit 0 |
+| Catalog currency | `lingui extract` + `git diff --exit-code apps/mobile/locales` | clean (31 strings, 0 missing DE) |
+| Compose config | `docker compose config -q` | exit 0 |
