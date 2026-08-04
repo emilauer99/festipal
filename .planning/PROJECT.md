@@ -32,6 +32,7 @@ path must work.
 - ✓ Identity/membership schema in `packages/db`: vendored better-auth OTP tables (`user`/`session`/`account`/`verification`) + `visitor_profile` (accountId PK, `lower(username)` unique index) + gate-less `my_festival` save join; drizzle-zod bases surfaced drift-safely through `packages/contracts`; applied to Neon; identity model recorded as ADR-021 — **Validated in Phase 1: Identity Schema & Auth Foundation** (PLAT-01). Runtime auth wiring is Phase 2.
 - ✓ The API exposes the OTP-auth + profile + festival browse/save endpoints this slice needs (contract-first): better-auth email-OTP behind a global login-first `AuthGuard`, `GET/POST /api/v1/me*` (profile completion, username availability, my festivals), `GET /api/v1/festivals`, gate-less `POST /api/v1/festivals/:festivalId/save` (409 profile-required guard), `festivalId` data isolation proven by tests — **Validated in Phase 2: OTP Auth & Festival Backend API** (SEC-01, SEC-02)
 - ✓ An `Account` + `VisitorProfile` + `MyFestival` schema and better-auth (email-OTP) are wired into the NestJS API (env-configured Resend provider with dev console fallback; bodyParser smoke-tested; auth-annotation table reviewed) — **Validated in Phase 2: OTP Auth & Festival Backend API**
+- ✓ The `apps/mobile` Expo (Expo Router, RN New Arch) app exists, talks to the real API through `packages/contracts` (ts-rest client with SecureStore cookie-forwarding, better-auth Expo client, TanStack Query), and enforces i18n from the first line of UI (Lingui catalogs DE/EN loaded, `no-literal-string` lint, `resolveUiLocale` German fallback); full core-value path (OTP login → festivals → save → gate-less enter → home) signed off on real Android hardware — **Validated in Phase 3: Mobile App Shell & i18n Foundation** (PLAT-02, I18N-01)
 
 ### Active
 
@@ -48,7 +49,7 @@ path must work.
 - [ ] The home shows a basic festival **overview** the visitor can click into
 - [ ] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email)
 - [ ] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet)
-- [ ] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts`
+- [x] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts` — **done in Phase 3** (PLAT-02, I18N-01)
 
 ### Out of Scope
 
@@ -126,4 +127,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-02 — Phase 2 (OTP Auth & Festival Backend API) complete: email-OTP auth + login-first guard live in NestJS, profile completion + festival browse/gate-less save endpoints, `festivalId` isolation test-proven (SEC-01, SEC-02).*
+*Last updated: 2026-08-04 — Phase 3 (Mobile App Shell & i18n Foundation) complete & verified (12/12 must-haves): the Expo app exists, talks to the real API via `packages/contracts`, and enforces Lingui i18n from the first UI string; full core-value path signed off on real Android (iOS deferred). PLAT-02, I18N-01 validated.*
