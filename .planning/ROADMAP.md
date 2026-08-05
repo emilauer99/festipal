@@ -195,8 +195,28 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
   5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
 
-**Plans**: TBD
-**Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less.
+**Plans**: 7 plans
+
+**Wave 1** *(parallel — no file overlap)*
+
+- [ ] 05-01-PLAN.md — TRACER backend: D-08 master-data vertical (db → contracts → seed → migration) + api round-trip/cross-tenant proof
+- [ ] 05-02-PLAN.md — Foundation: design tokens (radiiScale + translucent/glass roles) + expo-blur + typed routes
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 05-03-PLAN.md — TRACER client endpoint: formatDateRange + active-festival storage + ComingSoonTile + festival home renders real D-08 data end-to-end
+
+**Wave 3** *(parallel — blocked on Wave 2)*
+
+- [ ] 05-04-PLAN.md — Owned list primitives: FestivalCard (flat + hero) + SegmentedControl
+- [ ] 05-05-PLAN.md — App shell frame: FloatingNav tab bar + (tabs) group + root-guard swap + active-festival cold-start focus
+
+**Wave 4** *(parallel — blocked on Wave 3)*
+
+- [ ] 05-06-PLAN.md — Festivals screen: Meine/Alle segment + one-tap optimistic server-backed save
+- [ ] 05-07-PLAN.md — Home tab: lean "nächstes Festival" hero + Meine-Festivals rail + empty state
+
+**Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
 **UI hint**: yes
 
 ### Phase 6: Profile & Friends Placeholders
@@ -226,5 +246,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 0/TBD | Not started | - |
+| 5. Festival Selection & Home | 0/7 | Not started | - |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
