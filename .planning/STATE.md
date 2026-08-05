@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 5
 current_phase_name: Festival Selection & Home
 status: "Phase 04 shipped — PR #9"
-stopped_at: Phase 5 context gathered
-last_updated: "2026-08-05T16:16:17.041Z"
+stopped_at: Phase 5 UI-SPEC approved
+last_updated: "2026-08-05T18:46:37.261Z"
 last_activity: 2026-08-05
+last_activity_desc: Phase 05 planning complete
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 22
+  total_plans: 29
   completed_plans: 22
-last_activity_desc: Phase 04 complete, transitioned to Phase 5
 ---
 
 # Project State
@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 Phase: 5 — Festival Selection & Home
 Plan: Not started
 Status: Phase 04 shipped — PR #9
-Last activity: 2026-08-05
+Last activity: 2026-08-05 — Phase 05 planning complete
 
 Progress: [██████████] 100%
 
@@ -180,6 +180,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-05T16:16:17.012Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-festival-selection-home/05-CONTEXT.md
+Last session: 2026-08-05T16:38:58.107Z
+Stopped at: Phase 5 UI-SPEC approved
+Resume file: .planning/phases/05-festival-selection-home/05-UI-SPEC.md
