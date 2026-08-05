@@ -21,7 +21,11 @@ export default [
     // introduces it. `consistent-type-imports` (from the base config) stays
     // ENABLED here — unlike apps/api, there is no NestJS DI reason to
     // disable it for RN/Expo code.
-    files: ['app/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}'],
+    // `components/**` added 04-04 (Rule 2): this is the first plan to add a
+    // components/ directory (OtpBoxes, ResendCountdown) — without this glob
+    // entry, hardcoded strings in shared components would silently bypass
+    // the same guard every screen is held to.
+    files: ['app/**/*.{ts,tsx}', 'lib/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}'],
     plugins: { i18next },
     rules: {
       'i18next/no-literal-string': [

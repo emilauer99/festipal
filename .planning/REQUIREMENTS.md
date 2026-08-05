@@ -10,15 +10,15 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 ### Authentication (passwordless email-OTP)
 
-- [ ] **AUTH-01**: A visitor enters their email, receives a 6-digit one-time code, and is logged in by entering it; a new email creates a global `Account` (no password stored)
-- [ ] **AUTH-02**: A returning visitor (email already has a VisitorProfile) is taken straight into the app after OTP, skipping profile setup
-- [ ] **AUTH-03**: A visitor's session is long-lived and auto-renews so they stay logged in across app restarts; on expiry they re-authenticate via OTP
-- [ ] **AUTH-04**: A visitor can log out
-- [ ] **AUTH-05**: OTP errors and edge cases (wrong/expired code, resend, change email, rate-limited requests) are shown clearly and localized
+- [x] **AUTH-01**: A visitor enters their email, receives a 6-digit one-time code, and is logged in by entering it; a new email creates a global `Account` (no password stored)
+- [x] **AUTH-02**: A returning visitor (email already has a VisitorProfile) is taken straight into the app after OTP, skipping profile setup
+- [x] **AUTH-03**: A visitor's session is long-lived and auto-renews so they stay logged in across app restarts; on expiry they re-authenticate via OTP
+- [x] **AUTH-04**: A visitor can log out
+- [x] **AUTH-05**: OTP errors and edge cases (wrong/expired code, resend, change email, rate-limited requests) are shown clearly and localized
 
 ### Identity & Profile
 
-- [ ] **IDN-01**: On first login, a visitor completes their VisitorProfile with a required unique `username` (live availability check) and `displayName`; `avatar` is optional (upload/camera, else initials tile)
+- [x] **IDN-01**: On first login, a visitor completes their VisitorProfile with a required unique `username` (live availability check) and `displayName`; `avatar` is optional (upload/camera, else initials tile)
 - [ ] **PROF-01**: A visitor can open a Profile screen showing their username, displayName, avatar/initials, and email (view-only)
 
 ### Festival Selection
@@ -98,12 +98,12 @@ Which phases cover which requirements.
 | SEC-02 | Phase 2 | Complete |
 | PLAT-02 | Phase 3 | Complete |
 | I18N-01 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Pending |
-| AUTH-02 | Phase 4 | Pending |
-| AUTH-03 | Phase 4 | Pending |
-| AUTH-04 | Phase 4 | Pending |
-| AUTH-05 | Phase 4 | Pending |
-| IDN-01 | Phase 4 | Pending |
+| AUTH-01 | Phase 4 | Complete |
+| AUTH-02 | Phase 4 | Complete |
+| AUTH-03 | Phase 4 | Complete |
+| AUTH-04 | Phase 4 | Complete |
+| AUTH-05 | Phase 4 | Complete |
+| IDN-01 | Phase 4 | Complete |
 | FEST-01 | Phase 5 | Pending |
 | FEST-02 | Phase 5 | Pending |
 | FEST-03 | Phase 5 | Pending |

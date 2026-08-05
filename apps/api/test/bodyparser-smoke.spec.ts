@@ -119,7 +119,7 @@ describe('body-parser wiring (SC-4, two-POST proof)', () => {
     const profileRes = await request(app.getHttpServer())
       .post('/api/v1/me/complete-profile')
       .set('cookie', cookie)
-      .send({ username: `bodyparser-${randomUUID().slice(0, 8)}`, displayName: 'Bodyparser Smoke Tester' });
+      .send({ username: `bodyparser_${randomUUID().slice(0, 8)}`, displayName: 'Bodyparser Smoke Tester' });
     expect(profileRes.status).toBe(200);
 
     const [fest] = await db

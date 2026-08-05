@@ -67,7 +67,9 @@ describe('me endpoints (complete-profile, GET /me, GET /me/festivals)', () => {
   let db: Database;
 
   const testEmail = `me-endpoints-${randomUUID()}@festipal.dev`;
-  const username = `visitor-${randomUUID().slice(0, 8)}`;
+  // D-03: usernames are lowercase-only (a-z 0-9 _ .) per the server-side Zod
+  // cap on visitorProfileInsertSchema — no dash.
+  const username = `visitor_${randomUUID().slice(0, 8)}`;
   let accountId: string;
   let cookie: string;
   let festivalId: string;
@@ -121,14 +123,18 @@ describe('me endpoints (complete-profile, GET /me, GET /me/festivals)', () => {
     expect(res.body).toMatchObject({ accountId, username, displayName: 'Me Endpoints Tester' });
   });
 
-  it('a duplicate (case-variant) username on complete-profile returns 409', async () => {
+  it('a second complete-profile call for the same account returns 409', async () => {
+    // D-03 makes usernames lowercase-only via this endpoint, so a true
+    // case-variant duplicate can never reach it (Zod rejects uppercase at
+    // 400 before the DB is touched) — that TOCTOU/case-insensitivity path is
+    // proven directly at the DB layer in username-race.spec.ts instead. Here,
+    // resubmitting for an account that already has a profile hits the
+    // accountId PK conflict, which maps to 409, never a 500.
     const res = await request(app.getHttpServer())
       .post('/api/v1/me/complete-profile')
       .set('cookie', cookie)
-      .send({ username: username.toUpperCase(), displayName: 'Should Not Matter' });
+      .send({ username: `${username}x`, displayName: 'Should Not Matter' });
 
-    // This account already has a profile (accountId is the PK) — either the
-    // PK conflict or the lower(username) conflict maps to 409, never a 500.
     expect(res.status).toBe(409);
   });
 

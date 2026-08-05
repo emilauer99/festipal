@@ -13,6 +13,26 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(profile-setup)/complete-profile.tsx
+msgid "@{username} is already taken."
+msgstr "@{username} ist schon vergeben."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "@{username} is available"
+msgstr "@{username} ist frei"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "3–20 characters: a-z 0-9 _ ."
+msgstr "3–20 Zeichen: a–z 0–9 _ ."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Almost done"
+msgstr "Fast fertig"
+
+#: app/(auth)/email.tsx
+msgid "Back"
+msgstr "Zurück"
+
 #: app/(festival)/index.tsx
 msgid "Back to festivals"
 msgstr "Zurück zu den Festivals"
@@ -21,43 +41,72 @@ msgstr "Zurück zu den Festivals"
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
-#: app/(auth)/index.tsx
+#: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
+#: app/(profile-setup)/complete-profile.tsx
 #: app/festivals/index.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
+
+#: app/(auth)/verify.tsx
+msgid "Change email"
+msgstr "E-Mail ändern"
 
 #: app/festivals/index.tsx
 msgid "Check back soon — new festivals will appear here."
 msgstr "Schau bald wieder vorbei — neue Festivals erscheinen hier."
 
 #: app/(profile-setup)/complete-profile.tsx
-msgid "Continue"
-msgstr "Weiter"
+msgid "Checking…"
+msgstr "prüfe…"
 
 #: app/(profile-setup)/complete-profile.tsx
-msgid "Couldn't set up your profile — tap Continue to try again."
-msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
+msgid "Choose photo"
+msgstr "Foto wählen"
+
+#: app/(profile-setup)/complete-profile.tsx
+#~ msgid "Continue"
+#~ msgstr "Weiter"
+
+#: app/(profile-setup)/complete-profile.tsx
+#~ msgid "Couldn't complete your profile — tap Done to try again."
+#~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Fertig“, um es noch einmal zu versuchen."
+
+#: app/(profile-setup)/complete-profile.tsx
+#~ msgid "Couldn't set up your profile — tap Continue to try again."
+#~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
 
 #: app/(auth)/verify.tsx
-msgid "Didn't get a code? Resend"
-msgstr "Keinen Code erhalten? Erneut senden"
+#~ msgid "Didn't get a code? Resend"
+#~ msgstr "Keinen Code erhalten? Erneut senden"
 
-#: app/(auth)/index.tsx
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Display name"
+msgstr "Anzeigename"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Done"
+msgstr "Fertig"
+
+#: app/(auth)/email.tsx
 msgid "Email"
 msgstr "E-Mail"
+
+#: app/(auth)/verify.tsx
+msgid "Enter code"
+msgstr "Code eingeben"
 
 #: app/festivals/index.tsx
 msgid "Enter festival"
 msgstr "Festival betreten"
 
 #: app/(auth)/verify.tsx
-msgid "Enter the 6-digit code we sent to {email}"
-msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
+#~ msgid "Enter the 6-digit code we sent to {email}"
+#~ msgstr "Gib den 6-stelligen Code ein, den wir an {email} gesendet haben"
 
 #: app/(auth)/verify.tsx
-msgid "Enter your code"
-msgstr "Gib deinen Code ein"
+#~ msgid "Enter your code"
+#~ msgstr "Gib deinen Code ein"
 
 #: app/(festival)/index.tsx
 msgid "Festival home"
@@ -67,21 +116,49 @@ msgstr "Festival-Startseite"
 msgid "Festivals"
 msgstr "Festivals"
 
+#: app/(auth)/verify.tsx
+msgid "Get a new code."
+msgstr "Hol dir einen neuen Code."
+
+#: app/(auth)/index.tsx
+msgid "Get started"
+msgstr "Los geht's"
+
 #: app/festivals/index.tsx
 msgid "Loading festivals…"
 msgstr "Festivals werden geladen…"
 
 #: app/(auth)/index.tsx
-msgid "Log in"
-msgstr "Anmelden"
+#~ msgid "Log in"
+#~ msgstr "Anmelden"
+
+#: app/festivals/index.tsx
+msgid "Log out"
+msgstr "Abmelden"
 
 #: app/festivals/index.tsx
 msgid "No festivals yet"
 msgstr "Noch keine Festivals"
 
 #: app/(profile-setup)/complete-profile.tsx
-msgid "One more step"
-msgstr "Nur noch ein Schritt"
+#~ msgid "One more step"
+#~ msgstr "Nur noch ein Schritt"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Optional. You can add this later."
+msgstr "Optional. Geht auch später."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Required"
+msgstr "Pflicht"
+
+#: components/ResendCountdown.tsx
+msgid "Resend code"
+msgstr "Code erneut senden"
+
+#: components/ResendCountdown.tsx
+msgid "Resend in {countdownLabel}"
+msgstr "Erneut senden in {countdownLabel}"
 
 #: app/festivals/index.tsx
 msgid "Retry"
@@ -95,47 +172,95 @@ msgstr "Speichern"
 msgid "Saving…"
 msgstr "Wird gespeichert…"
 
-#: app/(auth)/index.tsx
+#: app/(auth)/email.tsx
 msgid "Send code"
 msgstr "Code senden"
 
-#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+msgid "Send new code"
+msgstr "Neuen Code senden"
+
+#: app/(auth)/email.tsx
 msgid "Sending…"
-msgstr "Wird gesendet…"
+msgstr "Code kommt"
 
 #: app/(auth)/verify.tsx
-msgid "That code didn't work — check your email and try again."
-msgstr "Der Code war falsch — prüfe deine E-Mails und versuche es erneut."
+msgid "Six digits sent to {email}."
+msgstr "Sechs Ziffern an {email}."
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Take photo"
+msgstr "Foto aufnehmen"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Tell us what to call you in the app."
+msgstr "Sag uns, wie du in der App heißt."
 
 #: app/(auth)/verify.tsx
-msgid "That code has expired — request a new one."
-msgstr "Der Code ist abgelaufen — fordere einen neuen an."
+#~ msgid "That code didn't work — check your email and try again."
+#~ msgstr "Der Code war falsch — prüfe deine E-Mails und versuche es erneut."
 
-#: app/(auth)/index.tsx
+#: app/(auth)/verify.tsx
+#~ msgid "That code has expired — request a new one."
+#~ msgstr "Der Code ist abgelaufen — fordere einen neuen an."
+
+#: app/(auth)/verify.tsx
+msgid "That code is wrong or has expired."
+msgstr "Der Code ist falsch oder abgelaufen."
+
+#: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 msgid "Too many attempts — try again in a few minutes."
 msgstr "Zu viele Versuche — versuche es in ein paar Minuten erneut."
 
-#: app/(auth)/verify.tsx
-msgid "Verify"
-msgstr "Verifizieren"
-
-#: app/(auth)/verify.tsx
-msgid "Verifying…"
-msgstr "Wird verifiziert…"
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Try something else, like @{suggestion}."
+msgstr "Nimm etwas anderes, zum Beispiel @{suggestion}."
 
 #: app/(profile-setup)/complete-profile.tsx
-msgid "We need a temporary profile to continue."
-msgstr "Wir brauchen ein vorübergehendes Profil, um fortzufahren."
+msgid "Username"
+msgstr "Username"
+
+#: app/(auth)/verify.tsx
+#~ msgid "Verify"
+#~ msgstr "Verifizieren"
+
+#: app/(auth)/verify.tsx
+#~ msgid "Verifying…"
+#~ msgstr "Wird verifiziert…"
+
+#: app/(profile-setup)/complete-profile.tsx
+#~ msgid "We need a temporary profile to continue."
+#~ msgstr "Wir brauchen ein vorübergehendes Profil, um fortzufahren."
+
+#: app/(auth)/email.tsx
+msgid "We'll send you a 6-digit code — no password needed."
+msgstr "Wir schicken dir einen 6-stelligen Code — kein Passwort nötig."
+
+#: app/(auth)/email.tsx
+msgid "We'll send you a code in a moment."
+msgstr "Wir schicken dir gleich einen Code."
+
+#: app/(auth)/index.tsx
+msgid "Welcome"
+msgstr "Willkommen"
 
 #: app/index.tsx
 #~ msgid "Welcome to festipal"
 #~ msgstr "Willkommen bei festipal"
 
-#: app/(auth)/index.tsx
+#: app/(auth)/email.tsx
 msgid "you@example.com"
 msgstr "du@beispiel.com"
+
+#: app/(auth)/email.tsx
+msgid "Your email"
+msgstr "Deine E-Mail"
 
 #: app/(festival)/index.tsx
 msgid "Your festival overview is coming soon."
 msgstr "Deine Festival-Übersicht kommt in Kürze."
+
+#: app/(auth)/index.tsx
+msgid "Your festivals, your crew, your plan."
+msgstr "Deine Festivals, deine Crew, dein Plan."

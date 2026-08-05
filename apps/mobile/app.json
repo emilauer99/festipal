@@ -36,6 +36,13 @@
           }
         }
       ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "festipal needs access to your photos so you can pick an avatar for your profile.",
+          "cameraPermission": "festipal needs access to your camera so you can take an avatar photo for your profile."
+        }
+      ],
       "./plugins/with-windows-long-path-fix.js"
     ],
     "extra": {

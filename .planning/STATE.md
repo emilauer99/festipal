@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 4
-current_phase_name: Visitor Auth & Profile Completion
-status: "Phase 03 shipped — PR #8"
-stopped_at: Completed 03-06-PLAN.md — all Phase 03 plans done, ready for /gsd-verify-work
-last_updated: "2026-08-04T11:30:30.444Z"
-last_activity: 2026-08-04
+current_phase: 5
+current_phase_name: Festival Selection & Home
+status: "Phase 04 shipped — PR #9"
+stopped_at: "Completed 04-07-PLAN.md (gap closure: AUTH-04 server revocation + font-family application)"
+last_updated: "2026-08-05T14:10:38.946Z"
+last_activity: 2026-08-05
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 15
-  completed_plans: 15
-last_activity_desc: Phase 03 complete, transitioned to Phase 4
+  total_phases: 4
+  completed_phases: 4
+  total_plans: 22
+  completed_plans: 22
+last_activity_desc: Phase 04 complete, transitioned to Phase 5
 ---
 
 # Project State
@@ -23,14 +23,14 @@ last_activity_desc: Phase 03 complete, transitioned to Phase 4
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 03 — mobile-app-shell-i18n-foundation
+**Current focus:** Phase 04 — visitor-auth-profile-completion
 
 ## Current Position
 
-Phase: 4 — Visitor Auth & Profile Completion
+Phase: 5 — Festival Selection & Home
 Plan: Not started
-Status: Phase 03 shipped — PR #8
-Last activity: 2026-08-04
+Status: Phase 04 shipped — PR #9
+Last activity: 2026-08-05
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 15
+- Total plans completed: 22
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -49,6 +49,7 @@ Progress: [██████████] 100%
 | 01 | 3 | - | - |
 | 02 | 6 | - | - |
 | 03 | 6 | - | - |
+| 04 | 7 | - | - |
 
 **Recent Trend:**
 
@@ -75,6 +76,13 @@ Progress: [██████████] 100%
 | Phase 03 P04 | ~24 min | 2 tasks | 11 files |
 | Phase 03 P05 | 20min | 2 tasks | 6 files |
 | Phase 03 P06 | ~3h35m | 2 tasks | 2 files |
+| Phase 04 P01 | 8 | 3 tasks | 6 files |
+| Phase 04 P02 | 45min | 2 tasks | 5 files |
+| Phase 04 P03 | ~55min | 3 tasks | 7 files |
+| Phase 04 P04 | ~35min | 3 tasks | 9 files |
+| Phase 04 P05 | ~40min | 3 tasks | 7 files |
+| Phase 04 P06 | ~35min | 3 tasks | 5 files |
+| Phase 04 P07 | ~25min | 2 tasks | 13 files |
 
 ## Accumulated Context
 
@@ -117,6 +125,27 @@ Recent decisions affecting current work:
 - [Phase 03]: 03-06: dev-cleartext to LAN API via expo-build-properties — Android usesCleartextTraffic + iOS NSAllowsLocalNetworking (narrow, not NSAllowsArbitraryLoads); guarded DEV-ONLY by an app.json _devOnlyCleartextComment, no EAS/release profile this phase (T-03-14/15).
 - [Phase 03]: 03-06: full core-value path (OTP → festivals → save → gate-less enter → home, kill-and-relaunch persists, DE/EN + German fallback) signed off on REAL ANDROID; iOS device-verification deferred (Mac/Xcode toolchain not set up) — user-approved deviation.
 - [Phase 03]: 03-06 (env): reverted stray root-level expo pollution (root app.json + expo/react-native deps in root package.json) from an accidental root `expo install`; the pnpm reconcile then hung on Windows due to a lingering Metro file-watcher racing pnpm's atomic temp-dir import — stopping Expo/Metro processes let `pnpm install` complete. Root cause of the ENOENT-on-*_tmp_*/node_modules install failures on this machine.
+- [Phase ?]: 04-01: MMKV v4 + react-native-nitro-modules peer installed together (Pitfall 3); MMKV wired only to avatar URI later, session stays on SecureStore
+- [Phase ?]: 04-01: apps/mobile Vitest runner is node-env + pure lib/ scope; RN modules lazily required in useAppFonts to keep fonts.ts node-importable
+- [Phase ?]: 04-01: non-blocking font contract (D-04/Pitfall 5) — resolveFontFamily falls back to system font, never gates splash-hide
+- [Phase ?]: 04-02: Real festipal brand tokens ported into packages/ui/src/tokens.ts (extended, not replaced) — dark-first palette + light variant map, single source of truth for Phases 4-6
+- [Phase ?]: 04-02: D-03 username/displayName caps added to the EXISTING visitor-profile.ts .extend() z.string() values (Pitfall 4) — not createInsertSchema's refinement callback; no db:push needed (validation-only)
+- [Phase ?]: 04-02: fixed 3 pre-existing HTTP-integration test fixtures (dash/uppercase usernames) broken by the new D-03 caps — direct in-scope Rule 1 fix, full 42-test apps/api suite green
+- [Phase ?]: [Phase 04]: 04-03: Added @festipal/ui as a real apps/mobile dependency (workspace:*) — first mobile screen import; Metro/pnpm workspace resolution already generically supports @festipal/* packages, no config change needed
+- [Phase ?]: [Phase 04]: 04-03: Username input sanitized on every keystroke (lowercase + charset-strip to a-z0-9_.) instead of post-hoc format validation — client can never construct a request the D-03 server regex would reject for charset
+- [Phase ?]: [Phase 04]: 04-03: Username-taken suggestion sentence deliberately deferred to 04-05 per the task's own scope; only the taken headline ships in the tracer
+- [Phase ?]: 04-04: mapOtpError returns a stable OtpErrorKind (not a translated string) so the pure classifier stays importable in the node-env Vitest runner with zero RN/Lingui setup
+- [Phase ?]: 04-04: extended eslint no-literal-string glob + Lingui extract include to cover components/ — this plan's first components/ directory was invisible to both i18n guards before the fix
+- [Phase ?]: 04-04: ResendCountdown remounts via a resendGeneration key on every successful resend (either affordance) so the two resend triggers never show an inconsistent countdown
+- [Phase ?]: [Phase 04]: 04-05: accountId sourced from a cached GET /me useQuery instead of authClient.useSession() -- session's ClientSession<Option> generic resolved to never under this project's plugin config
+- [Phase ?]: [Phase 04]: 04-05: a completeProfile 409 is treated as a username-taken event (unified taken-state UI + regenerated suggestion) since lower(username) is the endpoint's only unique constraint -- replaces 04-03's generic 409 retry copy
+- [Phase ?]: [Phase 04]: 04-05: MMKV avatar-storage.ts keyed strictly avatar-uri:${accountId} (Open Question 1 resolved) -- react-native-mmkv required lazily so the module stays importable off-device
+- [Phase ?]: 04-06: forceUnauthenticated() guard singleton added to app/_layout.tsx so an offline/failed signOut() still reaches Welcome (better-auth only broadcasts its session signal on success)
+- [Phase ?]: 04-06: deep-link exclusion filters by the resolved route path ('', email, verify, complete-profile), not the (auth)/(profile-setup) folder names, since Expo Router route groups never appear in the URL
+- [Phase ?]: 04-06: cold-start resolve timeout set to 8000ms (Claude's discretion) forcing authState from loading to unauthenticated via a functional setState update
+- [Phase ?]: 04-07: Added advanced.disableOriginCheck: false to auth.instance.ts — better-auth defaults origin-check off under NODE_ENV=test unless set, which would make signout-origin.spec.ts's negative control pass regardless of the expo() fix; explicit false matches the existing implicit production default (no CSRF weakening)
+- [Phase ?]: 04-07: expo() server plugin installed in apps/api's betterAuth plugins array (AUTH-04, WINDOWS id 2) — translates apps/mobile's expo-origin header to origin so cookie-bearing sign-out requests pass the origin-check instead of 403ing; proven headlessly via signout-origin.spec.ts
+- [Phase ?]: 04-07: FontsReadyProvider/useFontsReady context (apps/mobile/lib/fonts-context.tsx) shares the root useAppFonts() readiness boolean; all eight restyled Phase-4 screens/components now resolve fontFamily inline via resolveFontFamily(FONT_DISPLAY|FONT_BODY|FONT_MONO, fontsReady) instead of the generic typeRoles.*.family name (WINDOWS id 15)
 
 ### Pending Todos
 
@@ -132,12 +161,14 @@ None yet.
 - Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated and inherited by all later content reads — verify with a cross-festival data-isolation test. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
 - Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
+- Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
 
 ### Quick Tasks Completed
 
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260803-mz6 | Anchor UI component strategy in docs: ADR-022 (custom RN components for mobile, shadcn/ui for admin, minimize custom CSS) + CLAUDE.md tech stack update | 2026-08-03 | 56456a5 | [260803-mz6-anchor-ui-component-strategy-in-docs-adr](./quick/260803-mz6-anchor-ui-component-strategy-in-docs-adr/) |
+| 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
 
 ## Deferred Items
 
@@ -149,6 +180,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-04T00:15:00.000Z
-Stopped at: Completed 03-06-PLAN.md — all Phase 03 plans done, ready for /gsd-verify-work
+Last session: 2026-08-05T11:29:43.636Z
+Stopped at: Completed 04-07-PLAN.md (gap closure: AUTH-04 server revocation + font-family application)
 Resume file: None

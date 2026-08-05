@@ -9,14 +9,19 @@
     "ios": "expo run:ios",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
     "build": "expo export --platform ios --platform android",
     "extract": "lingui extract",
     "compile": "lingui compile"
   },
   "dependencies": {
     "@better-auth/expo": "1.6.25",
+    "@expo-google-fonts/jetbrains-mono": "^0.4.1",
+    "@expo-google-fonts/outfit": "^0.4.3",
+    "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
     "@festipal/contracts": "workspace:*",
     "@festipal/i18n": "workspace:*",
+    "@festipal/ui": "workspace:*",
     "@lingui/core": "^6.6.0",
     "@lingui/react": "^6.6.0",
     "@tanstack/react-query": "^5.101.4",
@@ -25,6 +30,9 @@
     "expo": "~57.0.9",
     "expo-build-properties": "~57.0.8",
     "expo-constants": "~57.0.8",
+    "expo-font": "~57.0.1",
+    "expo-image": "~57.0.2",
+    "expo-image-picker": "~57.0.7",
     "expo-linking": "~57.0.4",
     "expo-localization": "~57.0.1",
     "expo-network": "~57.0.1",
@@ -32,10 +40,14 @@
     "expo-secure-store": "~57.0.1",
     "expo-splash-screen": "~57.0.5",
     "expo-status-bar": "~57.0.1",
+    "lucide-react-native": "^1.28.0",
     "react": "19.2.3",
     "react-native": "0.86.2",
+    "react-native-mmkv": "^4.3.2",
+    "react-native-nitro-modules": "^0.36.5",
     "react-native-safe-area-context": "5.8.0",
     "react-native-screens": "4.26.2",
+    "react-native-svg": "~15.15.5",
     "zod": "^3.25.76"
   },
   "devDependencies": {
@@ -47,6 +59,7 @@
     "@types/react": "~19.2.2",
     "babel-preset-expo": "~57.0.5",
     "eslint-plugin-i18next": "^6.1.5",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.10"
   }
 }

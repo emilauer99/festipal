@@ -63,13 +63,25 @@ export const visitorProfile = pgTable(
  */
 export const visitorProfileInsertSchema = createInsertSchema(visitorProfile).extend({
   accountId: z.string(),
-  username: z.string(),
-  displayName: z.string(),
+  // D-03: server-side name caps — the authoritative half (client soft-caps in
+  // the mobile screens are UX sugar only). Added to these EXISTING `.extend()`
+  // z.string() values, NOT via createInsertSchema's refinement callback,
+  // which re-triggers the text()->unknown inference bug documented above.
+  username: z
+    .string()
+    .min(3)
+    .max(20)
+    .regex(/^[a-z0-9_.]+$/, 'lowercase letters, numbers, _ and . only'),
+  displayName: z.string().min(1).max(40),
   avatar: z.string().nullable().optional(),
 });
 export const visitorProfileSelectSchema = createSelectSchema(visitorProfile).extend({
   accountId: z.string(),
-  username: z.string(),
-  displayName: z.string(),
+  username: z
+    .string()
+    .min(3)
+    .max(20)
+    .regex(/^[a-z0-9_.]+$/, 'lowercase letters, numbers, _ and . only'),
+  displayName: z.string().min(1).max(40),
   avatar: z.string().nullable(),
 });

@@ -16,7 +16,10 @@ const config = {
   catalogs: [
     {
       path: 'locales/{locale}/messages',
-      include: ['app', 'lib'],
+      // 'components' added 04-04 (Rule 2): first plan to add a components/
+      // directory (OtpBoxes, ResendCountdown) — without it, `t`/`Trans`
+      // usage there would silently never reach the catalog.
+      include: ['app', 'lib', 'components'],
     },
   ],
   format: formatter({ lineNumbers: false }),

@@ -2,6 +2,11 @@
 
 > **Zweck:** Die konkreten Anmelde-/Onboarding-Flows für **App-Nutzer** und **Staff/Admin**.
 > Verbindlich als **ADR-009** (Auth) + **ADR-016** (Profil). Stand: 2026-07-29. Noch kein Code.
+>
+> **Screen-Designs (Visitor-Flow):** [`designs/auth/`](designs/auth/) — Welcome, E-Mail, Code,
+> Profil als 8 Frames in dark+light (inkl. Lade-, Fehler- und Username-Check-Zuständen),
+> aus Claude Design importiert 2026-08-04. `preview.html` öffnen. Staff/Admin-Screens folgen
+> im Admin-Zyklus. Bau der RN-Screens später via `/gsd-ui-phase` → `apps/mobile`.
 
 ---
 

@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>festipal — Onboarding & Auth (Preview)</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="./source/festipal-tokens.css">
+<style>
+body{margin:0;background:var(--ink-1000);color:var(--ink-050);font-family:"Plus Jakarta Sans",system-ui,sans-serif;padding:56px 56px 96px}
+@keyframes fp-spin{to{transform:rotate(360deg)}}
+@keyframes fp-blink{50%{opacity:0}}
+.wrap{display:flex;flex-direction:column;gap:52px}
+.head{display:flex;flex-direction:column;gap:14px;max-width:760px}
+.sec{display:flex;flex-direction:column;gap:18px}
+.sec-h{display:flex;align-items:baseline;gap:12px;border-bottom:1px solid rgba(233,236,242,.12);padding-bottom:12px}
+.rail{overflow-x:auto;scrollbar-width:thin}
+.foot{display:flex;flex-direction:column;gap:8px;max-width:760px;border-top:1px solid rgba(233,236,242,.12);padding-top:20px}
+</style>
+</head>
+<body>
+<!-- Generated from source/Festipal Onboarding.dc.html + source/Festipal Onboarding Set.dc.html.
+     Standalone preview: no dc-runtime/React needed. Icons via ./vendor/lucide.js (pinned v0.470.0). -->
+<div class="wrap">
+  <header class="head">
+    <span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--green-500)">Festipal · Onboarding &amp; Auth</span>
+    <h1 style="font:var(--text-display-1);letter-spacing:var(--ls-display);color:var(--ink-050);margin:0">Login-first, passwortlos</h1>
+    <p style="font:var(--text-body);color:var(--ink-200);margin:0">Vier Screens, jeweils in Dark und Light: Welcome, E-Mail, Code, Profil. Dazu der Ladezustand des Senden-Buttons, der Fehlerfall beim Code und die drei Zustände des Username-Checks. Kein anonymes Browsen, kein Passwort, kein Geburtsdatum.</p>
+  </header>
+
+  <section class="sec">
+    <div class="sec-h">
+      <h2 style="font:var(--text-title-1);color:var(--ink-050);margin:0">Dark Mode</h2>
+      <span style="font:var(--text-body-sm);color:var(--ink-300)">Standard · 430 px Content, iPhone-Maße</span>
+    </div>
+    <div class="rail" data-theme="dark" data-festival="festipal">
+      <div style="display:flex;gap:32px;align-items:flex-start;width:max-content">
+
+  <!-- 01 Welcome -->
+  <div data-screen-label="01 Welcome" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">01</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Welcome</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px;color:var(--text-primary)"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="position:absolute;top:170px;left:-60px;width:420px;height:420px;border-radius:999px;background:radial-gradient(circle,var(--ci-tint) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:0 26px 26px;position:relative">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px">
+          <span style="font:var(--fw-black) 56px/1 var(--font-display);letter-spacing:var(--ls-display);color:var(--text-primary)">festipal<span style="color:var(--ci-primary)">.</span></span>
+          <p style="font:var(--text-title-2);letter-spacing:var(--ls-title);color:var(--text-secondary);max-width:300px">Deine Festivals, deine Crew, dein Plan.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <button style="display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;width:100%;padding:0 26px;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Los geht's</button>
+          <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:8px auto 0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 E-Mail -->
+  <div data-screen-label="02 E-Mail eingeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">02</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">E-Mail eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">Standard</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Deine E-Mail</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Wir schicken dir gleich einen Code.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">E-Mail</span>
+            <span style="display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--ci-primary);border-radius:var(--r-control);box-shadow:0 0 0 3px var(--ci-tint)">
+              <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="mail" width="17" height="17"></i></span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k@mailbox.at</span>
+              <span style="width:1.5px;height:20px;background:var(--ci-primary)"></span>
+            </span>
+          </label>
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Code senden</button>
+          <p style="font:var(--text-body-sm);color:var(--text-muted);text-align:center">Wir schicken dir einen 6-stelligen Code — kein Passwort nötig.</p>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 02b E-Mail lädt -->
+  <div data-screen-label="02b E-Mail Laden" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">02b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">E-Mail eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--status-warning)">Button lädt</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-muted);opacity:.5"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Deine E-Mail</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Wir schicken dir gleich einen Code.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">E-Mail</span>
+            <span style="display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control);opacity:.6">
+              <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="mail" width="17" height="17"></i></span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k@mailbox.at</span>
+            </span>
+          </label>
+          <button style="display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.72;cursor:progress">
+            <span style="width:19px;height:19px;border-radius:999px;border:2px solid rgba(7,8,11,.28);border-top-color:var(--ci-on-primary);animation:fp-spin .8s linear infinite"></span>
+            Code kommt
+          </button>
+          <p style="font:var(--text-body-sm);color:var(--text-muted);text-align:center">Wir schicken dir einen 6-stelligen Code — kein Passwort nötig.</p>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 03 Code -->
+  <div data-screen-label="03 Code eingeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">03</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Code eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">Countdown</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Code eingeben</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sechs Ziffern an <span style="font:var(--text-body-strong);color:var(--text-primary)">lena.k@mailbox.at</span>.</p>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">4</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">8</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">1</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--ci-primary);box-shadow:0 0 0 3px var(--ci-tint);font:var(--fw-medium) 27px/1 var(--font-mono)"><span style="width:2px;height:28px;background:var(--ci-primary);animation:fp-blink 1.1s steps(2,start) infinite"></span></div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-subtle)"></div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-subtle)"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+          <span style="display:inline-flex;align-items:center;gap:7px;font:var(--text-body-sm);color:var(--text-muted)"><i data-lucide="timer" width="15" height="15"></i>Erneut senden in <span style="font:var(--text-mono);color:var(--text-secondary)">0:42</span></span>
+        </div>
+        <div style="margin-top:auto;display:flex;justify-content:center">
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 20px;font:var(--text-body-strong);letter-spacing:var(--ls-label);border-radius:var(--r-pill);background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer">E-Mail ändern</button>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 03b Code Fehler -->
+  <div data-screen-label="03b Code Fehler" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">03b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Code eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--status-danger)">Fehler</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Code eingeben</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sechs Ziffern an <span style="font:var(--text-body-strong);color:var(--text-primary)">lena.k@mailbox.at</span>.</p>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">4</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">8</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">1</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">9</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">0</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">3</div>
+        </div>
+        <div style="display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:rgba(255,77,94,.12);border:1px solid rgba(255,77,94,.34)">
+          <span style="display:inline-flex;color:var(--status-danger);margin-top:1px"><i data-lucide="alert-circle" width="19" height="19"></i></span>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font:var(--text-body-strong);color:var(--text-primary)">Der Code ist falsch oder abgelaufen.</span>
+            <span style="font:var(--text-body-sm);color:var(--text-secondary)">Hol dir einen neuen Code.</span>
+          </div>
+        </div>
+        <button style="display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer"><i data-lucide="rotate-ccw" width="19" height="19"></i>Neuen Code senden</button>
+        <div style="margin-top:auto;display:flex;justify-content:center">
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 20px;font:var(--text-body-strong);letter-spacing:var(--ls-label);border-radius:var(--r-pill);background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer">E-Mail ändern</button>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04a Profil prüft -->
+  <div data-screen-label="04a Profil prueft" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04a</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">prüfe…</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--ci-primary);border-radius:var(--r-control);box-shadow:0 0 0 3px var(--ci-tint)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena</span>
+              <span style="width:15px;height:15px;border-radius:999px;border:2px solid var(--border-medium);border-top-color:var(--text-muted);animation:fp-spin .8s linear infinite"></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--text-muted);margin-top:6px">prüfe…</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.45;cursor:not-allowed">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04b Profil frei -->
+  <div data-screen-label="04b Profil frei" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--status-success)">frei ✓</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--status-success);border-radius:var(--r-control)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k</span>
+              <span style="display:inline-flex;color:var(--status-success)"><i data-lucide="check" width="18" height="18"></i></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--status-success);margin-top:6px">@lena.k ist frei</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04c Profil vergeben -->
+  <div data-screen-label="04c Profil vergeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04c</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--status-danger)">schon vergeben</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:rgba(255,77,94,.08);border:1.5px solid var(--status-danger);border-radius:var(--r-control)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena</span>
+              <span style="display:inline-flex;color:var(--status-danger)"><i data-lucide="x" width="18" height="18"></i></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--status-danger);margin-top:6px">@lena ist schon vergeben.</span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--text-secondary);margin-top:2px">Nimm etwas anderes, zum Beispiel @lena.k.</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.45;cursor:not-allowed">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+</div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h">
+      <h2 style="font:var(--text-title-1);color:var(--ink-050);margin:0">Light Mode</h2>
+      <span style="font:var(--text-body-sm);color:var(--ink-300)">gleiche Struktur, hellere Flächen</span>
+    </div>
+    <div class="rail" data-theme="light" data-festival="festipal" style="padding:28px;border-radius:32px;background:var(--green-050)">
+      <div style="display:flex;gap:32px;align-items:flex-start;width:max-content">
+
+  <!-- 01 Welcome -->
+  <div data-screen-label="01 Welcome" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">01</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Welcome</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px;color:var(--text-primary)"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="position:absolute;top:170px;left:-60px;width:420px;height:420px;border-radius:999px;background:radial-gradient(circle,var(--ci-tint) 0%,transparent 70%);pointer-events:none"></div>
+      <div style="flex:1;display:flex;flex-direction:column;justify-content:space-between;padding:0 26px 26px;position:relative">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px">
+          <span style="font:var(--fw-black) 56px/1 var(--font-display);letter-spacing:var(--ls-display);color:var(--text-primary)">festipal<span style="color:var(--ci-primary)">.</span></span>
+          <p style="font:var(--text-title-2);letter-spacing:var(--ls-title);color:var(--text-secondary);max-width:300px">Deine Festivals, deine Crew, dein Plan.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <button style="display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;width:100%;padding:0 26px;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Los geht's</button>
+          <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:8px auto 0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 E-Mail -->
+  <div data-screen-label="02 E-Mail eingeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">02</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">E-Mail eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">Standard</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Deine E-Mail</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Wir schicken dir gleich einen Code.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">E-Mail</span>
+            <span style="display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--ci-primary);border-radius:var(--r-control);box-shadow:0 0 0 3px var(--ci-tint)">
+              <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="mail" width="17" height="17"></i></span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k@mailbox.at</span>
+              <span style="width:1.5px;height:20px;background:var(--ci-primary)"></span>
+            </span>
+          </label>
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Code senden</button>
+          <p style="font:var(--text-body-sm);color:var(--text-muted);text-align:center">Wir schicken dir einen 6-stelligen Code — kein Passwort nötig.</p>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 02b E-Mail lädt -->
+  <div data-screen-label="02b E-Mail Laden" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">02b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">E-Mail eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--status-warning)">Button lädt</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-muted);opacity:.5"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Deine E-Mail</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Wir schicken dir gleich einen Code.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">E-Mail</span>
+            <span style="display:flex;align-items:center;gap:10px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control);opacity:.6">
+              <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="mail" width="17" height="17"></i></span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k@mailbox.at</span>
+            </span>
+          </label>
+          <button style="display:inline-flex;align-items:center;justify-content:center;gap:10px;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.72;cursor:progress">
+            <span style="width:19px;height:19px;border-radius:999px;border:2px solid rgba(7,8,11,.28);border-top-color:var(--ci-on-primary);animation:fp-spin .8s linear infinite"></span>
+            Code kommt
+          </button>
+          <p style="font:var(--text-body-sm);color:var(--text-muted);text-align:center">Wir schicken dir einen 6-stelligen Code — kein Passwort nötig.</p>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 03 Code -->
+  <div data-screen-label="03 Code eingeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">03</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Code eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">Countdown</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:28px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Code eingeben</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sechs Ziffern an <span style="font:var(--text-body-strong);color:var(--text-primary)">lena.k@mailbox.at</span>.</p>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">4</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">8</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-medium);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">1</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--ci-primary);box-shadow:0 0 0 3px var(--ci-tint);font:var(--fw-medium) 27px/1 var(--font-mono)"><span style="width:2px;height:28px;background:var(--ci-primary);animation:fp-blink 1.1s steps(2,start) infinite"></span></div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-subtle)"></div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:var(--surface-inset);border:1.5px solid var(--border-subtle)"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;align-items:center">
+          <span style="display:inline-flex;align-items:center;gap:7px;font:var(--text-body-sm);color:var(--text-muted)"><i data-lucide="timer" width="15" height="15"></i>Erneut senden in <span style="font:var(--text-mono);color:var(--text-secondary)">0:42</span></span>
+        </div>
+        <div style="margin-top:auto;display:flex;justify-content:center">
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 20px;font:var(--text-body-strong);letter-spacing:var(--ls-label);border-radius:var(--r-pill);background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer">E-Mail ändern</button>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 03b Code Fehler -->
+  <div data-screen-label="03b Code Fehler" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">03b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Code eingeben</span>
+      <span style="font:var(--text-body-sm);color:var(--status-danger)">Fehler</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:14</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="height:56px;flex:none;display:flex;align-items:center;padding:0 18px">
+        <span style="display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary)"><i data-lucide="arrow-left" width="20" height="20"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:20px 26px 26px;gap:22px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Code eingeben</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sechs Ziffern an <span style="font:var(--text-body-strong);color:var(--text-primary)">lena.k@mailbox.at</span>.</p>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">4</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">8</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">1</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">9</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">0</div>
+          <div style="flex:1;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r-sm);background:rgba(255,77,94,.10);border:1.5px solid var(--status-danger);font:var(--fw-medium) 27px/1 var(--font-mono);color:var(--text-primary)">3</div>
+        </div>
+        <div style="display:flex;gap:12px;padding:14px 16px;border-radius:var(--r-md);background:rgba(255,77,94,.12);border:1px solid rgba(255,77,94,.34)">
+          <span style="display:inline-flex;color:var(--status-danger);margin-top:1px"><i data-lucide="alert-circle" width="19" height="19"></i></span>
+          <div style="display:flex;flex-direction:column;gap:3px">
+            <span style="font:var(--text-body-strong);color:var(--text-primary)">Der Code ist falsch oder abgelaufen.</span>
+            <span style="font:var(--text-body-sm);color:var(--text-secondary)">Hol dir einen neuen Code.</span>
+          </div>
+        </div>
+        <button style="display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer"><i data-lucide="rotate-ccw" width="19" height="19"></i>Neuen Code senden</button>
+        <div style="margin-top:auto;display:flex;justify-content:center">
+          <button style="display:inline-flex;align-items:center;justify-content:center;height:46px;padding:0 20px;font:var(--text-body-strong);letter-spacing:var(--ls-label);border-radius:var(--r-pill);background:transparent;border:1px solid transparent;color:var(--text-secondary);cursor:pointer">E-Mail ändern</button>
+        </div>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04a Profil prüft -->
+  <div data-screen-label="04a Profil prueft" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04a</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">prüfe…</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--ci-primary);border-radius:var(--r-control);box-shadow:0 0 0 3px var(--ci-tint)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena</span>
+              <span style="width:15px;height:15px;border-radius:999px;border:2px solid var(--border-medium);border-top-color:var(--text-muted);animation:fp-spin .8s linear infinite"></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--text-muted);margin-top:6px">prüfe…</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.45;cursor:not-allowed">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04b Profil frei -->
+  <div data-screen-label="04b Profil frei" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04b</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--status-success)">frei ✓</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--status-success);border-radius:var(--r-control)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena.k</span>
+              <span style="display:inline-flex;color:var(--status-success)"><i data-lucide="check" width="18" height="18"></i></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--status-success);margin-top:6px">@lena.k ist frei</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);cursor:pointer">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+  <!-- 04c Profil vergeben -->
+  <div data-screen-label="04c Profil vergeben" style="flex:none;display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;align-items:baseline;gap:8px;padding-left:4px">
+      <span style="font:var(--text-mono);color:var(--ci-primary)">04c</span>
+      <span style="font:var(--text-title-3);color:var(--text-primary)">Profil vervollständigen</span>
+      <span style="font:var(--text-body-sm);color:var(--status-danger)">schon vergeben</span>
+    </div>
+    <div style="width:430px;height:932px;flex:none;position:relative;overflow:hidden;border-radius:44px;background:var(--bg-app);border:1px solid var(--border-medium);box-shadow:var(--shadow-3);display:flex;flex-direction:column">
+      <div style="height:54px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 32px;font:var(--text-label);color:var(--text-primary)">
+        <span>21:15</span>
+        <span style="display:flex;align-items:center;gap:6px"><i data-lucide="signal" width="15" height="15"></i><i data-lucide="wifi" width="15" height="15"></i><i data-lucide="battery-full" width="19" height="19"></i></span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;padding:24px 26px 20px;gap:22px;overflow:hidden">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h1 style="font:var(--text-display-2);letter-spacing:var(--ls-display);color:var(--text-primary)">Fast fertig</h1>
+          <p style="font:var(--text-body);color:var(--text-secondary)">Sag uns, wie du in der App heißt.</p>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <span style="width:84px;height:84px;flex:none;border-radius:var(--r-pill);background:var(--ci-tint);border:1px solid var(--border-brand);display:inline-flex;align-items:center;justify-content:center;font:var(--fw-bold) 28px/1 var(--font-display);color:var(--ci-primary)">LK</span>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;gap:8px">
+              <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;font:var(--text-label);border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="image" width="16" height="16"></i>Foto wählen</button>
+              <button style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:var(--r-pill);background:var(--fill-quiet);border:1px solid var(--border-subtle);color:var(--text-primary);cursor:pointer"><i data-lucide="camera" width="16" height="16"></i></button>
+            </div>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Optional. Geht auch später.</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <label style="display:block">
+            <span style="display:block;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Username</span>
+            <span style="display:flex;align-items:center;gap:4px;height:48px;padding:0 14px;background:rgba(255,77,94,.08);border:1.5px solid var(--status-danger);border-radius:var(--r-control)">
+              <span style="font:var(--text-body);color:var(--text-muted)">@</span>
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">lena</span>
+              <span style="display:inline-flex;color:var(--status-danger)"><i data-lucide="x" width="18" height="18"></i></span>
+            </span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--status-danger);margin-top:6px">@lena ist schon vergeben.</span>
+            <span style="display:block;font:var(--text-body-sm);color:var(--text-secondary);margin-top:2px">Nimm etwas anderes, zum Beispiel @lena.k.</span>
+          </label>
+          <label style="display:block">
+            <span style="display:flex;align-items:baseline;gap:6px;font:var(--text-label);color:var(--text-secondary);margin-bottom:6px">Anzeigename<span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ci-primary)">Pflicht</span></span>
+            <span style="display:flex;align-items:center;height:48px;padding:0 14px;background:var(--surface-inset);border:1.5px solid var(--border-subtle);border-radius:var(--r-control)">
+              <span style="flex:1;font:var(--text-body);color:var(--text-primary)">Lena K.</span>
+            </span>
+          </label>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Social-Links (optional)</span>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="instagram" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">instagram.com/</span>
+            <span style="flex:1;font:var(--text-body-sm);color:var(--text-primary)">lena.k</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;height:44px;padding:0 14px;background:var(--surface-inset);border:1px solid var(--border-subtle);border-radius:var(--r-control)">
+            <span style="display:inline-flex;color:var(--text-muted)"><i data-lucide="music" width="17" height="17"></i></span>
+            <span style="font:var(--text-body-sm);color:var(--text-muted)">Spotify-Profil</span>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font:var(--text-label);color:var(--text-secondary)">Wer sieht dein Profil?</span>
+          <div style="display:flex;gap:4px;padding:4px;background:var(--fill-quiet);border-radius:var(--r-pill);border:1px solid var(--border-subtle)">
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);background:var(--surface-3);color:var(--text-primary);font:var(--text-label);box-shadow:var(--shadow-1)">Nur ich</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Freunde</span>
+            <span style="flex:1;height:38px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--r-pill);font:var(--text-label);color:var(--text-muted)">Alle</span>
+          </div>
+        </div>
+        <button style="margin-top:auto;display:inline-flex;align-items:center;justify-content:center;height:54px;width:100%;font:var(--fw-bold) var(--fs-title-3)/1 var(--font-body);letter-spacing:var(--ls-label);border-radius:var(--r-pill);border:1px solid transparent;background:var(--ci-primary);color:var(--ci-on-primary);box-shadow:var(--glow-primary);opacity:.45;cursor:not-allowed">Fertig</button>
+      </div>
+      <div style="height:5px;width:140px;border-radius:999px;background:var(--border-strong);margin:0 auto 12px"></div>
+    </div>
+  </div>
+
+</div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--ink-300)">Offen</span>
+    <p style="font:var(--text-body-sm);color:var(--ink-200);margin:0">Noch nicht dabei: Tastatur-Overlays, der Erfolgsmoment nach „Fertig“ und der Rate-Limit-Fall (zu viele Code-Anfragen).</p>
+  </footer>
+</div>
+
+<script src="./vendor/lucide.js"></script>
+<script>
+  (function(){
+    function draw(){ if(window.lucide&&window.lucide.createIcons){window.lucide.createIcons();} }
+    if(document.readyState!=="loading"){draw();}else{document.addEventListener("DOMContentLoaded",draw);}
+    // fonts/icons may settle a beat later
+    setTimeout(draw,300);
+  })();
+</script>
+</body>
+</html>
