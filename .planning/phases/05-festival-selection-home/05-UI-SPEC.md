@@ -1,7 +1,7 @@
 ---
 phase: 5
 slug: festival-selection-home
-status: draft
+status: verified
 shadcn_initialized: false
 preset: none
 created: 2026-08-05
@@ -315,34 +315,91 @@ voice (doc 03 §5: Du-form, no emoji, sentence case, ≤1 "!" per screen).
 > Empty-state and error-state COPY live in `## Copywriting Contract` above — this section covers
 > state coverage and REFERENCES those rows rather than restating the copy (de-dup).
 
-**Elements classified** (5 surfaces):
+**Elements classified** (6 surfaces), fed to the compiled `ui-consideration-probe` engine (Step 9.5):
 - `home-hero` (list-collection, degenerate 0/1-item collection) — the "next festival" featured card
 - `home-rail` (list-collection) — "Meine Festivals" horizontal rail
-- `festivals-list` (list-collection, form) — Meine/Alle `SegmentedControl` + the resulting list
-- `festival-home-identity` (static-content) — name/dates/place key-facts block
-- `coming-soon-tiles` (interactive-control, non-interactive by design) — the 4-tile menu
+- `festivals-list` (form + list-collection) — Meine/Alle `SegmentedControl` + the resulting list
+- `festival-home-identity` (static-content + interactive-control) — name/dates/place key-facts block; kinds authored override (kind-confirmation step) so the data-fetched **loading**/**error** states surface, which pure `static-content` classification missed
+- `coming-soon-tiles` (static grid) — the 4-tile disabled menu; the heuristic over-classifies it as a data collection, so its non-reachable data states are explicitly **dismissed** below
 - `tab-bar` (nav) — the 4-item `FloatingNav`, 2 disabled
 
-Applicable state considerations: 19 resolved — 15 covered, 4 backstop, 0 unresolved.
+**Probe coverage: 44 applicable considerations — 27 covered · 6 backstop · 11 dismissed (n/a) · 0 unresolved.** Empty-state and error-state COPY lives in `## Copywriting Contract`; the rows below reference it rather than restating it (de-dup).
+<!-- PROBE-PARITY §UI Considerations: applicable=44 resolved=44 explicit=27 backstop=6 dismissed=11 unresolved=0 -->
 
-| Category | Element(s) | Status | Resolution / Reason |
-|----------|------------|--------|---------------------|
-| empty | home-hero, home-rail | ✅ covered | See Copywriting Contract "Home — empty state" rows; hero and rail render the SAME single empty-state block (Component Contract: rail is entirely omitted when 0 saved festivals — no duplicate empty UI) |
-| empty | festivals-list (Meine) | ✅ covered | See Copywriting Contract "Festivals — Meine empty state" rows |
-| empty | festivals-list (Alle) | ✅ covered | See Copywriting Contract "Festivals — Alle empty state" rows (near-impossible in practice — seed always has festivals — but the API contract allows an empty array) |
-| loading | home-hero, home-rail, festivals-list | 🧪 backstop | No mockup precedent for a loading skeleton (all mock data is pre-populated). Researcher default: reuse the existing `festivals/index.tsx` pattern (`<Trans>Loading festivals…</Trans>` text, `textSecondary`) rather than inventing a skeleton shimmer. Verification: confirm the loading text renders while `useQuery` is `pending`, matching the existing Festivals-screen convention, not a new loading pattern. |
-| loading | coming-soon-tiles | ✅ covered | N/A by design — tiles are static, no data fetch (they render immediately, no loading state possible) |
-| error | home-hero, home-rail, festivals-list | ✅ covered | Reuse the existing `festivals/index.tsx` network-error copy pattern verbatim ("Can't reach the server — make sure your device is on the same Wi-Fi as the dev API." / retry button) — no new error copy invented this phase |
-| error | festival-home-identity | 🧪 backstop | `getFestival(festivalId)` can 404 (deleted/invalid id) — no mockup precedent, no CONTEXT.md resolution. Researcher default: render the same network-error pattern; a genuine 404 falls back to the "Back to festivals" navigation already required by FEST-04. Verification: confirm a 404 response does not crash the screen and still exposes the header back button. |
-| populated | home-rail, festivals-list | ✅ covered | Vertical single-column stack (Festivals tab) / horizontal `Rail` (Home), matching mockup fidelity — `stack-gap`/`sp-5` (12px) between FestivalCards |
-| partial | festival-home-identity | ✅ covered | `place`/`startDate`/`endDate` are D-08 additions landing in this same phase (schema→contracts→seed, coordinated) — no partial-data state exists post-migration; pre-migration is not a runtime state to design for |
-| overflow | festivals-list, home-rail | ✅ covered | `FlatList`/`ScrollView` — RN scrolls natively, no client-side cap needed |
-| zero-one-many | home-hero | ✅ covered | Zero → empty state (above); one-or-many → same hero renders only the FIRST (earliest upcoming by `startDate`, else first-saved) — the rest surface via the rail, not a second hero |
-| zero-one-many | tab-bar | ✅ covered | Always exactly 4 items, fixed — no dynamic count |
-| long-text | FestivalCard name | ✅ covered | Component Contract specifies `numberOfLines={1}` + ellipsis on the header row |
-| long-text | coming-soon tile labels | ✅ covered | Fixed short authored strings (Timetable/Lageplan/Cashless/News), no dynamic content risk |
-| long-text | `place` field | 🧪 backstop | User/organizer-generated free text (D-08), no client-side length cap specified anywhere (db/contracts/seed). Verification: confirm the caption row (`bodySm`, single line) truncates gracefully rather than wrapping/breaking layout if an organizer enters an unusually long place name — add `numberOfLines={1}` defensively even though no cap exists server-side yet. |
-| long-text | date-range formatting | 🧪 backstop | `Intl.DateTimeFormat.prototype.formatRange` support on Hermes/Expo needs a runtime check — not verified by this research pass. Verification: confirm `formatRange` works on-device (both iOS/Android via Hermes); if unsupported, fall back to two `Intl.DateTimeFormat().format()` calls joined with "–" (en-dash, matching mockup's date-range punctuation). |
+
+**`home-hero`** — Home tab featured card
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| empty | ✅ covered | Zero saved festivals → hero renders the shared empty-state block (Copywriting: "Home — empty state" rows) with a "Browse festivals" CTA; the rail is omitted, no duplicate empty UI. |
+| loading | 🧪 backstop | No mockup skeleton precedent. Reuse existing `festivals/index.tsx` loading-text pattern while `useQuery` is pending. Verify: loading text renders (`textSecondary`), not a new shimmer. |
+| error | ✅ covered | Reuse the existing `festivals/index.tsx` network-error copy + retry verbatim; no new error copy invented this phase. |
+| populated | ✅ covered | Featured card renders name (`title2`), "{dates} · {place}" caption (`bodySm`), saved-badge/save-affordance, and the "Festival öffnen" CTA below (Component Contract: Home hero variant). |
+| partial | ✅ covered | `place`/`startDate`/`endDate` all land in THIS phase (D-08 schema→contracts→seed migration); no post-migration partial-data runtime state exists. |
+| overflow | ✅ covered | Single featured card only; additional saved festivals surface in the rail, never a second hero (Visual Hierarchy: hero is the sole Home focal point). |
+| zero-one-many | ✅ covered | Zero → empty state; one-or-many → only the FIRST (earliest upcoming by `startDate`, else first-saved) is featured, the rest render in the "Meine Festivals" rail. |
+| long-text | ✅ covered | Festival name is `numberOfLines={1}` + ellipsis per Component Contract header row. |
+
+**`home-rail`** — "Meine Festivals" rail
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| empty | ✅ covered | Rail is omitted entirely when 0 saved festivals (single shared empty-state block with the hero; Component Contract). |
+| loading | 🧪 backstop | Reuse existing `festivals/index.tsx` loading-text pattern while pending. Verify: loading text renders, not a new skeleton. |
+| error | ✅ covered | Reuse the existing `festivals/index.tsx` network-error copy + retry pattern; no new error copy. |
+| populated | ✅ covered | Horizontal `Rail` of flat FestivalCards, `spacingScale['sp-5']` (12px) gap between rows (Component Contract). |
+| partial | ✅ covered | D-08 coordinated migration lands all fields this phase; no partial-data runtime state. |
+| overflow | ✅ covered | Horizontal `ScrollView`/`FlatList` scrolls natively; no client-side cap needed. |
+| zero-one-many | ✅ covered | Zero → rail omitted; one-or-many → horizontal scroll of the same FestivalCard row. |
+| long-text | ✅ covered | FestivalCard name `numberOfLines={1}` + ellipsis (Component Contract). |
+
+**`festivals-list`** — SegmentedControl + list
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| empty | ✅ covered | Distinct per-segment empty states: Meine ("Noch keine gespeicherten Festivals" + "Zu Alle wechseln") and Alle ("Noch keine Festivals" + "Neue Festivals erscheinen hier.") — Copywriting Contract rows. |
+| loading | 🧪 backstop | Reuse existing `festivals/index.tsx` loading-text pattern while `useQuery` pending. Verify: loading text renders, matching the established Festivals-screen convention, not a new pattern. |
+| error | ✅ covered | Reuse the existing `festivals/index.tsx` network-error copy + retry verbatim. |
+| populated | ✅ covered | Vertical single-column stack of flat FestivalCards, `sp-5` (12px) gap; each card header row = name + saved-badge/save-affordance (Visual Hierarchy). |
+| partial | ✅ covered | D-08 migration lands all fields this phase; no partial-data runtime state. |
+| overflow | ✅ covered | `FlatList` scrolls natively; `scrollBottomPad` (104px) keeps content clear of the floating nav. |
+| zero-one-many | ✅ covered | Zero → per-segment empty state; one-or-many → vertical FestivalCard list. |
+| long-text | ✅ covered | FestivalCard name `numberOfLines={1}` + ellipsis (Component Contract). |
+
+**`festival-home-identity`** — name/dates/place block (kinds override: static-content + interactive-control)
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| loading | 🧪 backstop | `getFestival(festivalId)` pending → reuse the existing loading-text pattern. Verify: loading state renders and does not crash the detail screen. |
+| error | 🧪 backstop | `getFestival` can 404 on a deleted/invalid id (no mockup precedent). Render the same network-error pattern; a genuine 404 falls back to the "Back to festivals" navigation required by FEST-04. Verify: a 404 does not crash the screen and still exposes the header Back button. |
+| overflow | ✅ covered | Static identity block (no scrollable collection); content fits, the screen `ScrollView` handles any vertical overflow. |
+| long-text | 🧪 backstop | Two rendering backstops on the caption line: (1) `place` is organizer-generated free text (D-08) with no server-side length cap — add `numberOfLines={1}` (`bodySm`) defensively so a long place truncates rather than breaking layout; (2) `Intl.DateTimeFormat.prototype.formatRange` support on Hermes/Expo is unverified — verify on-device (iOS+Android), else fall back to two `Intl` `format()` calls joined with an en-dash ("–"). |
+
+**`coming-soon-tiles`** — 4 disabled tiles (fixed static grid; data states dismissed)
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| empty | — n/a | _Fixed 4-tile static grid (Timetable/Map/Cashless/News); no data fetch, so an empty state is not reachable._ |
+| loading | — n/a | _Tiles render immediately with no data fetch; no loading state is possible._ |
+| error | — n/a | _No data fetch backs the tiles; no error state is possible._ |
+| populated | — n/a | _Always exactly four fixed, authored tiles; not a data-driven collection._ |
+| partial | — n/a | _No backing data; a partial-data state cannot occur._ |
+| overflow | ✅ covered | Fixed 2×2 grid (four known tiles), `spacingScale['sp-5']` (12px) gap; no overflow possible. |
+| zero-one-many | — n/a | _Count is fixed at exactly four tiles; no zero/one/many variance._ |
+| long-text | ✅ covered | Fixed short authored labels (Timetable/Lageplan/Cashless/News) + "Bald" badge (`micro`); no dynamic-length content. |
+
+**`tab-bar`** — FloatingNav, 2 disabled (fixed 4-item nav; data states dismissed)
+
+| Category | Status | Resolution |
+|----------|--------|------------|
+| empty | — n/a | _Fixed 4-item navigation chrome; it is never empty._ |
+| loading | — n/a | _The tab bar is static chrome with no data fetch; no loading state._ |
+| error | — n/a | _The tab bar has no data fetch; no error state._ |
+| populated | — n/a | _Fixed four items (2 live, 2 disabled); not a data-driven collection._ |
+| partial | — n/a | _Items are fixed; no partial-data state._ |
+| overflow | ✅ covered | Exactly four items in a fixed-width floating pill; disabled items still occupy their slot, no overflow. |
+| zero-one-many | ✅ covered | Always exactly four items (Home/Festivals live, Friends/Profil disabled); no dynamic count. |
+| long-text | ✅ covered | Fixed short `micro` labels (Home/Festivals/Friends/Profil, not uppercase, matching `FloatingNav` source); no dynamic text. |
 
 <!-- Status vocabulary (locked by probe-core projectTruths):
      ✅ covered   → a plain truth string lifted into must_haves.truths
@@ -390,11 +447,11 @@ lockfile review is sufficient.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** APPROVED (gsd-ui-checker, 2026-08-05) — 6/6 dimensions PASS. UI-consideration probe (Step 9.5): 44 considerations, 0 unresolved.
