@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="./festipal-tokens.css">
+<script src="./vendor/lucide.js"></script>
+<script src="./festipal-ds.js"></script>
+<style>body{margin:0;background:#07080B;color:#E9ECF2;font-family:"Plus Jakarta Sans",system-ui,sans-serif}</style>
+</helmet>
+
+<div data-theme="{{ themeAttr }}" data-festival="{{ ciAttr }}" style="min-height:100vh;background:var(--bg-app-deep);padding:56px 56px 96px;display:flex;flex-direction:column;gap:56px">
+
+  <header style="display:flex;flex-direction:column;gap:14px;max-width:720px">
+    <span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--brand-primary)">Festipal · Screen-Übersicht</span>
+    <h1 style="font:var(--text-display-1);letter-spacing:var(--ls-display);color:var(--text-primary);margin:0">Alle Screens der App</h1>
+    <p style="font:var(--text-body);color:var(--text-secondary);margin:0">13 Screens, aus dem bestehenden Festipal-Build übernommen — Tokens, Komponenten und Copy unverändert. Jeder Screen ist eine eigene, voll bedienbare Instanz der App: tippen, filtern, Sheets öffnen und in der Navigation weiterspringen funktioniert direkt in der Karte.</p>
+  </header>
+
+  <section style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border-subtle);padding-bottom:12px">
+      <h2 style="font:var(--text-title-1);color:var(--text-primary);margin:0">Festipal Shell</h2>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">globaler Kontext · Nav: Home · Festivals · Artists · Friends · Mehr</span>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start;width:max-content">
+
+      <div data-screen-label="01 Home" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">01</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Home</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Nächstes Festival, News, Artists</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="overview" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="02 Meine Festivals" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">02</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Meine Festivals</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Kommend / Vorbei</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="festivals" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="03 Meine Artists" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">03</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Meine Artists</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Gefolgte Acts, Social-Links</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="artists" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="04 Friends" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">04</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Friends</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Crew, Anfragen, Einladen</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="friends" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="05 Einstellungen" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">05</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Einstellungen</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Standort, SafeNow, Konto</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="settings" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="06 Profil" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-primary)">06</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Profil</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Push-Screen mit Zurück-Pfeil</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="profile" hint-size="430px,900px"></x-import>
+      </div>
+
+    </div>
+  </section>
+
+  <section style="display:flex;flex-direction:column;gap:20px">
+    <div style="display:flex;align-items:baseline;gap:12px;border-bottom:1px solid var(--border-subtle);padding-bottom:12px">
+      <h2 style="font:var(--text-title-1);color:var(--text-primary);margin:0">Im Festival</h2>
+      <span style="font:var(--text-body-sm);color:var(--text-muted)">Festival-Kontext · Nav: Dashboard · Tausch · Crew · Timetable · Lageplan</span>
+    </div>
+    <div style="display:flex;gap:36px;align-items:flex-start;width:max-content">
+
+      <div data-screen-label="07 Dashboard" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">07</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Dashboard</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Jetzt live, Bühnen, Guthaben</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="dashboard" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="08 Timetable" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">08</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Timetable</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Tage, Konflikte, Merken</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="timetable" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="09 Lageplan" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">09</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Lageplan</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Full-bleed Karte, Layer, SafeNow</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="map" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="10 Tauschbörse" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">10</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Tauschbörse</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Tausch, Suche, Verschenkt</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="swap" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="11 Crew" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">11</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Crew</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Aktivitäten &amp; Freunde vor Ort</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="social" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="12 Cashless" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">12</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">Cashless</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Guthaben, Aufladen, Buchungen</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="wallet" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+      <div data-screen-label="13 News" style="display:flex;flex-direction:column;gap:12px;flex:none">
+        <div style="display:flex;align-items:baseline;gap:8px">
+          <span style="font:var(--text-mono);color:var(--brand-secondary)">13</span>
+          <span style="font:var(--text-title-3);color:var(--text-primary)">News</span>
+          <span style="font:var(--text-body-sm);color:var(--text-muted)">Wichtig, Lineup, Info</span>
+        </div>
+        <x-import component-from-global-scope="FestipalApp" from="./festipal-screens.jsx" initial-tab="news" initial-festival="{{ fest }}" hint-size="430px,900px"></x-import>
+      </div>
+
+    </div>
+  </section>
+
+  <footer style="display:flex;flex-direction:column;gap:8px;max-width:720px;border-top:1px solid var(--border-subtle);padding-top:20px">
+    <span style="font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-muted)">Nächste Schritte</span>
+    <p style="font:var(--text-body-sm);color:var(--text-secondary);margin:0">Sag mir, welche Screens weiter sollen: Onboarding &amp; Ticket-Einlösung fehlen noch, ebenso Artist-Detail, Suche und ein Offline-Zustand. Über die Tweaks lassen sich Festival-Name, CI-Farbe und die helle Fläche umschalten.</p>
+  </footer>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;festivalName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Nova Rise&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Inhalt&quot;},&quot;ciTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;festipal&quot;,&quot;hoerspiel&quot;],&quot;default&quot;:&quot;festipal&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;appearance&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;dark&quot;,&quot;light&quot;],&quot;default&quot;:&quot;dark&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;}}">
+class Component extends DCLogic {
+  /* The imported screen bundle and the design-system bundle both read the global
+     React, so hand them the runtime's copy before anything mounts. */
+  _react = (window.React = window.React || React, true);
+
+  renderVals() {
+    const appearance = this.props.appearance ?? 'dark';
+    return {
+      fest: { id: 'nova', name: this.props.festivalName ?? 'Nova Rise' },
+      themeAttr: appearance === 'light' ? 'light' : 'dark',
+      ciAttr: this.props.ciTheme ?? 'festipal',
+    };
+  }
+}
+
+</script>
+</body>
+</html>
