@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 2
+open_count: 13
 waived_count: 0
-fixed_count: 0
-total_count: 2
-last_updated: 2026-08-03T16:40:15.840Z
+fixed_count: 2
+total_count: 15
+last_updated: 2026-08-05T11:26:46.185Z
 ---
 
 # Broken Windows Ledger
@@ -16,7 +16,20 @@ last_updated: 2026-08-03T16:40:15.840Z
 | id | phase | kind | file | line | description | status | reason | recorded_at | resolved_at |
 |----|-------|------|------|------|-------------|--------|--------|-------------|-------------|
 | 1 | 03 | todo | apps/mobile/lib/i18n.ts |  | activateUiLocale calls i18n.activate() but never i18n.load()s the compiled DE/EN catalogs — Trans macro currently always falls back to English source text regardless of active locale; wire in when the first real screen lands | open |  | 2026-08-03T16:15:49.882Z |  |
-| 2 | 03 | todo | apps/api/src/auth/auth.instance.ts |  | Server-side better-auth instance is missing the @better-auth/expo server plugin (plugins: [expo()]). Without it, the expo-origin header the mobile client sends is never translated to the standard origin header, so any cookie-bearing state-changing better-auth endpoint (e.g. a future sign-out) will 403 with INVALID_ORIGIN/MISSING_OR_NULL_ORIGIN. Not exercised by Phase 3's OTP-login-only scope (no logout feature planned in Plans 04-06) but must be added before any session-revocation/logout feature ships. | open |  | 2026-08-03T16:40:15.840Z |  |
+| 2 | 03 | todo | apps/api/src/auth/auth.instance.ts |  | Server-side better-auth instance is missing the @better-auth/expo server plugin (plugins: [expo()]). Without it, the expo-origin header the mobile client sends is never translated to the standard origin header, so any cookie-bearing state-changing better-auth endpoint (e.g. a future sign-out) will 403 with INVALID_ORIGIN/MISSING_OR_NULL_ORIGIN. Not exercised by Phase 3's OTP-login-only scope (no logout feature planned in Plans 04-06) but must be added before any session-revocation/logout feature ships. | fixed |  | 2026-08-03T16:40:15.840Z | 2026-08-05T11:26:40.317Z |
+| 3 | 04 | unrun-verify | apps/mobile/app/(auth)/email.tsx |  | Task 1 human-check not run headless: Welcome->Email->real OTP send->verify full flow on a dev build with Mailpit | open |  | 2026-08-05T09:25:44.011Z |  |
+| 4 | 04 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | Task 2 human-check not run headless: fresh-account username live-check + Done flow + network body {username,displayName} confirmation on a real device | open |  | 2026-08-05T09:25:51.579Z |  |
+| 5 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | AUTH-02 human-check not run headless: returning visitor with existing profile lands directly in festivals after OTP, skipping (profile-setup) | open |  | 2026-08-05T09:25:52.005Z |  |
+| 6 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | AUTH-03 human-check not run headless: session survives a real OS force-quit + relaunch (Pitfall 1 method) with no OTP re-prompt | open |  | 2026-08-05T09:25:52.450Z |  |
+| 7 | 04 | unrun-verify | apps/mobile/app/(auth)/verify.tsx |  | Real-device UAT: correct code auto-submits+advances; wrong code shows unified error box + Send new code; resend countdown 60s->0 becomes tappable, double-tap-safe; Change email returns to Email; DE copy matches mockup (04-04) | open |  | 2026-08-05T09:39:54.447Z |  |
+| 8 | 04 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | Real-device UAT: pick from gallery + take a photo (permission prompts, both grant paths) replaces the initials tile with the circular photo; force-quit + relaunch on the same account -> photo persists via MMKV; confirm the completeProfile network body has no avatar field (04-05, D-01) | open |  | 2026-08-05T09:59:27.090Z |  |
+| 9 | 04 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | Real-device UAT: type a taken username -> both taken lines render ('@{username} is already taken.' + 'Try something else, like @{suggestion}.') with a verified ≤20-char suggestion; force a completeProfile 409 (two devices/tabs racing the same username) -> same taken UI + suggestion regenerates (04-05, IDN-01) | open |  | 2026-08-05T09:59:27.534Z |  |
+| 10 | 04 | unrun-verify | apps/mobile/components/AvatarTile.tsx |  | Visual smoke check (UI-SPEC populated/avatar backstop): a real picked/captured photo visually replaces the initials tile correctly (circular, r-pill radius); separately, a long/multi-byte/emoji displayName does not break the avatar-tile initials derivation or the profile layout (IDN-01 encoding edge backstop) | open |  | 2026-08-05T09:59:27.980Z |  |
+| 11 | 04 | unrun-verify | apps/mobile/app/festivals/index.tsx |  | Real-device UAT: tap logout icon returns to Welcome; enable airplane mode + tap logout -> still returns to Welcome (local session cleared); double-tap fast -> no double-fire/no crash (04-06, AUTH-04) | open |  | 2026-08-05T10:17:41.069Z |  |
+| 12 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | Real-device UAT: force-quit, cold deep link to festipal://festivals while logged out -> auth flow (no content leak); complete OTP + first-login profile-completion -> lands on originally-tapped route, not Home; repeat as returning user (no profile step) and warm-start (backgrounded) -> same (04-06, D-02/SC-5) | open |  | 2026-08-05T10:17:41.487Z |  |
+| 13 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | Real-device UAT: cold-start on cache-cleared install shows the dark brand wordmark splash and does not hang noticeably longer than Phase 3; simulate hung/offline API on cold start -> splash falls through to Welcome within the 8s timeout, not a deadlock (04-06, D-04) | open |  | 2026-08-05T10:17:41.899Z |  |
+| 14 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | Real-device UAT: log out, log back in, force-quit, relaunch from icon -> lands logged-in (AUTH-03 re-confirmed after this plan's guard changes: deep-link capture/consume + resolve-timeout effects, Pitfall 1) | open |  | 2026-08-05T10:17:42.311Z |  |
+| 15 | 04 | todo | apps/mobile/app/(auth)/index.tsx |  | useAppFonts() was never called anywhere before 04-06 (now wired in app/_layout.tsx for the splash wordmark), so the three Google Fonts were never actually loaded; separately, Welcome/verify/complete-profile screens set fontFamily to the generic typeRoles.*.family name ('Outfit'/'Plus Jakarta Sans'/'JetBrains Mono') which does not match the specific registered font key (e.g. 'Outfit_700Bold' from lib/fonts.ts FONT_DISPLAY) — even now that fonts load, those screens still silently render in the system-font fallback. Out of 04-06's file scope (only _layout.tsx's own SplashView correctly uses resolveFontFamily); needs a follow-up pass across the restyled auth/profile screens. | fixed |  | 2026-08-05T10:17:54.878Z | 2026-08-05T11:26:46.185Z |
 
 ````json
 [
@@ -39,10 +52,166 @@ last_updated: 2026-08-03T16:40:15.840Z
     "file": "apps/api/src/auth/auth.instance.ts",
     "line": null,
     "description": "Server-side better-auth instance is missing the @better-auth/expo server plugin (plugins: [expo()]). Without it, the expo-origin header the mobile client sends is never translated to the standard origin header, so any cookie-bearing state-changing better-auth endpoint (e.g. a future sign-out) will 403 with INVALID_ORIGIN/MISSING_OR_NULL_ORIGIN. Not exercised by Phase 3's OTP-login-only scope (no logout feature planned in Plans 04-06) but must be added before any session-revocation/logout feature ships.",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-03T16:40:15.840Z",
+    "resolved_at": "2026-08-05T11:26:40.317Z"
+  },
+  {
+    "id": 3,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/(auth)/email.tsx",
+    "line": null,
+    "description": "Task 1 human-check not run headless: Welcome->Email->real OTP send->verify full flow on a dev build with Mailpit",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:25:44.011Z",
     "resolved_at": null
+  },
+  {
+    "id": 4,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "Task 2 human-check not run headless: fresh-account username live-check + Done flow + network body {username,displayName} confirmation on a real device",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:25:51.579Z",
+    "resolved_at": null
+  },
+  {
+    "id": 5,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "AUTH-02 human-check not run headless: returning visitor with existing profile lands directly in festivals after OTP, skipping (profile-setup)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:25:52.005Z",
+    "resolved_at": null
+  },
+  {
+    "id": 6,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "AUTH-03 human-check not run headless: session survives a real OS force-quit + relaunch (Pitfall 1 method) with no OTP re-prompt",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:25:52.450Z",
+    "resolved_at": null
+  },
+  {
+    "id": 7,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/(auth)/verify.tsx",
+    "line": null,
+    "description": "Real-device UAT: correct code auto-submits+advances; wrong code shows unified error box + Send new code; resend countdown 60s->0 becomes tappable, double-tap-safe; Change email returns to Email; DE copy matches mockup (04-04)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:39:54.447Z",
+    "resolved_at": null
+  },
+  {
+    "id": 8,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "Real-device UAT: pick from gallery + take a photo (permission prompts, both grant paths) replaces the initials tile with the circular photo; force-quit + relaunch on the same account -> photo persists via MMKV; confirm the completeProfile network body has no avatar field (04-05, D-01)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:59:27.090Z",
+    "resolved_at": null
+  },
+  {
+    "id": 9,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "Real-device UAT: type a taken username -> both taken lines render ('@{username} is already taken.' + 'Try something else, like @{suggestion}.') with a verified ≤20-char suggestion; force a completeProfile 409 (two devices/tabs racing the same username) -> same taken UI + suggestion regenerates (04-05, IDN-01)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:59:27.534Z",
+    "resolved_at": null
+  },
+  {
+    "id": 10,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/components/AvatarTile.tsx",
+    "line": null,
+    "description": "Visual smoke check (UI-SPEC populated/avatar backstop): a real picked/captured photo visually replaces the initials tile correctly (circular, r-pill radius); separately, a long/multi-byte/emoji displayName does not break the avatar-tile initials derivation or the profile layout (IDN-01 encoding edge backstop)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T09:59:27.980Z",
+    "resolved_at": null
+  },
+  {
+    "id": 11,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/festivals/index.tsx",
+    "line": null,
+    "description": "Real-device UAT: tap logout icon returns to Welcome; enable airplane mode + tap logout -> still returns to Welcome (local session cleared); double-tap fast -> no double-fire/no crash (04-06, AUTH-04)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T10:17:41.069Z",
+    "resolved_at": null
+  },
+  {
+    "id": 12,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "Real-device UAT: force-quit, cold deep link to festipal://festivals while logged out -> auth flow (no content leak); complete OTP + first-login profile-completion -> lands on originally-tapped route, not Home; repeat as returning user (no profile step) and warm-start (backgrounded) -> same (04-06, D-02/SC-5)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T10:17:41.487Z",
+    "resolved_at": null
+  },
+  {
+    "id": 13,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "Real-device UAT: cold-start on cache-cleared install shows the dark brand wordmark splash and does not hang noticeably longer than Phase 3; simulate hung/offline API on cold start -> splash falls through to Welcome within the 8s timeout, not a deadlock (04-06, D-04)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T10:17:41.899Z",
+    "resolved_at": null
+  },
+  {
+    "id": 14,
+    "kind": "unrun-verify",
+    "phase": "04",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "Real-device UAT: log out, log back in, force-quit, relaunch from icon -> lands logged-in (AUTH-03 re-confirmed after this plan's guard changes: deep-link capture/consume + resolve-timeout effects, Pitfall 1)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-05T10:17:42.311Z",
+    "resolved_at": null
+  },
+  {
+    "id": 15,
+    "kind": "todo",
+    "phase": "04",
+    "file": "apps/mobile/app/(auth)/index.tsx",
+    "line": null,
+    "description": "useAppFonts() was never called anywhere before 04-06 (now wired in app/_layout.tsx for the splash wordmark), so the three Google Fonts were never actually loaded; separately, Welcome/verify/complete-profile screens set fontFamily to the generic typeRoles.*.family name ('Outfit'/'Plus Jakarta Sans'/'JetBrains Mono') which does not match the specific registered font key (e.g. 'Outfit_700Bold' from lib/fonts.ts FONT_DISPLAY) — even now that fonts load, those screens still silently render in the system-font fallback. Out of 04-06's file scope (only _layout.tsx's own SplashView correctly uses resolveFontFamily); needs a follow-up pass across the restyled auth/profile screens.",
+    "status": "fixed",
+    "reason": "",
+    "recorded_at": "2026-08-05T10:17:54.878Z",
+    "resolved_at": "2026-08-05T11:26:46.185Z"
   }
 ]
 ````

@@ -3,6 +3,7 @@ import { randomUUID } from 'node:crypto';
 import { inArray } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { user, visitorProfile, type Database } from '@festipal/db';
+import { completeProfileBodySchema } from '@festipal/contracts';
 
 import { MeService } from '../src/me/me.service';
 import { createTestDatabase } from './setup';
@@ -62,5 +63,76 @@ describe('username-race (Pitfall 11 / SC-5)', () => {
   it('checkUsernameAvailability now reports the username taken (case-insensitive)', async () => {
     const available = await me.checkUsernameAvailability(usernameUpper);
     expect(available).toBe(false);
+  });
+});
+
+/**
+ * D-03: server-side username/displayName caps, proven at the Zod parse layer
+ * (`completeProfileBodySchema`, composed on `visitorProfileInsertSchema`'s
+ * `.extend()` values — packages/db/src/schema/visitor-profile.ts). This is
+ * where `apps/api/src/me/me.controller.ts`'s `@TsRestHandler(contract.completeProfile)`
+ * actually validates the request body — rejected input never reaches
+ * `MeService.completeProfile`/the DB. Testing `safeParse` directly proves the
+ * boundary without needing a live HTTP/DB round-trip.
+ */
+describe('D-03 server-side name caps (username/displayName)', () => {
+  const validDisplayName = 'Race Test';
+
+  it('rejects a username shorter than 3 chars', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'ab', displayName: validDisplayName });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a username longer than 20 chars', () => {
+    const result = completeProfileBodySchema.safeParse({
+      username: 'a'.repeat(21),
+      displayName: validDisplayName,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it.each([
+    ['uppercase', 'Ab_1'],
+    ['space', 'a b'],
+    ['special char', 'a!b'],
+  ])('rejects a username with a %s (%s)', (_label, badUsername) => {
+    const result = completeProfileBodySchema.safeParse({
+      username: badUsername,
+      displayName: validDisplayName,
+    });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts a 3-char lowercase username', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'abc', displayName: validDisplayName });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a 20-char lowercase/digit/underscore/dot username', () => {
+    const result = completeProfileBodySchema.safeParse({
+      username: 'a1_.'.repeat(5), // 20 chars, charset-valid
+      displayName: validDisplayName,
+    });
+    expect(result.success).toBe(true);
+  });
+
+  it('rejects an empty displayName', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'abc', displayName: '' });
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects a displayName longer than 40 chars', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'abc', displayName: 'x'.repeat(41) });
+    expect(result.success).toBe(false);
+  });
+
+  it('accepts a 1-char displayName', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'abc', displayName: 'x' });
+    expect(result.success).toBe(true);
+  });
+
+  it('accepts a 40-char displayName', () => {
+    const result = completeProfileBodySchema.safeParse({ username: 'abc', displayName: 'x'.repeat(40) });
+    expect(result.success).toBe(true);
   });
 });

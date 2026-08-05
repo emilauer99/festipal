@@ -1,20 +1,37 @@
 import { useEffect, useRef, useState } from 'react';
-import { Stack } from 'expo-router';
+import { StyleSheet, Text, View } from 'react-native';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization';
+import * as Linking from 'expo-linking';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from '@lingui/react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { tokens } from '@festipal/ui';
 
 import { queryClient } from '../lib/query-client';
 import { activateUiLocale, i18n } from '../lib/i18n';
 import { authClient } from '../lib/auth-client';
 import { apiClient } from '../lib/api-client';
+import { capturePendingDestination, consumePendingDestination } from '../lib/pending-destination';
+import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
+import { FontsReadyProvider } from '../lib/fonts-context';
 
-// D-04: splash/icon stay a plain "festipal" wordmark placeholder (no branding
-// assets this phase) — held until BOTH the UI locale (ADR-012 axis 1) AND the
-// four-state auth guard below resolve, so no protected route ever flashes on
-// cold start (Pitfall 5).
+const { colors, typeRoles } = tokens;
+
+// D-04: held until BOTH the UI locale (ADR-012 axis 1) AND the four-state
+// auth guard below resolve, so no protected route ever flashes on cold start
+// (Pitfall 5). The presentation shown while held is restyled to the real
+// brand tokens (dark bgAppDeep + Outfit wordmark, see SplashView below).
 SplashScreen.preventAutoHideAsync();
+
+// D-04 / Pitfall 5 backstop — the cold-start session/festival resolve must
+// not be able to deadlock the splash indefinitely on a hung request (a
+// SecureStore read that never settles, or a stalled GET /me). Past this
+// timeout the guard falls through to 'unauthenticated' (routes to Welcome)
+// rather than holding the splash forever; if the real resolution finishes
+// slightly after, its result still wins (no additional gate is added).
+const AUTH_RESOLVE_TIMEOUT_MS = 8000;
 
 /**
  * Pitfall B / PITFALLS.md #5 — a route guard MUST branch on more than
@@ -42,16 +59,61 @@ export function refreshAuthState(): void {
   notifyMeMightHaveChanged?.();
 }
 
+// AUTH-04 logout robustness backstop — authClient.signOut()'s local session
+// signal only updates on a SUCCESSFUL response (better-auth's client only
+// broadcasts the sign-out session signal from its onSuccess path); an
+// offline/failed signOut() never touches the SecureStore-cached cookie, so
+// without this the guard would stay 'authenticated' and strand the visitor
+// logged-in. `forceUnauthenticated()` sets the guard directly, independent
+// of the session-derived resolveAuthState effect below, so the Festivals
+// header's logout control always reaches Welcome. Same module-singleton
+// idiom as `refreshAuthState` above.
+let notifyForceLogout: (() => void) | null = null;
+export function forceUnauthenticated(): void {
+  notifyForceLogout?.();
+}
+
+// D-02 (SC-5) — Expo Router's parenthesized route groups ((auth),
+// (profile-setup)) never appear in the resolved deep-link PATH (that's the
+// whole point of the group syntax), so the "never capture an (auth)/
+// (profile-setup) href itself" rule is enforced by the actual route paths
+// those screens resolve to, not the folder names.
+const AUTH_FLOW_PATHS = new Set(['', 'email', 'verify', 'complete-profile']);
+
 export default function RootLayout() {
   const [localeReady, setLocaleReady] = useState(false);
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
   const [meRefreshToken, setMeRefreshToken] = useState(0);
   const splashHiddenRef = useRef(false);
+  const router = useRouter();
+  // D-04 / Pitfall 5 — non-blocking: `fontsLoaded` gates ONLY which
+  // `fontFamily` the SplashView's wordmark style resolves, never the
+  // `bootstrapped`/`hideAsync()` decision below.
+  const { fontsLoaded } = useAppFonts();
+
+  // D-02 (SC-5) — deep-link capture is the FIRST effect declared in this
+  // component, deliberately ungated by the locale/session bootstrap effects
+  // below (Pitfall 2): `Linking.useLinkingURL()` always returns the
+  // cold-launch URL immediately on every render, so this effect observes it
+  // the instant the guard itself resolves to 'unauthenticated', regardless of
+  // how long locale/session resolution takes. Never captures an
+  // (auth)/(profile-setup) destination itself (content-leak boundary).
+  const linkingUrl = Linking.useLinkingURL();
+  useEffect(() => {
+    if (!linkingUrl || authState.status !== 'unauthenticated') return;
+    const { path } = Linking.parse(linkingUrl);
+    if (!path) return;
+    const normalizedPath = path.replace(/^\/+/, '');
+    if (AUTH_FLOW_PATHS.has(normalizedPath)) return;
+    capturePendingDestination(`/${normalizedPath}`);
+  }, [linkingUrl, authState.status]);
 
   useEffect(() => {
     notifyMeMightHaveChanged = () => setMeRefreshToken((token) => token + 1);
+    notifyForceLogout = () => setAuthState({ status: 'unauthenticated' });
     return () => {
       notifyMeMightHaveChanged = null;
+      notifyForceLogout = null;
     };
   }, []);
 
@@ -101,6 +163,32 @@ export default function RootLayout() {
     };
   }, [session, sessionPending, meRefreshToken]);
 
+  // D-04 / Pitfall 5 backstop — cold-start resolve timeout: if the guard is
+  // still 'loading' after AUTH_RESOLVE_TIMEOUT_MS, force it to
+  // 'unauthenticated' so `bootstrapped` can never be held indefinitely by a
+  // hung SecureStore read or a stalled GET /me.
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAuthState((current) =>
+        current.status === 'loading' ? { status: 'unauthenticated' } : current,
+      );
+    }, AUTH_RESOLVE_TIMEOUT_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // D-02 (SC-5) — consume+replay the captured deep-link destination ONLY on
+  // the transition INTO 'authenticated' (never at 'authenticated-no-profile'
+  // — a primitive-string dependency only re-runs this effect when the VALUE
+  // changes, i.e. exactly on a state transition), so this survives the
+  // profile-completion detour. The captured href is only ever replayed AFTER
+  // the guard has independently reached 'authenticated' here — it can never
+  // be used to bypass the guard's own check (threat T-4-06-E).
+  useEffect(() => {
+    if (authState.status !== 'authenticated') return;
+    const href = consumePendingDestination();
+    if (href) router.replace(href);
+  }, [authState.status, router]);
+
   const bootstrapped = localeReady && authState.status !== 'loading';
 
   useEffect(() => {
@@ -110,26 +198,71 @@ export default function RootLayout() {
     }
   }, [bootstrapped]);
 
-  // Splash stays up (nothing rendered) until locale + auth + profile are all
-  // resolved — this is the load-bearing "no auth-flash" guarantee (SC-2).
-  if (!bootstrapped) return null;
+  // Splash stays up until locale + auth + profile are all resolved — this is
+  // the load-bearing "no auth-flash" guarantee (SC-2). D-04: the presentation
+  // is the real brand tokens (dark bgAppDeep + Outfit wordmark); this is
+  // strictly a presentation change — `bootstrapped` (locale + auth state)
+  // stays the SOLE gate, never a `useFonts()` gate (Pitfall 5).
+  if (!bootstrapped) return <SplashView fontsLoaded={fontsLoaded} />;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <I18nProvider i18n={i18n}>
-        <Stack>
-          <Stack.Protected guard={authState.status === 'unauthenticated'}>
-            <Stack.Screen name="(auth)" />
-          </Stack.Protected>
-          <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
-            <Stack.Screen name="(profile-setup)" />
-          </Stack.Protected>
-          <Stack.Protected guard={authState.status === 'authenticated'}>
-            <Stack.Screen name="festivals" />
-            <Stack.Screen name="(festival)" />
-          </Stack.Protected>
-        </Stack>
-      </I18nProvider>
-    </QueryClientProvider>
+    <SafeAreaProvider>
+      <FontsReadyProvider ready={fontsLoaded}>
+        <QueryClientProvider client={queryClient}>
+          <I18nProvider i18n={i18n}>
+            <Stack>
+              <Stack.Protected guard={authState.status === 'unauthenticated'}>
+                <Stack.Screen name="(auth)" />
+              </Stack.Protected>
+              <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
+                <Stack.Screen name="(profile-setup)" />
+              </Stack.Protected>
+              <Stack.Protected guard={authState.status === 'authenticated'}>
+                <Stack.Screen name="festivals" />
+                <Stack.Screen name="(festival)" />
+              </Stack.Protected>
+            </Stack>
+          </I18nProvider>
+        </QueryClientProvider>
+      </FontsReadyProvider>
+    </SafeAreaProvider>
   );
 }
+
+/**
+ * D-04 — the splash-hold presentation: dark `bgAppDeep` background + the
+ * "festipal." wordmark in Outfit, falling back to the system font until
+ * Outfit resolves (`resolveFontFamily`, non-blocking — Pitfall 5). The
+ * wordmark brand name is NOT wrapped in Lingui (UI-SPEC Copywriting
+ * Contract), matching the Welcome screen's identical pattern.
+ */
+function SplashView({ fontsLoaded }: { fontsLoaded: boolean }) {
+  return (
+    <View style={splashStyles.screen}>
+      <Text
+        style={[splashStyles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsLoaded) }]}
+      >
+        festipal
+        <Text style={splashStyles.wordmarkDot}>.</Text>
+      </Text>
+    </View>
+  );
+}
+
+const splashStyles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: colors.bgAppDeep,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wordmark: {
+    fontSize: typeRoles.wordmark.size,
+    fontWeight: typeRoles.wordmark.weight,
+    lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
+    color: colors.textPrimary,
+  },
+  wordmarkDot: {
+    color: colors.primary,
+  },
+});

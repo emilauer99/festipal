@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { emailOTP } from 'better-auth/plugins';
+import { expo } from '@better-auth/expo';
 import { account, createDatabase, session, user, verification } from '@festipal/db';
 
 import { env } from '../config/env';
@@ -35,6 +36,19 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 90,
     updateAge: 60 * 60 * 24,
   },
+  // Discovered while writing test/signout-origin.spec.ts (gap-closure Task 1):
+  // better-auth defaults `skipOriginCheck` to `true` whenever
+  // `NODE_ENV === 'test'` (its own isTest() heuristic), UNLESS
+  // `advanced.disableOriginCheck` is explicitly set — silently bypassing the
+  // origin-check middleware for every /api/auth/* POST in this project's
+  // Vitest suite regardless of trustedOrigins/expo(). Explicit `false` here
+  // matches the existing (implicit) production default — it does NOT weaken
+  // origin/CSRF checking (T-4-07-I) — but makes it consistently ACTIVE in
+  // tests too, which is what actually lets signout-origin.spec.ts's negative
+  // control prove the mechanism instead of trivially passing either way.
+  advanced: {
+    disableOriginCheck: false,
+  },
   plugins: [
     emailOTP({
       otpLength: 6,
@@ -51,5 +65,14 @@ export const auth = betterAuth({
         void otpEmailProvider.send({ email, otp, type });
       },
     }),
+    // AUTH-04 (WINDOWS id 2) — apps/mobile's expoClient sends `expo-origin`
+    // instead of a standard `origin` header (the Expo app scheme has no HTTP
+    // Origin). Without this plugin every cookie-bearing better-auth call from
+    // the mobile client — including authClient.signOut() — is rejected 403
+    // (MISSING_OR_NULL_ORIGIN) before the origin-check below ever runs. The
+    // plugin's onRequest hook ONLY translates `expo-origin` -> `origin`; the
+    // existing `trustedOrigins` allowlist above still validates the
+    // translated value (T-4-07-S — no new trust introduced).
+    expo(),
   ],
 });

@@ -30,6 +30,16 @@ als ADR in [`../DEVELOPMENT_DECISIONS.md`](../DEVELOPMENT_DECISIONS.md) steht. A
 | 10 | `10-offline-matrix.md` | Offline-Matrix (offline-kritisch/Cache/online), Mutation-Queue, Prefetch-Bundle, Offline-UX (→ ADR-007) | ✅ Entwurf |
 | … | (folgen beim Durcharbeiten) | Domänenmodell → contracts/db, Safety/Recht (Birgit), … | offen |
 
+## Screen-Designs
+
+Aus Claude Design abgeleitete Screen-Entwürfe (Referenz, gegen die gebaut wird — Prinzip 5):
+
+| Bereich | Ordner | Screens |
+|---|---|---|
+| Onboarding & Auth (Visitor) | [`designs/auth/`](designs/auth/) | Welcome · E-Mail · Code · Profil (8 Frames, dark+light) — siehe [Doc 09](09-onboarding-auth.md) |
+
+`preview.html` im jeweiligen Ordner öffnen (self-contained). Rohexport unter `source/`.
+
 ## Abstimmungs-Stand (Kurz)
 
 | Bereich | Ergebnis | ADR |

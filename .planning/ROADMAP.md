@@ -29,7 +29,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Identity Schema & Auth Foundation** - `Account` + `VisitorProfile` + `MyFestival` schema, better-auth (OTP) tables, username uniqueness, drizzle-zod, identity-model decision (completed 2026-07-30)
 - [x] **Phase 2: OTP Auth & Festival Backend API** - better-auth email-OTP in NestJS, profile-completion + festival browse/save endpoints, login-first guard + `festivalId` data isolation (completed 2026-08-02)
 - [x] **Phase 3: Mobile App Shell & i18n Foundation** - `apps/mobile` Expo scaffold, auth/api clients, `Stack.Protected` navigation, Lingui + lint (completed 2026-08-04)
-- [ ] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors
+- [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
 - [ ] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview
 - [ ] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home
 
@@ -152,8 +152,34 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. OTP edge cases and validation errors (wrong/expired code, resend, change-email, rate-limited requests, username taken) show clear, localized messages (AUTH-05).
   5. A deep link to a protected route while logged out redirects to the auth flow instead of leaking content.
 
-**Plans**: TBD
-**Notes**: Verify native session persistence explicitly (Pitfall 2 — `expo-secure-store`, `trustedOrigins`, force-quit test) and re-auth-via-OTP on expiry. Deep-link redirect check covers Pitfall 5. Profile completion is a real VisitorProfile write, not a placeholder.
+**Plans**: 7/7 plans executed
+
+**Wave 1** *(foundation, parallel)*
+
+- [x] 04-01-PLAN.md — Mobile deps (icons/SVG/image-picker/MMKV/fonts) + package-legitimacy checkpoint + Vitest runner + non-blocking font module
+- [x] 04-02-PLAN.md — Real brand tokens (`packages/ui`) + D-03 server-side name caps (`packages/db` drizzle-zod `.extend()`) + rejection tests (no db:push)
+
+**Wave 2** *(tracer, blocked on Wave 1)*
+
+- [x] 04-03-PLAN.md — TRACER: Welcome/Email routing split + real first-login profile write (live username check + displayName) end-to-end → land in app; returning-user skip + force-quit persistence
+
+**Wave 3** *(blocked on tracer)*
+
+- [x] 04-04-PLAN.md — OTP screen restyle: 6-box auto-submit + unified error box + 60s resend countdown + change-email; `mapOtpError` extracted + unit-tested (AUTH-05)
+
+**Wave 4** *(blocked on Wave 3 — shared Lingui catalogs)*
+
+- [x] 04-05-PLAN.md — Profile polish: device-local avatar (MMKV, keyed by accountId) + AvatarTile + username-suggestion generator (≤20, unit-tested) + full taken-state (IDN-01)
+
+**Wave 5** *(blocked on Wave 4 — shared Lingui catalogs / root guard)*
+
+- [x] 04-06-PLAN.md — Logout (AUTH-04) + deep-link return-to through profile-completion (D-02/SC-5) + non-blocking brand splash restyle (D-04)
+
+**Wave 6** *(gap closure — from 04-VERIFICATION.md)*
+
+- [x] 04-07-PLAN.md — Close verification gaps: add the `@better-auth/expo` server `expo()` plugin so `signOut()` is accepted (no 403) and genuinely revokes server-side (AUTH-04, WINDOWS #2) + apply the registered weight-specific font keys across the 8 restyled screens so brand fonts render (ADR-015, WINDOWS #15)
+
+**Notes**: Verify native session persistence explicitly (Pitfall 2 — `expo-secure-store`, `trustedOrigins`, force-quit test) and re-auth-via-OTP on expiry. Deep-link redirect check covers Pitfall 5. Profile completion is a real VisitorProfile write, not a placeholder. Screen plans serialize on the shared `apps/mobile/locales/{de,en}/messages.po` catalogs (binding DE copy) and the root guard.
 **UI hint**: yes
 
 ### Phase 5: Festival Selection & Home
@@ -199,6 +225,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
-| 4. Visitor Auth & Profile Completion | 0/TBD | Not started | - |
+| 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 0/TBD | Not started | - |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
