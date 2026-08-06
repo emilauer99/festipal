@@ -25,10 +25,19 @@ async function seed() {
         slug: 'frequency-2026',
         name: 'Frequency 2026',
         defaultLocale: 'de',
+        startDate: '2026-08-13',
+        endDate: '2026-08-16',
+        place: 'Wiesen, Burgenland',
       })
       .onConflictDoUpdate({
         target: festival.slug,
-        set: { name: 'Frequency 2026', defaultLocale: 'de' },
+        set: {
+          name: 'Frequency 2026',
+          defaultLocale: 'de',
+          startDate: '2026-08-13',
+          endDate: '2026-08-16',
+          place: 'Wiesen, Burgenland',
+        },
       })
       .returning();
     if (!fest) {

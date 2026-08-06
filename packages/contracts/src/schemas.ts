@@ -1,16 +1,36 @@
-import { visitorProfileInsertSchema, visitorProfileSelectSchema } from '@festipal/db/schema';
+import {
+  festivalSelectSchema,
+  visitorProfileInsertSchema,
+  visitorProfileSelectSchema,
+} from '@festipal/db/schema';
 import { z } from 'zod';
 
 import { localeSchema } from './locale';
 
-export const festivalSchema = z.object({
-  id: z.string().uuid(),
-  slug: z.string(),
-  name: z.string(),
-  defaultLocale: localeSchema,
-  supportedLocales: z.array(localeSchema),
-  cashlessUrl: z.string().url().nullable(),
-});
+/**
+ * Drift-detection proof (D-08, Pitfall 1/6): composed on the `@festipal/db`
+ * drizzle-zod `festivalSelectSchema` base, NOT a hand-mirrored `z.object` —
+ * renaming a `festival` column now breaks this typecheck instead of
+ * drifting silently. `supportedLocales` is NOT a column on `festival`
+ * (aggregated server-side from `festival_locale`) so it stays a manual
+ * `.extend()`. `.url()` is reapplied on `cashlessUrl` so the existing public
+ * response contract does not regress to an arbitrary string.
+ */
+export const festivalSchema = festivalSelectSchema
+  .pick({
+    id: true,
+    slug: true,
+    name: true,
+    defaultLocale: true,
+    cashlessUrl: true,
+    startDate: true,
+    endDate: true,
+    place: true,
+  })
+  .extend({
+    cashlessUrl: z.string().url().nullable(),
+    supportedLocales: z.array(localeSchema),
+  });
 export type Festival = z.infer<typeof festivalSchema>;
 
 /** A tag/chip with its title already resolved to the requested locale server-side. */
