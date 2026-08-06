@@ -143,3 +143,7 @@ None - no external service configuration required.
 ---
 *Phase: 05-festival-selection-home*
 *Completed: 2026-08-06*
+
+## Self-Check: PASSED
+
+All created/moved files verified present, old `app/festivals/index.tsx` confirmed deleted, and all 4 commits (3 task commits + summary doc commit) verified present in `git log`.

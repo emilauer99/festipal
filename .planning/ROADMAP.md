@@ -195,7 +195,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
   5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
 
-**Plans**: 4/8 plans executed
+**Plans**: 5/8 plans executed
 
 **Wave 1** *(parallel — no file overlap)*
 
@@ -209,7 +209,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Wave 3** *(parallel — blocked on Wave 2)*
 
 - [x] 05-04-PLAN.md — Owned list primitives: FestivalCard (flat + hero) + SegmentedControl
-- [ ] 05-05-PLAN.md — App shell frame: FloatingNav tab bar + (tabs) group + root-guard swap + active-festival cold-start focus
+- [x] 05-05-PLAN.md — App shell frame: FloatingNav tab bar + (tabs) group + root-guard swap + active-festival cold-start focus
 
 **Wave 4** *(parallel — blocked on Wave 3)*
 
@@ -250,5 +250,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 4/8 | In Progress|  |
+| 5. Festival Selection & Home | 5/8 | In Progress|  |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |

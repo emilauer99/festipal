@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-04-PLAN.md
-last_updated: "2026-08-06T12:14:51.177Z"
+stopped_at: Completed 05-05-PLAN.md
+last_updated: "2026-08-06T12:25:33.013Z"
 last_activity: 2026-08-06
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 30
-  completed_plans: 26
+  completed_plans: 27
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 5 of 8
+Plan: 6 of 8
 Status: Ready to execute
 Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [█████████░] 87%
+Progress: [█████████░] 90%
 
 ## Performance Metrics
 
@@ -87,6 +87,7 @@ Progress: [█████████░] 87%
 | Phase 05 P02 | ~10min | 2 tasks | 5 files |
 | Phase 05 P03 | ~35min | 3 tasks | 11 files |
 | Phase 05 P04 | ~15min | 2 tasks | 4 files |
+| Phase 05 P05 | ~30min | 3 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -159,6 +160,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-03: festival-queries.ts (festivalKeys + unwrapOk) kept framework-free (no React import) so 05-06's save mutation can reuse it directly
 - [Phase ?]: 05-04: FestivalCard's enter Pressable wraps name+caption as a sibling to the Save/Badge slot (non-nested), avoiding any stopPropagation() dependency
 - [Phase ?]: 05-04: FestivalCard owns its Save/Saved/Open-festival copy via Trans macros; SegmentedControl takes caller-supplied localized labels instead (per-instance wording)
+- [Phase ?]: [Phase 05]: 05-05: BottomTabBarProps imported from expo-router/build/react-navigation/bottom-tabs (verified in node_modules) since the top-level expo-router package only re-exports the Tabs binding, not this type
+- [Phase ?]: [Phase 05]: 05-05: FloatingNav maps state.routes directly (home/festivals) instead of filtering, since Friends/Profil have no backing Tabs.Screen at all; clearActiveFestivalSlug() added to handleLogout (REVIEW 05-05 LOW)
+- [Phase ?]: [Phase 05]: 05-05: cold-start redirect guarded by coldStartRedirectRef (mirrors splashHiddenRef) so a same-session logout/login cycle never re-hijacks tab navigation; pending deep-link href always checked and replayed before the active-festival slug is read
 
 ### Pending Todos
 
@@ -193,6 +197,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T12:14:51.149Z
-Stopped at: Completed 05-04-PLAN.md
+Last session: 2026-08-06T12:25:32.983Z
+Stopped at: Completed 05-05-PLAN.md
 Resume file: None

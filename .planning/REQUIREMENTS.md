@@ -30,7 +30,7 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 ### Home & Navigation
 
-- [ ] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
+- [x] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
 - [x] **HOME-02**: The home shows a basic festival overview (identity + key facts) the visitor can open
 - [ ] **HOME-03**: The home provides navigation to Profile and Friends
 
@@ -108,7 +108,7 @@ Which phases cover which requirements.
 | FEST-02 | Phase 5 | Complete |
 | FEST-03 | Phase 5 | Pending |
 | FEST-04 | Phase 5 | Complete |
-| HOME-01 | Phase 5 | Pending |
+| HOME-01 | Phase 5 | Complete |
 | HOME-02 | Phase 5 | Complete |
 | HOME-03 | Phase 6 | Pending |
 | PROF-01 | Phase 6 | Pending |
