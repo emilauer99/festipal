@@ -10,7 +10,7 @@ import type { Festival } from '@festipal/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
-import { saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { clearActiveFestivalSlug, saveActiveFestivalSlug } from '../../lib/active-festival-storage';
 import { festivalKeys } from '../../lib/festival-queries';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
@@ -30,6 +30,10 @@ const { colors, typeRoles, layout, radii, spacingScale } = tokens;
  * tint, no confirmation dialog) lives in this screen's header, the only
  * authenticated shell surface that exists until Phase 6's real Profile
  * screen.
+ *
+ * 05-05 — moved from `app/festivals/index.tsx` into the `(tabs)` group
+ * (same import depth, no path changes needed); rewritten to the Meine/Alle
+ * segmented layout in 05-06.
  */
 export default function FestivalsScreen() {
   const router = useRouter();
@@ -56,6 +60,10 @@ export default function FestivalsScreen() {
       // app/_layout.tsx forceUnauthenticated() for why this is required
       // (better-auth only broadcasts its own session signal on success).
       forceUnauthenticated();
+      // REVIEW 05-05 LOW — clear the persisted D-06 focus so a different
+      // account signing in on the same device does not inherit this
+      // account's active festival.
+      clearActiveFestivalSlug();
       signingOutRef.current = false;
     }
   }
@@ -170,6 +178,7 @@ export default function FestivalsScreen() {
             data={festivalsQuery.data.body}
             keyExtractor={(item) => item.id}
             renderItem={renderRow}
+            contentContainerStyle={styles.listContent}
           />
         )
       ) : null}
@@ -179,6 +188,9 @@ export default function FestivalsScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, padding: layout.screenPad, backgroundColor: colors.bgApp },
+  // 05-05 — this screen now sits inside the (tabs) shell, under the
+  // floating nav; scrollBottomPad keeps the last row clear of it.
+  listContent: { paddingBottom: layout.scrollBottomPad },
   helper: {
     fontSize: typeRoles.body.size,
     color: colors.textSecondary,

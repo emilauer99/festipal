@@ -221,7 +221,7 @@ export default function RootLayout() {
                 <Stack.Screen name="(profile-setup)" />
               </Stack.Protected>
               <Stack.Protected guard={authState.status === 'authenticated'}>
-                <Stack.Screen name="festivals" />
+                <Stack.Screen name="(tabs)" />
                 <Stack.Screen name="(festival)" />
               </Stack.Protected>
             </Stack>
