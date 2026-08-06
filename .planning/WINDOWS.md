@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 13
+open_count: 14
 waived_count: 0
 fixed_count: 2
-total_count: 15
-last_updated: 2026-08-05T11:26:46.185Z
+total_count: 16
+last_updated: 2026-08-06T12:03:46.028Z
 ---
 
 # Broken Windows Ledger
@@ -30,6 +30,7 @@ last_updated: 2026-08-05T11:26:46.185Z
 | 13 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | Real-device UAT: cold-start on cache-cleared install shows the dark brand wordmark splash and does not hang noticeably longer than Phase 3; simulate hung/offline API on cold start -> splash falls through to Welcome within the 8s timeout, not a deadlock (04-06, D-04) | open |  | 2026-08-05T10:17:41.899Z |  |
 | 14 | 04 | unrun-verify | apps/mobile/app/_layout.tsx |  | Real-device UAT: log out, log back in, force-quit, relaunch from icon -> lands logged-in (AUTH-03 re-confirmed after this plan's guard changes: deep-link capture/consume + resolve-timeout effects, Pitfall 1) | open |  | 2026-08-05T10:17:42.311Z |  |
 | 15 | 04 | todo | apps/mobile/app/(auth)/index.tsx |  | useAppFonts() was never called anywhere before 04-06 (now wired in app/_layout.tsx for the splash wordmark), so the three Google Fonts were never actually loaded; separately, Welcome/verify/complete-profile screens set fontFamily to the generic typeRoles.*.family name ('Outfit'/'Plus Jakarta Sans'/'JetBrains Mono') which does not match the specific registered font key (e.g. 'Outfit_700Bold' from lib/fonts.ts FONT_DISPLAY) — even now that fonts load, those screens still silently render in the system-font fallback. Out of 04-06's file scope (only _layout.tsx's own SplashView correctly uses resolveFontFamily); needs a follow-up pass across the restyled auth/profile screens. | fixed |  | 2026-08-05T10:17:54.878Z | 2026-08-05T11:26:46.185Z |
+| 16 | 05 | unrun-verify | apps/mobile/app/(festival)/f/[festivalSlug].tsx |  | 05-03 Task 3 on-device manual UAT not run headless: enter seeded frequency-2026 festival, confirm formatted dates/place render, DE/EN toggle re-formats, wrong-slug shows error pattern with usable Back (real Android device required) | open |  | 2026-08-06T12:03:46.028Z |  |
 
 ````json
 [
@@ -212,6 +213,18 @@ last_updated: 2026-08-05T11:26:46.185Z
     "reason": "",
     "recorded_at": "2026-08-05T10:17:54.878Z",
     "resolved_at": "2026-08-05T11:26:46.185Z"
+  },
+  {
+    "id": 16,
+    "kind": "unrun-verify",
+    "phase": "05",
+    "file": "apps/mobile/app/(festival)/f/[festivalSlug].tsx",
+    "line": null,
+    "description": "05-03 Task 3 on-device manual UAT not run headless: enter seeded frequency-2026 festival, confirm formatted dates/place render, DE/EN toggle re-formats, wrong-slug shows error pattern with usable Back (real Android device required)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-06T12:03:46.028Z",
+    "resolved_at": null
   }
 ]
 ````

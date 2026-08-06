@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-02-PLAN.md
-last_updated: "2026-08-06T11:48:25.864Z"
+stopped_at: Completed 05-03-PLAN.md
+last_updated: "2026-08-06T12:05:49.905Z"
 last_activity: 2026-08-06
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 30
-  completed_plans: 24
+  completed_plans: 25
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 3 of 8
+Plan: 4 of 8
 Status: Ready to execute
 Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [████████░░] 80%
+Progress: [████████░░] 83%
 
 ## Performance Metrics
 
@@ -85,6 +85,7 @@ Progress: [████████░░] 80%
 | Phase 04 P07 | ~25min | 2 tasks | 13 files |
 | Phase 05 P01 | ~20min | 4 tasks | 6 files |
 | Phase 05 P02 | ~10min | 2 tasks | 5 files |
+| Phase 05 P03 | ~35min | 3 tasks | 11 files |
 
 ## Accumulated Context
 
@@ -152,6 +153,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-01: drizzle-zod .extend() overrides also needed for date({mode:'string'}) columns, not just text() — verified via generated .d.ts (startDate/endDate resolved to ZodType<Buffer,...> without an explicit override)
 - [Phase ?]: 05-02: radiiScale added as its own export (mirroring spacingScale) wired into the public tokens aggregate object, not merged into the generic radii object (UI-SPEC + REVIEW 05-02 MEDIUM)
 - [Phase ?]: 05-02: Fixed a typedRoutes-caused typecheck break in app/_layout.tsx (deep-link replay href cast to Href) — Rule 3, required for Task 2's own verify to pass
+- [Phase ?]: 05-03: cachedFestival instant-paint scans festivalKeys.all/mine caches directly (status===200 + Array.isArray guard) rather than initialData/placeholderData of a mismatched shape (REVIEW 05-03 HIGH)
+- [Phase ?]: 05-03: leaveFestival(router) (canGoBack ? back : replace('/festivals')) backs the festival-home Stack.Screen headerLeft, not a bare router.back() — required for cold-start router.replace('/f/:slug') entry (FEST-04, REVIEW 05-03/05-05 HIGH)
+- [Phase ?]: 05-03: festival-queries.ts (festivalKeys + unwrapOk) kept framework-free (no React import) so 05-06's save mutation can reuse it directly
 
 ### Pending Todos
 
@@ -186,6 +190,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T11:48:25.834Z
-Stopped at: Completed 05-02-PLAN.md
+Last session: 2026-08-06T12:05:49.875Z
+Stopped at: Completed 05-03-PLAN.md
 Resume file: None
