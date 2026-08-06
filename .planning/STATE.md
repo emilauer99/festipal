@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 5
-current_phase_name: Festival Selection & Home
-status: "Phase 04 shipped — PR #9"
-stopped_at: Phase 5 UI-SPEC approved
-last_updated: "2026-08-06T11:29:10.907Z"
-last_activity: 2026-08-05
-last_activity_desc: Phase 05 planning complete
+current_phase: 05
+current_phase_name: festival-selection-home
+status: executing
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-08-06T11:43:09.910Z"
+last_activity: 2026-08-06
+last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 30
-  completed_plans: 22
+  completed_plans: 23
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 04 — visitor-auth-profile-completion
+**Current focus:** Phase 05 — festival-selection-home
 
 ## Current Position
 
-Phase: 5 — Festival Selection & Home
-Plan: Not started
-Status: Phase 04 shipped — PR #9
-Last activity: 2026-08-05 — Phase 05 planning complete
+Phase: 05 (festival-selection-home) — EXECUTING
+Plan: 2 of 8
+Status: Ready to execute
+Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [██████████] 100%
+Progress: [████████░░] 77%
 
 ## Performance Metrics
 
@@ -83,6 +83,7 @@ Progress: [██████████] 100%
 | Phase 04 P05 | ~40min | 3 tasks | 7 files |
 | Phase 04 P06 | ~35min | 3 tasks | 5 files |
 | Phase 04 P07 | ~25min | 2 tasks | 13 files |
+| Phase 05 P01 | ~20min | 4 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -146,6 +147,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 04-07: Added advanced.disableOriginCheck: false to auth.instance.ts — better-auth defaults origin-check off under NODE_ENV=test unless set, which would make signout-origin.spec.ts's negative control pass regardless of the expo() fix; explicit false matches the existing implicit production default (no CSRF weakening)
 - [Phase ?]: 04-07: expo() server plugin installed in apps/api's betterAuth plugins array (AUTH-04, WINDOWS id 2) — translates apps/mobile's expo-origin header to origin so cookie-bearing sign-out requests pass the origin-check instead of 403ing; proven headlessly via signout-origin.spec.ts
 - [Phase ?]: 04-07: FontsReadyProvider/useFontsReady context (apps/mobile/lib/fonts-context.tsx) shares the root useAppFonts() readiness boolean; all eight restyled Phase-4 screens/components now resolve fontFamily inline via resolveFontFamily(FONT_DISPLAY|FONT_BODY|FONT_MONO, fontsReady) instead of the generic typeRoles.*.family name (WINDOWS id 15)
+- [Phase ?]: 05-01: startDate/endDate/place all nullable at DB+contract (DATE-NULLABILITY) — single additive migration, client renders fallback when absent
+- [Phase ?]: 05-01: drizzle-zod .extend() overrides also needed for date({mode:'string'}) columns, not just text() — verified via generated .d.ts (startDate/endDate resolved to ZodType<Buffer,...> without an explicit override)
 
 ### Pending Todos
 
@@ -180,6 +183,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-05T16:38:58.107Z
-Stopped at: Phase 5 UI-SPEC approved
-Resume file: .planning/phases/05-festival-selection-home/05-UI-SPEC.md
+Last session: 2026-08-06T11:43:09.881Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
