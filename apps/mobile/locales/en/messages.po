@@ -170,6 +170,10 @@ msgstr "No festivals yet"
 #~ msgid "One more step"
 #~ msgstr "One more step"
 
+#: components/FestivalCard.tsx
+msgid "Open festival"
+msgstr "Open festival"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Optional. You can add this later."
 msgstr "Optional. You can add this later."
@@ -192,8 +196,13 @@ msgid "Retry"
 msgstr "Retry"
 
 #: app/festivals/index.tsx
+#: components/FestivalCard.tsx
 msgid "Save"
 msgstr "Save"
+
+#: components/FestivalCard.tsx
+msgid "Saved"
+msgstr "Saved"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Saving…"
