@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-05-PLAN.md
-last_updated: "2026-08-06T12:25:33.013Z"
+stopped_at: Completed 05-06-PLAN.md
+last_updated: "2026-08-06T12:42:24.269Z"
 last_activity: 2026-08-06
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 30
-  completed_plans: 27
+  completed_plans: 28
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 6 of 8
+Plan: 7 of 8
 Status: Ready to execute
 Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -88,6 +88,7 @@ Progress: [█████████░] 90%
 | Phase 05 P03 | ~35min | 3 tasks | 11 files |
 | Phase 05 P04 | ~15min | 2 tasks | 4 files |
 | Phase 05 P05 | ~30min | 3 tasks | 6 files |
+| Phase 05 P06 | ~15min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -163,6 +164,9 @@ Recent decisions affecting current work:
 - [Phase ?]: [Phase 05]: 05-05: BottomTabBarProps imported from expo-router/build/react-navigation/bottom-tabs (verified in node_modules) since the top-level expo-router package only re-exports the Tabs binding, not this type
 - [Phase ?]: [Phase 05]: 05-05: FloatingNav maps state.routes directly (home/festivals) instead of filtering, since Friends/Profil have no backing Tabs.Screen at all; clearActiveFestivalSlug() added to handleLogout (REVIEW 05-05 LOW)
 - [Phase ?]: [Phase 05]: 05-05: cold-start redirect guarded by coldStartRedirectRef (mirrors splashHiddenRef) so a same-session logout/login cycle never re-hijacks tab navigation; pending deep-link href always checked and replayed before the active-festival slug is read
+- [Phase ?]: 05-06: onSave/handleSave takes the full Festival row (not just an id) so the 'all-list row must exist before mutate' requirement is satisfied structurally by the render loop's own cache source, not a second lookup
+- [Phase ?]: 05-06: onError restores the exact prior mine-cache snapshot via removeQueries when it was previously absent (not setQueryData with undefined), avoiding react-query's undefined-write ambiguity
+- [Phase ?]: 05-06: Left 05-05's 4 pre-existing untranslated FloatingNav DE msgids (Home/Friends/Profile/coming soon) untouched — out of this task's scope, logged to WINDOWS.md id 17 for a follow-up translation pass
 
 ### Pending Todos
 
@@ -197,6 +201,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T12:25:32.983Z
-Stopped at: Completed 05-05-PLAN.md
+Last session: 2026-08-06T12:42:24.243Z
+Stopped at: Completed 05-06-PLAN.md
 Resume file: None

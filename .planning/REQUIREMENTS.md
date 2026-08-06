@@ -25,7 +25,7 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 - [x] **FEST-01**: A visitor can browse all festivals, each showing name, dates, and place
 - [x] **FEST-02**: The Festivals tab offers a Meine/Alle segment (default Meine), distinguishing saved festivals
-- [ ] **FEST-03**: A visitor can save a festival to "Meine Festivals" in one tap
+- [x] **FEST-03**: A visitor can save a festival to "Meine Festivals" in one tap
 - [x] **FEST-04**: A visitor can enter a festival gate-lessly (no ticket/approval) and return to the list without a dead-end
 
 ### Home & Navigation
@@ -106,7 +106,7 @@ Which phases cover which requirements.
 | IDN-01 | Phase 4 | Complete |
 | FEST-01 | Phase 5 | Complete |
 | FEST-02 | Phase 5 | Complete |
-| FEST-03 | Phase 5 | Pending |
+| FEST-03 | Phase 5 | Complete |
 | FEST-04 | Phase 5 | Complete |
 | HOME-01 | Phase 5 | Complete |
 | HOME-02 | Phase 5 | Complete |

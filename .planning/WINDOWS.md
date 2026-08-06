@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 15
+open_count: 17
 waived_count: 0
 fixed_count: 2
-total_count: 17
-last_updated: 2026-08-06T12:37:14.059Z
+total_count: 19
+last_updated: 2026-08-06T12:40:21.575Z
 ---
 
 # Broken Windows Ledger
@@ -32,6 +32,8 @@ last_updated: 2026-08-06T12:37:14.059Z
 | 15 | 04 | todo | apps/mobile/app/(auth)/index.tsx |  | useAppFonts() was never called anywhere before 04-06 (now wired in app/_layout.tsx for the splash wordmark), so the three Google Fonts were never actually loaded; separately, Welcome/verify/complete-profile screens set fontFamily to the generic typeRoles.*.family name ('Outfit'/'Plus Jakarta Sans'/'JetBrains Mono') which does not match the specific registered font key (e.g. 'Outfit_700Bold' from lib/fonts.ts FONT_DISPLAY) — even now that fonts load, those screens still silently render in the system-font fallback. Out of 04-06's file scope (only _layout.tsx's own SplashView correctly uses resolveFontFamily); needs a follow-up pass across the restyled auth/profile screens. | fixed |  | 2026-08-05T10:17:54.878Z | 2026-08-05T11:26:46.185Z |
 | 16 | 05 | unrun-verify | apps/mobile/app/(festival)/f/[festivalSlug].tsx |  | 05-03 Task 3 on-device manual UAT not run headless: enter seeded frequency-2026 festival, confirm formatted dates/place render, DE/EN toggle re-formats, wrong-slug shows error pattern with usable Back (real Android device required) | open |  | 2026-08-06T12:03:46.028Z |  |
 | 17 | 05 | todo | apps/mobile/components/FloatingNav.tsx |  | DE translations missing for Home/Friends/Profile/coming-soon msgids (05-06 deferred, out of task scope) | open |  | 2026-08-06T12:37:14.059Z |  |
+| 18 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05-06 Task 1 on-device manual UAT not run headless: Festivals tab opens on Meine by default; switch to Alle -> every festival listed, saved one shows Gespeichert badge while unsaved show Save affordance; both segments render name/dates/place | open |  | 2026-08-06T12:40:21.121Z |  |
+| 19 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05-06 Task 2 on-device manual UAT not run headless: tap Save in Alle -> immediate Gespeichert + appears under Meine; survives force-quit+relaunch (FEST-03); rapid double-tap enqueues one save; simulated failing save rolls back with visible error; idempotent re-save of already-saved festival shows no error | open |  | 2026-08-06T12:40:21.575Z |  |
 
 ````json
 [
@@ -237,6 +239,30 @@ last_updated: 2026-08-06T12:37:14.059Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-06T12:37:14.059Z",
+    "resolved_at": null
+  },
+  {
+    "id": 18,
+    "kind": "unrun-verify",
+    "phase": "05",
+    "file": "apps/mobile/app/(tabs)/festivals.tsx",
+    "line": null,
+    "description": "05-06 Task 1 on-device manual UAT not run headless: Festivals tab opens on Meine by default; switch to Alle -> every festival listed, saved one shows Gespeichert badge while unsaved show Save affordance; both segments render name/dates/place",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-06T12:40:21.121Z",
+    "resolved_at": null
+  },
+  {
+    "id": 19,
+    "kind": "unrun-verify",
+    "phase": "05",
+    "file": "apps/mobile/app/(tabs)/festivals.tsx",
+    "line": null,
+    "description": "05-06 Task 2 on-device manual UAT not run headless: tap Save in Alle -> immediate Gespeichert + appears under Meine; survives force-quit+relaunch (FEST-03); rapid double-tap enqueues one save; simulated failing save rolls back with visible error; idempotent re-save of already-saved festival shows no error",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-06T12:40:21.575Z",
     "resolved_at": null
   }
 ]
