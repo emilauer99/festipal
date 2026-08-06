@@ -28,6 +28,7 @@
     "@ts-rest/core": "^3.52.1",
     "better-auth": "1.6.25",
     "expo": "~57.0.9",
+    "expo-blur": "~57.0.2",
     "expo-build-properties": "~57.0.8",
     "expo-constants": "~57.0.8",
     "expo-font": "~57.0.1",

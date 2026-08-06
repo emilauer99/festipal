@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { Stack, useRouter, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization';
 import * as Linking from 'expo-linking';
@@ -186,7 +186,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (authState.status !== 'authenticated') return;
     const href = consumePendingDestination();
-    if (href) router.replace(href);
+    // Deep-link path captured at runtime (Linking.parse) — cannot be a typed-route literal
+    // union member statically; typedRoutes (05-02) still validates every literal route
+    // elsewhere in the app, this is the one intentionally-dynamic exception.
+    if (href) router.replace(href as Href);
   }, [authState.status, router]);
 
   const bootstrapped = localeReady && authState.status !== 'loading';
