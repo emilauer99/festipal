@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-06-PLAN.md
-last_updated: "2026-08-06T12:42:24.269Z"
+stopped_at: Completed 05-07-PLAN.md
+last_updated: "2026-08-06T13:05:32.673Z"
 last_activity: 2026-08-06
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 30
-  completed_plans: 28
+  completed_plans: 29
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 7 of 8
+Plan: 8 of 8
 Status: Ready to execute
 Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [█████████░] 93%
+Progress: [██████████] 97%
 
 ## Performance Metrics
 
@@ -89,6 +89,7 @@ Progress: [█████████░] 93%
 | Phase 05 P04 | ~15min | 2 tasks | 4 files |
 | Phase 05 P05 | ~30min | 3 tasks | 6 files |
 | Phase 05 P06 | ~15min | 2 tasks | 3 files |
+| Phase 05 P07 | ~20min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -167,6 +168,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-06: onSave/handleSave takes the full Festival row (not just an id) so the 'all-list row must exist before mutate' requirement is satisfied structurally by the render loop's own cache source, not a second lookup
 - [Phase ?]: 05-06: onError restores the exact prior mine-cache snapshot via removeQueries when it was previously absent (not setQueryData with undefined), avoiding react-query's undefined-write ambiguity
 - [Phase ?]: 05-06: Left 05-05's 4 pre-existing untranslated FloatingNav DE msgids (Home/Friends/Profile/coming soon) untouched — out of this task's scope, logged to WINDOWS.md id 17 for a follow-up translation pass
+- [Phase ?]: 05-07: selectNextFestival is a first-item projection of orderFestivalsForHome so hero and rail share one deterministic ordering source (never the API's unspecified listMyFestivals row order)
+- [Phase ?]: 05-07: rail/hero cards always pass saved={true} via a shared noopSave() no-op -- no Save affordance is ever wired on already-saved rows
 
 ### Pending Todos
 
@@ -201,6 +204,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T12:42:24.243Z
-Stopped at: Completed 05-06-PLAN.md
+Last session: 2026-08-06T13:05:32.648Z
+Stopped at: Completed 05-07-PLAN.md
 Resume file: None
