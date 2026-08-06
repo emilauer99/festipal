@@ -14,6 +14,7 @@ import { activateUiLocale, i18n } from '../lib/i18n';
 import { authClient } from '../lib/auth-client';
 import { apiClient } from '../lib/api-client';
 import { capturePendingDestination, consumePendingDestination } from '../lib/pending-destination';
+import { getActiveFestivalSlug } from '../lib/active-festival-storage';
 import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider } from '../lib/fonts-context';
 
@@ -85,6 +86,14 @@ export default function RootLayout() {
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
   const [meRefreshToken, setMeRefreshToken] = useState(0);
   const splashHiddenRef = useRef(false);
+  // D-06 / HOME-01 (05-05) — guards the cold-start redirect (deep-link
+  // replay OR active-festival focus) so it fires exactly once per cold
+  // start, same one-shot idiom as `splashHiddenRef` — without it, a
+  // logout-then-login cycle within the same app session (authState.status
+  // cycling authenticated -> unauthenticated -> authenticated) would
+  // re-trigger the redirect and hijack normal tab navigation later in the
+  // session (REVIEW 05-05 HIGH acceptance note).
+  const coldStartRedirectRef = useRef(false);
   const router = useRouter();
   // D-04 / Pitfall 5 — non-blocking: `fontsLoaded` gates ONLY which
   // `fontFamily` the SplashView's wordmark style resolves, never the
@@ -183,13 +192,38 @@ export default function RootLayout() {
   // profile-completion detour. The captured href is only ever replayed AFTER
   // the guard has independently reached 'authenticated' here — it can never
   // be used to bypass the guard's own check (threat T-4-06-E).
+  //
+  // 05-05 / D-06 (HOME-01) — extended with the active-festival cold-start
+  // focus: the pending deep-link destination takes STRICT precedence
+  // (REVIEW 05-05 HIGH) — if one exists, replay it and `return` IMMEDIATELY,
+  // before the active-festival slug is ever read, so the deep link always
+  // wins. Only when there is no pending href does the effect read the
+  // persisted `active-festival-slug` (synchronous MMKV read, no new gate
+  // before `SplashScreen.hideAsync()` — RESEARCH Pattern 4) and, if present,
+  // open that festival's home directly. Both branches are guarded by
+  // `coldStartRedirectRef` so this whole block runs at most once per cold
+  // start.
   useEffect(() => {
     if (authState.status !== 'authenticated') return;
+    if (coldStartRedirectRef.current) return;
+    coldStartRedirectRef.current = true;
+
     const href = consumePendingDestination();
-    // Deep-link path captured at runtime (Linking.parse) — cannot be a typed-route literal
-    // union member statically; typedRoutes (05-02) still validates every literal route
-    // elsewhere in the app, this is the one intentionally-dynamic exception.
-    if (href) router.replace(href as Href);
+    if (href) {
+      // Deep-link path captured at runtime (Linking.parse) — cannot be a typed-route literal
+      // union member statically; typedRoutes (05-02) still validates every literal route
+      // elsewhere in the app, this is the one intentionally-dynamic exception.
+      router.replace(href as Href);
+      return;
+    }
+
+    const activeFestivalSlug = getActiveFestivalSlug();
+    if (activeFestivalSlug) {
+      router.replace(`/f/${activeFestivalSlug}`);
+    }
+    // No pending href and no persisted slug: fall through to the guard's
+    // default authenticated route — the Home tab (`(tabs)/_layout.tsx`
+    // `initialRouteName="home"`).
   }, [authState.status, router]);
 
   const bootstrapped = localeReady && authState.status !== 'loading';
