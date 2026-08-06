@@ -86,6 +86,10 @@ msgstr "coming soon"
 #~ msgid "Couldn't complete your profile — tap Done to try again."
 #~ msgstr "Couldn't complete your profile — tap Done to try again."
 
+#: app/(tabs)/festivals.tsx
+msgid "Couldn't save festival — try again."
+msgstr "Couldn't save festival — try again."
+
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Couldn't set up your profile — tap Continue to try again."

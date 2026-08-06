@@ -11,7 +11,7 @@ import type { Festival } from '@festipal/contracts';
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
 import { clearActiveFestivalSlug, saveActiveFestivalSlug } from '../../lib/active-festival-storage';
-import { festivalKeys } from '../../lib/festival-queries';
+import { festivalKeys, unwrapOk } from '../../lib/festival-queries';
 import { i18n } from '../../lib/i18n';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
@@ -22,6 +22,9 @@ import { SegmentedControl } from '../../components/SegmentedControl';
 const { colors, typeRoles, layout, radii, spacingScale } = tokens;
 
 type Segment = 'meine' | 'alle';
+
+/** A raw ts-rest response shape, narrowed defensively (REVIEW 05-03 HIGH idiom, reused here). */
+type CachedResponse = { status: number; body: unknown };
 
 /**
  * `/festivals?segment=all` is the shared cross-tab contract the Home CTA and
@@ -42,8 +45,8 @@ type SegmentViewState =
 /**
  * D-05 — this screen is a thin client mirror of `listFestivals`/`listMyFestivals`/
  * `saveFestival` (PATTERNS.md): no local business logic, no re-declared festival
- * shape (Pitfall 6). Enter is gate-less (ADR-014) regardless of saved-state.
- * Save is upgraded to a full optimistic, server-backed mutation in 05-06 Task 2.
+ * shape (Pitfall 6). Save is idempotent + optimistic + server-backed (FEST-03);
+ * Enter is gate-less (ADR-014) regardless of saved-state.
  *
  * AUTH-04 — the icon-only logout control (UI-SPEC Scope note #9, neutral tint,
  * no confirmation dialog) lives in this screen's header, the only authenticated
@@ -115,18 +118,76 @@ export default function FestivalsScreen() {
     return new Set(data.body.map((f) => f.id));
   }, [listMyFestivalsQuery.data]);
 
-  // Placeholder save mutation for Task 1's rendering pass — 05-06 Task 2
-  // replaces this with a full optimistic onMutate/onError/onSettled dance
-  // (in-flight guard, rollback, localized error surface).
-  const saveMutation = useMutation({
-    mutationFn: (festival: Festival) =>
-      apiClient.saveFestival({ params: { festivalId: festival.id }, body: {} }),
-    onSuccess: () => {
+  // Synchronous per-id in-flight guard (REVIEW 05-06 MEDIUM) — a `useRef` so
+  // two native press events arriving before React re-renders cannot enqueue a
+  // second save of the SAME festival, while different festivals still save
+  // concurrently. Mirrored into `savingIds` render state for FestivalCard.
+  const inFlightIdsRef = useRef<Set<string>>(new Set());
+  const [savingIds, setSavingIds] = useState<ReadonlySet<string>>(new Set());
+  const [saveError, setSaveError] = useState<string | null>(null);
+
+  // Stale save-error banner never survives a segment switch.
+  useEffect(() => {
+    setSaveError(null);
+  }, [segment]);
+
+  const saveMutation = useMutation<
+    { saved: true },
+    Error,
+    Festival,
+    { previous: CachedResponse | undefined }
+  >({
+    mutationFn: async (festival) => {
+      const response = await apiClient.saveFestival({
+        params: { festivalId: festival.id },
+        body: {},
+      });
+      // REVIEW 05-06 HIGH — unwrapOk THROWS on a non-200 ts-rest result so a
+      // failure becomes a real mutation rejection and onError actually fires.
+      return unwrapOk<{ saved: true }>(response);
+    },
+    onMutate: async (festival) => {
+      setSaveError(null);
+      await queryClient.cancelQueries({ queryKey: festivalKeys.mine });
+      const previous = queryClient.getQueryData<CachedResponse>(festivalKeys.mine);
+      const currentBody =
+        previous?.status === 200 && Array.isArray(previous.body)
+          ? (previous.body as Festival[])
+          : [];
+      // REVIEW 05-06 MEDIUM — dedupe by id; never insert twice on a
+      // rapid-tap/already-saved race.
+      const alreadySaved = currentBody.some((f) => f.id === festival.id);
+      if (!alreadySaved) {
+        queryClient.setQueryData<CachedResponse>(festivalKeys.mine, {
+          status: 200,
+          body: [...currentBody, festival],
+        });
+      }
+      return { previous };
+    },
+    onError: (_error, _festival, context) => {
+      // REVIEW 05-06 MEDIUM — restore the EXACT prior snapshot; when the mine
+      // cache was previously absent, reset it rather than retaining the
+      // synthesized optimistic entry.
+      if (context?.previous !== undefined) {
+        queryClient.setQueryData(festivalKeys.mine, context.previous);
+      } else {
+        queryClient.removeQueries({ queryKey: festivalKeys.mine, exact: true });
+      }
+      setSaveError(t`Couldn't save festival — try again.`);
+    },
+    onSettled: (_data, _error, festival) => {
+      inFlightIdsRef.current.delete(festival.id);
+      setSavingIds(new Set(inFlightIdsRef.current));
+      // Server (idempotent saveFestival) is the source of truth — reconcile.
       void queryClient.invalidateQueries({ queryKey: festivalKeys.mine });
     },
   });
 
   function handleSave(festival: Festival) {
+    if (inFlightIdsRef.current.has(festival.id)) return;
+    inFlightIdsRef.current.add(festival.id);
+    setSavingIds(new Set(inFlightIdsRef.current));
     saveMutation.mutate(festival);
   }
 
@@ -143,6 +204,7 @@ export default function FestivalsScreen() {
       <FestivalCard
         festival={item}
         saved={savedIds.has(item.id)}
+        saving={savingIds.has(item.id)}
         locale={i18n.locale}
         onEnter={() => handleEnter(item.slug)}
         onSave={() => handleSave(item)}
@@ -218,6 +280,10 @@ export default function FestivalsScreen() {
           onChange={setSegment}
         />
       </View>
+
+      {segment === 'alle' && saveError ? (
+        <Text style={[styles.error, styles.saveError, { fontFamily: bodyFont }]}>{saveError}</Text>
+      ) : null}
 
       {viewState.kind === 'loading' ? (
         <Text style={[styles.helper, { fontFamily: bodyFont }]}>
@@ -305,6 +371,7 @@ const styles = StyleSheet.create({
     color: colors.danger,
     fontSize: typeRoles.bodySm.size,
   },
+  saveError: { marginBottom: spacingScale['sp-4'] },
   button: {
     minHeight: layout.hitMin,
     paddingHorizontal: spacingScale['sp-8'],
