@@ -43,6 +43,9 @@ export class FestivalService {
       defaultLocale: row.defaultLocale,
       supportedLocales: locales.map((l) => l.locale),
       cashlessUrl: row.cashlessUrl,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      place: row.place,
     };
   }
 
@@ -113,6 +116,9 @@ export class FestivalService {
       defaultLocale: row.defaultLocale,
       supportedLocales: localesByFestival.get(row.id) ?? [],
       cashlessUrl: row.cashlessUrl,
+      startDate: row.startDate,
+      endDate: row.endDate,
+      place: row.place,
     }));
   }
 
