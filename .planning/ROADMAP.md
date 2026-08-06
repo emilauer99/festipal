@@ -195,12 +195,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
   5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
 
-**Plans**: 1/8 plans executed
+**Plans**: 2/8 plans executed
 
 **Wave 1** *(parallel — no file overlap)*
 
 - [x] 05-01-PLAN.md — TRACER backend: D-08 master-data vertical (db → contracts → API service projections → seed → migration) + api round-trip/cross-tenant proof (dates/place NULLABLE)
-- [ ] 05-02-PLAN.md — Foundation: design tokens (radiiScale + translucent/glass roles) + expo-blur + typed routes
+- [x] 05-02-PLAN.md — Foundation: design tokens (radiiScale + translucent/glass roles) + expo-blur + typed routes
 
 **Wave 2** *(blocked on Wave 1)*
 
@@ -250,5 +250,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 1/8 | In Progress|  |
+| 5. Festival Selection & Home | 2/8 | In Progress|  |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
