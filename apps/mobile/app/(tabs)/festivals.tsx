@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { LogOut } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,28 +12,45 @@ import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
 import { clearActiveFestivalSlug, saveActiveFestivalSlug } from '../../lib/active-festival-storage';
 import { festivalKeys } from '../../lib/festival-queries';
+import { i18n } from '../../lib/i18n';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { forceUnauthenticated } from '../_layout';
+import { FestivalCard } from '../../components/FestivalCard';
+import { SegmentedControl } from '../../components/SegmentedControl';
 
 const { colors, typeRoles, layout, radii, spacingScale } = tokens;
 
+type Segment = 'meine' | 'alle';
+
 /**
- * D-03 — this screen is a thin client mirror of `listFestivals`/`saveFestival`
- * (PATTERNS.md): no local business logic, no re-declared festival shape
- * (Pitfall 6). Save is idempotent server-side and Enter is gate-less
- * (ADR-014) — the Enter CTA always navigates regardless of saved-state;
- * only the Save CTA's own disabled styling reflects whether THIS session has
- * already saved a given row.
+ * `/festivals?segment=all` is the shared cross-tab contract the Home CTA and
+ * rail "see all" action (05-07) navigate into (REVIEW 05-06/05-07 HIGH).
+ * Unknown/empty/missing values fail closed to Meine.
+ */
+function normalizeSegmentParam(raw: string | string[] | undefined): Segment {
+  const value = Array.isArray(raw) ? raw[0] : raw;
+  return value === 'all' ? 'alle' : 'meine';
+}
+
+type SegmentViewState =
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'empty' }
+  | { kind: 'data'; items: Festival[] };
+
+/**
+ * D-05 — this screen is a thin client mirror of `listFestivals`/`listMyFestivals`/
+ * `saveFestival` (PATTERNS.md): no local business logic, no re-declared festival
+ * shape (Pitfall 6). Enter is gate-less (ADR-014) regardless of saved-state.
+ * Save is upgraded to a full optimistic, server-backed mutation in 05-06 Task 2.
  *
- * AUTH-04 — the icon-only logout control (UI-SPEC Scope note #9, neutral
- * tint, no confirmation dialog) lives in this screen's header, the only
- * authenticated shell surface that exists until Phase 6's real Profile
- * screen.
+ * AUTH-04 — the icon-only logout control (UI-SPEC Scope note #9, neutral tint,
+ * no confirmation dialog) lives in this screen's header, the only authenticated
+ * shell surface that exists until Phase 6's real Profile screen.
  *
- * 05-05 — moved from `app/festivals/index.tsx` into the `(tabs)` group
- * (same import depth, no path changes needed); rewritten to the Meine/Alle
- * segmented layout in 05-06.
+ * 05-06 — rewritten from a single `listFestivals` list into the Meine/Alle
+ * segmented D-05 experience over `FestivalCard` + `SegmentedControl`.
  */
 export default function FestivalsScreen() {
   const router = useRouter();
@@ -41,7 +58,20 @@ export default function FestivalsScreen() {
   const fontsReady = useFontsReady();
   const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
   const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
-  const [savedIds, setSavedIds] = useState<ReadonlySet<string>>(new Set());
+  const queryClient = useQueryClient();
+  const params = useLocalSearchParams<{ segment?: string | string[] }>();
+
+  const normalizedParam = normalizeSegmentParam(params.segment);
+  const [segment, setSegment] = useState<Segment>(() => normalizedParam);
+
+  // Re-sync ONLY when the URL search param itself changes on re-navigation
+  // (the Home CTA/rail's `/festivals?segment=all` target, 05-07) — manual
+  // SegmentedControl taps never touch this param, so they are never
+  // overridden by this effect (REVIEW 05-06/05-07 HIGH).
+  useEffect(() => {
+    setSegment(normalizedParam);
+  }, [normalizedParam]);
+
   // Non-re-entrancy guard (UI-SPEC logout-robustness backstop) — a double-tap
   // during the in-flight signOut() cannot fire a second concurrent call.
   const signingOutRef = useRef(false);
@@ -68,24 +98,36 @@ export default function FestivalsScreen() {
     }
   }
 
-  const festivalsQuery = useQuery({
+  const listFestivalsQuery = useQuery({
     queryKey: festivalKeys.all,
     queryFn: () => apiClient.listFestivals(),
   });
-
-  const saveMutation = useMutation({
-    mutationFn: (festivalId: string) =>
-      apiClient.saveFestival({ params: { festivalId }, body: {} }),
+  const listMyFestivalsQuery = useQuery({
+    queryKey: festivalKeys.mine,
+    queryFn: () => apiClient.listMyFestivals(),
   });
 
-  function handleSave(festivalId: string) {
-    saveMutation.mutate(festivalId, {
-      onSuccess: (result) => {
-        if (result.status === 200) {
-          setSavedIds((prev) => new Set(prev).add(festivalId));
-        }
-      },
-    });
+  // Pattern 3 — saved-state is client-derived from `listMyFestivals`, never a
+  // server-side saved flag.
+  const savedIds = useMemo(() => {
+    const data = listMyFestivalsQuery.data;
+    if (data?.status !== 200) return new Set<string>();
+    return new Set(data.body.map((f) => f.id));
+  }, [listMyFestivalsQuery.data]);
+
+  // Placeholder save mutation for Task 1's rendering pass — 05-06 Task 2
+  // replaces this with a full optimistic onMutate/onError/onSettled dance
+  // (in-flight guard, rollback, localized error surface).
+  const saveMutation = useMutation({
+    mutationFn: (festival: Festival) =>
+      apiClient.saveFestival({ params: { festivalId: festival.id }, body: {} }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: festivalKeys.mine });
+    },
+  });
+
+  function handleSave(festival: Festival) {
+    saveMutation.mutate(festival);
   }
 
   function handleEnter(slug: string) {
@@ -96,32 +138,58 @@ export default function FestivalsScreen() {
     router.push(`/f/${slug}`);
   }
 
-  function renderRow({ item }: { item: Festival }) {
-    const saved = savedIds.has(item.id);
+  function renderCard({ item }: { item: Festival }) {
     return (
-      <View style={styles.row}>
-        {/* UI-SPEC "partial" state — dates/place are Phase-5 master data not
-            in the current schema; only the always-present name renders. */}
-        <Text style={[styles.name, { fontFamily: bodyFont }]}>{item.name}</Text>
-        <View style={styles.actions}>
-          <Pressable
-            style={[styles.button, saved ? styles.buttonDisabled : null]}
-            onPress={() => handleSave(item.id)}
-            disabled={saved}
-          >
-            <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
-              <Trans>Save</Trans>
-            </Text>
-          </Pressable>
-          <Pressable style={styles.button} onPress={() => handleEnter(item.slug)}>
-            <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
-              <Trans>Enter festival</Trans>
-            </Text>
-          </Pressable>
-        </View>
-      </View>
+      <FestivalCard
+        festival={item}
+        saved={savedIds.has(item.id)}
+        locale={i18n.locale}
+        onEnter={() => handleEnter(item.slug)}
+        onSave={() => handleSave(item)}
+      />
     );
   }
+
+  function computeMeineState(): SegmentViewState {
+    if (listMyFestivalsQuery.status === 'pending') return { kind: 'loading' };
+    if (listMyFestivalsQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void listMyFestivalsQuery.refetch() };
+    }
+    if (listMyFestivalsQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void listMyFestivalsQuery.refetch() };
+    }
+    return listMyFestivalsQuery.data.body.length === 0
+      ? { kind: 'empty' }
+      : { kind: 'data', items: listMyFestivalsQuery.data.body };
+  }
+
+  // Alle is ready only after BOTH queries succeed — rendering it before the
+  // caller-scoped membership query resolves would briefly mislabel saved rows
+  // as unsaved. A mine-query failure surfaces the same error+retry affordance
+  // (retrying the failed dependency) rather than exposing incorrect Save
+  // buttons.
+  function computeAlleState(): SegmentViewState {
+    if (listFestivalsQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void listFestivalsQuery.refetch() };
+    }
+    if (listMyFestivalsQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void listMyFestivalsQuery.refetch() };
+    }
+    if (listFestivalsQuery.status === 'pending' || listMyFestivalsQuery.status === 'pending') {
+      return { kind: 'loading' };
+    }
+    if (listFestivalsQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void listFestivalsQuery.refetch() };
+    }
+    if (listMyFestivalsQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void listMyFestivalsQuery.refetch() };
+    }
+    return listFestivalsQuery.data.body.length === 0
+      ? { kind: 'empty' }
+      : { kind: 'data', items: listFestivalsQuery.data.body };
+  }
+
+  const viewState = segment === 'meine' ? computeMeineState() : computeAlleState();
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
@@ -139,48 +207,77 @@ export default function FestivalsScreen() {
           ),
         }}
       />
-      {festivalsQuery.status === 'pending' ? (
+
+      <View style={styles.segmentedControlWrapper}>
+        <SegmentedControl
+          options={[
+            { value: 'meine', label: t`Mine` },
+            { value: 'alle', label: t`All` },
+          ]}
+          value={segment}
+          onChange={setSegment}
+        />
+      </View>
+
+      {viewState.kind === 'loading' ? (
         <Text style={[styles.helper, { fontFamily: bodyFont }]}>
           <Trans>Loading festivals…</Trans>
         </Text>
       ) : null}
-      {festivalsQuery.status === 'error' ? (
-        <Text style={[styles.error, { fontFamily: bodyFont }]}>
-          <Trans>
-            Can't reach the server — make sure your device is on the same Wi-Fi as the dev API.
-          </Trans>
-        </Text>
-      ) : null}
-      {festivalsQuery.status === 'success' && festivalsQuery.data.status !== 200 ? (
-        <View>
+
+      {viewState.kind === 'error' ? (
+        <View style={styles.stateBlock}>
           <Text style={[styles.error, { fontFamily: bodyFont }]}>
-            <Trans>Can't load festivals — check your connection and try again.</Trans>
+            {viewState.variant === 'transport' ? (
+              <Trans>
+                Can't reach the server — make sure your device is on the same Wi-Fi as the dev API.
+              </Trans>
+            ) : (
+              <Trans>Can't load festivals — check your connection and try again.</Trans>
+            )}
           </Text>
-          <Pressable style={styles.button} onPress={() => festivalsQuery.refetch()}>
+          <Pressable style={styles.button} onPress={viewState.retry}>
             <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
               <Trans>Retry</Trans>
             </Text>
           </Pressable>
         </View>
       ) : null}
-      {festivalsQuery.status === 'success' && festivalsQuery.data.status === 200 ? (
-        festivalsQuery.data.body.length === 0 ? (
-          <View>
-            <Text style={[styles.heading, { fontFamily: displayFont }]}>
-              <Trans>No festivals yet</Trans>
+
+      {viewState.kind === 'empty' && segment === 'meine' ? (
+        <View style={styles.stateBlock}>
+          <Text style={[styles.heading, { fontFamily: displayFont }]}>
+            <Trans>No saved festivals yet</Trans>
+          </Text>
+          <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+            <Trans>Switch to 'All' and save one with a tap.</Trans>
+          </Text>
+          <Pressable style={styles.button} onPress={() => setSegment('alle')}>
+            <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+              <Trans>Switch to All</Trans>
             </Text>
-            <Text style={[styles.helper, { fontFamily: bodyFont }]}>
-              <Trans>Check back soon — new festivals will appear here.</Trans>
-            </Text>
-          </View>
-        ) : (
-          <FlatList
-            data={festivalsQuery.data.body}
-            keyExtractor={(item) => item.id}
-            renderItem={renderRow}
-            contentContainerStyle={styles.listContent}
-          />
-        )
+          </Pressable>
+        </View>
+      ) : null}
+
+      {viewState.kind === 'empty' && segment === 'alle' ? (
+        <View style={styles.stateBlock}>
+          <Text style={[styles.heading, { fontFamily: displayFont }]}>
+            <Trans>No festivals yet</Trans>
+          </Text>
+          <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+            <Trans>New festivals will show up here.</Trans>
+          </Text>
+        </View>
+      ) : null}
+
+      {viewState.kind === 'data' ? (
+        <FlatList
+          data={viewState.items}
+          keyExtractor={(item) => item.id}
+          renderItem={renderCard}
+          contentContainerStyle={styles.listContent}
+        />
       ) : null}
     </SafeAreaView>
   );
@@ -188,9 +285,12 @@ export default function FestivalsScreen() {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, padding: layout.screenPad, backgroundColor: colors.bgApp },
-  // 05-05 — this screen now sits inside the (tabs) shell, under the
-  // floating nav; scrollBottomPad keeps the last row clear of it.
-  listContent: { paddingBottom: layout.scrollBottomPad },
+  segmentedControlWrapper: { marginBottom: spacingScale['sp-6'] },
+  // 05-05 — this screen sits inside the (tabs) shell, under the floating
+  // nav; scrollBottomPad keeps the last row clear of it. sp-5 (12px) row gap
+  // per UI-SPEC `festivals-list` populated state.
+  listContent: { paddingBottom: layout.scrollBottomPad, gap: spacingScale['sp-5'] },
+  stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
   helper: {
     fontSize: typeRoles.body.size,
     color: colors.textSecondary,
@@ -200,34 +300,19 @@ const styles = StyleSheet.create({
     fontWeight: typeRoles.title2.weight,
     lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
     color: colors.textPrimary,
-    marginBottom: spacingScale['sp-4'],
   },
   error: {
     color: colors.danger,
     fontSize: typeRoles.bodySm.size,
   },
-  row: {
-    backgroundColor: colors.surfaceCard,
-    borderRadius: radii.control,
-    padding: spacingScale['sp-6'],
-    marginBottom: spacingScale['sp-4'],
-  },
-  name: {
-    fontSize: typeRoles.bodyStrong.size,
-    fontWeight: typeRoles.bodyStrong.weight,
-    color: colors.textPrimary,
-    marginBottom: spacingScale['sp-4'],
-  },
-  actions: { flexDirection: 'row', gap: spacingScale['sp-4'] },
   button: {
     minHeight: layout.hitMin,
-    flex: 1,
+    paddingHorizontal: spacingScale['sp-8'],
     backgroundColor: colors.primary,
     borderRadius: radii.pill,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonDisabled: { opacity: 0.5 },
   buttonText: {
     fontSize: typeRoles.title3.size,
     fontWeight: typeRoles.title3.weight,
