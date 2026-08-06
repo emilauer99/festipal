@@ -61,6 +61,14 @@ export const radii = {
   pill: 999,
 } as const;
 
+/** Full ported `--r-*` radii ramp used by Phase 5 primitives (festipal-tokens.css). Mirrors the
+ * `spacingScale` export pattern — do not overload the generic `radii` object above. */
+export const radiiScale = {
+  'r-card': 22,
+  'r-md': 16,
+  'r-pill': 999,
+} as const;
+
 export const fontSizes = {
   xs: 12,
   sm: 14,
@@ -131,6 +139,14 @@ export const colors = {
   textSecondary: '#9FA6B6',
   textMuted: '#7C8394',
   textOnPrimary: '#07080B',
+  // translucent border/fill/glass roles (festipal-tokens.css --border-subtle/--border-brand/
+  // --fill-quiet/--fill-brand-quiet/--glass-fill/--glass-border) — Phase 5 UI-SPEC ## Color
+  borderSubtle: 'rgba(233,236,242,.08)',
+  borderBrand: 'rgba(116,204,31,.45)',
+  fillQuiet: 'rgba(233,236,242,.06)',
+  fillBrandQuiet: 'rgba(116,204,31,.16)',
+  glassFill: 'rgba(20,22,29,.62)',
+  glassBorder: 'rgba(255,255,255,.16)',
 } as const;
 
 /**
@@ -153,11 +169,16 @@ export const lightColors = {
   textPrimary: '#07080B',
   textSecondary: '#363B49',
   textMuted: '#565C6E',
+  // translucent border/fill roles differ in light mode; glassFill/glassBorder/borderBrand/
+  // fillBrandQuiet stay the same as dark (inherited via spread — nav stays dark-glass, UI-SPEC)
+  borderSubtle: 'rgba(7,8,11,.08)',
+  fillQuiet: 'rgba(7,8,11,.05)',
 } as const;
 
 export const tokens = {
   spacing,
   spacingScale,
+  radiiScale,
   layout,
   radii,
   fontSizes,
