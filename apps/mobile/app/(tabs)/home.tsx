@@ -1,42 +1,256 @@
-import { StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
+import { useQuery } from '@tanstack/react-query';
 import { Trans } from '@lingui/react/macro';
 import { tokens } from '@festipal/ui';
+import type { Festival } from '@festipal/contracts';
 
-import { FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { apiClient } from '../../lib/api-client';
+import { i18n } from '../../lib/i18n';
+import { festivalKeys } from '../../lib/festival-queries';
+import { saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { orderFestivalsForHome } from '../../lib/select-next-festival';
+import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import { FestivalCard } from '../../components/FestivalCard';
 
-const { colors, typeRoles, layout } = tokens;
+const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
+
+const RAIL_ITEM_WIDTH = 268;
+
+/** Rail/hero cards are always saved (sourced from `listMyFestivals`) and never expose a Save affordance (REVIEW 05-07 MEDIUM) — this no-op satisfies FestivalCard's required prop without a real save path. */
+function noopSave(): void {}
+
+type HomeViewState =
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'empty' }
+  | { kind: 'ready'; hero: Festival; rail: Festival[] };
 
 /**
- * Minimal Home tab placeholder so the `home` route renders — the real
- * hero + "My festivals" rail + coming-soon menu ships in 05-07 (HOME-02).
- * This plan only needs the Home tab to exist and be the default tab
- * (`(tabs)/_layout.tsx` `initialRouteName="home"`).
+ * D-04 — the lean, post-login Home overview: a single "next festival" hero +
+ * "Meine Festivals" rail, both from the ALREADY-FETCHED `listMyFestivals`
+ * data (no new endpoint). Hero/rail order comes from the pure, tested
+ * `orderFestivalsForHome` (05-07 Task 1) — never the API's unspecified
+ * `listMyFestivals` row order. Loading/error copy reuses the existing
+ * `festivals.tsx` pattern verbatim (backstop — no new skeleton).
  */
 export default function HomeScreen() {
+  const router = useRouter();
   const fontsReady = useFontsReady();
+  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
   const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
+
+  const myFestivalsQuery = useQuery({
+    queryKey: festivalKeys.mine,
+    queryFn: () => apiClient.listMyFestivals(),
+  });
+
+  // One `today` per render (not memoized across renders) — a day-boundary
+  // crossing while the screen stays mounted is picked up on the next render
+  // rather than frozen at first mount.
+  const today = new Date();
+
+  function computeState(): HomeViewState {
+    if (myFestivalsQuery.status === 'pending') return { kind: 'loading' };
+    if (myFestivalsQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void myFestivalsQuery.refetch() };
+    }
+    // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
+    // `status === 'error'` — never fall through to the empty state here,
+    // that would falsely render "no festival saved" on a real API failure.
+    if (myFestivalsQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void myFestivalsQuery.refetch() };
+    }
+    const saved = myFestivalsQuery.data.body;
+    if (saved.length === 0) return { kind: 'empty' };
+    const ordered = orderFestivalsForHome(saved, today);
+    const [hero, ...rail] = ordered;
+    return { kind: 'ready', hero: hero as Festival, rail };
+  }
+
+  const viewState = computeState();
+
+  function handleEnter(slug: string) {
+    // Gate-less entry (ADR-014, HOME-01) must never dead-end: persist first,
+    // but a synchronous MMKV write failure still lets the navigation happen.
+    try {
+      saveActiveFestivalSlug(slug);
+    } catch {
+      // Persistence is a nicety (D-06 cold-start focus) — entry itself never
+      // depends on it succeeding.
+    }
+    router.push(`/f/${slug}`);
+  }
+
+  function goToAllFestivals() {
+    // Shared cross-tab contract (REVIEW 05-06/05-07 HIGH) — the segment
+    // param is REQUIRED so the Festivals tab opens on Alle, not Meine.
+    router.push('/festivals?segment=all');
+  }
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <Text style={[styles.heading, { fontFamily: displayFont }]}>
-        <Trans>Home</Trans>
-      </Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        {viewState.kind === 'loading' ? (
+          <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+            <Trans>Loading festivals…</Trans>
+          </Text>
+        ) : null}
+
+        {viewState.kind === 'error' ? (
+          <View style={styles.stateBlock}>
+            <Text style={[styles.error, { fontFamily: bodyFont }]}>
+              {viewState.variant === 'transport' ? (
+                <Trans>
+                  Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                  API.
+                </Trans>
+              ) : (
+                <Trans>Can't load festivals — check your connection and try again.</Trans>
+              )}
+            </Text>
+            <Pressable style={styles.button} onPress={viewState.retry}>
+              <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+                <Trans>Retry</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {viewState.kind === 'empty' ? (
+          <View style={styles.stateBlock}>
+            <Text style={[styles.heading, { fontFamily: displayFont }]}>
+              <Trans>No festival saved yet</Trans>
+            </Text>
+            <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+              <Trans>Browse all festivals and save your first one.</Trans>
+            </Text>
+            <Pressable style={styles.button} onPress={goToAllFestivals}>
+              <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+                <Trans>Browse festivals</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {viewState.kind === 'ready' ? (
+          <>
+            <View style={styles.heroSection}>
+              <Text style={[styles.eyebrow, { fontFamily: bodyFont }]}>
+                <Trans>Your next festival</Trans>
+              </Text>
+              <FestivalCard
+                festival={viewState.hero}
+                saved
+                locale={i18n.locale}
+                variant="hero"
+                onEnter={() => handleEnter(viewState.hero.slug)}
+                onSave={noopSave}
+              />
+            </View>
+
+            {viewState.rail.length > 0 ? (
+              <View style={styles.railSection}>
+                <View style={styles.railHeader}>
+                  <Text style={[styles.sectionHead, { fontFamily: displayFont }]}>
+                    <Trans>My festivals</Trans>
+                  </Text>
+                  <Pressable onPress={goToAllFestivals} accessibilityRole="button">
+                    <Text style={[styles.seeAll, { fontFamily: bodyFont }]}>
+                      <Trans>All</Trans>
+                    </Text>
+                  </Pressable>
+                </View>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.railContent}
+                >
+                  {viewState.rail.map((festival) => (
+                    <View key={festival.id} style={styles.railItem}>
+                      <FestivalCard
+                        festival={festival}
+                        saved
+                        locale={i18n.locale}
+                        onEnter={() => handleEnter(festival.slug)}
+                        onSave={noopSave}
+                      />
+                    </View>
+                  ))}
+                </ScrollView>
+              </View>
+            ) : null}
+          </>
+        ) : null}
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    padding: layout.screenPad,
-    backgroundColor: colors.bgApp,
+  screen: { flex: 1, backgroundColor: colors.bgApp },
+  content: {
+    paddingHorizontal: layout.screenPad,
+    paddingTop: layout.screenPad,
+    paddingBottom: layout.scrollBottomPad,
+    gap: layout.sectionGap,
+  },
+  stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
+  heroSection: { gap: spacingScale['sp-4'] },
+  eyebrow: {
+    fontSize: typeRoles.micro.size,
+    fontWeight: typeRoles.micro.weight,
+    lineHeight: typeRoles.micro.size * typeRoles.micro.lineHeight,
+    color: colors.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: typeRoles.micro.size * 0.09,
+  },
+  railSection: { gap: spacingScale['sp-5'] },
+  railHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  sectionHead: {
+    fontSize: typeRoles.title2.size,
+    fontWeight: typeRoles.title2.weight,
+    lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+    color: colors.textPrimary,
+  },
+  seeAll: {
+    fontSize: typeRoles.label.size,
+    fontWeight: typeRoles.label.weight,
+    color: colors.primary,
+  },
+  railContent: { gap: spacingScale['sp-5'] },
+  railItem: { width: RAIL_ITEM_WIDTH },
+  helper: {
+    fontSize: typeRoles.body.size,
+    color: colors.textSecondary,
   },
   heading: {
     fontSize: typeRoles.title2.size,
     fontWeight: typeRoles.title2.weight,
     lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
     color: colors.textPrimary,
+  },
+  error: {
+    color: colors.danger,
+    fontSize: typeRoles.bodySm.size,
+  },
+  button: {
+    minHeight: layout.hitMin,
+    paddingHorizontal: spacingScale['sp-8'],
+    backgroundColor: colors.primary,
+    borderRadius: radiiScale['r-pill'],
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    fontSize: typeRoles.title3.size,
+    fontWeight: typeRoles.title3.weight,
+    color: colors.textOnPrimary,
   },
 });

@@ -26,6 +26,7 @@ msgid "3–20 characters: a-z 0-9 _ ."
 msgstr "3–20 characters: a-z 0-9 _ ."
 
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "All"
 msgstr "All"
 
@@ -42,7 +43,16 @@ msgstr "Back"
 #~ msgid "Back to festivals"
 #~ msgstr "Back to festivals"
 
+#: app/(tabs)/home.tsx
+msgid "Browse all festivals and save your first one."
+msgstr "Browse all festivals and save your first one."
+
+#: app/(tabs)/home.tsx
+msgid "Browse festivals"
+msgstr "Browse festivals"
+
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Can't load festivals — check your connection and try again."
 
@@ -51,6 +61,7 @@ msgstr "Can't load festivals — check your connection and try again."
 #: app/(festival)/f/[festivalSlug].tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
@@ -156,7 +167,6 @@ msgstr "Get a new code."
 msgid "Get started"
 msgstr "Get started"
 
-#: app/(tabs)/home.tsx
 #: components/FloatingNav.tsx
 msgid "Home"
 msgstr "Home"
@@ -166,6 +176,7 @@ msgid "Loading festival…"
 msgstr "Loading festival…"
 
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Loading festivals…"
 msgstr "Loading festivals…"
 
@@ -185,6 +196,10 @@ msgstr "Map"
 msgid "Mine"
 msgstr "Mine"
 
+#: app/(tabs)/home.tsx
+msgid "My festivals"
+msgstr "My festivals"
+
 #: app/(tabs)/festivals.tsx
 msgid "New festivals will show up here."
 msgstr "New festivals will show up here."
@@ -192,6 +207,10 @@ msgstr "New festivals will show up here."
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "News"
 msgstr "News"
+
+#: app/(tabs)/home.tsx
+msgid "No festival saved yet"
+msgstr "No festival saved yet"
 
 #: app/(tabs)/festivals.tsx
 msgid "No festivals yet"
@@ -231,6 +250,7 @@ msgstr "Resend in {countdownLabel}"
 
 #: app/(festival)/f/[festivalSlug].tsx
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Retry"
 msgstr "Retry"
 
@@ -358,3 +378,7 @@ msgstr "Your email"
 #: app/(auth)/index.tsx
 msgid "Your festivals, your crew, your plan."
 msgstr "Your festivals, your crew, your plan."
+
+#: app/(tabs)/home.tsx
+msgid "Your next festival"
+msgstr "Your next festival"
