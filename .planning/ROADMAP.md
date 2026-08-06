@@ -195,7 +195,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
   5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
 
-**Plans**: 7/8 plans executed
+**Plans**: 8/8 plans executed
 
 **Wave 1** *(parallel — no file overlap)*
 
@@ -218,7 +218,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Wave 5** *(blocked on Wave 4 — final integration gate)*
 
-- [ ] 05-08-PLAN.md — Phase-wide gate: full monorepo typecheck/lint/test + clean mobile build + on-device end-to-end acceptance flow
+- [x] 05-08-PLAN.md — Phase-wide gate: full monorepo typecheck/lint/test + clean mobile build + on-device end-to-end acceptance flow
 
 **Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
 **UI hint**: yes
@@ -250,5 +250,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 7/8 | In Progress|  |
+| 5. Festival Selection & Home | 8/8 | In Progress|  |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |

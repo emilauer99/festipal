@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
-status: executing
-stopped_at: Completed 05-07-PLAN.md
-last_updated: "2026-08-06T13:05:32.673Z"
+status: verifying
+stopped_at: Completed 05-08-PLAN.md
+last_updated: "2026-08-06T13:29:24.926Z"
 last_activity: 2026-08-06
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 30
-  completed_plans: 29
+  completed_plans: 30
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 
 Phase: 05 (festival-selection-home) — EXECUTING
 Plan: 8 of 8
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-06 — Phase 05 execution started
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -90,6 +90,7 @@ Progress: [██████████] 97%
 | Phase 05 P05 | ~30min | 3 tasks | 6 files |
 | Phase 05 P06 | ~15min | 2 tasks | 3 files |
 | Phase 05 P07 | ~20min | 2 tasks | 5 files |
+| Phase 05 P08 | ~5min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -170,6 +171,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-06: Left 05-05's 4 pre-existing untranslated FloatingNav DE msgids (Home/Friends/Profile/coming soon) untouched — out of this task's scope, logged to WINDOWS.md id 17 for a follow-up translation pass
 - [Phase ?]: 05-07: selectNextFestival is a first-item projection of orderFestivalsForHome so hero and rail share one deterministic ordering source (never the API's unspecified listMyFestivals row order)
 - [Phase ?]: 05-07: rail/hero cards always pass saved={true} via a shared noopSave() no-op -- no Save affordance is ever wired on already-saved rows
+- [Phase ?]: 05-08: Task 2 on-device 8-step acceptance flow deferred to persisted UAT (05-UAT.md) by explicit user decision at checkpoint, consistent with Phase 3/4 device-UAT convention
+- [Phase ?]: 05-08: Task 1 full monorepo gate green -- typecheck/lint/test 10/10+10/10+7/7, frozen install no lockfile drift, mobile build/export both platforms OK
 
 ### Pending Todos
 
@@ -204,6 +207,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T13:05:32.648Z
-Stopped at: Completed 05-07-PLAN.md
+Last session: 2026-08-06T13:29:24.896Z
+Stopped at: Completed 05-08-PLAN.md
 Resume file: None

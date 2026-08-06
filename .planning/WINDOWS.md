@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 17
+open_count: 18
 waived_count: 0
 fixed_count: 2
-total_count: 19
-last_updated: 2026-08-06T12:40:21.575Z
+total_count: 20
+last_updated: 2026-08-06T13:28:08.825Z
 ---
 
 # Broken Windows Ledger
@@ -34,6 +34,7 @@ last_updated: 2026-08-06T12:40:21.575Z
 | 17 | 05 | todo | apps/mobile/components/FloatingNav.tsx |  | DE translations missing for Home/Friends/Profile/coming-soon msgids (05-06 deferred, out of task scope) | open |  | 2026-08-06T12:37:14.059Z |  |
 | 18 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05-06 Task 1 on-device manual UAT not run headless: Festivals tab opens on Meine by default; switch to Alle -> every festival listed, saved one shows Gespeichert badge while unsaved show Save affordance; both segments render name/dates/place | open |  | 2026-08-06T12:40:21.121Z |  |
 | 19 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05-06 Task 2 on-device manual UAT not run headless: tap Save in Alle -> immediate Gespeichert + appears under Meine; survives force-quit+relaunch (FEST-03); rapid double-tap enqueues one save; simulated failing save rolls back with visible error; idempotent re-save of already-saved festival shows no error | open |  | 2026-08-06T12:40:21.575Z |  |
+| 20 | 05 | unrun-verify | apps/mobile/app/(tabs)/home.tsx |  | 05-08 Task 2 on-device 8-step acceptance flow not run headless: login->Home->Alle-segment CTA->save exactly-once+persist+rollback->enter/back->cold-start-back->cross-account logout hygiene->deep-link precedence over persisted slug->DE/EN date+null-fallback+TalkBack coming-soon a11y (all six requirements + cross-plan edges); persisted as .planning/phases/05-festival-selection-home/05-UAT.md for /gsd-verify-work 5 | open |  | 2026-08-06T13:28:08.825Z |  |
 
 ````json
 [
@@ -263,6 +264,18 @@ last_updated: 2026-08-06T12:40:21.575Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-06T12:40:21.575Z",
+    "resolved_at": null
+  },
+  {
+    "id": 20,
+    "kind": "unrun-verify",
+    "phase": "05",
+    "file": "apps/mobile/app/(tabs)/home.tsx",
+    "line": null,
+    "description": "05-08 Task 2 on-device 8-step acceptance flow not run headless: login->Home->Alle-segment CTA->save exactly-once+persist+rollback->enter/back->cold-start-back->cross-account logout hygiene->deep-link precedence over persisted slug->DE/EN date+null-fallback+TalkBack coming-soon a11y (all six requirements + cross-plan edges); persisted as .planning/phases/05-festival-selection-home/05-UAT.md for /gsd-verify-work 5",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-06T13:28:08.825Z",
     "resolved_at": null
   }
 ]
