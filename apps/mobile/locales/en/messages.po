@@ -30,12 +30,13 @@ msgid "Almost done"
 msgstr "Almost done"
 
 #: app/(auth)/email.tsx
+#: app/(festival)/f/[festivalSlug].tsx
 msgid "Back"
 msgstr "Back"
 
 #: app/(festival)/index.tsx
-msgid "Back to festivals"
-msgstr "Back to festivals"
+#~ msgid "Back to festivals"
+#~ msgstr "Back to festivals"
 
 #: app/festivals/index.tsx
 msgid "Can't load festivals — check your connection and try again."
@@ -43,10 +44,15 @@ msgstr "Can't load festivals — check your connection and try again."
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
+#: app/(festival)/f/[festivalSlug].tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/festivals/index.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Cashless"
+msgstr "Cashless"
 
 #: app/(auth)/verify.tsx
 msgid "Change email"
@@ -108,9 +114,17 @@ msgstr "Enter festival"
 #~ msgid "Enter your code"
 #~ msgstr "Enter your code"
 
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Festival"
+msgstr "Festival"
+
 #: app/(festival)/index.tsx
-msgid "Festival home"
-msgstr "Festival home"
+#~ msgid "Festival home"
+#~ msgstr "Festival home"
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Festival not found"
+msgstr "Festival not found"
 
 #: app/festivals/index.tsx
 msgid "Festivals"
@@ -124,6 +138,10 @@ msgstr "Get a new code."
 msgid "Get started"
 msgstr "Get started"
 
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Loading festival…"
+msgstr "Loading festival…"
+
 #: app/festivals/index.tsx
 msgid "Loading festivals…"
 msgstr "Loading festivals…"
@@ -135,6 +153,14 @@ msgstr "Loading festivals…"
 #: app/festivals/index.tsx
 msgid "Log out"
 msgstr "Log out"
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Map"
+msgstr "Map"
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "News"
+msgstr "News"
 
 #: app/festivals/index.tsx
 msgid "No festivals yet"
@@ -160,6 +186,7 @@ msgstr "Resend code"
 msgid "Resend in {countdownLabel}"
 msgstr "Resend in {countdownLabel}"
 
+#: app/(festival)/f/[festivalSlug].tsx
 #: app/festivals/index.tsx
 msgid "Retry"
 msgstr "Retry"
@@ -188,6 +215,10 @@ msgstr "Sending…"
 msgid "Six digits sent to {email}."
 msgstr "Six digits sent to {email}."
 
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Soon"
+msgstr "Soon"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Take photo"
 msgstr "Take photo"
@@ -207,6 +238,14 @@ msgstr "Tell us what to call you in the app."
 #: app/(auth)/verify.tsx
 msgid "That code is wrong or has expired."
 msgstr "That code is wrong or has expired."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "This festival may have been removed or the link is out of date."
+msgstr "This festival may have been removed or the link is out of date."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Timetable"
+msgstr "Timetable"
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
@@ -258,8 +297,8 @@ msgid "Your email"
 msgstr "Your email"
 
 #: app/(festival)/index.tsx
-msgid "Your festival overview is coming soon."
-msgstr "Your festival overview is coming soon."
+#~ msgid "Your festival overview is coming soon."
+#~ msgstr "Your festival overview is coming soon."
 
 #: app/(auth)/index.tsx
 msgid "Your festivals, your crew, your plan."

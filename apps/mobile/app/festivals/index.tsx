@@ -10,6 +10,8 @@ import type { Festival } from '@festipal/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
+import { saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { festivalKeys } from '../../lib/festival-queries';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { forceUnauthenticated } from '../_layout';
@@ -59,7 +61,7 @@ export default function FestivalsScreen() {
   }
 
   const festivalsQuery = useQuery({
-    queryKey: ['festivals'],
+    queryKey: festivalKeys.all,
     queryFn: () => apiClient.listFestivals(),
   });
 
@@ -78,11 +80,12 @@ export default function FestivalsScreen() {
     });
   }
 
-  function handleEnter() {
-    // D-01 — the (festival) home placeholder isn't tied to a specific
-    // festivalId yet (real festival master-data content is Phase 5); entry
-    // is gate-less (ADR-014), so no saved-state check gates this navigation.
-    router.push('/(festival)');
+  function handleEnter(slug: string) {
+    // D-06 / D-08 — entry is gate-less (ADR-014): no saved-state check gates
+    // this navigation. Persists the slug for the D-06 cold-start focus
+    // (05-05), then pushes the real slug-keyed festival home (HOME-02).
+    saveActiveFestivalSlug(slug);
+    router.push(`/f/${slug}`);
   }
 
   function renderRow({ item }: { item: Festival }) {
@@ -102,7 +105,7 @@ export default function FestivalsScreen() {
               <Trans>Save</Trans>
             </Text>
           </Pressable>
-          <Pressable style={styles.button} onPress={handleEnter}>
+          <Pressable style={styles.button} onPress={() => handleEnter(item.slug)}>
             <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
               <Trans>Enter festival</Trans>
             </Text>
