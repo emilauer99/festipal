@@ -33,14 +33,34 @@ function getStorage(): MMKV {
   return cachedStorage;
 }
 
+// REVIEW 05-FIX WR-02 — persistence here is a nicety (the D-06 cold-start
+// focus), never a gate: gate-less entry into a festival (ADR-014) must never
+// dead-end on a synchronous MMKV read/write throwing. Every exported
+// function below swallows its own storage errors so ALL call sites get this
+// guarantee for free, instead of relying on each one remembering to wrap it
+// (previously only one of four call sites did, see 05-REVIEW.md WR-02).
+
 export function saveActiveFestivalSlug(slug: string): void {
-  getStorage().set(ACTIVE_FESTIVAL_SLUG_KEY, slug);
+  try {
+    getStorage().set(ACTIVE_FESTIVAL_SLUG_KEY, slug);
+  } catch {
+    // Best-effort — see module-level note above.
+  }
 }
 
 export function getActiveFestivalSlug(): string | undefined {
-  return getStorage().getString(ACTIVE_FESTIVAL_SLUG_KEY);
+  try {
+    return getStorage().getString(ACTIVE_FESTIVAL_SLUG_KEY);
+  } catch {
+    // Best-effort — see module-level note above.
+    return undefined;
+  }
 }
 
 export function clearActiveFestivalSlug(): void {
-  getStorage().remove(ACTIVE_FESTIVAL_SLUG_KEY);
+  try {
+    getStorage().remove(ACTIVE_FESTIVAL_SLUG_KEY);
+  } catch {
+    // Best-effort — see module-level note above.
+  }
 }
