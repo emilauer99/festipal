@@ -165,14 +165,25 @@ export default function FestivalsScreen() {
       }
       return { previous };
     },
-    onError: (_error, _festival, context) => {
-      // REVIEW 05-06 MEDIUM — restore the EXACT prior snapshot; when the mine
-      // cache was previously absent, reset it rather than retaining the
-      // synthesized optimistic entry.
-      if (context?.previous !== undefined) {
-        queryClient.setQueryData(festivalKeys.mine, context.previous);
-      } else {
-        queryClient.removeQueries({ queryKey: festivalKeys.mine, exact: true });
+    onError: (_error, festival, context) => {
+      // REVIEW 05-FIX WR-01 — reconcile against the CURRENT cache instead of
+      // restoring a raw snapshot: two concurrent saves (A then B) each
+      // capture their own `previous` at onMutate time, so a naive
+      // `setQueryData(context.previous)` on A's failure would wipe out B's
+      // still-in-flight (or already-succeeded) optimistic entry. Undo only
+      // the optimistic insert THIS call made — never an entry that was
+      // already saved before this call (`wasAlreadySaved`), and never a
+      // different festival's entry.
+      const previousBody =
+        context?.previous?.status === 200 && Array.isArray(context.previous.body)
+          ? context.previous.body
+          : [];
+      const wasAlreadySaved = previousBody.some((f) => f.id === festival.id);
+      if (!wasAlreadySaved) {
+        queryClient.setQueryData<CachedResponse>(festivalKeys.mine, (current) => {
+          if (current?.status !== 200 || !Array.isArray(current.body)) return current;
+          return { status: 200, body: current.body.filter((f) => f.id !== festival.id) };
+        });
       }
       setSaveError(t`Couldn't save festival — try again.`);
     },
