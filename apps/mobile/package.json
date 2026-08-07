@@ -12,7 +12,7 @@
     "test": "vitest run",
     "build": "expo export --platform ios --platform android",
     "extract": "lingui extract",
-    "compile": "lingui compile"
+    "compile": "lingui compile --strict"
   },
   "dependencies": {
     "@better-auth/expo": "1.6.25",

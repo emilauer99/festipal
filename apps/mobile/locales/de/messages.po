@@ -87,7 +87,7 @@ msgstr "Foto wählen"
 
 #: components/FloatingNav.tsx
 msgid "coming soon"
-msgstr ""
+msgstr "bald verfügbar"
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Continue"
@@ -157,7 +157,7 @@ msgstr "Festivals"
 
 #: components/FloatingNav.tsx
 msgid "Friends"
-msgstr ""
+msgstr "Freunde"
 
 #: app/(auth)/verify.tsx
 msgid "Get a new code."
@@ -169,7 +169,7 @@ msgstr "Los geht's"
 
 #: components/FloatingNav.tsx
 msgid "Home"
-msgstr ""
+msgstr "Start"
 
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Loading festival…"
@@ -234,7 +234,7 @@ msgstr "Optional. Geht auch später."
 
 #: components/FloatingNav.tsx
 msgid "Profile"
-msgstr ""
+msgstr "Profil"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Required"
