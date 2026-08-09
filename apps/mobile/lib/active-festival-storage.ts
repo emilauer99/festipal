@@ -82,10 +82,7 @@ export function nextActiveFestivalSlug(
   prior: string | undefined,
   entered: { slug: string; saved: boolean },
 ): string | undefined {
-  // RED-step naive placeholder (05-09's actual bug behavior) — keeps `prior`
-  // on an unsaved entry instead of clearing it. Confirmed to fail the
-  // G-05-5b-r2 regression test before being replaced by the real fix below.
-  return entered.saved ? entered.slug : prior;
+  return entered.saved ? entered.slug : undefined;
 }
 
 /**

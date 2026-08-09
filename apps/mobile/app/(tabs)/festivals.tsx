@@ -10,7 +10,7 @@ import type { Festival } from '@festipal/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
-import { clearActiveFestivalSlug, saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { clearActiveFestivalSlug, syncActiveFestivalOnEnter } from '../../lib/active-festival-storage';
 import { festivalKeys, unwrapOk } from '../../lib/festival-queries';
 import { consumeFestivalsSegment } from '../../lib/festivals-segment-request';
 import { i18n } from '../../lib/i18n';
@@ -214,13 +214,16 @@ export default function FestivalsScreen() {
   function handleEnter(slug: string, saved: boolean) {
     // D-06 / D-08 — entry is gate-less (ADR-014): no saved-state check gates
     // this navigation; entering an unsaved festival always still works.
-    // G-05-5b — the cold-start RESTORE must only ever bring back a SAVED
-    // festival, so the PERSIST is gated here on the saved-state already
-    // known on this row. An unsaved entry is never persisted (and never
-    // clears an already-persisted saved slug, so the last saved-and-opened
-    // festival is kept). This keeps _layout's cold-start read fully
-    // synchronous — no new gate, no async dependency (offline-first).
-    if (saved) saveActiveFestivalSlug(slug);
+    // G-05-5b-r2 — the cold-start RESTORE must only ever bring back the
+    // LAST-entered festival, and only when it was saved.
+    // syncActiveFestivalOnEnter is the single persist/clear authority
+    // (lib/active-festival-storage.ts): a SAVED entry persists this slug; an
+    // UNSAVED entry now CLEARS any previously-persisted slug instead of
+    // leaving it in place, so a stale saved festival can never stay stuck as
+    // the cold-start restore target (the 05-09 regression). This keeps
+    // _layout's cold-start read fully synchronous — no new gate, no async
+    // dependency (offline-first).
+    syncActiveFestivalOnEnter(slug, saved);
     router.push(`/f/${slug}`);
   }
 
