@@ -224,6 +224,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] 05-09-PLAN.md — Tab nav + cold-start restore: reliable see-all→Alle segment (G-05-2), restore only saved festivals (G-05-5b), Back→Home tab fallback (G-05-5a)
 - [x] 05-10-PLAN.md — Deep-link fixes: custom-scheme hostname+path reconstructor (G-05-7) + auth-agnostic capture so authenticated deep links beat the persisted slug (G-05-7b)
+- [ ] 05-11-PLAN.md — Cold-start restore regression (G-05-5b-r2): clear the persisted slug on unsaved-festival entry so cold-start lands on Home unless the last-entered festival was saved
 
 **Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
 **UI hint**: yes
