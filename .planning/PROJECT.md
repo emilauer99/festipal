@@ -33,6 +33,8 @@ path must work.
 - ✓ The API exposes the OTP-auth + profile + festival browse/save endpoints this slice needs (contract-first): better-auth email-OTP behind a global login-first `AuthGuard`, `GET/POST /api/v1/me*` (profile completion, username availability, my festivals), `GET /api/v1/festivals`, gate-less `POST /api/v1/festivals/:festivalId/save` (409 profile-required guard), `festivalId` data isolation proven by tests — **Validated in Phase 2: OTP Auth & Festival Backend API** (SEC-01, SEC-02)
 - ✓ An `Account` + `VisitorProfile` + `MyFestival` schema and better-auth (email-OTP) are wired into the NestJS API (env-configured Resend provider with dev console fallback; bodyParser smoke-tested; auth-annotation table reviewed) — **Validated in Phase 2: OTP Auth & Festival Backend API**
 - ✓ The `apps/mobile` Expo (Expo Router, RN New Arch) app exists, talks to the real API through `packages/contracts` (ts-rest client with SecureStore cookie-forwarding, better-auth Expo client, TanStack Query), and enforces i18n from the first line of UI (Lingui catalogs DE/EN loaded, `no-literal-string` lint, `resolveUiLocale` German fallback); full core-value path (OTP login → festivals → save → gate-less enter → home) signed off on real Android hardware — **Validated in Phase 3: Mobile App Shell & i18n Foundation** (PLAT-02, I18N-01)
+- ✓ Passwordless **email-OTP login** (email → 6-digit code → in; new email creates a better-auth `Account`), mandatory first-login **VisitorProfile completion** (unique `username` with live availability + `displayName`, optional avatar), returning-visitor **skip-profile** fast path, and a **long-lived auto-renewing session** (persists across restarts, re-auth via OTP on expiry) — **Validated in Phase 4: Visitor Auth & Profile Completion**
+- ✓ A visitor can **browse all festivals** and **save** them to "Meine Festivals" (Meine/Alle segment, default Meine), **enter a festival gate-lessly** (no ticket/approval) landing on that festival's home, and the home shows a basic festival **overview**; festival-scoped reads are `festivalId`-isolated (SEC-02 cross-tenant test) and cold-start restores only the last-entered *saved* festival — **Validated in Phase 5: Festival Selection & Home** (SEC-02)
 
 ### Active
 
@@ -40,16 +42,11 @@ path must work.
      Reconciled 2026-07-30 with the binding concept phase (docs/concept/04–10, ADR-009/014/016/020).
      Hypotheses until shipped and validated. -->
 
-- [ ] A visitor logs in **passwordlessly via email OTP** (enter email → 6-digit code → in); a new email creates an `Account` (better-auth, global/non-tenant)
-- [ ] On first login the visitor completes a **VisitorProfile**: required unique `username` (live availability check) + `displayName` (avatar optional)
-- [ ] A returning visitor (email already has a VisitorProfile) goes straight in, skipping profile setup
-- [ ] The visitor's session is long-lived and auto-renews (stays logged-in across restarts; re-auth via OTP on expiry)
-- [ ] A visitor can browse **all** festivals and **save** ones to "Meine Festivals" (Meine/Alle segment, default Meine)
-- [ ] A visitor can **enter** a festival **gate-lessly** (no ticket/approval) and land on that festival's home / main menu
-- [ ] The home shows a basic festival **overview** the visitor can click into
 - [ ] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email)
 - [ ] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet)
 - [x] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts` — **done in Phase 3** (PLAT-02, I18N-01)
+- [x] Passwordless email-OTP login + first-login VisitorProfile completion + returning-user skip + long-lived session — **done in Phase 4**
+- [x] Browse/save festivals (Meine/Alle) + gate-less enter + basic festival home overview — **done in Phase 5**
 
 ### Out of Scope
 
@@ -106,7 +103,7 @@ path must work.
 | First-login **profile completion** (unique `username` + `displayName`) is in the shell | Concept makes it mandatory at first login; more than a placeholder | ✓ Concept-binding |
 | Festival join is **gate-less "save"** (`MyFestival`), not a membership/access gate (ADR-014) | No ticket/approval to enter; tenant isolation is data-scoping by `festivalId`, not auth membership | ✓ Concept-binding |
 | Profile & Friends: Profile view-only, Friends placeholder this cycle | Real social/editing is meaningful scope; keep the first slice lean | — Pending |
-| Festival browse/save is list-based this cycle (no QR) | Avoids native camera/QR work; shared-link/QR save added later | — Pending |
+| Festival browse/save is list-based this cycle (no QR) | Avoids native camera/QR work; shared-link/QR save added later | ✓ Shipped Phase 5 |
 | Online-assumed for this slice (offline architected, not implemented) | Login needs network anyway; no cacheable content yet | — Pending |
 
 ## Evolution
@@ -127,4 +124,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-04 — Phase 3 (Mobile App Shell & i18n Foundation) complete & verified (12/12 must-haves): the Expo app exists, talks to the real API via `packages/contracts`, and enforces Lingui i18n from the first UI string; full core-value path signed off on real Android (iOS deferred). PLAT-02, I18N-01 validated.*
+*Last updated: 2026-08-09 — Phase 5 (Festival Selection & Home) complete & verified: browse/save (Meine/Alle), gate-less enter, and basic festival home overview shipped; `festivalId` cross-tenant isolation proven (SEC-02); cold-start restores only the last-entered saved festival (G-05-5b-r2 fix re-confirmed on device, UAT round 3); security threats_open: 0. Phase 4 auth/profile requirements also moved to Validated. Next: Phase 6 — Profile & Friends placeholders.*

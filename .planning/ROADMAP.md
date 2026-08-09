@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 2: OTP Auth & Festival Backend API** - better-auth email-OTP in NestJS, profile-completion + festival browse/save endpoints, login-first guard + `festivalId` data isolation (completed 2026-08-02)
 - [x] **Phase 3: Mobile App Shell & i18n Foundation** - `apps/mobile` Expo scaffold, auth/api clients, `Stack.Protected` navigation, Lingui + lint (completed 2026-08-04)
 - [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
-- [ ] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview
+- [x] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview (completed 2026-08-09)
 - [ ] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home
 
 ## Phase Details
@@ -256,5 +256,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 11/11 | In Progress|  |
+| 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |

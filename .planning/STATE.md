@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 05
-current_phase_name: festival-selection-home
-status: executing
-stopped_at: Completed 05-11-PLAN.md (gap closure G-05-5b-r2)
-last_updated: "2026-08-09T16:36:42.864Z"
+current_phase: 6
+current_phase_name: Profile & Friends Placeholders
+status: planning
+stopped_at: Phase 05 complete & verified (UAT round 3 pass, security clean); ready to plan Phase 6
+last_updated: "2026-08-09T18:38:36.027Z"
 last_activity: 2026-08-09
-last_activity_desc: Phase 05 execution started
+last_activity_desc: Phase 05 complete, transitioned to Phase 6
 progress:
   total_phases: 5
   completed_phases: 5
@@ -20,17 +20,17 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
+See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 05 — festival-selection-home
+**Current focus:** Phase 06 — Profile & Friends Placeholders
 
 ## Current Position
 
-Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 2 of 11
-Status: Ready to execute
-Last activity: 2026-08-09 — Phase 05 execution started
+Phase: 6 — Profile & Friends Placeholders
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-08-09 — Phase 05 complete, transitioned to Phase 6
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 22
+- Total plans completed: 33
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -50,6 +50,7 @@ Progress: [██████████] 100%
 | 02 | 6 | - | - |
 | 03 | 6 | - | - |
 | 04 | 7 | - | - |
+| 05 | 11 | - | - |
 
 **Recent Trend:**
 
@@ -195,7 +196,7 @@ None yet.
 [Issues that affect future work]
 
 - Phase 2 (MEDIUM, downgraded 2026-07-30): `@thallesp/nestjs-better-auth` × ts-rest body parsing — current wrapper (`better-auth >= 1.5.0`) auto-re-applies `express.json()` for non-auth routes, so no manual exclusion needed; ts-rest controllers just consume `req.body`. Spike = *confirm* (2-request body proof + resolve `/api/v1` vs `/api/auth` global-prefix collision + version-pin), not *design*. Hand-rolled `@All('auth/*path')` catch-all is Plan-C fallback. See PITFALLS.md Pitfall 3 update.
-- Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated and inherited by all later content reads — verify with a cross-festival data-isolation test. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
+- Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated — **baseline proven in Phase 5** (`apps/api/test/festival-isolation.spec.ts`: festival B's dates/place never leak to a visitor who saved only festival A). This isolation obligation is INHERITED by all later content reads (timetable, map, news) — re-assert the cross-tenant test as new tenant-scoped tables land. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
 - Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
@@ -217,6 +218,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T16:36:42.800Z
-Stopped at: Completed 05-11-PLAN.md (gap closure G-05-5b-r2)
+Last session: 2026-08-09T18:38:36Z
+Stopped at: Phase 05 complete & verified — UAT round 3 passed (G-05-5b-r2 cold-start fix re-confirmed on device), security threats_open: 0; ready to plan Phase 6
 Resume file: None
