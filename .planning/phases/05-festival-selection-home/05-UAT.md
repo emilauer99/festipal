@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 05-festival-selection-home
 source: [05-VERIFICATION.md]
 started: 2026-08-09T14:59:20Z
@@ -62,5 +62,15 @@ blocked: 0
   severity: major
   test: 2
   regression_of: G-05-5b
-  artifacts: []
-  missing: []
+  root_cause: "The 05-09 fix implemented 'restore only a SAVED festival' as 'only PERSIST when saved', making the persisted active-festival-slug a sticky 'last saved festival ever entered'. Entering an UNSAVED festival neither writes a new slug nor CLEARS the existing one (festivals.tsx:220-222 documents this as intentional), so a previously-entered saved festival (frequency-2026, the Home hero) stays stuck in MMKV and _layout.tsx:246-249 restores it unconditionally on every cold-start. Requires both a pre-existing saved slug AND the missing clear-on-unsaved-entry."
+  artifacts:
+    - path: "apps/mobile/app/(tabs)/festivals.tsx"
+      issue: "handleEnter (214-225) gates persist on `saved` but never clears the persisted slug when entering an unsaved festival; comment 220-222 documents the wrong 'never clears' decision"
+    - path: "apps/mobile/app/_layout.tsx"
+      issue: "cold-start restore (246-249) replays any persisted slug unconditionally, without confirming it is still the last-entered / still-saved festival"
+    - path: "apps/mobile/lib/active-festival-storage.ts"
+      issue: "clearActiveFestivalSlug exists but is only invoked on logout and 404, not on unsaved entry"
+  missing:
+    - "In festivals.tsx handleEnter, clear the persisted slug (else clearActiveFestivalSlug()) when entering an UNSAVED festival, reversing the 'never clears' decision at 220-222"
+    - "Keep _layout.tsx restore read synchronous (offline-safe); no async re-validation against listMyFestivals required"
+  debug_session: .planning/debug/cold-start-restores-unsaved-festival.md
