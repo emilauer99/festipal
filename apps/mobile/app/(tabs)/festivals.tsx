@@ -211,22 +211,28 @@ export default function FestivalsScreen() {
     saveMutation.mutate(festival);
   }
 
-  function handleEnter(slug: string) {
+  function handleEnter(slug: string, saved: boolean) {
     // D-06 / D-08 — entry is gate-less (ADR-014): no saved-state check gates
-    // this navigation. Persists the slug for the D-06 cold-start focus
-    // (05-05), then pushes the real slug-keyed festival home (HOME-02).
-    saveActiveFestivalSlug(slug);
+    // this navigation; entering an unsaved festival always still works.
+    // G-05-5b — the cold-start RESTORE must only ever bring back a SAVED
+    // festival, so the PERSIST is gated here on the saved-state already
+    // known on this row. An unsaved entry is never persisted (and never
+    // clears an already-persisted saved slug, so the last saved-and-opened
+    // festival is kept). This keeps _layout's cold-start read fully
+    // synchronous — no new gate, no async dependency (offline-first).
+    if (saved) saveActiveFestivalSlug(slug);
     router.push(`/f/${slug}`);
   }
 
   function renderCard({ item }: { item: Festival }) {
+    const saved = savedIds.has(item.id);
     return (
       <FestivalCard
         festival={item}
-        saved={savedIds.has(item.id)}
+        saved={saved}
         saving={savingIds.has(item.id)}
         locale={i18n.locale}
-        onEnter={() => handleEnter(item.slug)}
+        onEnter={() => handleEnter(item.slug, saved)}
         onSave={() => handleSave(item)}
       />
     );

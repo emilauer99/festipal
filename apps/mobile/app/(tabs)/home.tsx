@@ -76,6 +76,11 @@ export default function HomeScreen() {
   function handleEnter(slug: string) {
     // Gate-less entry (ADR-014, HOME-01) must never dead-end: persist first,
     // but a synchronous MMKV write failure still lets the navigation happen.
+    // G-05-5b — Home's hero and rail cards are sourced exclusively from
+    // `listMyFestivals`, so every card entered here is ALREADY saved;
+    // persisting unconditionally is always correct (unlike the Festivals
+    // tab's Alle segment, which also lists unsaved festivals and gates the
+    // persist on the row's saved-state — see festivals.tsx handleEnter).
     try {
       saveActiveFestivalSlug(slug);
     } catch {
