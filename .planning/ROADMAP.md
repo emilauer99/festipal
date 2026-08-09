@@ -195,7 +195,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
   5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
 
-**Plans**: 8/8 plans executed
+**Plans**: 9/10 plans executed
 
 **Wave 1** *(parallel — no file overlap)*
 
@@ -222,7 +222,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Gap closure** *(post-UAT, closes 05-UAT.md gaps; parallel — no file overlap)*
 
-- [ ] 05-09-PLAN.md — Tab nav + cold-start restore: reliable see-all→Alle segment (G-05-2), restore only saved festivals (G-05-5b), Back→Home tab fallback (G-05-5a)
+- [x] 05-09-PLAN.md — Tab nav + cold-start restore: reliable see-all→Alle segment (G-05-2), restore only saved festivals (G-05-5b), Back→Home tab fallback (G-05-5a)
 - [ ] 05-10-PLAN.md — Deep-link fixes: custom-scheme hostname+path reconstructor (G-05-7) + auth-agnostic capture so authenticated deep links beat the persisted slug (G-05-7b)
 
 **Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
@@ -255,5 +255,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
 | 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 8/8 | In Progress|  |
+| 5. Festival Selection & Home | 9/10 | In Progress|  |
 | 6. Profile & Friends Placeholders | 0/TBD | Not started | - |

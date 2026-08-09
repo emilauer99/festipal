@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
-status: verifying
-stopped_at: Completed 05-08-PLAN.md
-last_updated: "2026-08-06T13:29:24.926Z"
-last_activity: 2026-08-06
+status: executing
+stopped_at: Completed 05-09-PLAN.md
+last_updated: "2026-08-09T14:28:18.324Z"
+last_activity: 2026-08-09
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
-  completed_phases: 5
-  total_plans: 30
-  completed_plans: 30
+  completed_phases: 4
+  total_plans: 32
+  completed_plans: 31
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 8 of 8
-Status: Phase complete — ready for verification
-Last activity: 2026-08-06 — Phase 05 execution started
+Plan: 2 of 10
+Status: Ready to execute
+Last activity: 2026-08-09 — Phase 05 execution started
 
-Progress: [██████████] 100%
+Progress: [██████████] 97%
 
 ## Performance Metrics
 
@@ -91,6 +91,7 @@ Progress: [██████████] 100%
 | Phase 05 P06 | ~15min | 2 tasks | 3 files |
 | Phase 05 P07 | ~20min | 2 tasks | 5 files |
 | Phase 05 P08 | ~5min | 2 tasks | 1 files |
+| Phase 05 P09 | ~15min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -173,6 +174,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-07: rail/hero cards always pass saved={true} via a shared noopSave() no-op -- no Save affordance is ever wired on already-saved rows
 - [Phase ?]: 05-08: Task 2 on-device 8-step acceptance flow deferred to persisted UAT (05-UAT.md) by explicit user decision at checkpoint, consistent with Phase 3/4 device-UAT convention
 - [Phase ?]: 05-08: Task 1 full monorepo gate green -- typecheck/lint/test 10/10+10/10+7/7, frozen install no lockfile drift, mobile build/export both platforms OK
+- [Phase ?]: 05-09: G-05-2 fixed via useFocusEffect consuming a module-level consume-once segment-request singleton (mirrors pending-destination.ts) instead of a URL nonce param
+- [Phase ?]: 05-09: G-05-5b gated the cold-start-restore PERSIST on the row's already-known saved-state at enter time, keeping _layout.tsx's synchronous cold-start read unchanged
+- [Phase ?]: 05-09: G-05-5a changed only leaveFestival's no-history fallback to router.replace('/home'); the canGoBack() in-tab-history branch is untouched
 
 ### Pending Todos
 
@@ -207,6 +211,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-06T13:29:24.896Z
-Stopped at: Completed 05-08-PLAN.md
+Last session: 2026-08-09T14:28:18.266Z
+Stopped at: Completed 05-09-PLAN.md
 Resume file: None
