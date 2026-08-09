@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-09-PLAN.md
-last_updated: "2026-08-09T14:28:18.324Z"
+stopped_at: Completed 05-10-PLAN.md
+last_updated: "2026-08-09T14:33:30.713Z"
 last_activity: 2026-08-09
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 32
-  completed_plans: 31
+  completed_plans: 32
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 2 of 10
+Plan: 3 of 10
 Status: Ready to execute
 Last activity: 2026-08-09 — Phase 05 execution started
 
-Progress: [██████████] 97%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -92,6 +92,7 @@ Progress: [██████████] 97%
 | Phase 05 P07 | ~20min | 2 tasks | 5 files |
 | Phase 05 P08 | ~5min | 2 tasks | 1 files |
 | Phase 05 P09 | ~15min | 3 tasks | 5 files |
+| Phase 05 P10 | ~10min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -177,6 +178,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-09: G-05-2 fixed via useFocusEffect consuming a module-level consume-once segment-request singleton (mirrors pending-destination.ts) instead of a URL nonce param
 - [Phase ?]: 05-09: G-05-5b gated the cold-start-restore PERSIST on the row's already-known saved-state at enter time, keeping _layout.tsx's synchronous cold-start read unchanged
 - [Phase ?]: 05-09: G-05-5a changed only leaveFestival's no-history fallback to router.replace('/home'); the canGoBack() in-tab-history branch is untouched
+- [Phase ?]: 05-10: hostname rejoined into the deep-link route ONLY for the app's own custom scheme (Constants.expoConfig scheme, festipal fallback); https hostname never prepended (G-05-7)
+- [Phase ?]: 05-10: capture effect's authState.status===unauthenticated gate removed entirely — content-leak boundary preserved at replay (redirect effect), not capture (G-05-7b)
 
 ### Pending Todos
 
@@ -211,6 +214,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T14:28:18.266Z
-Stopped at: Completed 05-09-PLAN.md
+Last session: 2026-08-09T14:33:30.663Z
+Stopped at: Completed 05-10-PLAN.md
 Resume file: None

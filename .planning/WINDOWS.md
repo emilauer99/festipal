@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 20
+open_count: 21
 waived_count: 0
 fixed_count: 2
-total_count: 22
-last_updated: 2026-08-09T14:25:58.180Z
+total_count: 23
+last_updated: 2026-08-09T14:33:18.123Z
 ---
 
 # Broken Windows Ledger
@@ -37,6 +37,7 @@ last_updated: 2026-08-09T14:25:58.180Z
 | 20 | 05 | unrun-verify | apps/mobile/app/(tabs)/home.tsx |  | 05-08 Task 2 on-device 8-step acceptance flow not run headless: login->Home->Alle-segment CTA->save exactly-once+persist+rollback->enter/back->cold-start-back->cross-account logout hygiene->deep-link precedence over persisted slug->DE/EN date+null-fallback+TalkBack coming-soon a11y (all six requirements + cross-plan edges); persisted as .planning/phases/05-festival-selection-home/05-UAT.md for /gsd-verify-work 5 | open |  | 2026-08-06T13:28:08.825Z |  |
 | 21 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | G-05-5b on-device UAT not run headlessly: enter unsaved festival, force-quit, relaunch -> Home; save+enter+relaunch -> restores festival (05-09 task 2) | open |  | 2026-08-09T14:25:57.499Z |  |
 | 22 | 05 | unrun-verify | apps/mobile/lib/festival-navigation.ts |  | G-05-5a on-device UAT not run headlessly: cold-start Back -> Home tab; normal in-tab Back -> Festivals tab (05-09 task 3) | open |  | 2026-08-09T14:25:58.180Z |  |
+| 23 | 05 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05-UAT.md test 7: on-device deep-link verification (logged-out festipal://f/:slug double-slash, and already-authenticated cold-start festipal:///f/:slug) not run headlessly — requires real device | open |  | 2026-08-09T14:33:18.123Z |  |
 
 ````json
 [
@@ -302,6 +303,18 @@ last_updated: 2026-08-09T14:25:58.180Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-09T14:25:58.180Z",
+    "resolved_at": null
+  },
+  {
+    "id": 23,
+    "kind": "unrun-verify",
+    "phase": "05",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "05-UAT.md test 7: on-device deep-link verification (logged-out festipal://f/:slug double-slash, and already-authenticated cold-start festipal:///f/:slug) not run headlessly — requires real device",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-09T14:33:18.123Z",
     "resolved_at": null
   }
 ]
