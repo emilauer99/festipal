@@ -9,7 +9,7 @@ import type { Festival } from '@festipal/contracts';
 import { apiClient } from '../../lib/api-client';
 import { i18n } from '../../lib/i18n';
 import { festivalKeys } from '../../lib/festival-queries';
-import { saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { syncActiveFestivalOnEnter } from '../../lib/active-festival-storage';
 import { requestFestivalsSegment } from '../../lib/festivals-segment-request';
 import { orderFestivalsForHome } from '../../lib/select-next-festival';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
@@ -76,13 +76,16 @@ export default function HomeScreen() {
   function handleEnter(slug: string) {
     // Gate-less entry (ADR-014, HOME-01) must never dead-end: persist first,
     // but a synchronous MMKV write failure still lets the navigation happen.
-    // G-05-5b — Home's hero and rail cards are sourced exclusively from
+    // G-05-5b-r2 — Home's hero and rail cards are sourced exclusively from
     // `listMyFestivals`, so every card entered here is ALREADY saved;
-    // persisting unconditionally is always correct (unlike the Festivals
-    // tab's Alle segment, which also lists unsaved festivals and gates the
-    // persist on the row's saved-state — see festivals.tsx handleEnter).
+    // passing `saved: true` is behavior-preserving (still persists), but
+    // routes through syncActiveFestivalOnEnter — the shared single
+    // persist/clear authority (lib/active-festival-storage.ts) also used by
+    // the Festivals tab's Alle segment (festivals.tsx handleEnter) — so a
+    // future entry path can never silently reintroduce the sticky
+    // stale-saved-slug bug by calling saveActiveFestivalSlug directly.
     try {
-      saveActiveFestivalSlug(slug);
+      syncActiveFestivalOnEnter(slug, true);
     } catch {
       // Persistence is a nicety (D-06 cold-start focus) — entry itself never
       // depends on it succeeding.
