@@ -10,6 +10,7 @@ import { apiClient } from '../../lib/api-client';
 import { i18n } from '../../lib/i18n';
 import { festivalKeys } from '../../lib/festival-queries';
 import { saveActiveFestivalSlug } from '../../lib/active-festival-storage';
+import { requestFestivalsSegment } from '../../lib/festivals-segment-request';
 import { orderFestivalsForHome } from '../../lib/select-next-festival';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
@@ -85,8 +86,14 @@ export default function HomeScreen() {
   }
 
   function goToAllFestivals() {
-    // Shared cross-tab contract (REVIEW 05-06/05-07 HIGH) — the segment
-    // param is REQUIRED so the Festivals tab opens on Alle, not Meine.
+    // G-05-2 — both the empty-state "Browse festivals" CTA and the rail
+    // "All" see-all go through this one function, so both are fixed
+    // together. Queue the segment request BEFORE navigating so it is
+    // already pending when the Festivals tab's focus effect runs, covering
+    // the already-mounted case (a plain param change does not re-fire an
+    // effect keyed on an unchanged value). The `segment=all` param is kept
+    // as the initial-mount seed when the tab is not yet mounted.
+    requestFestivalsSegment('alle');
     router.push('/festivals?segment=all');
   }
 

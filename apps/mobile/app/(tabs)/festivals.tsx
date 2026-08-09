@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { LogOut } from 'lucide-react-native';
@@ -12,6 +12,7 @@ import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
 import { clearActiveFestivalSlug, saveActiveFestivalSlug } from '../../lib/active-festival-storage';
 import { festivalKeys, unwrapOk } from '../../lib/festival-queries';
+import { consumeFestivalsSegment } from '../../lib/festivals-segment-request';
 import { i18n } from '../../lib/i18n';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
@@ -67,13 +68,21 @@ export default function FestivalsScreen() {
   const normalizedParam = normalizeSegmentParam(params.segment);
   const [segment, setSegment] = useState<Segment>(() => normalizedParam);
 
-  // Re-sync ONLY when the URL search param itself changes on re-navigation
-  // (the Home CTA/rail's `/festivals?segment=all` target, 05-07) — manual
-  // SegmentedControl taps never touch this param, so they are never
-  // overridden by this effect (REVIEW 05-06/05-07 HIGH).
-  useEffect(() => {
-    setSegment(normalizedParam);
-  }, [normalizedParam]);
+  // G-05-2 fix — a param-value re-sync effect cannot re-fire when the Home
+  // CTA/rail always target the SAME `segment=all` param on a second
+  // navigation (the tab stays mounted across bottom-tab switches, so the
+  // value is unchanged and the effect never re-runs, letting a manually-set
+  // 'meine' survive). Replaced with a focus-time consume of the cross-tab
+  // festivals-segment-request singleton: on every focus, only apply a
+  // QUEUED segment request. A plain bottom-tab focus queues nothing, so
+  // `consumeFestivalsSegment()` returns null and a manual SegmentedControl
+  // tap is never clobbered (05-UAT.md G-05-2).
+  useFocusEffect(
+    useCallback(() => {
+      const requested = consumeFestivalsSegment();
+      if (requested) setSegment(requested);
+    }, []),
+  );
 
   // Non-re-entrancy guard (UI-SPEC logout-robustness backstop) — a double-tap
   // during the in-flight signOut() cannot fire a second concurrent call.
