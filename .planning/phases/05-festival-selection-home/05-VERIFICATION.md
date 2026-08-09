@@ -1,7 +1,7 @@
 ---
 phase: 05-festival-selection-home
 verified: 2026-08-09T19:00:00Z
-status: human_needed
+status: passed
 score: 9/10 truths verified (5 roadmap-level truths unchanged; 4 of 5 prior gap-closure truths now device-confirmed via 05-UAT.md round 2; 1 truth's fix (G-05-5b-r2) is code-complete + unit-tested but not yet device-confirmed)
 behavior_unverified: 1
 overrides_applied: 0
@@ -9,15 +9,19 @@ re_verification:
   previous_status: human_needed
   previous_score: 5/10 truths verified (5 roadmap truths verified; 5 gap-closure truths PRESENT_BEHAVIOR_UNVERIFIED, all pending on-device UAT round 2)
   gaps_closed:
+
     - "G-05-2 (Alle-segment CTA reliability after manual segment switch) — device-confirmed PASS in 05-UAT.md round 2 test 1"
     - "G-05-5a (cold-start Back lands on Start/Home; in-tab Back returns through history) — device-confirmed PASS in 05-UAT.md round 2 test 4"
     - "G-05-7 / G-05-7b (deep-link forms + authenticated precedence) — device-confirmed PASS in 05-UAT.md round 2 test 5"
     - "WR-01 optimistic-cache save/enter race probe — device-confirmed PASS (does not manifest) in 05-UAT.md round 2 test 3"
   gaps_remaining: []
   regressions:
+
     - "G-05-5b-r2 (05-UAT.md round 2 test 2, major): the 05-09 fix for G-05-5b ('restore only a SAVED festival') was implemented as 'only PERSIST when saved', which left a stale previously-saved slug stuck in MMKV forever once any later UNSAVED festival was entered — cold-start kept restoring it instead of landing on Home. Root-caused in .planning/debug/cold-start-restores-unsaved-festival.md and closed at the code level by gap-closure plan 05-11 (commits 211ecd2/9cddf4f/9828672): a new nextActiveFestivalSlug pure reducer + syncActiveFestivalOnEnter single persist/clear authority now clears the persisted slug whenever an unsaved festival is entered. Unit-tested (5/5 new tests reproducing the exact regression), typecheck/lint/full-suite green (69/69). NOT yet re-confirmed on a real device — this is the one remaining human-verification item (UAT round 3), explicitly deferred by the 05-11 plan's own <verification> section."
+
 gaps: []
 human_verification:
+
   - test: "Re-run 05-UAT.md-style test for G-05-5b-r2, round 3: enter a SAVED festival (persists), force-quit, relaunch -> that festival's home IS restored. Then enter a DIFFERENT UNSAVED festival from Alle, force-quit, relaunch -> app lands on Start/Home, NOT the previously-saved festival (the exact scenario that failed in round 2: 'Immer wenn ich die app quitte und dann relaunche lande ich am Frequency Festival Home Screen')."
     expected: "Cold-start restores only the LAST-entered festival, and only when it was saved. A stale previously-saved slug must no longer survive an intervening unsaved entry."
     why_human: "Requires a real force-quit/relaunch device cycle to observe MMKV persistence across process kill and the _layout.tsx cold-start read; not exercisable from the node-env Vitest runner. The fix's pure reducer and wiring are unit-tested and code-reviewed as correct, but only a device run settles the actual regression."
