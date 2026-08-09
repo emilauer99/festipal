@@ -140,6 +140,10 @@ None.
 - The plan's three `<human-check>` verification steps (G-05-2 cross-tab CTA reliability, G-05-5b cold-start restore gating, G-05-5a cold-start Back target) require a real device/emulator and were NOT run headlessly — logged to `.planning/WINDOWS.md` as unrun-verify entries (ids 21, 22; G-05-2's device check is covered by 05-UAT.md test 2's existing open item) for the `/gsd-verify-work 5` resume.
 - Sibling gap-closure plan `05-10` (gaps G-05-7/G-05-7b) is still incomplete and independent of this plan's changes (no shared files).
 
+## Self-Check: PASSED
+
+All 6 created/modified files verified present on disk; all 6 commits (4324b98, 1473dd2, 69f4e61, 8462a41, 68e038d, 583603b) verified present in git log.
+
 ---
 *Phase: 05-festival-selection-home*
 *Completed: 2026-08-09*
