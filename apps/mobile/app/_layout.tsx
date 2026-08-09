@@ -4,6 +4,7 @@ import { Stack, useRouter, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization';
 import * as Linking from 'expo-linking';
+import Constants from 'expo-constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from '@lingui/react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -15,6 +16,7 @@ import { authClient } from '../lib/auth-client';
 import { apiClient } from '../lib/api-client';
 import { capturePendingDestination, consumePendingDestination } from '../lib/pending-destination';
 import { getActiveFestivalSlug } from '../lib/active-festival-storage';
+import { reconstructDeepLinkRoute } from '../lib/deep-link';
 import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider } from '../lib/fonts-context';
 
@@ -81,6 +83,11 @@ export function forceUnauthenticated(): void {
 // those screens resolve to, not the folder names.
 const AUTH_FLOW_PATHS = new Set(['', 'email', 'verify', 'complete-profile']);
 
+// G-05-7 — fallback app scheme when `Constants.expoConfig?.scheme` is
+// unavailable at runtime (e.g. a bare/unexpected config shape); matches
+// app.json's `expo.scheme` ("festipal").
+const APP_SCHEME_FALLBACK = 'festipal';
+
 export default function RootLayout() {
   const [localeReady, setLocaleReady] = useState(false);
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
@@ -104,17 +111,36 @@ export default function RootLayout() {
   // component, deliberately ungated by the locale/session bootstrap effects
   // below (Pitfall 2): `Linking.useLinkingURL()` always returns the
   // cold-launch URL immediately on every render, so this effect observes it
-  // the instant the guard itself resolves to 'unauthenticated', regardless of
-  // how long locale/session resolution takes. Never captures an
-  // (auth)/(profile-setup) destination itself (content-leak boundary).
+  // as soon as it fires, regardless of how long locale/session resolution
+  // takes.
+  //
+  // G-05-7b (05-UAT.md) — capture is auth-agnostic: it fires REGARDLESS of
+  // `authState.status` (an already-authenticated cold start captures a
+  // fired deep link too, not only an unauthenticated one), so the deep link
+  // wins over the persisted active-festival slug in BOTH auth paths.
+  // `authState.status` stays in the dependency array so this effect
+  // re-evaluates across state transitions — it is declared BEFORE the
+  // redirect effect below, so on the 'authenticated' transition capture
+  // runs first and the redirect effect consumes what it just stored.
+  // This does NOT weaken the content-leak boundary (T-05-10-E / T-4-06-E
+  // lineage): capture NEVER stores an (auth)/(profile-setup) path (the
+  // AUTH_FLOW_PATHS guard below), and the captured href is only ever
+  // REPLAYED by the redirect effect AFTER the guard has independently
+  // reached 'authenticated' — the boundary is enforced at replay, not
+  // capture.
   const linkingUrl = Linking.useLinkingURL();
   useEffect(() => {
-    if (!linkingUrl || authState.status !== 'unauthenticated') return;
-    const { path } = Linking.parse(linkingUrl);
-    if (!path) return;
-    const normalizedPath = path.replace(/^\/+/, '');
-    if (AUTH_FLOW_PATHS.has(normalizedPath)) return;
-    capturePendingDestination(`/${normalizedPath}`);
+    if (!linkingUrl) return;
+    // G-05-7 — reconstruct the FULL route, not just `Linking.parse`'s
+    // `path`: for the app's own custom scheme, the `new URL()`-based parser
+    // puts the first path segment into `hostname` (URL authority), not
+    // `path` (see lib/deep-link.ts for the full root-cause explanation).
+    const rawScheme = Constants.expoConfig?.scheme;
+    const appScheme = (Array.isArray(rawScheme) ? rawScheme[0] : rawScheme) ?? APP_SCHEME_FALLBACK;
+    const route = reconstructDeepLinkRoute(Linking.parse(linkingUrl), appScheme);
+    if (!route) return;
+    if (AUTH_FLOW_PATHS.has(route)) return;
+    capturePendingDestination(`/${route}`);
   }, [linkingUrl, authState.status]);
 
   useEffect(() => {
