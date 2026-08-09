@@ -5,15 +5,15 @@ milestone_name: milestone
 current_phase: 05
 current_phase_name: festival-selection-home
 status: executing
-stopped_at: Completed 05-10-PLAN.md
-last_updated: "2026-08-09T14:33:30.713Z"
+stopped_at: Completed 05-11-PLAN.md (gap closure G-05-5b-r2)
+last_updated: "2026-08-09T16:36:42.864Z"
 last_activity: 2026-08-09
 last_activity_desc: Phase 05 execution started
 progress:
   total_phases: 5
   completed_phases: 5
-  total_plans: 32
-  completed_plans: 32
+  total_plans: 33
+  completed_plans: 33
 ---
 
 # Project State
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
 ## Current Position
 
 Phase: 05 (festival-selection-home) — EXECUTING
-Plan: 3 of 10
+Plan: 2 of 11
 Status: Ready to execute
 Last activity: 2026-08-09 — Phase 05 execution started
 
@@ -93,6 +93,7 @@ Progress: [██████████] 100%
 | Phase 05 P08 | ~5min | 2 tasks | 1 files |
 | Phase 05 P09 | ~15min | 3 tasks | 5 files |
 | Phase 05 P10 | ~10min | 2 tasks | 3 files |
+| Phase 05 P11 | ~15min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -180,6 +181,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-09: G-05-5a changed only leaveFestival's no-history fallback to router.replace('/home'); the canGoBack() in-tab-history branch is untouched
 - [Phase ?]: 05-10: hostname rejoined into the deep-link route ONLY for the app's own custom scheme (Constants.expoConfig scheme, festipal fallback); https hostname never prepended (G-05-7)
 - [Phase ?]: 05-10: capture effect's authState.status===unauthenticated gate removed entirely — content-leak boundary preserved at replay (redirect effect), not capture (G-05-7b)
+- [Phase ?]: 05-11: nextActiveFestivalSlug's return depends only on entered.saved (not prior) -- an unsaved entry ALWAYS clears the persisted slug, reversing 05-09's 'only persist when saved' semantics that made the persisted slug a sticky last-SAVED-festival-ever-entered value (G-05-5b-r2)
+- [Phase ?]: 05-11: syncActiveFestivalOnEnter is now the single persist/clear authority shared by festivals.tsx and home.tsx handleEnter -- home.tsx passes saved=true (behavior-preserving) purely so no future entry path can bypass the shared invariant
 
 ### Pending Todos
 
@@ -214,6 +217,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T14:33:30.663Z
-Stopped at: Completed 05-10-PLAN.md
+Last session: 2026-08-09T16:36:42.800Z
+Stopped at: Completed 05-11-PLAN.md (gap closure G-05-5b-r2)
 Resume file: None
