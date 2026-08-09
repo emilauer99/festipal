@@ -1,170 +1,140 @@
 ---
 phase: 05-festival-selection-home
-verified: 2026-08-09T14:54:46Z
+verified: 2026-08-09T19:00:00Z
 status: human_needed
-score: 5/10 truths verified (5 roadmap-level truths, unchanged since initial verification, backed by re-run code inspection + green suites); 5 gap-closure truths present + wired + newly unit-tested but behaviorally unverified pending on-device UAT re-run
-behavior_unverified: 5
+score: 9/10 truths verified (5 roadmap-level truths unchanged; 4 of 5 prior gap-closure truths now device-confirmed via 05-UAT.md round 2; 1 truth's fix (G-05-5b-r2) is code-complete + unit-tested but not yet device-confirmed)
+behavior_unverified: 1
 overrides_applied: 0
 re_verification:
   previous_status: human_needed
-  previous_score: 6/6 must-haves verified (requirement-level); 1 quality regression (CR-01) and 2 robustness warnings (WR-01/WR-02) open; 8 on-device UAT items pending
+  previous_score: 5/10 truths verified (5 roadmap truths verified; 5 gap-closure truths PRESENT_BEHAVIOR_UNVERIFIED, all pending on-device UAT round 2)
   gaps_closed:
-    - "CR-01 (German FloatingNav translations) — fixed in commit 6023cff, confirmed empty msgstr entries now filled (Home/Friends/Profile/coming soon), lingui compile --strict wired into package.json and passing"
-    - "WR-01 (concurrent-save cache rollback clobbering a sibling festival) — fixed in commit 2735700, onError now reconciles against the current cache filtered by festival.id instead of restoring a raw snapshot"
-    - "WR-02 (inconsistent MMKV guard coverage) — fixed in commit 69e7a9f, try/catch moved into active-festival-storage.ts's exported functions themselves so every call site gets the guarantee"
-    - "G-05-2 (Alle-segment CTA unreliable after a manual segment switch) — root cause fixed via new festivals-segment-request.ts consume-once singleton + useFocusEffect (05-09)"
-    - "G-05-5b (cold-start restored unsaved festivals) — persist now gated on saved-state at enter time (05-09)"
-    - "G-05-5a (cold-start Back landed on Festivals tab instead of Home) — leaveFestival's no-history fallback now targets /home (05-09)"
-    - "G-05-7 (festipal://f/:slug double-slash form dropped the 'f/' segment) — new pure reconstructDeepLinkRoute helper rejoins hostname+path for the app's own custom scheme (05-10)"
-    - "G-05-7b (authenticated deep link ignored in favor of the persisted slug) — capture effect's auth gate removed; capture now fires regardless of authState.status (05-10)"
+    - "G-05-2 (Alle-segment CTA reliability after manual segment switch) — device-confirmed PASS in 05-UAT.md round 2 test 1"
+    - "G-05-5a (cold-start Back lands on Start/Home; in-tab Back returns through history) — device-confirmed PASS in 05-UAT.md round 2 test 4"
+    - "G-05-7 / G-05-7b (deep-link forms + authenticated precedence) — device-confirmed PASS in 05-UAT.md round 2 test 5"
+    - "WR-01 optimistic-cache save/enter race probe — device-confirmed PASS (does not manifest) in 05-UAT.md round 2 test 3"
   gaps_remaining: []
   regressions:
-    - "New WR-01 (05-REVIEW.md, 2026-08-09 re-review): G-05-5b's saved-gate reads the OPTIMISTIC (pre-settle) savedIds cache at enter time — a same-row Save-then-Enter race where the save subsequently fails can persist the active-festival slug for a festival that was never actually saved, violating the G-05-5b invariant it was built to enforce. Warning-level, not yet fixed as of this verification. See Anti-Patterns Found."
+    - "G-05-5b-r2 (05-UAT.md round 2 test 2, major): the 05-09 fix for G-05-5b ('restore only a SAVED festival') was implemented as 'only PERSIST when saved', which left a stale previously-saved slug stuck in MMKV forever once any later UNSAVED festival was entered — cold-start kept restoring it instead of landing on Home. Root-caused in .planning/debug/cold-start-restores-unsaved-festival.md and closed at the code level by gap-closure plan 05-11 (commits 211ecd2/9cddf4f/9828672): a new nextActiveFestivalSlug pure reducer + syncActiveFestivalOnEnter single persist/clear authority now clears the persisted slug whenever an unsaved festival is entered. Unit-tested (5/5 new tests reproducing the exact regression), typecheck/lint/full-suite green (69/69). NOT yet re-confirmed on a real device — this is the one remaining human-verification item (UAT round 3), explicitly deferred by the 05-11 plan's own <verification> section."
 gaps: []
 human_verification:
-  - test: "Re-run 05-UAT.md test 2: from the empty-state CTA / rail 'Alle' see-all, switch Festivals to Meine, return to Home, tap 'Alle Festivals ansehen' again — Festivals tab must open on Alle (not Meine)."
-    expected: "The Alle segment opens on every navigation, including the previously-broken second-navigation-after-manual-switch case (G-05-2)."
-    why_human: "The consume-once singleton's request/consume contract is unit-tested (12/12), but the end-to-end cross-tab focus-effect UI behavior (CTA tap -> navigate -> useFocusEffect fires -> setSegment) requires a real device/emulator; no RN-rendering test harness is wired for this repo."
-  - test: "Re-run 05-UAT.md test 5, part 1 (WINDOWS.md id 21): enter an UNSAVED festival from Alle, force-quit, relaunch -> must land on Start/Home, not the festival. Then save+enter+relaunch -> must restore that festival."
-    expected: "Cold-start restores only a SAVED festival's home; an entered-but-unsaved festival lands on Home."
-    why_human: "Requires a real force-quit/relaunch device cycle to observe MMKV persistence and the _layout.tsx cold-start read; not exercisable from the node-env Vitest runner."
-  - test: "Additionally probe the new WR-01 race while re-running the above: tap Save and immediately tap Enter on the SAME unsaved row before the save settles, then force the save to fail (e.g. toggle airplane mode mid-tap), force-quit, relaunch."
-    expected: "Cold-start must NOT restore that festival (it was never actually saved) — if it does, WR-01 (05-REVIEW.md) is confirmed as a real regression, not just a theoretical one, and needs a follow-up fix (gate the persist on the settled save result, not the optimistic cache)."
-    why_human: "This is a timing-dependent race between the optimistic save-mutation cache write and the enter-time saved-state read; only reproducible with a real network toggle and device timing."
-  - test: "Re-run 05-UAT.md test 5, part 2 (WINDOWS.md id 22): cold-start into a restored (saved) festival home, tap Back -> must land on Start/Home tab. Enter a festival normally from the Festivals tab, tap Back -> must return to the Festivals tab."
-    expected: "Cold-start Back targets Home/Start; normal in-tab Back still returns through history (G-05-5a)."
-    why_human: "Requires a real device to distinguish a replace-based cold-start entry from a push-based in-tab entry and observe the Back target."
-  - test: "Re-run 05-UAT.md test 7 (WINDOWS.md id 23), both sub-cases against the seeded second festival nova-sound-2026: (a) logged out, session revoked, slug A=frequency-2026 persisted, open festipal://f/nova-sound-2026 (double-slash) -> auth gate, then nova-sound-2026 opens. (b) Already authenticated, close app, fire festipal:///f/nova-sound-2026 -> nova-sound-2026 opens, NOT the persisted frequency-2026."
-    expected: "Both the double-slash custom-scheme form and an already-authenticated deep link resolve correctly and take precedence over the persisted slug; the previously-confirmed logged-out triple-slash precedence must not regress."
-    why_human: "reconstructDeepLinkRoute's transformation logic is fully unit-tested (8/8 fixture cases mirroring exact expo-linking@57 parse output), but firing a real OS-level festipal:// URL and observing app navigation requires a device. Additionally, 05-REVIEW.md WR-04 flags that this fix is wired only into the ONE-SHOT cold-start capture/replay path — a warm deep-link tap (app already running past its first authenticated transition) goes through Expo Router's own linking resolution instead, which was not verified to share (or not share) the same hostname-drop defect. Confirm cold-start case here; a warm-tap check is a separate follow-up."
+  - test: "Re-run 05-UAT.md-style test for G-05-5b-r2, round 3: enter a SAVED festival (persists), force-quit, relaunch -> that festival's home IS restored. Then enter a DIFFERENT UNSAVED festival from Alle, force-quit, relaunch -> app lands on Start/Home, NOT the previously-saved festival (the exact scenario that failed in round 2: 'Immer wenn ich die app quitte und dann relaunche lande ich am Frequency Festival Home Screen')."
+    expected: "Cold-start restores only the LAST-entered festival, and only when it was saved. A stale previously-saved slug must no longer survive an intervening unsaved entry."
+    why_human: "Requires a real force-quit/relaunch device cycle to observe MMKV persistence across process kill and the _layout.tsx cold-start read; not exercisable from the node-env Vitest runner. The fix's pure reducer and wiring are unit-tested and code-reviewed as correct, but only a device run settles the actual regression."
 ---
 
 # Phase 5: Festival Selection & Home Verification Report
 
 **Phase Goal:** A visitor can browse all festivals, save ones to "Meine", enter any festival gate-lessly, and land on that festival's home with a basic overview they can open
-**Verified:** 2026-08-09T14:54:46Z
+**Verified:** 2026-08-09T19:00:00Z
 **Status:** human_needed
-**Re-verification:** Yes — after gap closure (plans 05-09, 05-10 closing UAT gaps G-05-2, G-05-5a, G-05-5b, G-05-7, G-05-7b)
+**Re-verification:** Yes — after gap-closure plan 05-11 (G-05-5b-r2), itself triggered by a regression found during 05-UAT.md round 2 on-device testing of the earlier 05-09/05-10 gap closures
 
 ## Goal Achievement
 
 ### Observable Truths
 
-**A. Roadmap Success Criteria (re-confirmed unchanged since initial verification)**
+**A. Roadmap Success Criteria (re-confirmed unchanged since initial verification; files untouched by 05-11 except where noted)**
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Festivals tab shows Meine/Alle segment (default Meine); Alle lists every festival with name/dates/place, visually distinguishing saved ones (FEST-01, FEST-02) | ✓ VERIFIED | `apps/mobile/app/(tabs)/festivals.tsx` `normalizeSegmentParam` fails closed to `meine`; `computeAlleState()`/`computeMeineState()` source `listFestivals`/`listMyFestivals`; `savedIds` (client-derived) drives `FestivalCard`'s `saved` prop. Re-read directly, unchanged from initial verification. |
-| 2 | Save persists server-side (`my_festival`) and survives app restart (FEST-03) | ✓ VERIFIED | `saveMutation` in `festivals.tsx:143-205` — `unwrapOk` throws on non-200 so `onError` fires; `onSettled` invalidates `festivalKeys.mine` (server reconciliation, not client-only cache). `apps/api/test/save-idempotency.spec.ts` part of the green 45/45 api suite (re-ran live against Neon this session). |
-| 3 | A visitor can enter any festival gate-lessly (saved or browsed), landing on that festival's home (FEST-04 entry, HOME-01) | ✓ VERIFIED | `handleEnter(slug, saved)` in `festivals.tsx:214-225` calls `router.push(`/f/${slug}`)` unconditionally, outside the `if (saved)` persist gate — entry itself is never gated on saved-state, only the cold-start-restore persist is (G-05-5b). `home.tsx:76-91` same pattern. |
-| 4 | The home shows a basic festival overview (identity + key facts: name, dates, place) the visitor can open (HOME-02) | ✓ VERIFIED | `apps/mobile/app/(festival)/f/[festivalSlug].tsx` unchanged this cycle; renders name H1 + `formatDateRange` + place + `ComingSoonTile` grid (re-confirmed present). |
-| 5 | A visitor can return to the festival list from inside a festival without a dead-end (FEST-04) | ✓ VERIFIED | `leaveFestival(router)` (`lib/festival-navigation.ts`) — `canGoBack() ? back() : replace('/home')`; the `canGoBack()` in-tab branch (normal push-entry -> Festivals tab) is unchanged. The no-history fallback target changed from `/festivals` to `/home` this cycle (G-05-5a, explicit user-requested change captured in 05-UAT.md) — still never a dead-end, just a different (product-intended) landing tab. |
+| 1 | Festivals tab shows Meine/Alle segment (default Meine); Alle lists every festival with name/dates/place, visually distinguishing saved ones (FEST-01, FEST-02) | ✓ VERIFIED | `apps/mobile/app/(tabs)/festivals.tsx` unchanged in this area; unaffected by 05-11's diff (which only touched `handleEnter` and its import). |
+| 2 | Save persists server-side (`my_festival`) and survives app restart (FEST-03) | ✓ VERIFIED | `saveMutation` unchanged this cycle; `apps/api/test/save-idempotency.spec.ts` unaffected. |
+| 3 | A visitor can enter any festival gate-lessly (saved or browsed), landing on that festival's home (FEST-04 entry, HOME-01) | ✓ VERIFIED | `handleEnter(slug, saved)` in `festivals.tsx:214-228` — `router.push(`/f/${slug}`)` still runs unconditionally, outside/after the (now non-gating) `syncActiveFestivalOnEnter` call. `home.tsx:76-94` wraps the persist call in try/catch specifically so a synchronous MMKV failure never blocks `router.push`. Gate-less entry preserved. |
+| 4 | The home shows a basic festival overview (identity + key facts: name, dates, place) the visitor can open (HOME-02) | ✓ VERIFIED | `apps/mobile/app/(festival)/f/[festivalSlug].tsx` unchanged this cycle. |
+| 5 | A visitor can return to the festival list from inside a festival without a dead-end (FEST-04) | ✓ VERIFIED | `apps/mobile/lib/festival-navigation.ts` unchanged this cycle (last touched 05-09, already device-confirmed via UAT round 2 test 4 below). |
 
-**B. Gap-Closure Truths (new this cycle — 05-09/05-10 must_haves)**
+**B. Gap-Closure Truths (05-09/05-10, now cross-checked against 05-UAT.md round 2 device results)**
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 6 | The Home empty-state CTA / rail "Alle" see-all reliably opens the Festivals tab on the Alle segment on EVERY navigation, including after a manual switch to Meine and back — without clobbering a manual SegmentedControl tap on a plain tab-bar focus (G-05-2) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Root cause fixed: `festivals.tsx`'s param-value re-sync `useEffect` (which could not re-fire on an unchanged `segment=all` param) replaced with a `useFocusEffect` that consumes `consumeFestivalsSegment()`; `home.tsx`'s `goToAllFestivals` now calls `requestFestivalsSegment('alle')` before navigating. New `festivals-segment-request.ts` singleton's request/consume/consume-once/last-write-wins contract is unit-tested (4/4 passing, re-ran this session). The cross-tab focus-effect UI behavior itself (CTA tap -> focus -> segment switch surviving a manual tab switch) has no RN-rendering test harness in this repo and needs the on-device re-run of 05-UAT.md test 2. |
-| 7 | On cold-start, only a SAVED festival's home is restored; a merely-entered-but-unsaved festival lands on Home instead (G-05-5b) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | `festivals.tsx handleEnter(slug, saved)` persists `saveActiveFestivalSlug(slug)` only `if (saved)`; `home.tsx` keeps its unconditional persist (all Home cards are sourced from `listMyFestivals`, i.e. always saved) — code matches plan exactly, `typecheck`/`lint`/unit suite green. Requires a real force-quit/relaunch cycle to observe (WINDOWS.md id 21). **Caveat surfaced by 05-REVIEW.md WR-01 (2026-08-09, not yet fixed):** the `saved` flag read at enter time is the OPTIMISTIC `savedIds` (written synchronously in `saveMutation.onMutate`, before the network call resolves) — a same-row Save-then-Enter race where the save subsequently fails can persist the slug for a festival that was never actually saved. See Anti-Patterns Found and the added Human Verification probe. |
-| 8 | Back from a cold-start-launched Festival Home lands on the Start/Home tab; Back from a normal in-tab push-entry still returns through history (G-05-5a) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | `leaveFestival`'s no-history fallback changed to `router.replace('/home')`; `canGoBack()` branch untouched. `typecheck` passes (`/home` typed-route literal resolves). Requires a real device to distinguish a replace-based cold-start entry from a push-based in-tab entry (WINDOWS.md id 22). |
-| 9 | `festipal://f/:slug` (double-slash), `festipal:///f/:slug` (triple-slash), and `https://<domain>/f/:slug` all reconstruct to the identical `f/:slug` route; the https hostname is never prepended (G-05-7) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Pure `reconstructDeepLinkRoute(parsed, appScheme)` (`lib/deep-link.ts`) rejoins hostname+path ONLY when `parsed.scheme === appScheme`; unit-tested 8/8 (double-slash, triple-slash, https, both auth-path forms, root, 2x appScheme parameterization) against fixtures documented to mirror exact expo-linking@57 `Linking.parse()` output — re-ran this session, passing. Wired into `_layout.tsx`'s capture effect (`Constants.expoConfig?.scheme` resolution + `'festipal'` fallback, confirmed at lines 131-144). The pure transformation is proven; the OS-delivered-URL -> app-navigation end-to-end path needs a real device (WINDOWS.md id 23). **05-REVIEW.md WR-04 (not yet fixed):** this fix is wired only into the one-shot cold-start capture/replay path (guarded by `coldStartRedirectRef`) — a *warm* deep-link tap (app already running past its first `'authenticated'` transition) goes through Expo Router's own linking resolution instead, which was not verified to share or not share the same defect. |
-| 10 | A deep link fired while the user is ALREADY authenticated is honored and opens the linked festival, taking precedence over the persisted active-festival slug; the existing logged-out precedence does not regress (G-05-7b) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Capture effect's guard changed from `!linkingUrl \|\| authState.status !== 'unauthenticated'` to `!linkingUrl` only (confirmed at `_layout.tsx:133`) — capture now fires regardless of auth status. Redirect effect (unchanged, `_layout.tsx:232-253`) still consumes the pending destination and returns immediately, before ever reading the persisted slug — precedence logic is unchanged and was device-confirmed working for the logged-out case in the original UAT. The authenticated-capture path itself needs the same on-device re-run (WINDOWS.md id 23). **05-REVIEW.md WR-02 (not yet fixed, doc-only):** `lib/pending-destination.ts`'s header comment still states capture is auth-gated, contradicting the current code — a documentation-accuracy issue on a security-relevant boundary, not a functional defect. |
+| 6 | The Home empty-state CTA / rail "Alle" see-all reliably opens the Festivals tab on the Alle segment on EVERY navigation, including after a manual switch to Meine and back (G-05-2) | ✓ VERIFIED | Code unchanged since prior verification (`festivals-segment-request.ts` singleton + `useFocusEffect`). **Now device-confirmed**: 05-UAT.md round 2 test 1 = `result: pass`. |
+| 7 | On cold-start, only a SAVED festival's home is restored; a merely-entered-but-unsaved festival lands on Home instead (G-05-5b) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | 05-UAT.md round 2 test 2 found this **FAILED on device** (`result: issue`, severity major) — the 05-09 fix only gated the PERSIST on `saved`, never CLEARED a stale prior slug on an unsaved entry, so a previously-saved festival stayed stuck as the cold-start target forever. Root-caused (`.planning/debug/cold-start-restores-unsaved-festival.md`) and fixed at the code level by gap-closure plan 05-11: new `nextActiveFestivalSlug` pure reducer (`active-festival-storage.ts:81-86`) returns `undefined` whenever `entered.saved` is false regardless of `prior`, and the new `syncActiveFestivalOnEnter` (lines 104-112) is the single effectful persist/clear authority now called from both `festivals.tsx:226` and `home.tsx:88`. Verified present, substantive, and wired directly against source (re-read this session, not trusted from SUMMARY). 5 new unit tests reproduce the exact regression scenario (`prior='frequency-2026'` + unsaved entry of `'nova-sound-2026'` → `undefined`) and pass; re-ran `pnpm --filter @festipal/mobile exec vitest run lib/__tests__/active-festival-entry.test.ts` this session — 5/5 pass. Full mobile `typecheck`/`lint`/`test` re-ran this session — all clean (69/69 tests). **The fix itself has NOT yet been re-confirmed on a real device** (round 2's force-quit/relaunch failure is the only evidence of the underlying bug; round 3 is required to confirm the fix actually resolves it in the real MMKV/cold-start environment). This is a behavior-dependent (state-transition/persistence-across-process-kill) truth that unit tests alone cannot fully settle — routed to human verification per the behavior-dependent-truth rule. |
+| 8 | Back from a cold-start-launched Festival Home lands on the Start/Home tab; Back from a normal in-tab push-entry still returns through history (G-05-5a) | ✓ VERIFIED | Code unchanged since prior verification. **Now device-confirmed**: 05-UAT.md round 2 test 4 = `result: pass`. |
+| 9 | `festipal://f/:slug` (double-slash), `festipal:///f/:slug` (triple-slash), and `https://<domain>/f/:slug` all reconstruct to the identical `f/:slug` route (G-05-7) | ✓ VERIFIED | Code unchanged since prior verification. **Now device-confirmed**: 05-UAT.md round 2 test 5 sub-case (a) = `result: pass`. |
+| 10 | A deep link fired while the user is ALREADY authenticated is honored and takes precedence over the persisted active-festival slug; logged-out precedence does not regress (G-05-7b) | ✓ VERIFIED | Code unchanged since prior verification. **Now device-confirmed**: 05-UAT.md round 2 test 5 sub-case (b) = `result: pass`. |
 
-**Score:** 5/10 truths ✓ VERIFIED (all 5 roadmap-level truths, unchanged and re-confirmed against source); 5/10 ⚠️ PRESENT_BEHAVIOR_UNVERIFIED (all 5 gap-closure truths — code is present, wired, and unit-tested where automatable, but the on-device behavioral confirmation from 05-UAT.md tests 2, 5, and 7 has not yet been re-run against the fixed code). **0 truths FAILED.**
+**Additional device-confirmed item not itself a numbered roadmap/gap-closure truth:** the WR-01 optimistic-cache Save-then-Enter race (05-REVIEW.md, flagged as an open warning in the prior verification cycle) was specifically probed in 05-UAT.md round 2 test 3 (force a failing save mid-tap, force-quit, relaunch) and **passed** — the race does not manifest as a real cold-start regression on-device. The underlying code pattern (reading the optimistic `savedIds` cache at enter time) is unchanged and still theoretically present, but is no longer an open, unconfirmed risk; retained below as an informational anti-pattern note rather than a blocker.
+
+**Score:** 9/10 truths ✓ VERIFIED (5 roadmap-level truths + 4 gap-closure truths now device-confirmed via 05-UAT.md round 2); 1/10 ⚠️ PRESENT_BEHAVIOR_UNVERIFIED (truth 7 — G-05-5b-r2's fix is code-complete, unit-tested, and directly re-verified against source this session, but not yet device-confirmed). **0 truths FAILED.**
 
 ### Required Artifacts
 
 | Artifact | Expected | Status | Details |
 |----------|----------|--------|---------|
-| `apps/mobile/lib/festivals-segment-request.ts` | consume-once cross-tab segment-request singleton | ✓ VERIFIED | Matches plan exactly: `requestFestivalsSegment`/`consumeFestivalsSegment`, plain in-memory module var (not MMKV). |
-| `apps/mobile/lib/__tests__/festivals-segment-request.test.ts` | unit spec covering request/consume round-trip, consume-once, no-request, last-write-wins | ✓ VERIFIED | 4/4 passing (re-ran this session). |
-| `apps/mobile/lib/deep-link.ts` | pure `reconstructDeepLinkRoute(parsed, appScheme)` | ✓ VERIFIED | Matches plan exactly: hostname rejoined only for the app's own custom scheme, `normalizeSegment` strips/drops empty segments. |
-| `apps/mobile/lib/__tests__/deep-link.test.ts` | unit spec over all URL forms + edge cases | ✓ VERIFIED | 8/8 passing (re-ran this session). |
-| `apps/mobile/app/(tabs)/festivals.tsx` | useFocusEffect segment consume, handleEnter(slug, saved) saved-gated persist | ✓ VERIFIED | Both changes present and match plan (lines 68-85, 214-225). |
-| `apps/mobile/app/(tabs)/home.tsx` | goToAllFestivals queues segment request | ✓ VERIFIED | `requestFestivalsSegment('alle')` called before `router.push` (lines 93-103). |
-| `apps/mobile/lib/festival-navigation.ts` | leaveFestival no-history fallback -> `/home` | ✓ VERIFIED | Confirmed; `canGoBack()` branch untouched. |
-| `apps/mobile/app/_layout.tsx` | reconstructDeepLinkRoute wired, auth-agnostic capture guard | ✓ VERIFIED | `reconstructDeepLinkRoute` import + call at lines 140; guard is `if (!linkingUrl) return;` at line 133 (no auth-status check). |
-| `apps/mobile/locales/de/messages.po` | CR-01 fix — Home/Friends/Profile/coming-soon translated | ✓ VERIFIED | All 4 msgstr entries filled (`Start`/`Freunde`/`Profil`/`bald verfügbar`); re-confirmed directly, not just trusting the SUMMARY. |
-| `apps/mobile/package.json` | `lingui compile --strict` gate | ✓ VERIFIED | Per 05-REVIEW-FIX.md commit `6023cff`; not independently re-diffed this session but consistent with the passing `lingui compile --strict` claim in 05-REVIEW-FIX.md. |
-| `apps/mobile/lib/active-festival-storage.ts` | WR-02 fix — try/catch moved into the module's exported functions | ✓ VERIFIED | All three exports (`saveActiveFestivalSlug`, `getActiveFestivalSlug`, `clearActiveFestivalSlug`) wrap their MMKV call in try/catch. |
+| `apps/mobile/lib/active-festival-storage.ts` | exports `nextActiveFestivalSlug` (pure) + `syncActiveFestivalOnEnter` (effectful) | ✓ VERIFIED | Both present, matching plan's `<behavior>` spec exactly (lines 81-112); read directly this session. |
+| `apps/mobile/lib/__tests__/active-festival-entry.test.ts` | reproduces the stale-saved-slug regression | ✓ VERIFIED | 5 tests covering every row of the plan's behavior table, including the exact regression case; re-ran this session, 5/5 pass. |
+| `apps/mobile/app/(tabs)/festivals.tsx` | `handleEnter` calls `syncActiveFestivalOnEnter(slug, saved)` | ✓ VERIFIED | Lines 214-228; import updated line 13; `clearActiveFestivalSlug` still separately used by `handleLogout` (line 108). |
+| `apps/mobile/app/(tabs)/home.tsx` | `handleEnter` calls `syncActiveFestivalOnEnter(slug, true)` | ✓ VERIFIED | Lines 76-94; import updated line 12. |
+| `apps/mobile/app/_layout.tsx` | cold-start read stays synchronous, unchanged | ✓ VERIFIED | `git log` confirms no commit touching this file since 05-10 (`bb9b2aa`); `getActiveFestivalSlug()` call at line 246 unchanged. |
 
 ### Key Link Verification
 
 | From | To | Via | Status | Details |
 |------|-----|-----|--------|---------|
-| `home.goToAllFestivals` | `requestFestivalsSegment('alle')` | direct call before `router.push` | ✓ WIRED | `home.tsx:101-102`. |
-| `festivals.tsx` focus | `consumeFestivalsSegment()` | `useFocusEffect` | ✓ WIRED | `festivals.tsx:80-85`. |
-| `festivals.handleEnter` | `saveActiveFestivalSlug` | gated on `saved` param | ✓ WIRED (with WR-01 race caveat, see truth #7) | `festivals.tsx:214-225`; `renderCard` passes `savedIds.has(item.id)` as `saved` (line 235). |
-| `leaveFestival` no-history branch | `/home` route | `router.replace('/home')` | ✓ WIRED | `festival-navigation.ts:24-30`; `/home` resolves per `(tabs)/home.tsx` + `initialRouteName="home"`. |
-| `_layout.tsx` capture effect | `reconstructDeepLinkRoute` | direct call with `Linking.parse(linkingUrl)` + resolved `appScheme` | ✓ WIRED | `_layout.tsx:138-143`. |
-| `_layout.tsx` capture effect | `capturePendingDestination` | auth-agnostic guard (`!linkingUrl` only) | ✓ WIRED | `_layout.tsx:132-144`. |
-| `_layout.tsx` redirect effect | `consumePendingDestination()` before `getActiveFestivalSlug()` | early-return precedence, unchanged this cycle | ✓ WIRED | `_layout.tsx:232-253` (confirmed unmodified in this diff range per 05-REVIEW.md). |
+| `festivals.tsx handleEnter` | `syncActiveFestivalOnEnter(slug, saved)` | direct call, replaces old inline persist-if-saved logic | ✓ WIRED | `festivals.tsx:226`; `router.push` on line 227 still runs unconditionally after it — entry stays gate-less. |
+| `home.tsx handleEnter` | `syncActiveFestivalOnEnter(slug, true)` | direct call inside try/catch, replaces old direct `saveActiveFestivalSlug` call | ✓ WIRED | `home.tsx:88`; try/catch preserved so a throw still can't block `router.push`. |
+| production `app/` code | `saveActiveFestivalSlug` (direct call) | grep across `apps/mobile/app` | ✓ CONFIRMED ABSENT | Only reference left is a comment in `home.tsx:86` documenting the invariant; no production call site bypasses the shared helper. |
+| `_layout.tsx` cold-start read | `getActiveFestivalSlug()` | unchanged synchronous read | ✓ WIRED (unchanged) | No commits to `_layout.tsx` since 05-10; the read side of the fix was intentionally left untouched per plan scope. |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 |----------|---------|--------|--------|
-| New gap-closure unit tests (segment-request + deep-link) | `pnpm --filter @festipal/mobile exec vitest run lib/__tests__/festivals-segment-request.test.ts lib/__tests__/deep-link.test.ts` | 2 files / 12 tests passed | ✓ PASS |
-| Full mobile unit suite | `pnpm --filter @festipal/mobile test` | 8 files / 64 tests passed | ✓ PASS |
-| Full mobile typecheck | `pnpm --filter @festipal/mobile typecheck` | clean, no errors | ✓ PASS |
-| Full mobile lint | `pnpm --filter @festipal/mobile lint` | clean, no errors | ✓ PASS |
-| Full API integration suite | `pnpm --filter @festipal/api test` | 9 files / 45 tests passed, live against Neon | ✓ PASS |
-| Debt-marker scan (TBD/FIXME/XXX/TODO/HACK/PLACEHOLDER) across all 28 phase-modified files (05-01..05-10) | `grep -nE` per file | 0 matches | ✓ PASS |
-| Old static festival placeholder / `app/festivals/*` removal | directory listing | still not found; only `(festival)/f/[festivalSlug].tsx` and `(tabs)/festivals.tsx` remain | ✓ PASS |
-| Second seeded festival for deep-link UAT (`nova-sound-2026`) | `grep` `packages/db/scripts/seed.ts` | present alongside `frequency-2026` | ✓ PASS |
+| New G-05-5b-r2 regression-reproduction unit test | `pnpm --filter @festipal/mobile exec vitest run lib/__tests__/active-festival-entry.test.ts` (from `apps/mobile`) | 1 file / 5 tests passed | ✓ PASS |
+| Full mobile unit suite | `pnpm --filter @festipal/mobile test` | 9 files / 69 tests passed | ✓ PASS |
+| Full mobile typecheck | `pnpm --filter @festipal/mobile typecheck` (`tsc --noEmit`) | clean, no errors | ✓ PASS |
+| Full mobile lint | `pnpm --filter @festipal/mobile lint` (`eslint .`) | clean, no errors | ✓ PASS |
+| Debt-marker scan on 05-11's 4 modified/created files | `grep -nE "TBD|FIXME|XXX|TODO|HACK|PLACEHOLDER"` | 0 matches | ✓ PASS |
+| Commit provenance for 05-11's 3 claimed commits | `git show --stat 211ecd2 / 9cddf4f / 9828672` | all 3 exist, match SUMMARY's claimed file/line changes and RED→GREEN ordering | ✓ PASS |
 
 ### Probe Execution
 
-Not applicable — this phase has no `scripts/*/tests/probe-*.sh` probes; verification relies on the Vitest/typecheck/lint suites above (Step 7b), which were run directly.
+Not applicable — this phase has no `scripts/*/tests/probe-*.sh` probes; verification relies on the Vitest/typecheck/lint suites above plus the human-executed 05-UAT.md rounds.
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
 |-------------|-------------|--------------|--------|----------|
-| FEST-01 | 05-01, 05-06, 05-09 | Browse all festivals, each showing name/dates/place | ✓ SATISFIED | Unchanged listAll/listFestivals projections + Alle segment render; 05-09 additionally fixed the Alle-segment CTA reliability (G-05-2, behavior pending on-device re-confirm). |
+| FEST-01 | 05-01, 05-06, 05-09 | Browse all festivals, each showing name/dates/place | ✓ SATISFIED | Unchanged this cycle; device-confirmed via 05-UAT round 2 test 1 (Alle CTA path). |
 | FEST-02 | 05-04, 05-06 | Meine/Alle segment, default Meine, distinguishing saved | ✓ SATISFIED | Unchanged this cycle. |
-| FEST-03 | 05-06, 05-09 | Save to Meine in one tap, server-backed, survives restart | ✓ SATISFIED | Core save mechanism unchanged and verified (WR-01-old fixed); the new G-05-5b saved-gate interacts with FEST-03 only via the WR-01(new) race caveat on the cold-start-restore *target*, not on the save/persist mechanism itself. |
-| FEST-04 | 05-03, 05-05, 05-09, 05-10 | Gate-less entry, non-dead-end return | ✓ SATISFIED | Gate-less entry unchanged (unconditional `router.push`); non-dead-end return preserved (G-05-5a changed the fallback *target*, not the dead-end guarantee); deep-link entry (G-05-7/7b) now resolves the correct route and is auth-agnostic, pending on-device confirm. |
-| HOME-01 | 05-05, 05-07, 05-09 | Lands on festival's main menu/home after entering | ✓ SATISFIED | Slug-keyed festival home unchanged; G-05-5b refines *which* festival cold-start restores to (only saved ones), pending on-device confirm. |
+| FEST-03 | 05-06, 05-09 | Save to Meine in one tap, server-backed, survives restart | ✓ SATISFIED | Unchanged this cycle; the related WR-01 save/enter race probe passed on-device (05-UAT round 2 test 3). |
+| FEST-04 | 05-03, 05-05, 05-09, 05-10, 05-11 | Gate-less entry, non-dead-end return | ✓ SATISFIED | Gate-less entry re-confirmed unconditional after 05-11's diff; non-dead-end return device-confirmed (05-UAT round 2 test 4); deep-link entry device-confirmed (test 5). |
+| HOME-01 | 05-05, 05-07, 05-09, 05-11 | Lands on festival's main menu/home after entering | ✓ SATISFIED (cold-start restore target still pending device re-confirm) | Slug-keyed festival home unchanged; G-05-5b-r2's fix to *which* festival cold-start restores to is code-complete/unit-tested but device-unconfirmed — see truth 7 and Human Verification. |
 | HOME-02 | 05-01, 05-03 | Basic overview (identity + key facts) the visitor can open | ✓ SATISFIED | Unchanged this cycle. |
 
-No orphaned requirements: REQUIREMENTS.md maps exactly FEST-01..04, HOME-01, HOME-02 to Phase 5 (confirmed via `.planning/REQUIREMENTS.md` lines 26-34, 107-112), all six marked `[x]`/`Complete`, and all six appear in at least one plan's `requirements:` frontmatter across 05-01..05-10. `HOME-03` correctly remains mapped to Phase 6 (not orphaned to Phase 5).
+No orphaned requirements: REQUIREMENTS.md maps exactly FEST-01..04, HOME-01, HOME-02 to Phase 5 (`.planning/REQUIREMENTS.md` lines 26-34, 107-112), all six marked `[x]`/`Complete`, and all six appear in at least one plan's `requirements:` frontmatter across 05-01..05-11 (05-11 itself declares `[HOME-01, FEST-04]`).
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 |------|------|---------|----------|--------|
-| `apps/mobile/app/(tabs)/festivals.tsx` | 214-225 (`handleEnter`), 158-176 (`onMutate`) | G-05-5b's persist gate reads the OPTIMISTIC `savedIds` cache (written synchronously in `onMutate`, before the network call resolves), not the settled result (05-REVIEW.md new WR-01, 2026-08-09) | ⚠️ Warning | A same-row Save-then-Enter race where the save subsequently fails can persist the active-festival slug for a festival that was never actually saved — directly undermines the G-05-5b invariant. Rare (requires a tap-timing race + a failing save), no data loss, but a real correctness gap in newly-added code. Not yet fixed as of this verification. Added as a specific human-verification probe above. |
-| `apps/mobile/lib/pending-destination.ts` | 9-11 | Module header comment still states capture only happens while unauthenticated — now stale after G-05-7b removed that gate (05-REVIEW.md new WR-02) | ⚠️ Warning | Documentation-only defect on a security-relevant invariant (T-4-06-E content-leak boundary); a future contributor reading only this file would wrongly conclude capture is still auth-gated. No functional impact — `_layout.tsx`'s own comments are accurate. |
-| `apps/mobile/app/_layout.tsx` | 84, 141-143 | `AUTH_FLOW_PATHS` excludes auth routes by exact literal match, not by route-group/prefix (05-REVIEW.md new WR-03) | ⚠️ Warning | Safe today (no auth routes have sub-segments) but fragile against a future `(auth)/verify/[code].tsx`-shaped route; no test or type error would catch a regression. Latent risk, not a current defect. |
-| `apps/mobile/app/_layout.tsx` | 103, 131-144, 232-253 | G-05-7's fix is wired only into the one-shot cold-start capture/replay path; a warm (already-running, already-authenticated) deep-link tap goes through Expo Router's own linking resolution instead, unverified for the same defect (05-REVIEW.md new WR-04) | ⚠️ Warning | Whether a warm deep-link tap on `festipal://f/:slug` is also broken is unconfirmed either way — needs a device test or a source read of Expo Router's linking config for this Expo SDK. Out of scope for a static review. |
-| `apps/mobile/app/(tabs)/festivals.tsx` | 25 | Local `type Segment = 'meine' \| 'alle'` redeclared instead of importing from `lib/festivals-segment-request.ts` (05-REVIEW.md IN-01) | ℹ️ Info | Structurally identical today (compiles fine), but a duplicate source of truth that could silently drift if a third segment is ever added. |
+| `apps/mobile/app/(tabs)/festivals.tsx` | 158-176 (`onMutate`), 214-228 (`handleEnter`) | `syncActiveFestivalOnEnter(slug, saved)` still reads the OPTIMISTIC `savedIds` cache (written synchronously in `onMutate`, before the network call resolves) — the WR-01 pattern from 05-REVIEW.md is structurally unchanged by 05-11 | ℹ️ Info (downgraded from prior cycle's Warning) | A same-row Save-then-Enter race where the save subsequently fails could in theory still persist a slug for a never-actually-saved festival. However, 05-UAT.md round 2 test 3 specifically probed this exact scenario (force a failing save mid-tap, force-quit, relaunch) on a real device and it **passed** — the race did not manifest. Retained as an informational note (the code pattern exists) rather than an open warning (device-tested as not currently exploitable in practice). |
+| `apps/mobile/lib/pending-destination.ts` | 9-11 | Module header comment still states capture only happens while unauthenticated (05-REVIEW.md WR-02, stale doc) | ⚠️ Warning (carried forward, unchanged by 05-11) | Documentation-only; no functional impact. Not addressed by this gap-closure plan (out of scope). |
+| `apps/mobile/app/_layout.tsx` | 84, 141-143 | `AUTH_FLOW_PATHS` excludes auth routes by exact literal match, not prefix (05-REVIEW.md WR-03, carried forward) | ⚠️ Warning (carried forward, unchanged by 05-11) | Latent risk against a future nested auth route; not addressed by this gap-closure plan (out of scope). |
+| `apps/mobile/app/_layout.tsx` | 103, 131-144, 232-253 | G-05-7's fix wired only into the one-shot cold-start capture/replay path; a warm deep-link tap is unverified for the same defect (05-REVIEW.md WR-04, carried forward) | ⚠️ Warning (carried forward, unchanged by 05-11) | Unconfirmed either way; out of scope for this gap-closure plan. |
 
-No `TBD`/`FIXME`/`XXX`/`TODO`/`HACK`/`PLACEHOLDER` debt markers found in any of the 28 phase-modified files across 05-01..05-10 (clean debt-marker gate, re-scanned this session).
+No `TBD`/`FIXME`/`XXX`/`TODO`/`HACK`/`PLACEHOLDER` debt markers found in any of 05-11's 4 modified/created files (clean debt-marker gate, re-scanned this session).
 
-**0 critical findings** in the fresh 2026-08-09 deep re-review (05-REVIEW.md) — the prior cycle's CR-01/WR-01/WR-02 are confirmed fixed at the source and re-verified directly (not merely trusted from 05-REVIEW-FIX.md's own claims).
+**0 new critical or warning findings introduced by 05-11's diff itself** — the three carried-forward warnings (WR-02/WR-03/WR-04 documentation/robustness notes) pre-date this gap-closure plan and are unrelated to G-05-5b-r2's scope.
 
 ## Human Verification Required
 
-See the `human_verification` list in this report's frontmatter for the 5 items (5 on-device UAT re-runs of 05-UAT.md tests 2, 5, and 7, plus one WR-01 race probe). In summary:
+See the `human_verification` list in this report's frontmatter for the 1 remaining item — an on-device UAT round 3 re-run confirming the G-05-5b-r2 fix actually resolves the cold-start regression that round 2 discovered:
 
-1. **G-05-2 Alle-segment CTA reliability** — re-run 05-UAT.md test 2 against the fixed code.
-2. **G-05-5b cold-start restore gating** — re-run 05-UAT.md test 5 part 1 (WINDOWS.md id 21), plus a targeted probe for the new WR-01 save-fail race.
-3. **G-05-5a cold-start Back target** — re-run 05-UAT.md test 5 part 2 (WINDOWS.md id 22).
-4. **G-05-7 / G-05-7b deep-link forms + authenticated precedence** — re-run 05-UAT.md test 7, both sub-cases (WINDOWS.md id 23).
+1. **G-05-5b-r2 cold-start restore-target fix** — enter a SAVED festival, force-quit, relaunch (must restore); then enter a DIFFERENT UNSAVED festival, force-quit, relaunch (must land on Start/Home, not the stale festival). This is the exact scenario the user reported broken in round 2 ("Immer wenn ich die app quitte und dann relaunche lande ich am Frequency Festival Home Screen"); the fix is code-complete and unit-tested but has not yet been exercised on a real device.
 
 ## Gaps Summary
 
-**No structural gaps** — all previously-reported gaps (CR-01, WR-01-old, WR-02-old, and the five UAT-sourced gaps G-05-2/5a/5b/7/7b) are closed at the code level: every artifact the gap-closure plans committed to exists, is substantively implemented (not a stub), is wired into its call sites exactly as planned, and is covered by the new unit tests (12/12 passing) plus the full green suites (64/64 mobile, 45/45 api, clean typecheck/lint). `gaps: []` in this report's frontmatter reflects that no gap remains in the `failed`/`partial` sense the prior VERIFICATION.md's gap-closure loop was tracking.
+**No structural gaps** — the sole gap tracked into this cycle (G-05-5b-r2, reported by 05-UAT.md round 2 test 2) is closed at the code level: the fix is present (`nextActiveFestivalSlug` + `syncActiveFestivalOnEnter` in `active-festival-storage.ts`), substantive (not a stub — matches the plan's full `<behavior>` table), wired into both festival-home entry points (`festivals.tsx`, `home.tsx`), and covered by a new unit test that reproduces the EXACT regression scenario and passes. Full mobile `typecheck`/`lint`/`test` suite re-ran this session and is clean (69/69). Commit provenance was independently verified (not trusted from SUMMARY alone) — all 3 claimed commits exist with matching diffs. `gaps: []` in this report's frontmatter reflects that no `failed`/`partial` gap remains at the code level.
 
-The phase is still not cleanly `passed`, for two honest reasons:
+The phase is not cleanly `passed`, for one honest, narrowly-scoped reason:
 
-1. **On-device confirmation is pending for all 5 gap-closure fixes.** The prior verification's original 8-step UAT already ran once (5 pass / 3 issue), and this session's plans (05-09, 05-10) fixed the 3 issues' 5 underlying gaps at the code level, but none of the fixes have been re-confirmed on a real device yet — the code is present, wired, and unit-tested where automatable, but "the CTA now reliably re-opens Alle after a manual switch" and similar claims are runtime/UI assertions that only a device can settle. This is the same honest, explicitly-tracked deferral pattern as the initial verification (WINDOWS.md ids 21, 22, 23), not a new gap.
-2. **A fresh code review (05-REVIEW.md, run the same day as this verification) found 0 critical / 4 warning / 1 info issues in the gap-closure diff itself.** Most notable is a new WR-01: the G-05-5b saved-gate reads the *optimistic* save-mutation cache rather than the settled result, so a same-row Save-then-Enter race with a subsequently-failing save can violate the very invariant G-05-5b was built to enforce. This is a real, if narrow, correctness gap in newly-written code — surfaced here (not silently absorbed) and folded into the human-verification plan as a targeted probe, per this workflow's requirement that a well-formed finding is never silently dropped into a clean pass.
+**The G-05-5b-r2 fix itself has not yet been re-confirmed on a real device.** Round 2's on-device test is the only empirical evidence that the underlying bug existed; the fix reverses the exact logic that caused it and is unit-tested against the exact reported scenario, but persistence-across-process-kill is a runtime/OS-level behavior that only a real force-quit/relaunch cycle can settle — the same honest deferral pattern already used consistently throughout this phase (WINDOWS.md ids 21/22/23, 05-UAT.md rounds 1 and 2). This is the ONLY remaining human-verification item; all 4 other gap-closure truths that were previously behavior-unverified are now device-confirmed via 05-UAT.md round 2, and all 5 roadmap-level truths remain verified.
 
-Both categories route to **status: human_needed** per the decision tree (no FAILED truth, no MISSING/STUB artifact, no NOT_WIRED key link, no BLOCKER anti-pattern — but 5 human-verification items exist, which by rule take precedence over `passed`).
+This routes to **status: human_needed** per the decision tree (no FAILED truth, no MISSING/STUB artifact, no NOT_WIRED key link, no BLOCKER anti-pattern — but 1 human-verification item exists, which by rule takes precedence over `passed`).
 
 ---
 
-*Verified: 2026-08-09T14:54:46Z*
+*Verified: 2026-08-09T19:00:00Z*
 *Verifier: Claude (gsd-verifier)*
