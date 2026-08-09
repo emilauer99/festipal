@@ -1,8 +1,8 @@
 ---
 phase: 05-festival-selection-home
-reviewed: 2026-08-06T13:36:05Z
+reviewed: 2026-08-09T16:50:00Z
 depth: deep
-files_reviewed: 29
+files_reviewed: 32
 files_reviewed_list:
   - apps/api/src/festival/festival.service.ts
   - apps/api/src/me/me.service.ts
@@ -18,222 +18,202 @@ files_reviewed_list:
   - apps/mobile/components/FloatingNav.tsx
   - apps/mobile/components/SegmentedControl.tsx
   - apps/mobile/lib/__tests__/date-range.test.ts
+  - apps/mobile/lib/__tests__/deep-link.test.ts
+  - apps/mobile/lib/__tests__/festivals-segment-request.test.ts
   - apps/mobile/lib/__tests__/select-next-festival.test.ts
   - apps/mobile/lib/active-festival-storage.ts
   - apps/mobile/lib/date-range.ts
+  - apps/mobile/lib/deep-link.ts
   - apps/mobile/lib/festival-navigation.ts
   - apps/mobile/lib/festival-queries.ts
+  - apps/mobile/lib/festivals-segment-request.ts
   - apps/mobile/lib/select-next-festival.ts
   - apps/mobile/locales/de/messages.po
   - apps/mobile/locales/en/messages.po
   - apps/mobile/package.json
   - packages/contracts/src/schemas.ts
   - packages/db/drizzle/0003_omniscient_meteorite.sql
-  - packages/db/drizzle/meta/0003_snapshot.json
-  - packages/db/drizzle/meta/_journal.json
   - packages/db/scripts/seed.ts
   - packages/db/src/schema/festival.ts
   - packages/ui/src/tokens.ts
 findings:
-  critical: 1
-  warning: 2
-  info: 2
+  critical: 0
+  warning: 4
+  info: 1
   total: 5
 status: issues_found
 ---
 
 # Phase 05: Code Review Report
 
-**Reviewed:** 2026-08-06T13:36:05Z
+**Reviewed:** 2026-08-09T16:50:00Z
 **Depth:** deep
-**Files Reviewed:** 29
+**Files Reviewed:** 32
 **Status:** issues_found
 
 ## Summary
 
-Reviewed the festival-selection-home phase: the API-side `startDate`/`endDate`/`place` field
-propagation (`festival.service.ts`, `me.service.ts`), the `packages/contracts`/`packages/db`
-schema + migration for those fields, the SEC-02 tenant-isolation spec, and the full mobile
-surface (Home tab, Festivals tab with Meine/Alle segments, festival-home screen, FloatingNav,
-FestivalCard, SegmentedControl, active-festival persistence, date-range/hero-ordering pure libs
-and their unit tests) plus the two Lingui catalogs.
+This is a re-review of the festival-selection-home phase after a prior review + fix cycle (CR-01
+i18n gap, WR-01 optimistic-cache rollback, WR-02 unguarded MMKV calls — all confirmed fixed: the
+German catalog has no empty `msgstr`s, `lingui compile --strict` is wired into `package.json`,
+`festivals.tsx`'s `onError` now reconciles by filtering the current cache instead of restoring a
+raw snapshot, and `active-festival-storage.ts` wraps every exported function in `try/catch` at
+the source). `pnpm --filter @festipal/mobile typecheck`, `lint`, and `test` (64 tests, 8 files)
+all pass clean on the reviewed tree, and `apps/api`/`packages/*` are unchanged in this diff range
+(only `packages/db/scripts/seed.ts` gained a second seeded festival, which is sound and
+unrelated).
 
-The backend/contracts/db slice is clean — the new date/place fields are threaded through
-`getBySlug`/`listAll`/`listMyFestivals` consistently, the drift-detection Zod composition on
-`festivalSelectSchema` is sound, the migration is a safe additive `ADD COLUMN` (nullable, no
-backfill), and the SEC-02 isolation spec's assertions are solid (byte-level `JSON.stringify`
-non-leak checks, not just array-length checks). `tsc --noEmit` and the mobile Vitest suite
-(52 tests) both pass clean.
-
-The mobile UI surface has one confirmed, provable regression: two of the four newly-added
-strings for the app's always-visible tab bar (`FloatingNav`) were left untranslated in the
-German catalog and — verified by actually running `lingui compile` — silently fall back to
-their English source text rather than failing the build, so German-locale users see
-`Home`/`Friends`/`Profile`/`coming soon` in English inside an otherwise fully German shell, and
-this ships silently unless `lingui compile --strict` is added to the pipeline. Two further
-robustness issues were found by tracing the Save-mutation/optimistic-cache and MMKV
-persistence call chains across `festivals.tsx`, `home.tsx`, `[festivalSlug].tsx`, and
-`_layout.tsx`.
-
-## Critical Issues
-
-### CR-01: Four newly-added strings ship untranslated (English) in the German catalog, exposed on every screen via the tab bar
-
-**File:** `apps/mobile/locales/de/messages.po:88-90,158-160,170-172,235-237`
-**Issue:**
-This phase adds four new msgids to both catalogs (`coming soon`, `Home`, `Friends`, `Profile`,
-all sourced from `components/FloatingNav.tsx`). In `locales/de/messages.po` all four have an
-**empty** `msgstr`:
-
-```po
-#: components/FloatingNav.tsx
-msgid "coming soon"
-msgstr ""
-...
-#: components/FloatingNav.tsx
-msgid "Home"
-msgstr ""
-...
-#: components/FloatingNav.tsx
-msgid "Friends"
-msgstr ""
-...
-#: components/FloatingNav.tsx
-msgid "Profile"
-msgstr ""
-```
-
-This is not a hypothetical — I ran the actual build step (`npx lingui compile`) and confirmed
-the compiled `locales/de/messages.js` catalog embeds the English source strings verbatim for
-these four ids (`"i0qMbr":["Home"]`, `"tBmnPU":["Friends"]`, `"vERlcd":["Profile"]`,
-`"KMnlsQ":["coming soon"]`), i.e. Lingui's default (non-strict) compile silently falls back to
-the English source rather than erroring. Running `npx lingui compile --strict` fails with
-`Missing 4 translation(s)`, confirming these are genuinely untranslated and that the project's
-current `"compile": "lingui compile"` script (no `--strict`) will not catch this in CI.
-
-`Home`/`Friends`/`Profile` are the labels under 3 of the 4 always-visible `FloatingNav` tab-bar
-items (`components/FloatingNav.tsx:77,107-116`, rendered on every authenticated screen), and
-`coming soon` feeds the a11y label for the two decorative items
-(`components/FloatingNav.tsx:51,148`: `` `${label} — ${comingSoonSuffix}` ``). This directly
-violates the project's non-negotiable "i18n from day 1 — no hardcoded user-facing strings" rule
-(CLAUDE.md) for the one navigation surface that is visible on literally every authenticated
-screen, for the app's primary target locale (an Austrian festival app, German-default festival
-seed data).
-
-**Fix:**
-Translate the four strings in `apps/mobile/locales/de/messages.po` (e.g. `Home` → `Start` or
-keep `Home` as an intentional loanword *only if that's a deliberate product decision*, `Friends`
-→ `Freunde`, `Profile` → `Profil`, `coming soon` → `bald verfügbar`), then add a `--strict` (or
-equivalent CI) gate so an incomplete catalog fails the build instead of silently falling back to
-English:
-
-```jsonc
-// package.json
-"compile": "lingui compile --strict"
-```
-```po
-msgid "Home"
-msgstr "Start"
-
-msgid "Friends"
-msgstr "Freunde"
-
-msgid "Profile"
-msgstr "Profil"
-
-msgid "coming soon"
-msgstr "bald verfügbar"
-```
+Deep cross-file tracing focused on the two newest gap-closure areas per the review brief:
+`lib/festivals-segment-request.ts` (G-05-2) wired into `home.tsx`/`festivals.tsx`, and
+`lib/deep-link.ts` (G-05-7/G-05-7b) wired into `app/_layout.tsx`, plus the two smaller G-05-5a/5b
+fixes in `festival-navigation.ts` and `festivals.tsx`. No BLOCKER-level defect was found — the
+pure helpers (`reconstructDeepLinkRoute`, `consumeFestivalsSegment`) are correct and well-tested
+in isolation, and the segment-request wiring correctly avoids the previous
+cannot-re-fire-on-unchanged-param bug. However, tracing the G-05-5b fix against the pre-existing
+optimistic save-mutation flow in `festivals.tsx` surfaces a genuine data-consistency race that
+the previous review's WR-01 fix did not anticipate (because at WR-01 time, entry always persisted
+unconditionally), and the new auth-agnostic deep-link capture in `_layout.tsx` has both a stale
+cross-file doc comment and a not-fully-hardened security-boundary check worth tightening.
 
 ## Warnings
 
-### WR-01: Concurrent Save mutations can roll back a *different* festival's in-flight optimistic cache entry
+### WR-01: `handleEnter`'s G-05-5b save-gate can persist the active-festival slug for a festival whose save never actually succeeded
 
-**File:** `apps/mobile/app/(tabs)/festivals.tsx:134-185`
+**File:** `apps/mobile/app/(tabs)/festivals.tsx:158-205,214-225,227-239`
 **Issue:**
-`festivals.tsx` uses a single shared `saveMutation` (`useMutation(...)`) for every `FestivalCard`
-Save tap. Per-mutation-call state (`onMutate`/`onError`) closes over the `festivalKeys.mine`
-cache, but `onError`'s rollback restores the *exact* `previous` snapshot captured at the start of
-*that specific call* (line 152: `queryClient.getQueryData<CachedResponse>(festivalKeys.mine)`),
-not a merge against the current cache state.
+G-05-5b (this gap-closure cycle) changed `handleEnter` to persist the D-06 active-festival slug
+only `if (saved)` (line 223), where `saved` is computed per-row as `savedIds.has(item.id)`
+(line 228) and threaded into the `onEnter` closure (line 235). `savedIds` is derived from
+`listMyFestivalsQuery.data` (lines 124-128), which the pre-existing (05-06) `saveMutation`
+`onMutate` (lines 158-176) writes to **optimistically and synchronously**, before the network
+request resolves.
 
-Trace: user taps Save on festival A (`onMutate` captures `previous = [X]`, optimistically writes
-`[X, A]`); before A's request settles, the user taps Save on festival B (`onMutate` captures
-`previous = [X, A]`, optimistically writes `[X, A, B]`). If A's save then fails (e.g. a
-409 `profile-required` race, or a transient network error), A's `onError` runs
-`queryClient.setQueryData(festivalKeys.mine, context.previous)` — restoring `[X]`, which wipes
-out B's still-in-flight (or already-succeeded) optimistic entry until B's own `onSettled`
-eventually re-invalidates and refetches. Between A's rollback and B's refetch resolving, the UI
-will show festival B as unsaved even though the save may already have (or will) succeed
-server-side — a visible, avoidable flicker/inconsistency caused by one mutation's failure
-clobbering another's independent optimistic state.
+Trace: on the "Alle" segment, a user taps Save on festival A → `onMutate` immediately marks A as
+saved in the `festivalKeys.mine` cache → `savedIds` recomputes → the row re-renders with
+`saved: true` for A. If, in the window before the save request settles (any transient
+network failure, e.g. this is an explicitly offline-first app), the user also taps the same row's
+enter area, `handleEnter(slug, true)` fires and persists A's slug via
+`saveActiveFestivalSlug(slug)` (line 223). If the save subsequently fails, `onError`
+(lines 177-198) correctly rolls back the *cache* entry for A — but nothing rolls back the
+already-written MMKV slug. This leaves the D-06 cold-start focus pointing at a festival that was
+never actually saved, directly violating the invariant the G-05-5b fix itself documents:
+"the cold-start RESTORE must only ever bring back a SAVED festival" (line 218-219 comment). This
+is a regression introduced specifically by this gap-closure change: before G-05-5b, `handleEnter`
+persisted unconditionally regardless of saved state, so an unresolved/failed save never mattered
+for this invariant.
 
-**Fix:** Rather than restoring a raw snapshot, reconcile against the *current* cache by removing
-only the entry this specific mutation added (when it was the one that added it), e.g. key the
-rollback off `festival.id` instead of a full-array snapshot:
+**Fix:** Gate the persist on the *settled* save result, not the optimistic one — e.g. only persist
+in `onSuccess`/`onSettled` for the just-entered festival, or re-check `savedIds.has(item.id)`
+against the reconciled (post-`invalidateQueries`) cache before writing MMKV, rather than capturing
+`saved` in the `onEnter` closure at render time:
 
 ```ts
-onError: (_error, festival) => {
-  queryClient.setQueryData<CachedResponse>(festivalKeys.mine, (current) => {
-    if (current?.status !== 200 || !Array.isArray(current.body)) return current;
-    return { status: 200, body: current.body.filter((f) => f.id !== festival.id) };
-  });
-  setSaveError(t`Couldn't save festival — try again.`);
+onSettled: (_data, _error, festival) => {
+  inFlightIdsRef.current.delete(festival.id);
+  setSavingIds(new Set(inFlightIdsRef.current));
+  void queryClient.invalidateQueries({ queryKey: festivalKeys.mine });
 },
 ```
+plus, in `handleEnter`, only write the slug when the row is confirmed-saved (e.g. gate on
+`!inFlightIdsRef.current.has(item.id) && saved`, or simply accept a one-render lag by reading
+`savedIds` fresh rather than through the row's captured closure).
 
-### WR-02: Inconsistent guarding around synchronous MMKV storage calls — only one of four call sites protects the "entry must never dead-end" guarantee
+### WR-02: `lib/pending-destination.ts`'s header comment now contradicts `_layout.tsx`'s auth-agnostic capture, misdocumenting a security-relevant invariant
 
-**File:** `apps/mobile/app/(tabs)/festivals.tsx:194-200,82-102`, `apps/mobile/app/(festival)/f/[festivalSlug].tsx:93-98`, `apps/mobile/app/_layout.tsx:206-227`
+**File:** `apps/mobile/lib/pending-destination.ts:9-11`, `apps/mobile/app/_layout.tsx:131-144`
 **Issue:**
-`apps/mobile/app/(tabs)/home.tsx:75-85` explicitly wraps `saveActiveFestivalSlug(slug)` in a
-`try { … } catch { /* Persistence is a nicety … entry itself never depends on it succeeding. */ }`
-specifically because entry into a festival must be gate-less and non-dead-ending even if the
-MMKV write throws. That guarantee is **not** applied consistently to the other call sites added
-in this same phase:
+`pending-destination.ts`'s module doc still states: *"Capture (app/_layout.tsx) only happens
+while the guard is 'unauthenticated'..."*. This was true before this gap-closure cycle, but
+commit `bb9b2aa` (G-05-7b, this phase) deliberately removed that gate — the capture effect in
+`_layout.tsx` now fires "REGARDLESS of `authState.status`" (per its own updated comment at
+`_layout.tsx:117-118`), specifically so an already-authenticated cold start also captures a fired
+deep link. `pending-destination.ts` was not touched in this range and its header comment was
+never updated to match, so the one file whose entire purpose is documenting this security-relevant
+capture/replay/content-leak boundary (T-4-06-E) now states a guarantee the code no longer
+provides. A future contributor reading only `pending-destination.ts` (the natural place to look
+for this invariant) would reasonably conclude capture is authentication-gated when it is not.
+**Fix:** Update `pending-destination.ts`'s header comment to match `_layout.tsx`'s current
+behavior — capture is now auth-agnostic; only *replay* is gated (on the transition into
+`'authenticated'`) — and point at the `AUTH_FLOW_PATHS` guard as the mechanism that still prevents
+capturing an (auth)/(profile-setup) href.
 
-- `festivals.tsx:194-200` `handleEnter` calls `saveActiveFestivalSlug(slug)` unguarded before
-  `router.push` — an MMKV write failure here throws uncaught in the press handler and can block
-  the very "gate-less entry" navigation the code is trying to guarantee.
-- `festivals.tsx:82-102` `handleLogout`'s `clearActiveFestivalSlug()` (line 99) is unguarded.
-- `[festivalSlug].tsx:93-98`'s `useEffect` calls `getActiveFestivalSlug()` /
-  `clearActiveFestivalSlug()` unguarded.
-- `_layout.tsx:206-227`'s cold-start redirect effect calls `getActiveFestivalSlug()` (line 220)
-  unguarded — this is the one place a throw would be most damaging, since it sits between the
-  auth-guard resolving to `'authenticated'` and the app's first real navigation.
+### WR-03: `AUTH_FLOW_PATHS` excludes auth routes by exact string match, not by group/prefix — fragile against future sub-routes under `(auth)`/`(profile-setup)`
 
-**Fix:** Apply the same `try { … } catch { … }` (or a small shared `safeMmkvRead`/`safeMmkvWrite`
-helper in `active-festival-storage.ts` itself, so every caller gets the guarantee for free
-instead of relying on each call site remembering to wrap it) consistently at all four sites.
+**File:** `apps/mobile/app/_layout.tsx:84,141-143`
+**Issue:**
+The content-leak boundary that keeps a captured deep link from ever targeting an auth-flow screen
+is `AUTH_FLOW_PATHS.has(route)` against the literal set `['', 'email', 'verify',
+'complete-profile']` — a reconstructed route must match one of these **exactly**. The code
+comment above it explicitly frames this as load-bearing: "this MUST NOT weaken the content-leak
+boundary." Today this is safe only because none of `(auth)/email.tsx`, `(auth)/verify.tsx`, or
+`(profile-setup)/complete-profile.tsx` have any dynamic sub-segment. But the check does not
+express *why* it's safe (no route under those groups nests further) — it is safe by the current
+route tree's shape, not by construction. If a future phase adds e.g. `(auth)/verify/[code].tsx`
+(a very plausible shape for an OTP deep-link-with-code flow), a link reconstructing to
+`verify/ABC123` would silently fail the `AUTH_FLOW_PATHS.has()` check, get captured, and later
+get replayed via `router.replace('/verify/ABC123' as Href)` after the guard reaches
+`'authenticated'` — landing on an Unmatched Route today, but a real, unintended entry point into
+whatever `(auth)` renders in the future the moment such a route exists, with no test or type error
+to catch the regression (the `Href` cast on line 242 already opts this path out of typed-route
+checking).
+**Fix:** Make the exclusion structural instead of enumerated — e.g. derive the check from route
+*group* membership (a route reconstructed from a link that resolves under `(auth)` or
+`(profile-setup)`) rather than a hand-maintained literal set, or at minimum add a code comment
++ a guarding test that fails loudly if a new file is added under either group without updating
+`AUTH_FLOW_PATHS`.
+
+### WR-04: The G-05-7 `reconstructDeepLinkRoute` fix is wired only into the one-shot cold-start capture/replay path — not verified against a deep link received while the app is already running and authenticated
+
+**File:** `apps/mobile/app/_layout.tsx:103,131-144,232-253`
+**Issue:**
+`reconstructDeepLinkRoute` correctly fixes the authority-vs-path split for the custom
+double-slash scheme (`festipal://f/:slug`), and its unit tests are solid. It is wired into the
+`_layout.tsx` capture effect (lines 131-144), which stores into the `pending-destination.ts`
+singleton. That singleton is only ever *consumed* by the redirect effect at lines 232-253, which
+is itself guarded by `coldStartRedirectRef` (line 103) to run **at most once per app session**
+(deliberately, to avoid hijacking normal tab navigation on a later logout/login cycle — see the
+comment at lines 96-102). This means: a deep link tapped while the app is already running and
+already past its first `'authenticated'` transition (e.g. the user backgrounds the app, then taps
+a second `festipal://f/:slug` link, or taps one after already being logged in for a while) is
+captured into `pendingDestination` but never replayed by this mechanism — `consumePendingDestination()`
+is not called again for the remainder of the session. Whether this is actually a user-visible
+regression depends on whether Expo Router's own built-in (React Navigation) linking resolution —
+which fires independently of this app-level effect for any URL event, including warm ones — is
+*also* subject to the same `new URL()` authority/path-splitting defect that motivated this fix in
+the first place. That was not verified in this review (it would require an on-device/integration
+check, out of reach for a static review), but the root-cause note in `lib/deep-link.ts` describes
+the defect as a property of `Linking.parse()`/`new URL()` itself, which Expo Router's default
+linking config also ultimately consumes.
+**Fix:** Confirm (device test or reading Expo Router's linking-config source for this Expo SDK)
+whether a warm, already-authenticated tap on `festipal://f/:slug` correctly lands on the festival
+screen. If Expo Router's own resolution shares the same defect, either register a custom
+`linking.getStateFromPath`/`subscribe` override using `reconstructDeepLinkRoute`, or explicitly
+document in `deep-link.ts`/`_layout.tsx` that the fix is cold-start-only and why that is
+sufficient.
 
 ## Info
 
-### IN-01: Two parallel, overlapping radius token systems used inconsistently within this phase's own new files
+### IN-01: `Segment` type is redeclared locally in `festivals.tsx` instead of imported from `lib/festivals-segment-request.ts`
 
-**File:** `packages/ui/src/tokens.ts:54-70`, `apps/mobile/app/(tabs)/festivals.tsx:379`, `apps/mobile/app/(tabs)/home.tsx:247`, `apps/mobile/app/(festival)/f/[festivalSlug].tsx:221`
-**Issue:** `tokens.ts` exports both a legacy `radii` map (`radii.pill = 999`) and a newer
-`radiiScale` ramp (`radiiScale['r-pill'] = 999`) with the same numeric value under different
-keys. This phase's new files pick different ones for the identical pill shape:
-`festivals.tsx:379` uses `radii.pill`, while `home.tsx:247` and `[festivalSlug].tsx:221` use
-`radiiScale['r-pill']`. Functionally identical today, but two competing token systems for the
-same value is a maintenance trap — a future change to one ramp but not the other silently
-desyncs previously-identical UI.
-**Fix:** Standardize new code on `radiiScale` (the documented "real brand radii ramp") and treat
-`radii` as legacy/deprecated, or explicitly document why both are still needed.
-
-### IN-02: `FloatingNav`'s unknown-route fallback silently mislabels rather than failing loudly
-
-**File:** `apps/mobile/components/FloatingNav.tsx:28-30,75-77`
-**Issue:** `isLiveRouteName` narrows `route.name` to `'home' | 'festivals'`; any route name
-outside that set silently falls back to `'home'` (`const routeName = isLiveRouteName(route.name) ? route.name : 'home';`), reusing the Home icon/label for it. This is currently unreachable
-(only `home`/`festivals` are registered `Tabs.Screen`s in `(tabs)/_layout.tsx`), but if a future
-phase adds a third live tab without updating `LIVE_TAB_ICON`/`isLiveRouteName`, it will render as
-a second, mislabeled "Home" tab rather than surfacing a visible error during development.
-**Fix:** Consider a dev-time `console.error`/assertion in the `else` branch (or throwing in
-`__DEV__`) so a missed update is caught immediately instead of shipping a silently-wrong tab.
+**File:** `apps/mobile/app/(tabs)/festivals.tsx:25`, `apps/mobile/lib/festivals-segment-request.ts:14`
+**Issue:** `festivals-segment-request.ts` already exports `export type Segment = 'meine' |
+'alle';` for exactly this concept, and `festivals.tsx` imports `consumeFestivalsSegment` from
+that same module — but instead of importing its `Segment` type too, `festivals.tsx:25` redeclares
+an identical local `type Segment = 'meine' | 'alle';`. TypeScript's structural typing means this
+compiles fine today (the two literal unions are identical), but it is a duplicate source of truth
+for the same domain concept the codebase's own conventions (single source of truth, no
+re-declared shapes — see `festival-queries.ts`'s doc comments elsewhere in this phase) explicitly
+guard against. A future change to one (e.g. adding a third segment) will not raise a compile error
+in the other file until their usages actually diverge, which is exactly the kind of silent drift
+the project's Zod/contract conventions are designed to prevent.
+**Fix:**
+```ts
+import { consumeFestivalsSegment, type Segment } from '../../lib/festivals-segment-request';
+```
+and delete the local `type Segment = 'meine' | 'alle';` declaration.
 
 ---
 
-_Reviewed: 2026-08-06T13:36:05Z_
+_Reviewed: 2026-08-09T16:50:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: deep_
