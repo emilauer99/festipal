@@ -64,3 +64,52 @@ export function clearActiveFestivalSlug(): void {
     // Best-effort — see module-level note above.
   }
 }
+
+/**
+ * G-05-5b-r2 — pure persist/clear decision for an on-enter sync. `prior` is
+ * accepted (rather than folded into a closure) purely so callers/tests can
+ * narrate "a stale saved slug is present" without this function reading any
+ * storage itself; the RETURN depends only on `entered.saved` — an unsaved
+ * entry ALWAYS clears, regardless of what `prior` was, closing the 05-09
+ * regression where a previously-entered saved festival stayed stuck in MMKV
+ * forever because an unsaved entry neither wrote nor cleared it.
+ *
+ * Framework/storage-free (no react-native-mmkv reference) so this stays
+ * importable under the node-env Vitest runner, same purity idiom as
+ * `lib/select-next-festival.ts`.
+ */
+export function nextActiveFestivalSlug(
+  prior: string | undefined,
+  entered: { slug: string; saved: boolean },
+): string | undefined {
+  // RED-step naive placeholder (05-09's actual bug behavior) — keeps `prior`
+  // on an unsaved entry instead of clearing it. Confirmed to fail the
+  // G-05-5b-r2 regression test before being replaced by the real fix below.
+  return entered.saved ? entered.slug : prior;
+}
+
+/**
+ * G-05-5b-r2 — single persist/clear authority for every festival-home entry
+ * point. Reads the current slug, computes the next value via
+ * {@link nextActiveFestivalSlug}, and persists it: a SAVED entry persists the
+ * newly-entered slug, an UNSAVED entry now CLEARS any previously-persisted
+ * slug instead of leaving it in place (reversing 05-09's `festivals.tsx:223`
+ * "only persist when saved" semantics, which made the persisted slug a
+ * sticky "last SAVED festival ever entered" value instead of tracking the
+ * LAST entered festival).
+ *
+ * Routes through the existing error-swallowing `saveActiveFestivalSlug` /
+ * `clearActiveFestivalSlug`, so it inherits their offline-safe, gate-less
+ * guarantee (WR-02) and stays fully synchronous — `app/_layout.tsx`'s
+ * cold-start read is untouched and needs no async re-validation against
+ * `listMyFestivals`.
+ */
+export function syncActiveFestivalOnEnter(slug: string, saved: boolean): void {
+  const prior = getActiveFestivalSlug();
+  const next = nextActiveFestivalSlug(prior, { slug, saved });
+  if (next) {
+    saveActiveFestivalSlug(next);
+  } else {
+    clearActiveFestivalSlug();
+  }
+}
