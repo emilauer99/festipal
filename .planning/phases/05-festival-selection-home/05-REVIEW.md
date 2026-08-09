@@ -1,219 +1,140 @@
 ---
 phase: 05-festival-selection-home
-reviewed: 2026-08-09T16:50:00Z
+reviewed: 2026-08-09T00:00:00Z
 depth: deep
-files_reviewed: 32
+files_reviewed: 4
 files_reviewed_list:
-  - apps/api/src/festival/festival.service.ts
-  - apps/api/src/me/me.service.ts
-  - apps/api/test/festival-isolation.spec.ts
-  - apps/mobile/app.json
-  - apps/mobile/app/(festival)/f/[festivalSlug].tsx
-  - apps/mobile/app/(tabs)/_layout.tsx
+  - apps/mobile/lib/active-festival-storage.ts
   - apps/mobile/app/(tabs)/festivals.tsx
   - apps/mobile/app/(tabs)/home.tsx
-  - apps/mobile/app/_layout.tsx
-  - apps/mobile/components/ComingSoonTile.tsx
-  - apps/mobile/components/FestivalCard.tsx
-  - apps/mobile/components/FloatingNav.tsx
-  - apps/mobile/components/SegmentedControl.tsx
-  - apps/mobile/lib/__tests__/date-range.test.ts
-  - apps/mobile/lib/__tests__/deep-link.test.ts
-  - apps/mobile/lib/__tests__/festivals-segment-request.test.ts
-  - apps/mobile/lib/__tests__/select-next-festival.test.ts
-  - apps/mobile/lib/active-festival-storage.ts
-  - apps/mobile/lib/date-range.ts
-  - apps/mobile/lib/deep-link.ts
-  - apps/mobile/lib/festival-navigation.ts
-  - apps/mobile/lib/festival-queries.ts
-  - apps/mobile/lib/festivals-segment-request.ts
-  - apps/mobile/lib/select-next-festival.ts
-  - apps/mobile/locales/de/messages.po
-  - apps/mobile/locales/en/messages.po
-  - apps/mobile/package.json
-  - packages/contracts/src/schemas.ts
-  - packages/db/drizzle/0003_omniscient_meteorite.sql
-  - packages/db/scripts/seed.ts
-  - packages/db/src/schema/festival.ts
-  - packages/ui/src/tokens.ts
+  - apps/mobile/lib/__tests__/active-festival-entry.test.ts
 findings:
   critical: 0
-  warning: 4
-  info: 1
+  warning: 2
+  info: 3
   total: 5
 status: issues_found
 ---
 
 # Phase 05: Code Review Report
 
-**Reviewed:** 2026-08-09T16:50:00Z
+**Reviewed:** 2026-08-09T00:00:00Z
 **Depth:** deep
-**Files Reviewed:** 32
+**Files Reviewed:** 4
 **Status:** issues_found
 
 ## Summary
 
-This is a re-review of the festival-selection-home phase after a prior review + fix cycle (CR-01
-i18n gap, WR-01 optimistic-cache rollback, WR-02 unguarded MMKV calls — all confirmed fixed: the
-German catalog has no empty `msgstr`s, `lingui compile --strict` is wired into `package.json`,
-`festivals.tsx`'s `onError` now reconciles by filtering the current cache instead of restoring a
-raw snapshot, and `active-festival-storage.ts` wraps every exported function in `try/catch` at
-the source). `pnpm --filter @festipal/mobile typecheck`, `lint`, and `test` (64 tests, 8 files)
-all pass clean on the reviewed tree, and `apps/api`/`packages/*` are unchanged in this diff range
-(only `packages/db/scripts/seed.ts` gained a second seeded festival, which is sound and
-unrelated).
+Reviewed gap-closure plan 05-11 (G-05-5b-r2): the pure reducer `nextActiveFestivalSlug`
+and the effectful authority `syncActiveFestivalOnEnter` in
+`active-festival-storage.ts`, and their wiring into `festivals.tsx` and
+`home.tsx`'s `handleEnter`.
 
-Deep cross-file tracing focused on the two newest gap-closure areas per the review brief:
-`lib/festivals-segment-request.ts` (G-05-2) wired into `home.tsx`/`festivals.tsx`, and
-`lib/deep-link.ts` (G-05-7/G-05-7b) wired into `app/_layout.tsx`, plus the two smaller G-05-5a/5b
-fixes in `festival-navigation.ts` and `festivals.tsx`. No BLOCKER-level defect was found — the
-pure helpers (`reconstructDeepLinkRoute`, `consumeFestivalsSegment`) are correct and well-tested
-in isolation, and the segment-request wiring correctly avoids the previous
-cannot-re-fire-on-unchanged-param bug. However, tracing the G-05-5b fix against the pre-existing
-optimistic save-mutation flow in `festivals.tsx` surfaces a genuine data-consistency race that
-the previous review's WR-01 fix did not anticipate (because at WR-01 time, entry always persisted
-unconditionally), and the new auth-agnostic deep-link capture in `_layout.tsx` has both a stale
-cross-file doc comment and a not-fully-hardened security-boundary check worth tightening.
+**Core fix is correct.** I traced the diagnosed root cause
+(`.planning/debug/cold-start-restores-unsaved-festival.md`) against the new
+code: the previous "only persist when saved" gate made the persisted slug
+monotonic (never cleared by an unsaved entry). `nextActiveFestivalSlug`
+correctly returns `entered.slug` when `saved` and `undefined` otherwise —
+unconditionally, regardless of `prior` — which is exactly what's needed to
+make an unsaved entry always clear a stale saved slug. All five
+`must_haves.truths` / behavior rows in the plan are satisfied by the
+implementation and covered by the new unit tests. `grep saveActiveFestivalSlug`
+across `apps/mobile` confirms the helper is now the sole write path (Task 2's
+done-criterion holds).
+
+**Race conditions:** I specifically traced the "two tab screens calling the
+shared authority" concern requested in scope. `syncActiveFestivalOnEnter` is
+fully synchronous (MMKV's `getString`/`set`/`remove` are synchronous native
+calls) and JS on RN is single-threaded with no yield point inside the
+function body, so there is no TOCTOU window between its read and its write —
+two `handleEnter` invocations cannot interleave mid-function. This is a
+genuine non-finding, not an oversight.
+
+The defects below are quality/robustness issues, not functional regressions
+of the fix's stated goal — no BLOCKER found.
 
 ## Warnings
 
-### WR-01: `handleEnter`'s G-05-5b save-gate can persist the active-festival slug for a festival whose save never actually succeeded
+### WR-01: `prior` parameter of `nextActiveFestivalSlug` is unused, and 3 of 5 unit tests exercise the identical code branch under misleading names
 
-**File:** `apps/mobile/app/(tabs)/festivals.tsx:158-205,214-225,227-239`
-**Issue:**
-G-05-5b (this gap-closure cycle) changed `handleEnter` to persist the D-06 active-festival slug
-only `if (saved)` (line 223), where `saved` is computed per-row as `savedIds.has(item.id)`
-(line 228) and threaded into the `onEnter` closure (line 235). `savedIds` is derived from
-`listMyFestivalsQuery.data` (lines 124-128), which the pre-existing (05-06) `saveMutation`
-`onMutate` (lines 158-176) writes to **optimistically and synchronously**, before the network
-request resolves.
+**File:** `apps/mobile/lib/active-festival-storage.ts:81-86`
+**Issue:** `nextActiveFestivalSlug(prior, entered)` never reads `prior` — the
+function body is literally `return entered.saved ? entered.slug : undefined;`.
+The module doc (lines 71-75) is honest about this ("the RETURN depends only
+on `entered.saved`"), but the parameter's presence in the public signature
+invites a reader to assume it affects the result (e.g. "only clear if
+different from prior", or an idempotency short-circuit) — neither is
+implemented.
 
-Trace: on the "Alle" segment, a user taps Save on festival A → `onMutate` immediately marks A as
-saved in the `festivalKeys.mine` cache → `savedIds` recomputes → the row re-renders with
-`saved: true` for A. If, in the window before the save request settles (any transient
-network failure, e.g. this is an explicitly offline-first app), the user also taps the same row's
-enter area, `handleEnter(slug, true)` fires and persists A's slug via
-`saveActiveFestivalSlug(slug)` (line 223). If the save subsequently fails, `onError`
-(lines 177-198) correctly rolls back the *cache* entry for A — but nothing rolls back the
-already-written MMKV slug. This leaves the D-06 cold-start focus pointing at a festival that was
-never actually saved, directly violating the invariant the G-05-5b fix itself documents:
-"the cold-start RESTORE must only ever bring back a SAVED festival" (line 218-219 comment). This
-is a regression introduced specifically by this gap-closure change: before G-05-5b, `handleEnter`
-persisted unconditionally regardless of saved state, so an unresolved/failed save never mattered
-for this invariant.
+This leaks into the test suite
+(`apps/mobile/lib/__tests__/active-festival-entry.test.ts`): the test named
+`'overwrites a stale saved slug when a DIFFERENT saved festival is entered'`
+(lines 26-30) and the test named `'is idempotent when re-entering the SAME
+saved festival'` (lines 32-36) both just re-exercise the same `saved ===
+true → return entered.slug` branch already covered by the first test (lines
+6-10) — they would pass identically if `prior` were deleted from the
+function entirely. They give the impression that "overwrite" and
+"idempotent" semantics are independently verified when they are not; only
+the `saved === false` branch (lines 12-16, 18-24) is where `prior` actually
+matters to the regression narrative, and even there the function ignores it.
+**Fix:** Either (a) drop the unused `prior` parameter from
+`nextActiveFestivalSlug`'s signature (the JSDoc's "callers/tests can
+narrate…" rationale can be satisfied by naming the test's local variables
+instead, e.g. `const priorFromStaleSession = 'frequency-2026'; // narrative only, not passed to the reducer`),
+or (b) if the parameter is being kept intentionally as forward-looking API
+shape, add a short comment directly on the two "overwrites"/"idempotent"
+tests noting they assert the *same* branch as test 1 and exist only for
+narrative documentation, not distinct coverage — so a future reader doesn't
+mistake test count for behavioral coverage.
 
-**Fix:** Gate the persist on the *settled* save result, not the optimistic one — e.g. only persist
-in `onSuccess`/`onSettled` for the just-entered festival, or re-check `savedIds.has(item.id)`
-against the reconciled (post-`invalidateQueries`) cache before writing MMKV, rather than capturing
-`saved` in the `onEnter` closure at render time:
+### WR-02: The "single persist/clear authority" invariant only covers entry paths, not future un-save/removal paths
 
-```ts
-onSettled: (_data, _error, festival) => {
-  inFlightIdsRef.current.delete(festival.id);
-  setSavingIds(new Set(inFlightIdsRef.current));
-  void queryClient.invalidateQueries({ queryKey: festivalKeys.mine });
-},
-```
-plus, in `handleEnter`, only write the slug when the row is confirmed-saved (e.g. gate on
-`!inFlightIdsRef.current.has(item.id) && saved`, or simply accept a one-render lag by reading
-`savedIds` fresh rather than through the row's captured closure).
-
-### WR-02: `lib/pending-destination.ts`'s header comment now contradicts `_layout.tsx`'s auth-agnostic capture, misdocumenting a security-relevant invariant
-
-**File:** `apps/mobile/lib/pending-destination.ts:9-11`, `apps/mobile/app/_layout.tsx:131-144`
-**Issue:**
-`pending-destination.ts`'s module doc still states: *"Capture (app/_layout.tsx) only happens
-while the guard is 'unauthenticated'..."*. This was true before this gap-closure cycle, but
-commit `bb9b2aa` (G-05-7b, this phase) deliberately removed that gate — the capture effect in
-`_layout.tsx` now fires "REGARDLESS of `authState.status`" (per its own updated comment at
-`_layout.tsx:117-118`), specifically so an already-authenticated cold start also captures a fired
-deep link. `pending-destination.ts` was not touched in this range and its header comment was
-never updated to match, so the one file whose entire purpose is documenting this security-relevant
-capture/replay/content-leak boundary (T-4-06-E) now states a guarantee the code no longer
-provides. A future contributor reading only `pending-destination.ts` (the natural place to look
-for this invariant) would reasonably conclude capture is authentication-gated when it is not.
-**Fix:** Update `pending-destination.ts`'s header comment to match `_layout.tsx`'s current
-behavior — capture is now auth-agnostic; only *replay* is gated (on the transition into
-`'authenticated'`) — and point at the `AUTH_FLOW_PATHS` guard as the mechanism that still prevents
-capturing an (auth)/(profile-setup) href.
-
-### WR-03: `AUTH_FLOW_PATHS` excludes auth routes by exact string match, not by group/prefix — fragile against future sub-routes under `(auth)`/`(profile-setup)`
-
-**File:** `apps/mobile/app/_layout.tsx:84,141-143`
-**Issue:**
-The content-leak boundary that keeps a captured deep link from ever targeting an auth-flow screen
-is `AUTH_FLOW_PATHS.has(route)` against the literal set `['', 'email', 'verify',
-'complete-profile']` — a reconstructed route must match one of these **exactly**. The code
-comment above it explicitly frames this as load-bearing: "this MUST NOT weaken the content-leak
-boundary." Today this is safe only because none of `(auth)/email.tsx`, `(auth)/verify.tsx`, or
-`(profile-setup)/complete-profile.tsx` have any dynamic sub-segment. But the check does not
-express *why* it's safe (no route under those groups nests further) — it is safe by the current
-route tree's shape, not by construction. If a future phase adds e.g. `(auth)/verify/[code].tsx`
-(a very plausible shape for an OTP deep-link-with-code flow), a link reconstructing to
-`verify/ABC123` would silently fail the `AUTH_FLOW_PATHS.has()` check, get captured, and later
-get replayed via `router.replace('/verify/ABC123' as Href)` after the guard reaches
-`'authenticated'` — landing on an Unmatched Route today, but a real, unintended entry point into
-whatever `(auth)` renders in the future the moment such a route exists, with no test or type error
-to catch the regression (the `Href` cast on line 242 already opts this path out of typed-route
-checking).
-**Fix:** Make the exclusion structural instead of enumerated — e.g. derive the check from route
-*group* membership (a route reconstructed from a link that resolves under `(auth)` or
-`(profile-setup)`) rather than a hand-maintained literal set, or at minimum add a code comment
-+ a guarding test that fails loudly if a new file is added under either group without updating
-`AUTH_FLOW_PATHS`.
-
-### WR-04: The G-05-7 `reconstructDeepLinkRoute` fix is wired only into the one-shot cold-start capture/replay path — not verified against a deep link received while the app is already running and authenticated
-
-**File:** `apps/mobile/app/_layout.tsx:103,131-144,232-253`
-**Issue:**
-`reconstructDeepLinkRoute` correctly fixes the authority-vs-path split for the custom
-double-slash scheme (`festipal://f/:slug`), and its unit tests are solid. It is wired into the
-`_layout.tsx` capture effect (lines 131-144), which stores into the `pending-destination.ts`
-singleton. That singleton is only ever *consumed* by the redirect effect at lines 232-253, which
-is itself guarded by `coldStartRedirectRef` (line 103) to run **at most once per app session**
-(deliberately, to avoid hijacking normal tab navigation on a later logout/login cycle — see the
-comment at lines 96-102). This means: a deep link tapped while the app is already running and
-already past its first `'authenticated'` transition (e.g. the user backgrounds the app, then taps
-a second `festipal://f/:slug` link, or taps one after already being logged in for a while) is
-captured into `pendingDestination` but never replayed by this mechanism — `consumePendingDestination()`
-is not called again for the remainder of the session. Whether this is actually a user-visible
-regression depends on whether Expo Router's own built-in (React Navigation) linking resolution —
-which fires independently of this app-level effect for any URL event, including warm ones — is
-*also* subject to the same `new URL()` authority/path-splitting defect that motivated this fix in
-the first place. That was not verified in this review (it would require an on-device/integration
-check, out of reach for a static review), but the root-cause note in `lib/deep-link.ts` describes
-the defect as a property of `Linking.parse()`/`new URL()` itself, which Expo Router's default
-linking config also ultimately consumes.
-**Fix:** Confirm (device test or reading Expo Router's linking-config source for this Expo SDK)
-whether a warm, already-authenticated tap on `festipal://f/:slug` correctly lands on the festival
-screen. If Expo Router's own resolution shares the same defect, either register a custom
-`linking.getStateFromPath`/`subscribe` override using `reconstructDeepLinkRoute`, or explicitly
-document in `deep-link.ts`/`_layout.tsx` that the fix is cold-start-only and why that is
-sufficient.
+**File:** `apps/mobile/lib/active-festival-storage.ts:88-102`, `apps/mobile/app/(tabs)/home.tsx:82-86`
+**Issue:** The docs claim `syncActiveFestivalOnEnter` is now the sole owner
+of the persist/clear invariant "across every festival-home entry point," and
+home.tsx's comment states this means "a future entry path can never
+silently reintroduce the sticky stale-slug bug." That's true only for
+*entry* — there is currently no "unsave" / "remove from mine" mutation
+anywhere in the mobile app (confirmed via
+`grep -rniE "unsave|removeFestival|deleteFestival"` returning no hits), so
+this is not yet reachable. But the exact same bug class this plan closes
+(a slug that is stale relative to the festival's current saved state,
+restored unconditionally by `_layout.tsx:246-249`) can reappear the moment
+an "un-save" feature ships, unless that feature also calls
+`clearActiveFestivalSlug()` (or re-derives via the authority) for a festival
+that happens to be the currently-persisted slug. Nothing in this diff
+guards against that, and the doc comments read as though the invariant is
+now closed for good.
+**Fix:** Add a short forward-pointing note next to `ACTIVE_FESTIVAL_SLUG_KEY`
+or in the module doc: "if an un-save/remove-festival mutation is added, it
+must call `clearActiveFestivalSlug()` when the removed festival's slug
+matches `getActiveFestivalSlug()` (see `[festivalSlug].tsx`'s 404-clear
+effect for the existing pattern) — otherwise the sticky-stale-slug bug
+(G-05-5b-r2) reappears via a new trigger." This costs one comment now and
+prevents the same debugging cycle from recurring later.
 
 ## Info
 
-### IN-01: `Segment` type is redeclared locally in `festivals.tsx` instead of imported from `lib/festivals-segment-request.ts`
+### IN-01: Dead `try/catch` around `syncActiveFestivalOnEnter` in `home.tsx`, inconsistent with `festivals.tsx`
 
-**File:** `apps/mobile/app/(tabs)/festivals.tsx:25`, `apps/mobile/lib/festivals-segment-request.ts:14`
-**Issue:** `festivals-segment-request.ts` already exports `export type Segment = 'meine' |
-'alle';` for exactly this concept, and `festivals.tsx` imports `consumeFestivalsSegment` from
-that same module — but instead of importing its `Segment` type too, `festivals.tsx:25` redeclares
-an identical local `type Segment = 'meine' | 'alle';`. TypeScript's structural typing means this
-compiles fine today (the two literal unions are identical), but it is a duplicate source of truth
-for the same domain concept the codebase's own conventions (single source of truth, no
-re-declared shapes — see `festival-queries.ts`'s doc comments elsewhere in this phase) explicitly
-guard against. A future change to one (e.g. adding a third segment) will not raise a compile error
-in the other file until their usages actually diverge, which is exactly the kind of silent drift
-the project's Zod/contract conventions are designed to prevent.
-**Fix:**
-```ts
-import { consumeFestivalsSegment, type Segment } from '../../lib/festivals-segment-request';
-```
-and delete the local `type Segment = 'meine' | 'alle';` declaration.
+**File:** `apps/mobile/app/(tabs)/home.tsx:87-92`
+**Issue:** `home.tsx` still wraps the call in `try { syncActiveFestivalOnEnter(slug, true); } catch { ... }`. Per the module's own WR-02 guarantee (`active-festival-storage.ts:36-41`), every exported function — including `syncActiveFestivalOnEnter`, which only calls `getActiveFestivalSlug`/`saveActiveFestivalSlug`/`clearActiveFestivalSlug`, all of which already swallow their own storage errors — cannot throw. The `catch` branch is therefore unreachable dead code. `festivals.tsx:226` correctly calls the same function with no wrapper. Not a bug (belt-and-braces is harmless here), but the two call sites are now inconsistent for no functional reason, which makes the "single authority, no-throw guarantee" a little less legible at the call sites that are supposed to benefit from it.
+**Fix:** Drop the `try/catch` in `home.tsx`'s `handleEnter` to match `festivals.tsx`, or leave it but add a one-line comment ("defensive only — `syncActiveFestivalOnEnter` cannot throw, see WR-02") so a future reader doesn't assume it's load-bearing.
+
+### IN-02: The effectful `syncActiveFestivalOnEnter` (the actual read-decide-write wiring) has no unit test coverage
+
+**File:** `apps/mobile/lib/active-festival-storage.ts:104-112`, `apps/mobile/lib/__tests__/active-festival-entry.test.ts`
+**Issue:** The test file exercises only the pure `nextActiveFestivalSlug` reducer. `syncActiveFestivalOnEnter` — which actually calls `getActiveFestivalSlug()`, decides, and calls `saveActiveFestivalSlug`/`clearActiveFestivalSlug` — is untested (necessarily, since it touches the lazily-required native MMKV module that can't run under Vitest's node environment, consistent with the rest of this file's testing constraints). This is a reasonable and documented tradeoff, but it means the actual "read prior → clear if unsaved" wiring bug this plan closes is verified only by the plan's manual UAT round 3, not by CI. Not asking for a fix here — MMKV mocking is out of scope for this plan — just flagging that the regression's real fix-point is only regression-tested end-to-end manually.
+**Fix (optional, future):** If `react-native-mmkv` gains a mockable/in-memory adapter later, add a `syncActiveFestivalOnEnter` test using it so this wiring is covered by CI rather than only by manual UAT.
+
+### IN-03: Logout's `clearActiveFestivalSlug()` can race a concurrent `Enter` tap during the in-flight `signOut()` await
+
+**File:** `apps/mobile/app/(tabs)/festivals.tsx:91-111`
+**Issue:** `handleLogout` is `async` and awaits `authClient.signOut()` before its `finally` block runs `forceUnauthenticated()` then `clearActiveFestivalSlug()`. Because `await` yields the JS event loop, a synchronous `Enter` tap on a still-visible `FestivalCard` during that window runs `handleEnter → syncActiveFestivalOnEnter(slug, saved) → router.push(...)` to completion before `signOut()` resolves. When `signOut()` then resolves/rejects and the `finally` block runs, `clearActiveFestivalSlug()` unconditionally wipes whatever `syncActiveFestivalOnEnter` just persisted — even a legitimately just-entered SAVED festival. This predates plan 05-11 (the logout-clear call itself is from 05-05) and is not introduced by this diff, but it does touch the same shared persist/clear authority this plan consolidated, and is a plausible (if low-probability) way the "last entered saved festival" invariant can be violated by an unrelated code path.
+**Fix (optional, not blocking this plan):** Guard `clearActiveFestivalSlug()` in `handleLogout`'s `finally` the same way `[festivalSlug].tsx`'s 404-effect guards its clear — only clear if the persisted slug hasn't changed since logout was initiated, or simply accept this as a narrow, low-impact edge case (matches this plan's own threat-model disposition of `T-05-11-I` as "accept, non-secret, low severity").
 
 ---
 
-_Reviewed: 2026-08-09T16:50:00Z_
+_Reviewed: 2026-08-09T00:00:00Z_
 _Reviewer: Claude (gsd-code-reviewer)_
 _Depth: deep_
