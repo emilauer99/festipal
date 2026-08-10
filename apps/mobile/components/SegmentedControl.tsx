@@ -1,10 +1,15 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { tokens } from '@quiks/ui';
 
-import { FONT_BODY, resolveFontFamily } from '../lib/fonts';
+import { fontFamilyForRole } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';
+import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme-context';
 
-const { colors, typeRoles, radiiScale, spacingScale, layout } = tokens;
+// Colour roles resolve per render via `useTheme()` (05.1 D-01) — only the
+// mode-invariant scales stay at module scope.
+const { typeRoles, radiiScale, spacingScale, layout } = tokens;
 
 // Track inset padding — mirrors the legacy ADR-015 design-system source (docs/concept/designs/festival/)'s SegmentedControl (3px),
 // not part of the ported `spacingScale` ramp (closest step is 4px), kept
@@ -37,8 +42,12 @@ export function SegmentedControl<TValue extends string>({
   value,
   onChange,
 }: SegmentedControlProps<TValue>) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
+  // Role-resolved: `label` maps to a real 700 file, so `itemText` carries no
+  // numeric fontWeight (05.1 D-10 — no device faux-bold).
+  const labelFont = fontFamilyForRole('label', fontsReady);
 
   return (
     <View style={styles.track}>
@@ -61,7 +70,7 @@ export function SegmentedControl<TValue extends string>({
             <Text
               style={[
                 styles.itemText,
-                { fontFamily: bodyFont },
+                { fontFamily: labelFont },
                 selected ? styles.itemTextSelected : styles.itemTextUnselected,
               ]}
             >
@@ -74,34 +83,35 @@ export function SegmentedControl<TValue extends string>({
   );
 }
 
-const styles = StyleSheet.create({
-  track: {
-    flexDirection: 'row',
-    padding: TRACK_PADDING,
-    backgroundColor: colors.surfaceInset,
-    borderWidth: 1,
-    borderColor: colors.borderSubtle,
-    borderRadius: radiiScale['r-pill'],
-    gap: spacingScale['sp-2'],
-  },
-  item: {
-    flex: 1,
-    minHeight: layout.hitMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: radiiScale['r-pill'],
-  },
-  itemSelected: {
-    backgroundColor: colors.fillBrandQuiet,
-  },
-  itemText: {
-    fontSize: typeRoles.label.size,
-    fontWeight: typeRoles.label.weight,
-  },
-  itemTextSelected: {
-    color: colors.textPrimary,
-  },
-  itemTextUnselected: {
-    color: colors.textSecondary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    track: {
+      flexDirection: 'row',
+      padding: TRACK_PADDING,
+      backgroundColor: colors.surfaceInset,
+      borderWidth: 1,
+      borderColor: colors.borderSubtle,
+      borderRadius: radiiScale['r-pill'],
+      gap: spacingScale['sp-2'],
+    },
+    item: {
+      flex: 1,
+      minHeight: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radiiScale['r-pill'],
+    },
+    itemSelected: {
+      backgroundColor: colors.fillBrandQuiet,
+    },
+    itemText: {
+      fontSize: typeRoles.label.size,
+    },
+    itemTextSelected: {
+      color: colors.textPrimary,
+    },
+    itemTextUnselected: {
+      color: colors.textSecondary,
+    },
+  });
+}

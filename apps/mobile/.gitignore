@@ -39,3 +39,8 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# lingui `compile` output — a build by-product only. The app loads the `.po`
+# catalogs directly (lib/i18n.ts, via @lingui/metro-transformer), so these
+# compiled catalogs are never imported and must not be committed.
+locales/*/messages.js

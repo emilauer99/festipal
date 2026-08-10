@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
   Keyboard,
   Platform,
@@ -10,7 +10,12 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { tokens } from '@quiks/ui';
 
-const { colors, layout, spacingScale } = tokens;
+import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme-context';
+
+// Colour roles resolve per render via `useTheme()` (05.1 D-01) — only the
+// mode-invariant scales stay at module scope.
+const { layout, spacingScale } = tokens;
 
 const BASE_BOTTOM_PAD = spacingScale['sp-8'];
 
@@ -43,6 +48,8 @@ export function KeyboardScreen({
   children: ReactNode;
   contentContainerStyle?: StyleProp<ViewStyle>;
 }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   useEffect(() => {
@@ -81,13 +88,15 @@ export function KeyboardScreen({
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.bgApp },
-  flex: { flex: 1 },
-  content: {
-    flexGrow: 1,
-    paddingHorizontal: layout.screenPad,
-    paddingTop: layout.screenPad,
-    paddingBottom: BASE_BOTTOM_PAD,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    safe: { flex: 1, backgroundColor: colors.bgApp },
+    flex: { flex: 1 },
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: layout.screenPad,
+      paddingTop: layout.screenPad,
+      paddingBottom: BASE_BOTTOM_PAD,
+    },
+  });
+}
