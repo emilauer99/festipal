@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 05.1
 current_phase_name: quiks-rename-ci-v1-0-rollout
 status: executing
-stopped_at: Completed 05.1-01-PLAN.md
-last_updated: "2026-08-10T20:57:22.046Z"
+stopped_at: Completed 05.1-03-PLAN.md
+last_updated: "2026-08-10T21:13:55.262Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 34
+  completed_plans: 35
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 ## Current Position
 
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
-Plan: 2 of 7
+Plan: 3 of 7
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [█████████░] 85%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -96,6 +96,7 @@ Progress: [█████████░] 85%
 | Phase 05 P10 | ~10min | 2 tasks | 3 files |
 | Phase 05 P11 | ~15min | 2 tasks | 4 files |
 | Phase 05.1 P01 | ~30min | 2 tasks | 89 files |
+| Phase 05.1 P03 | ~20min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -189,6 +190,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-01: docker-compose.yml deliberately left untouched (owned by plan 05.1-02, which adds a top-level name: key and renames the volume) — this plan's 'zero festipal hits' acceptance criterion is therefore met except for that one file, by design
 - [Phase ?]: 05.1-01: comments citing the historical asset filenames festipal-tokens.css / festipal-ds.js were REPHRASED, not renamed — ADR-024 keeps those docs/ files under their original names, so a blind rename would have pointed at nothing
 - [Phase ?]: 05.1-01: MMKV ids switched to quiks-avatar / quiks-active-festival as a hard cut with no dual-read shim (D-14); the running Expo/Metro watcher had to be killed first or pnpm install fails ENOENT on *_tmp_*/node_modules
+- [Phase ?]: Hell-first Moduspfad: nur der exakte Gerätewert 'dark' ergibt Dunkel; 'light'/null/undefined/'unspecified' ergeben Hell (05.1-03, D-01)
+- [Phase ?]: ThemeColors als gewidmeter Mapped Type statt typeof colors — 'as const' macht die beiden Token-Sets sonst zueinander unzuweisbar (05.1-03)
+- [Phase ?]: gradientSunset liegt in colors und wird vom D-11-Gate rekursiv mitgeprüft; Limette/Violett sind per Test entfernt, kein ciFallbacks-Export (05.1-03)
 
 ### Pending Todos
 
@@ -228,6 +232,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T20:57:22.026Z
-Stopped at: Completed 05.1-01-PLAN.md
+Last session: 2026-08-10T21:13:55.243Z
+Stopped at: Completed 05.1-03-PLAN.md
 Resume file: None
