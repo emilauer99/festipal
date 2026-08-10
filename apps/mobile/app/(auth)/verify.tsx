@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -8,19 +8,19 @@ import { tokens } from '@quiks/ui';
 import { authClient } from '../../lib/auth-client';
 import { mapOtpError, type OtpErrorInput, type OtpErrorKind } from '../../lib/otp-error';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import type { ThemeColors } from '../../lib/theme';
+import { useTheme } from '../../lib/theme-context';
 import { KeyboardScreen } from '../../components/KeyboardScreen';
 import { OtpBoxes } from '../../components/OtpBoxes';
 import { ResendCountdown } from '../../components/ResendCountdown';
 
-const { colors, typeRoles, layout, radii, spacingScale } = tokens;
+// 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
+// mode-invariant scales stay destructured at module scope.
+const { typeRoles, layout, radii, spacingScale } = tokens;
 
 const OTP_LENGTH = 6;
-// UI-SPEC ## Color — status tints are always a 16%-ish tint behind colored
-// text/border, never a solid fill; the mockup renders the error box at
-// rgba(255,77,94,.12) specifically.
-const ERROR_TINT = 'rgba(255,77,94,0.12)';
 
 /**
  * UI-SPEC Scope note #5 — OTP auto-submits the instant the 6th digit lands
@@ -37,7 +37,15 @@ export default function VerifyScreen() {
   const email = Array.isArray(emailParam) ? (emailParam[0] ?? '') : (emailParam ?? '');
   const router = useRouter();
   const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
+  // Role-resolved families (05.1 D-10) — no numeric `fontWeight` sits on top.
+  const headingFont = fontFamilyForRole('display2', fontsReady);
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const bodyStrongFont = fontFamilyForRole('bodyStrong', fontsReady);
+  const ctaFont = fontFamilyForRole('title3', fontsReady);
   const [otp, setOtp] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [errorKind, setErrorKind] = useState<OtpErrorKind | null>(null);
@@ -126,16 +134,13 @@ export default function VerifyScreen() {
       <Stack.Screen options={{ headerShown: false, title: t`Enter code` }} />
       <View style={styles.content}>
         <View style={styles.headingBlock}>
-          <Text style={[styles.heading, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsReady) }]}>
+          <Text style={[styles.heading, { fontFamily: headingFont }]}>
             <Trans>Enter code</Trans>
           </Text>
-          <Text style={[styles.subtitle, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+          <Text style={[styles.subtitle, { fontFamily: bodyFont }]}>
             {subtitlePrefix}
             <Text
-              style={[
-                styles.subtitleStrong,
-                { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) },
-              ]}
+              style={[styles.subtitleStrong, { fontFamily: bodyStrongFont }]}
             >
               {email}
             </Text>
@@ -155,18 +160,15 @@ export default function VerifyScreen() {
         {errorKind ? (
           <View style={styles.errorBox}>
             <View style={styles.errorHeadlineRow}>
-              <AlertCircle size={16} color={colors.danger} strokeWidth={2} />
+              <AlertCircle size={16} color={colors.dangerText} strokeWidth={2} />
               <Text
-                style={[
-                  styles.errorHeadline,
-                  { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) },
-                ]}
+                style={[styles.errorHeadline, { fontFamily: bodyStrongFont }]}
               >
                 {errorHeadline(errorKind)}
               </Text>
             </View>
             {errorKind === 'wrong-or-expired' ? (
-              <Text style={[styles.errorBody, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+              <Text style={[styles.errorBody, { fontFamily: bodySmFont }]}>
                 <Trans>Get a new code.</Trans>
               </Text>
             ) : null}
@@ -176,10 +178,7 @@ export default function VerifyScreen() {
         {errorKind === 'wrong-or-expired' ? (
           <Pressable style={styles.retryButton} onPress={handleRetrySend}>
             <Text
-              style={[
-                styles.retryButtonText,
-                { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) },
-              ]}
+              style={[styles.retryButtonText, { fontFamily: ctaFont }]}
             >
               <Trans>Send new code</Trans>
             </Text>
@@ -193,10 +192,7 @@ export default function VerifyScreen() {
               hitSlop={8}
             >
               <Text
-                style={[
-                  styles.changeEmailText,
-                  { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) },
-                ]}
+                style={[styles.changeEmailText, { fontFamily: bodySmFont }]}
               >
                 <Trans>Change email</Trans>
               </Text>
@@ -208,82 +204,82 @@ export default function VerifyScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    // flexGrow (not flex:1) so the block grows to fill and stays centered when
-    // content is short, but keeps its intrinsic height (RN default flexShrink:0)
-    // and overflows into a scroll when the soft keyboard shrinks the viewport —
-    // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
-    // the KeyboardScreen ScrollView has nothing to scroll.
-    flexGrow: 1,
-    justifyContent: 'center',
-    gap: spacingScale['sp-8'],
-  },
-  headingBlock: {
-    gap: spacingScale['sp-6'],
-  },
-  heading: {
-    fontSize: typeRoles.display2.size,
-    fontWeight: typeRoles.display2.weight,
-    lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: typeRoles.body.size,
-    fontWeight: typeRoles.body.weight,
-    lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
-    color: colors.textSecondary,
-  },
-  subtitleStrong: {
-    fontSize: typeRoles.bodyStrong.size,
-    fontWeight: typeRoles.bodyStrong.weight,
-    color: colors.textPrimary,
-  },
-  errorBox: {
-    backgroundColor: ERROR_TINT,
-    borderWidth: 1,
-    borderColor: colors.danger,
-    borderRadius: radii.md,
-    padding: spacingScale['sp-6'],
-    gap: spacingScale['sp-4'],
-  },
-  errorHeadlineRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacingScale['sp-2'],
-  },
-  errorHeadline: {
-    flexShrink: 1,
-    fontSize: typeRoles.bodyStrong.size,
-    fontWeight: typeRoles.bodyStrong.weight,
-    color: colors.danger,
-  },
-  errorBody: {
-    fontSize: typeRoles.bodySm.size,
-    fontWeight: typeRoles.bodySm.weight,
-    color: colors.textSecondary,
-  },
-  retryButton: {
-    minHeight: layout.hitMin,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  retryButtonText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-  footer: {
-    gap: spacingScale['sp-5'],
-  },
-  changeEmailWrap: {
-    minHeight: layout.hitMin,
-    justifyContent: 'center',
-  },
-  changeEmailText: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.textMuted,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    content: {
+      // flexGrow (not flex:1) so the block grows to fill and stays centered when
+      // content is short, but keeps its intrinsic height (RN default flexShrink:0)
+      // and overflows into a scroll when the soft keyboard shrinks the viewport —
+      // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
+      // the KeyboardScreen ScrollView has nothing to scroll.
+      flexGrow: 1,
+      justifyContent: 'center',
+      gap: spacingScale['sp-8'],
+    },
+    headingBlock: {
+      gap: spacingScale['sp-6'],
+    },
+    heading: {
+      fontSize: typeRoles.display2.size,
+      lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: typeRoles.body.size,
+      lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
+      color: colors.textSecondary,
+    },
+    subtitleStrong: {
+      fontSize: typeRoles.bodyStrong.size,
+      color: colors.textPrimary,
+    },
+    // UI-SPEC ## Color — the status tint is a token, not a hand-mixed literal:
+    // `fillDangerQuiet` IS danger at 12%, the exact value the mockup used. The
+    // 1px border is a non-text UI component at the 3:1 threshold, so it takes
+    // `dangerText`, not the fill hue (2.98:1 on Papier).
+    errorBox: {
+      backgroundColor: colors.fillDangerQuiet,
+      borderWidth: 1,
+      borderColor: colors.dangerText,
+      borderRadius: radii.md,
+      padding: spacingScale['sp-6'],
+      gap: spacingScale['sp-4'],
+    },
+    errorHeadlineRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-2'],
+    },
+    errorHeadline: {
+      flexShrink: 1,
+      fontSize: typeRoles.bodyStrong.size,
+      color: colors.dangerText,
+    },
+    errorBody: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textSecondary,
+    },
+    retryButton: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.primary,
+      borderRadius: radii.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    retryButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    footer: {
+      gap: spacingScale['sp-5'],
+    },
+    changeEmailWrap: {
+      minHeight: layout.hitMin,
+      justifyContent: 'center',
+    },
+    changeEmailText: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textMuted,
+    },
+  });
+}

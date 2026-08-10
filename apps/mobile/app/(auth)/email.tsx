@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -7,11 +7,15 @@ import { tokens } from '@quiks/ui';
 
 import { authClient } from '../../lib/auth-client';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import type { ThemeColors } from '../../lib/theme';
+import { useTheme } from '../../lib/theme-context';
 import { KeyboardScreen } from '../../components/KeyboardScreen';
 
-const { colors, typeRoles, layout, radii, spacingScale } = tokens;
+// 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
+// mode-invariant scales stay destructured at module scope.
+const { typeRoles, layout, radii, spacingScale } = tokens;
 
 /**
  * D-02 — the real (unstyled-no-more) start of the email-OTP flow: `handleSendCode`
@@ -23,7 +27,15 @@ const { colors, typeRoles, layout, radii, spacingScale } = tokens;
 export default function EmailEntryScreen() {
   const router = useRouter();
   const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
+  // Role-resolved families (05.1 D-10) — no numeric `fontWeight` sits on top.
+  const headingFont = fontFamilyForRole('display2', fontsReady);
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const labelFont = fontFamilyForRole('label', fontsReady);
+  const ctaFont = fontFamilyForRole('title3', fontsReady);
   const [email, setEmail] = useState('');
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -78,18 +90,18 @@ export default function EmailEntryScreen() {
         <ArrowLeft size={24} color={colors.textPrimary} strokeWidth={2} />
       </Pressable>
       <View style={styles.content}>
-        <Text style={[styles.heading, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsReady) }]}>
+        <Text style={[styles.heading, { fontFamily: headingFont }]}>
           <Trans>Your email</Trans>
         </Text>
-        <Text style={[styles.subtitle, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+        <Text style={[styles.subtitle, { fontFamily: bodyFont }]}>
           <Trans>We'll send you a code in a moment.</Trans>
         </Text>
         <View style={styles.field}>
-          <Text style={[styles.label, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+          <Text style={[styles.label, { fontFamily: labelFont }]}>
             <Trans>Email</Trans>
           </Text>
           <TextInput
-            style={[styles.input, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}
+            style={[styles.input, { fontFamily: bodyFont }]}
             value={email}
             onChangeText={setEmail}
             placeholder={t`you@example.com`}
@@ -101,7 +113,7 @@ export default function EmailEntryScreen() {
           />
         </View>
         {error ? (
-          <Text style={[styles.error, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+          <Text style={[styles.error, { fontFamily: bodySmFont }]}>
             {error}
           </Text>
         ) : null}
@@ -112,11 +124,11 @@ export default function EmailEntryScreen() {
           onPress={handleSendCode}
           disabled={!canSubmit}
         >
-          <Text style={[styles.ctaText, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+          <Text style={[styles.ctaText, { fontFamily: ctaFont }]}>
             {sending ? t`Sending…` : t`Send code`}
           </Text>
         </Pressable>
-        <Text style={[styles.ctaHelper, { fontFamily: resolveFontFamily(FONT_BODY, fontsReady) }]}>
+        <Text style={[styles.ctaHelper, { fontFamily: bodySmFont }]}>
           <Trans>We'll send you a 6-digit code — no password needed.</Trans>
         </Text>
       </View>
@@ -124,78 +136,78 @@ export default function EmailEntryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  backButton: {
-    width: layout.hitMin,
-    height: layout.hitMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: -spacingScale['sp-5'],
-  },
-  content: {
-    // flexGrow (not flex:1) so the block grows to fill and stays centered when
-    // content is short, but keeps its intrinsic height (RN default flexShrink:0)
-    // and overflows into a scroll when the soft keyboard shrinks the viewport —
-    // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
-    // the KeyboardScreen ScrollView has nothing to scroll.
-    flexGrow: 1,
-    justifyContent: 'center',
-    gap: spacingScale['sp-6'],
-  },
-  heading: {
-    fontSize: typeRoles.display2.size,
-    fontWeight: typeRoles.display2.weight,
-    lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: typeRoles.body.size,
-    fontWeight: typeRoles.body.weight,
-    lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
-    color: colors.textSecondary,
-  },
-  field: {
-    gap: spacingScale['sp-5'],
-  },
-  label: {
-    fontSize: typeRoles.label.size,
-    fontWeight: typeRoles.label.weight,
-    lineHeight: typeRoles.label.size * typeRoles.label.lineHeight,
-    color: colors.textSecondary,
-  },
-  input: {
-    minHeight: layout.hitMin,
-    backgroundColor: colors.surfaceInset,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.control,
-    paddingHorizontal: spacingScale['sp-6'],
-    fontSize: typeRoles.body.size,
-    color: colors.textPrimary,
-  },
-  error: {
-    color: colors.danger,
-    fontSize: typeRoles.bodySm.size,
-  },
-  footer: {
-    gap: spacingScale['sp-5'],
-  },
-  cta: {
-    minHeight: layout.hitMin,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaDisabled: { opacity: 0.45 },
-  ctaText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-  ctaHelper: {
-    textAlign: 'center',
-    fontSize: typeRoles.bodySm.size,
-    color: colors.textMuted,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    backButton: {
+      width: layout.hitMin,
+      height: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: -spacingScale['sp-5'],
+    },
+    content: {
+      // flexGrow (not flex:1) so the block grows to fill and stays centered when
+      // content is short, but keeps its intrinsic height (RN default flexShrink:0)
+      // and overflows into a scroll when the soft keyboard shrinks the viewport —
+      // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
+      // the KeyboardScreen ScrollView has nothing to scroll.
+      flexGrow: 1,
+      justifyContent: 'center',
+      gap: spacingScale['sp-6'],
+    },
+    heading: {
+      fontSize: typeRoles.display2.size,
+      lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: typeRoles.body.size,
+      lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
+      color: colors.textSecondary,
+    },
+    field: {
+      gap: spacingScale['sp-5'],
+    },
+    label: {
+      fontSize: typeRoles.label.size,
+      lineHeight: typeRoles.label.size * typeRoles.label.lineHeight,
+      color: colors.textSecondary,
+    },
+    input: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.surfaceInset,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radii.control,
+      paddingHorizontal: spacingScale['sp-6'],
+      fontSize: typeRoles.body.size,
+      color: colors.textPrimary,
+    },
+    // Status hue as TEXT resolves through `dangerText` (4.54:1 on Papier),
+    // never the bare `danger` fill (2.98:1).
+    error: {
+      color: colors.dangerText,
+      fontSize: typeRoles.bodySm.size,
+    },
+    footer: {
+      gap: spacingScale['sp-5'],
+    },
+    cta: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.primary,
+      borderRadius: radii.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ctaDisabled: { opacity: 0.45 },
+    ctaText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    ctaHelper: {
+      textAlign: 'center',
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textMuted,
+    },
+  });
+}
