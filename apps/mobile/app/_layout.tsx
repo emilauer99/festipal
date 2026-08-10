@@ -134,6 +134,17 @@ export default function RootLayout() {
   // REPLAYED by the redirect effect AFTER the guard has independently
   // reached 'authenticated' — the boundary is enforced at replay, not
   // capture.
+  //
+  // WR-03 (05-REVIEW.md), accepted scope limitation for this MVP slice — the
+  // ONLY consumer of a captured pending destination is the cold-start
+  // redirect-decide effect below, which is one-shot per app process
+  // (`coldStartRedirectRef`). A deep link tapped AFTER that one-shot has
+  // already fired (e.g. a friend shares a link while the visitor is already
+  // mid-session and authenticated) IS still captured here but is never
+  // replayed — no in-session deep-link handling exists yet. This is a known
+  // gap, not a regression of the cold-start fix above; a future phase adding
+  // in-session deep links needs a second, non-one-shot consumer that reacts
+  // to `linkingUrl` changes while already 'authenticated'.
   const linkingUrl = Linking.useLinkingURL();
   // WR-02 (05-REVIEW.md) — `Linking.useLinkingURL()` resolves the initial
   // launch URL ASYNCHRONOUSLY (a native bridge call under the hood), so on
