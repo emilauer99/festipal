@@ -79,6 +79,21 @@ export function forceUnauthenticated(): void {
 // whole point of the group syntax), so the "never capture an (auth)/
 // (profile-setup) href itself" rule is enforced by the actual route paths
 // those screens resolve to, not the folder names.
+//
+// WR-05 (05-REVIEW.md) — this Set is hand-maintained and has NO compile-time
+// link to the actual screen files below; it MUST be kept in sync by
+// convention whenever a screen is added/removed/renamed in either group.
+// Current members map 1:1 to (as of this fix):
+//   app/(auth)/welcome.tsx           -> 'welcome'
+//   app/(auth)/email.tsx             -> 'email'
+//   app/(auth)/verify.tsx            -> 'verify'
+//   app/(profile-setup)/complete-profile.tsx -> 'complete-profile'
+// (the `''` member covers the group's index/empty-path case — see IN-01
+// below for why it is currently unreachable in practice.) Adding a new
+// screen to either group (e.g. a future `forgot-password` step) WITHOUT
+// adding its resolved path here means it is treated as a normal deep-link
+// destination — captured and potentially replayed post-login, defeating the
+// content-leak boundary this guard exists to enforce (lines above).
 const AUTH_FLOW_PATHS = new Set(['', 'welcome', 'email', 'verify', 'complete-profile']);
 
 // G-05-7 — fallback app scheme when `Constants.expoConfig?.scheme` is
