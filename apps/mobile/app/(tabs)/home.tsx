@@ -84,12 +84,14 @@ export default function HomeScreen() {
     // the Festivals tab's Alle segment (festivals.tsx handleEnter) — so a
     // future entry path can never silently reintroduce the sticky
     // stale-saved-slug bug by calling saveActiveFestivalSlug directly.
-    try {
-      syncActiveFestivalOnEnter(slug, true);
-    } catch {
-      // Persistence is a nicety (D-06 cold-start focus) — entry itself never
-      // depends on it succeeding.
-    }
+    //
+    // WR-06 (05-REVIEW.md) — no try/catch here: every storage call
+    // `syncActiveFestivalOnEnter` makes (`getActiveFestivalSlug` /
+    // `saveActiveFestivalSlug` / `clearActiveFestivalSlug`) already swallows
+    // its own errors internally (see active-festival-storage.ts's
+    // module-level note), so a wrapping try/catch here could never actually
+    // catch anything. Matches festivals.tsx's call site.
+    syncActiveFestivalOnEnter(slug, true);
     router.push(`/f/${slug}`);
   }
 
