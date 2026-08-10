@@ -235,13 +235,13 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
 **Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
 **Depends on:** Phase 5
-**Plans:** 7 plans
+**Plans:** 1/7 plans executed
 
 Plans:
 
 **Wave 1**
 
-- [ ] 05.1-01-PLAN.md — Rename: native-identity tracer (scheme ↔ trustedOrigins ↔ bundle ID) + full `@quiks/*` scope rename, MMKV IDs, lint exclusion, wordmark string, CLAUDE.md
+- [x] 05.1-01-PLAN.md — Rename: native-identity tracer (scheme ↔ trustedOrigins ↔ bundle ID) + full `@quiks/*` scope rename, MMKV IDs, lint exclusion, wordmark string, CLAUDE.md
 
 **Wave 2** *(blocked on Wave 1)*
 

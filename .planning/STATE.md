@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Rollout
-current_phase: 5.1
-current_phase_name: quiks Rename & CI v1.0 Rollout
+current_phase: 05.1
+current_phase_name: quiks-rename-ci-v1-0-rollout
 status: executing
-stopped_at: Phase 05.1 UI-SPEC approved
-last_updated: "2026-08-10T20:25:37.290Z"
+stopped_at: Completed 05.1-01-PLAN.md
+last_updated: "2026-08-10T20:57:22.046Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 33
+  completed_plans: 34
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 5.1 — quiks Rename & CI v1.0 Rollout (INSERTED, urgent — vor Phase 6)
+**Current focus:** Phase 05.1 — quiks-rename-ci-v1-0-rollout
 
 ## Current Position
 
-Phase: 5.1 — quiks Rename & CI v1.0 Rollout (INSERTED)
-Plan: Not started
+Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
+Plan: 2 of 7
 Status: Ready to execute
-Last activity: 2026-08-10 — Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)
+Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [██████████] 100%
+Progress: [█████████░] 85%
 
 ## Performance Metrics
 
@@ -95,6 +95,7 @@ Progress: [██████████] 100%
 | Phase 05 P09 | ~15min | 3 tasks | 5 files |
 | Phase 05 P10 | ~10min | 2 tasks | 3 files |
 | Phase 05 P11 | ~15min | 2 tasks | 4 files |
+| Phase 05.1 P01 | ~30min | 2 tasks | 89 files |
 
 ## Accumulated Context
 
@@ -184,6 +185,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-10: capture effect's authState.status===unauthenticated gate removed entirely — content-leak boundary preserved at replay (redirect effect), not capture (G-05-7b)
 - [Phase ?]: 05-11: nextActiveFestivalSlug's return depends only on entered.saved (not prior) -- an unsaved entry ALWAYS clears the persisted slug, reversing 05-09's 'only persist when saved' semantics that made the persisted slug a sticky last-SAVED-festival-ever-entered value (G-05-5b-r2)
 - [Phase ?]: 05-11: syncActiveFestivalOnEnter is now the single persist/clear authority shared by festivals.tsx and home.tsx handleEnter -- home.tsx passes saved=true (behavior-preserving) purely so no future entry path can bypass the shared invariant
+- [Phase ?]: 05.1-01: auth-client.ts's expoClient scheme moved in the SAME commit as app.json's scheme and auth.instance.ts's trustedOrigins — it produces the expo-origin header the allowlist validates, so splitting it would have left a 403-on-signout commit
+- [Phase ?]: 05.1-01: docker-compose.yml deliberately left untouched (owned by plan 05.1-02, which adds a top-level name: key and renames the volume) — this plan's 'zero festipal hits' acceptance criterion is therefore met except for that one file, by design
+- [Phase ?]: 05.1-01: comments citing the historical asset filenames festipal-tokens.css / festipal-ds.js were REPHRASED, not renamed — ADR-024 keeps those docs/ files under their original names, so a blind rename would have pointed at nothing
+- [Phase ?]: 05.1-01: MMKV ids switched to quiks-avatar / quiks-active-festival as a hard cut with no dual-read shim (D-14); the running Expo/Metro watcher had to be killed first or pnpm install fails ENOENT on *_tmp_*/node_modules
 
 ### Pending Todos
 
@@ -223,6 +228,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T19:32:07.216Z
-Stopped at: Phase 05.1 UI-SPEC approved
-Resume file: C:/Users/Emil/Documents/Privat/Projekte/festipal/.planning/phases/05.1-quiks-rename-ci-v1-0-rollout/05.1-UI-SPEC.md
+Last session: 2026-08-10T20:57:22.026Z
+Stopped at: Completed 05.1-01-PLAN.md
+Resume file: None

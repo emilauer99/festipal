@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 21
+open_count: 22
 waived_count: 0
 fixed_count: 2
-total_count: 23
-last_updated: 2026-08-09T14:33:18.123Z
+total_count: 24
+last_updated: 2026-08-10T20:57:29.452Z
 ---
 
 # Broken Windows Ledger
@@ -38,6 +38,7 @@ last_updated: 2026-08-09T14:33:18.123Z
 | 21 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | G-05-5b on-device UAT not run headlessly: enter unsaved festival, force-quit, relaunch -> Home; save+enter+relaunch -> restores festival (05-09 task 2) | open |  | 2026-08-09T14:25:57.499Z |  |
 | 22 | 05 | unrun-verify | apps/mobile/lib/festival-navigation.ts |  | G-05-5a on-device UAT not run headlessly: cold-start Back -> Home tab; normal in-tab Back -> Festivals tab (05-09 task 3) | open |  | 2026-08-09T14:25:58.180Z |  |
 | 23 | 05 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05-UAT.md test 7: on-device deep-link verification (logged-out festipal://f/:slug double-slash, and already-authenticated cold-start festipal:///f/:slug) not run headlessly — requires real device | open |  | 2026-08-09T14:33:18.123Z |  |
+| 24 | 05.1 | unrun-verify | docker-compose.yml |  | Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs. | open |  | 2026-08-10T20:57:29.452Z |  |
 
 ````json
 [
@@ -315,6 +316,18 @@ last_updated: 2026-08-09T14:33:18.123Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-09T14:33:18.123Z",
+    "resolved_at": null
+  },
+  {
+    "id": 24,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "docker-compose.yml",
+    "line": null,
+    "description": "Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-10T20:57:29.452Z",
     "resolved_at": null
   }
 ]
