@@ -37,6 +37,16 @@ SplashScreen.preventAutoHideAsync();
 // timeout the guard falls through to 'unauthenticated' (routes to Welcome)
 // rather than holding the splash forever; if the real resolution finishes
 // slightly after, its result still wins (no additional gate is added).
+//
+// WR-09 (05-REVIEW.md), accepted tradeoff in product terms — the "result
+// still wins" behavior means a visitor whose network/server is merely SLOW
+// (not actually hung) can see the splash drop them onto Welcome, start
+// typing an email/OTP, and then be silently yanked into Home/complete-profile
+// a moment later when the original resolve finally lands. This is judged an
+// acceptable rare edge case for this MVP slice (an 8s stall on `GET /me` is
+// itself already unusual) versus the complexity of cancelling the in-flight
+// resolve or debouncing a late result against user progress. Revisit if UAT
+// or telemetry surfaces this as a real visitor-facing disruption.
 const AUTH_RESOLVE_TIMEOUT_MS = 8000;
 
 // first-login-unmatched-route (round 3) — the four-state `AuthState` union
