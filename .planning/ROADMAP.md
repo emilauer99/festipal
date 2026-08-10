@@ -31,6 +31,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Mobile App Shell & i18n Foundation** - `apps/mobile` Expo scaffold, auth/api clients, `Stack.Protected` navigation, Lingui + lint (completed 2026-08-04)
 - [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
 - [x] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview (completed 2026-08-09)
+- [ ] **Phase 5.1: quiks Rename & CI v1.0 Rollout** (INSERTED) - ADR-024 Code-Rename (`@festipal/*` → `@quiks/*`, `at.festipal.app`) + ADR-023 CI-v1.0-Token-Swap (Beere/Amber/Sunset) und hell-first Light-Mode-Wiring
 - [ ] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home
 
 ## Phase Details
@@ -228,6 +229,34 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 **Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
 **UI hint**: yes
+
+### Phase 05.1: quiks Rename & CI v1.0 Rollout (INSERTED)
+
+**Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
+**Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
+**Depends on:** Phase 5
+**Plans:** 7 plans
+
+Plans:
+
+**Wave 1**
+
+- [ ] 05.1-01-PLAN.md — Rename: native-identity tracer (scheme ↔ trustedOrigins ↔ bundle ID) + full `@quiks/*` scope rename, MMKV IDs, lint exclusion, wordmark string, CLAUDE.md
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [ ] 05.1-02-PLAN.md — Local dev infra: `docker-compose.yml` rename + explicit Compose project name, `.env` handover checkpoint, volume reset + migrate + seed
+- [ ] 05.1-03-PLAN.md — CI v1.0 foundation tracer: `useColorScheme` → `useTheme()` mode resolution, `tokens.ts` Beere/Amber/Sunset swap (both modes), CI type roles + role-to-font-file resolver
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [ ] 05.1-04-PLAN.md — Component re-theme: `createStyles(colors)` migration, mode-aware nav glass + blur tint, Sunset hero gradient on `FestivalCard`, raw-literal tokenisation
+- [ ] 05.1-05-PLAN.md — Screen re-theme: `createStyles(colors)` migration across all 8 screens, light-mode-legible status text, last raw literals removed
+- [ ] 05.1-06-PLAN.md — Brand mark: shared glyph geometry, font-gated `WordmarkGlyph`, deterministic SVG→PNG icon generator, six regenerated app icons
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [ ] 05.1-07-PLAN.md — Phase gate: frozen install + root lint/typecheck/test + mobile export, mandatory Android device acceptance (both modes, auth, deep link, icons), D-15 post-merge rename checklist
 
 ### Phase 6: Profile & Friends Placeholders
 
