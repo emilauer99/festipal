@@ -97,10 +97,14 @@ export default function FestivalsScreen() {
     signingOutRef.current = true;
     try {
       await authClient.signOut();
-    } catch {
+    } catch (error) {
       // Offline/network failure — no error UI for this action (UI-SPEC
       // Copywriting Contract "Logout": immediate, no confirmation, reversible
       // action); fall through to forceUnauthenticated() below regardless.
+      // IN-03 (05-REVIEW.md) — still log it (project convention: "Use
+      // console.error() for errors"), purely for debuggability; this does
+      // not change any user-facing behavior.
+      console.error('signOut failed:', error);
     } finally {
       // Reaches Welcome even if signOut()'s network call failed — see
       // app/_layout.tsx forceUnauthenticated() for why this is required
