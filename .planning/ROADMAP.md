@@ -235,7 +235,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
 **Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
 **Depends on:** Phase 5
-**Plans:** 2/7 plans executed
+**Plans:** 3/7 plans executed
 
 Plans:
 
@@ -245,7 +245,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 05.1-02-PLAN.md — Local dev infra: `docker-compose.yml` rename + explicit Compose project name, `.env` handover checkpoint, volume reset + migrate + seed
+- [x] 05.1-02-PLAN.md — Local dev infra: `docker-compose.yml` rename + explicit Compose project name, `.env` handover checkpoint, volume reset + migrate + seed
 - [x] 05.1-03-PLAN.md — CI v1.0 foundation tracer: `useColorScheme` → `useTheme()` mode resolution, `tokens.ts` Beere/Amber/Sunset swap (both modes), CI type roles + role-to-font-file resolver
 
 **Wave 3** *(blocked on Wave 2)*
