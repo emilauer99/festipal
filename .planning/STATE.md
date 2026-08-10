@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 05.1
 current_phase_name: quiks-rename-ci-v1-0-rollout
 status: executing
-stopped_at: Completed 05.1-04-PLAN.md
-last_updated: "2026-08-10T21:42:11.521Z"
+stopped_at: Completed 05.1-05-PLAN.md
+last_updated: "2026-08-10T21:56:31.038Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 37
+  completed_plans: 38
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 ## Current Position
 
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
-Plan: 5 of 7
+Plan: 6 of 7
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [█████████░] 93%
+Progress: [██████████] 95%
 
 ## Performance Metrics
 
@@ -99,6 +99,7 @@ Progress: [█████████░] 93%
 | Phase 05.1 P03 | ~20min | 3 tasks | 8 files |
 | Phase 05.1 P02 | ~15min | 3 tasks | 1 files |
 | Phase 05.1 P04 | ~15min | 3 tasks | 12 files |
+| Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -202,6 +203,9 @@ Recent decisions affecting current work:
 - [Phase ?]: Sunset-Rect traegt rx/ry = r-card zusaetzlich zum overflow:hidden der Hero-Karte - doppelt abgesichertes Clipping
 - [Phase ?]: otpDigit und countdown behalten explizit FONT_MONO + numerisches fontWeight (Rolle deklariert 500, Datei ist 400 - von 05.1-03 geparkt)
 - [Phase ?]: WINDOWS-Eintrag 17 war veraltet: die vier DE-Uebersetzungen existieren seit dem Phase-5-Merge - verifiziert statt neu geschrieben
+- [Phase ?]: 05.1-05: Screens auf fontFamilyForRole umgestellt statt nur numerisches fontWeight zu streichen — sonst wäre D-10 trivial erfüllt und faux-bold geblieben
+- [Phase ?]: 05.1-05: Statushue als Text/Icon/1px-Rand geht immer über die *Text-Variante (dangerText/successText), bare Hue nur für gefüllte Flächen
+- [Phase ?]: 05.1-05: app/_layout.tsx (Splash-Wortmarke, letztes numerisches fontWeight) bewusst nicht angefasst — gehört Plan 05.1-06
 
 ### Pending Todos
 
@@ -241,6 +245,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T21:42:01.737Z
-Stopped at: Completed 05.1-04-PLAN.md
+Last session: 2026-08-10T21:56:22.058Z
+Stopped at: Completed 05.1-05-PLAN.md
 Resume file: None

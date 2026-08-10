@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 23
+open_count: 24
 waived_count: 0
 fixed_count: 3
-total_count: 26
-last_updated: 2026-08-10T21:39:45.181Z
+total_count: 27
+last_updated: 2026-08-10T21:53:55.129Z
 ---
 
 # Broken Windows Ledger
@@ -41,6 +41,7 @@ last_updated: 2026-08-10T21:39:45.181Z
 | 24 | 05.1 | unrun-verify | docker-compose.yml |  | Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs. | open |  | 2026-08-10T20:57:29.452Z |  |
 | 25 | 05.1 | deviation | apps/mobile/lib/fonts.ts |  | otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance | open |  | 2026-08-10T21:14:08.388Z |  |
 | 26 | 05.1 | unrun-verify | apps/mobile/components/FestivalCard.tsx |  | 05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07 | open |  | 2026-08-10T21:39:45.181Z |  |
+| 27 | 05.1 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07 | open |  | 2026-08-10T21:53:55.129Z |  |
 
 ````json
 [
@@ -354,6 +355,18 @@ last_updated: 2026-08-10T21:39:45.181Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-10T21:39:45.181Z",
+    "resolved_at": null
+  },
+  {
+    "id": 27,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/app/(tabs)/festivals.tsx",
+    "line": null,
+    "description": "05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-10T21:53:55.129Z",
     "resolved_at": null
   }
 ]
