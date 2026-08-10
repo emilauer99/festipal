@@ -98,13 +98,20 @@ export function forceUnauthenticated(): void {
 //   app/(auth)/email.tsx             -> 'email'
 //   app/(auth)/verify.tsx            -> 'verify'
 //   app/(profile-setup)/complete-profile.tsx -> 'complete-profile'
-// (the `''` member covers the group's index/empty-path case — see IN-01
-// below for why it is currently unreachable in practice.) Adding a new
-// screen to either group (e.g. a future `forgot-password` step) WITHOUT
-// adding its resolved path here means it is treated as a normal deep-link
-// destination — captured and potentially replayed post-login, defeating the
-// content-leak boundary this guard exists to enforce (lines above).
-const AUTH_FLOW_PATHS = new Set(['', 'welcome', 'email', 'verify', 'complete-profile']);
+// Adding a new screen to either group (e.g. a future `forgot-password` step)
+// WITHOUT adding its resolved path here means it is treated as a normal
+// deep-link destination — captured and potentially replayed post-login,
+// defeating the content-leak boundary this guard exists to enforce (lines
+// above).
+//
+// IN-01 (05-REVIEW.md) — no `''` member: `reconstructDeepLinkRoute`
+// (lib/deep-link.ts) can only ever return `null` (zero segments) or a
+// non-empty joined string, never `''`, and the capture effect below bails
+// via `if (!route) return;` before this Set is even checked — so a `''`
+// member would be dead/unreachable code. If a real group-index empty-path
+// case is ever added, add it here explicitly with a comment, don't rely on
+// this dead entry.
+const AUTH_FLOW_PATHS = new Set(['welcome', 'email', 'verify', 'complete-profile']);
 
 // G-05-7 — fallback app scheme when `Constants.expoConfig?.scheme` is
 // unavailable at runtime (e.g. a bare/unexpected config shape); matches
