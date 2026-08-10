@@ -21,10 +21,11 @@ import { coldStartRedirectHref, resolveColdStartRedirect } from '../lib/cold-sta
 import { ColdStartTargetContext } from '../lib/cold-start-target';
 import { type AuthState, AuthStateContext } from '../lib/auth-state';
 import { isIgnorableDeepLinkRoute, reconstructDeepLinkRoute } from '../lib/deep-link';
-import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
-import { FontsReadyProvider } from '../lib/fonts-context';
+import { fontFamilyForRole, useAppFonts } from '../lib/fonts';
+import { FontsReadyProvider, useFontsReady } from '../lib/fonts-context';
 import { ThemeProvider, useTheme } from '../lib/theme-context';
 import type { ThemeColors } from '../lib/theme';
+import { WordmarkGlyph } from '../components/WordmarkGlyph';
 
 const { typeRoles } = tokens;
 
@@ -405,7 +406,18 @@ function RootNavigation() {
   // presentation is the real brand tokens, resolved per mode (`bgApp` + Outfit
   // wordmark); this is strictly a presentation change — `bootstrapped` (locale
   // + auth state) stays the SOLE gate, never a `useFonts()` gate (Pitfall 5).
-  if (!bootstrapped) return <SplashView fontsLoaded={fontsLoaded} />;
+  // The splash branch gets its OWN `FontsReadyProvider`: `SplashView` now hosts
+  // `WordmarkGlyph`, whose font gate reads `useFontsReady()`. Without a provider
+  // above this branch the context default (`false`) would win and the glyph's
+  // `q` could never appear on the splash at all. This changes nothing about the
+  // gating itself — `bootstrapped` stays the SOLE splash gate.
+  if (!bootstrapped) {
+    return (
+      <FontsReadyProvider ready={fontsLoaded}>
+        <SplashView />
+      </FontsReadyProvider>
+    );
+  }
 
   return (
     <FontsReadyProvider ready={fontsLoaded}>
@@ -444,32 +456,51 @@ function RootNavigation() {
 }
 
 /**
- * D-04 / D-02 (05.1) — the splash-hold presentation: the "quiks." wordmark in
- * Outfit, falling back to the system font until Outfit resolves
- * (`resolveFontFamily`, non-blocking — Pitfall 5). The wordmark brand name is
- * NOT wrapped in Lingui (UI-SPEC Copywriting Contract), matching the Welcome
- * screen's identical pattern.
+ * D-04 / D-02 / D-07 (05.1) — the splash-hold presentation: the brand mark above
+ * the "quiks." wordmark. The brand name is NOT wrapped in Lingui (UI-SPEC
+ * Copywriting Contract), matching the Welcome screen's identical pattern.
  *
- * D-02: background and wordmark colour now FOLLOW THE MODE — Papier `bgApp` +
- * Ink text in light, Ink `bgApp` + light text in dark. The trailing dot stays
+ * D-02: background and wordmark colour FOLLOW THE MODE — Papier `bgApp` + Ink
+ * text in light, Ink `bgApp` + light text in dark. The trailing dot stays
  * `primary` (Beere) in BOTH modes; per CI §7 the dot must never be coloured
  * like the word. Styles are built inside the component off `useTheme()`, not in
  * a module-level `StyleSheet.create` — a module-level object freezes its
  * colours at import time and can never follow the mode.
+ *
+ * D-10: the wordmark resolves its family through `fontFamilyForRole('wordmark')`
+ * (real Outfit 800) and carries NO numeric `fontWeight`. Until 05.1-06 this was
+ * the last faux-bold render left in `apps/mobile/app` — handed over by plan
+ * 05.1-05, which owned every screen but not this file. It now matches the
+ * Welcome wordmark it is shown immediately before.
+ *
+ * The `WordmarkGlyph` mount is the item plan 05.1-07's device checkpoint asks
+ * the developer to confirm or reject (see 05.1-06-PLAN.md's flagged assumption:
+ * UI-SPEC E2 describes a runtime glyph, CONTEXT.md D-02 describes only the
+ * wordmark text). Rejecting it is a one-line removal — the component and the
+ * icon generator stay either way.
  */
-function SplashView({ fontsLoaded }: { fontsLoaded: boolean }) {
+function SplashView() {
   const { colors } = useTheme();
+  const fontsReady = useFontsReady();
   const styles = useMemo(() => createSplashStyles(colors), [colors]);
+  const wordmarkFont = fontFamilyForRole('wordmark', fontsReady);
 
   return (
     <View style={styles.screen}>
-      <Text style={[styles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsLoaded) }]}>
+      <WordmarkGlyph width={SPLASH_GLYPH_WIDTH} />
+      <Text style={[styles.wordmark, { fontFamily: wordmarkFont }]}>
         quiks
         <Text style={styles.wordmarkDot}>.</Text>
       </Text>
     </View>
   );
 }
+
+// derived: four times the wordmark type size. The mark's ink occupies roughly
+// the middle 45% of its 1200x800 viewBox, so this renders a mark about twice
+// the wordmark's cap height — proportional to the type role rather than a
+// free-floating pixel value.
+const SPLASH_GLYPH_WIDTH = typeRoles.wordmark.size * 4;
 
 function createSplashStyles(colors: ThemeColors) {
   return StyleSheet.create({
@@ -481,7 +512,6 @@ function createSplashStyles(colors: ThemeColors) {
     },
     wordmark: {
       fontSize: typeRoles.wordmark.size,
-      fontWeight: typeRoles.wordmark.weight,
       lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
       color: colors.textPrimary,
     },
