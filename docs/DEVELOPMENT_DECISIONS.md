@@ -332,6 +332,9 @@ fläche — der im Meeting bemängelte unlesbare „Home"-Text darf nicht auftre
 ist beim Scaffolding zu entscheiden (Konzept-Punkt C8). Admin braucht einen Theming-Editor mit
 Kontrast-Check.
 
+**Teilweise abgelöst (2026-08-10):** Farben, Standardmodus, Wortmarke und Gradient-Regel ersetzt
+durch **ADR-023** (quiks CI v1.0); alles Übrige bleibt in Kraft.
+
 ### ADR-016 — Identitäts- & Profilmodell (Account → Visitor/Staff/Admin) · **ENTSCHIEDEN**
 Aus dem Team-Meeting (2026-07-28) und der Auth-Konkretisierung (ADR-009). Trennt die gemeinsame
 Login-Basis von den typ-spezifischen Profilen. Detail-Entwurf: `docs/concept/04-domain-identity.md`.
@@ -538,6 +541,71 @@ zusätzlichem Abstraktions-Overhead ohne Mehrwert gegenüber eigenen, tokens-bas
 **Konsequenz:** Phase 3's freigegebenes UI-SPEC (reine RN-Primitiven + Tokens) ist bereits
 konsistent mit dieser Entscheidung — keine Nacharbeit nötig. Zukünftige Phasen zitieren ADR-022
 statt die UI-Framework-Frage erneut zu diskutieren.
+
+### ADR-023 — quiks CI v1.0: Beere/Amber, Sunset-Verlauf, hell-first, Wortmarke `quiks.` · **ENTSCHIEDEN**
+Nutzer-Entscheidung (2026-08-10), abgeleitet aus dem Claude-Design-Bundle `docs/quiks_CI.html`
+(Corporate Identity Version 1.0). Detail-Rendition: `docs/brand/quiks-ci-v1.md`.
+
+**Entscheidung:**
+1. Verbindliche Quelle ist `docs/brand/quiks-ci-v1.md`; `docs/quiks_CI.html` ist die visuelle
+   Vorlage. Der Dokumenttext bindet — das im Bundle eingebettete Stylesheet ist das alte
+   festipal-Design-System und wird ausdrücklich NICHT 1:1 portiert.
+2. Farbe: Beere `#E8559F` ist Primärfarbe (Marke, Punkt, Primäraktion; Text darauf weiß),
+   Amber `#FFC53D` ist Sekundärfarbe (Verlaufsstart, Hinweise; Text darauf Ink).
+3. Sunset `150°` von `#FFC53D` nach `#E8559F` ist der EINZIGE erlaubte Verlauf und nur für das
+   Zeichen und Hero-Flächen zulässig. Ersetzt die bisherige Gradient-Regel („zwei weiche radiale
+   Felder, grün/violett") aus ADR-015 bzw. `03-design-system.md` §4.
+4. Hell-first: Papier `#F7F5F2` ist die Standardfläche, Dunkel ist die „Nachtschicht" — mit der
+   verbindlichen Modus-Tabelle (Fläche / Karte / Text / Glas). Reines Invertieren ist unzulässig.
+5. Limette `#74CC1F` und Violett `#5A4DFF` sind keine Markenfarben mehr, sondern nur noch die
+   Default-Fallback-Werte der vier Festival-CI-Tokens (`--ci-primary`, `--ci-secondary`,
+   `--ci-tint`, `--ci-on-primary`) aus ADR-015 §3.
+6. Wortmarke ist `quiks.` — Outfit 800, komplett klein, −4 % Tracking, Punkt in Beere, nie in
+   Versalien, keine andere Schrift, keine Effekte.
+7. Typo-Rollen laut CI (Display 44/800, Titel 26/700, Body 15/400, Label 13,5/700, Mono 15/500,
+   Micro 10,5 caps); die Schriftfamilien bleiben unverändert.
+
+**Löst ADR-015 in diesen Punkten ab:** Markenfarben (Limette/Violett → Beere/Amber), Standardmodus
+(dark-first → hell-first inkl. Flächen-/Karten-/Glas-Werte), Wortmarke (`festipal.` → `quiks.`),
+Gradient-Regel.
+
+**Weiter in Kraft (ADR-015):** Schriftfamilien und Typo-System, Layout/Abstände/Radien, Motion,
+Voice & Tone als bindender Content-Style-Guide, der Festival-Theming-Vertrag als Mechanismus (nur
+seine Fallback-Werte ändern sich), Lucide-Ikonografie, „nur semantische Aliase in Komponenten".
+
+**Konsequenz:** (a) Light-Mode ist heute nicht implementiert — `lightColors` wird aus
+`packages/ui/src/tokens.ts` exportiert, in `apps/mobile` aber nirgends verwendet; die Umsetzung
+(Modus-Umschalter, Systemfolge, Karten-/Glas-Werte) ist Arbeit einer eigenen Folgephase und NICHT
+Teil dieser Entscheidung; (b) der Farbwechsel hat genau eine Angriffsfläche,
+`packages/ui/src/tokens.ts`, weil in `apps/mobile` keine Marken-Hex-Werte hartkodiert sind;
+(c) für den Sunset-Verlauf existiert noch kein Token — offener Punkt der Folgephase.
+
+### ADR-024 — Rename festipal → quiks (inkl. technischer Identifier) · **ENTSCHIEDEN**
+Nutzer-Entscheidung (2026-08-10). Umsetzung ist ausdrücklich einer eigenen Phase vorbehalten,
+dieses ADR hält nur Entscheidung und Umfang fest.
+
+**Entscheidung:**
+1. Produkt-/Markenname ist `quiks`.
+2. Der Rename umfasst auch technische Identifier — Vollumfang laut Checkliste unten.
+3. Bis zur Rename-Phase bleiben `@festipal/*` und `at.festipal.app` im Code unverändert und dürfen
+   NICHT punktuell „korrigiert" werden.
+
+**Checkliste:**
+
+| Bereich | heute | Ziel | Kopplung/Folge |
+|---|---|---|---|
+| npm-Scope | `@festipal/*` | `@quiks/*` | alle `package.json` names + `workspace:*`-Abhängigkeiten + Imports in `apps/*` |
+| Expo `name`/`slug`/`scheme` (`apps/mobile/app.json`) | `festipal` | `quiks` | das `scheme` MUSS mit `trustedOrigins` (`'festipal://'`) in `apps/api/src/auth/auth.instance.ts` synchron bleiben, sonst bricht der better-auth-Origin-Check |
+| Bundle-ID iOS `ios.bundleIdentifier` + Android `android.package` | `at.festipal.app` | `at.quiks.app` | voller nativer Rebuild via `npx expo run:android`, ausgeführt in `apps/mobile`, niemals im Repo-Root; zulässig, weil noch kein EAS Submit die Bundle-ID eingefroren hat (`extra._comment` in `app.json`) |
+| MMKV-Storage-IDs (`apps/mobile/lib/avatar-storage.ts`, `apps/mobile/lib/active-festival-storage.ts`) | `festipal-avatar`, `festipal-active-festival` | `quiks-*` | bestehende lokale Zustände (Avatar-URI, aktives Festival) gehen auf aktualisierten Dev-Installationen verloren |
+| `docker-compose.yml` | `POSTGRES_USER`/`POSTGRES_PASSWORD`/`POSTGRES_DB` `festipal`, Volume `festipal-postgres-data` | `quiks`, Volume `quiks-postgres-data` | lokaler DB-Reset nötig (Volume weg, Migration + Seed erneut) und `DATABASE_URL` in `apps/api/.env` UND `packages/db/.env` nachziehen |
+| Repo-Verzeichnis + Git-Remote | `festipal` | `quiks` | — |
+| Historische Dateinamen/Assets (`festipal-tokens.css`, `festipal-ds.js`, `festipal-screens.jsx` unter `docs/concept/designs/`) | `festipal-*` | bleiben unverändert | Historie, kein Rename |
+
+**Konsequenz:** Ausführung als eigene Phase (Rename + Token-Swap + Light-Mode), koordiniert mit
+ADR-023; ein Teil-Rename ist nicht zulässig, weil `scheme` ↔ `trustedOrigins` und Bundle-ID ↔
+nativer Build gekoppelt sind. **Nicht abgedeckt:** Store-Listings/EAS-Konfiguration (noch kein
+Submit) und Domains.
 
 ---
 
