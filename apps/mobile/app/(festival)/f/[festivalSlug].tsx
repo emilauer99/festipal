@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -17,11 +17,15 @@ import {
   getActiveFestivalSlug,
 } from '../../../lib/active-festival-storage';
 import { formatDateRange } from '../../../lib/date-range';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../../lib/fonts';
+import { fontFamilyForRole } from '../../../lib/fonts';
 import { useFontsReady } from '../../../lib/fonts-context';
+import type { ThemeColors } from '../../../lib/theme';
+import { useTheme } from '../../../lib/theme-context';
 import { ComingSoonTile } from '../../../components/ComingSoonTile';
 
-const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
+// 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
+// mode-invariant scales stay destructured at module scope.
+const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 function normalizeSlug(raw: string | string[] | undefined): string {
   const value = Array.isArray(raw) ? raw[0] : raw;
@@ -65,9 +69,16 @@ export default function FestivalHomeScreen() {
   const festivalSlug = normalizeSlug(params.festivalSlug);
   const router = useRouter();
   const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
-  const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
+  // Role-resolved families (05.1 D-10) — the family carries the weight, so the
+  // matching styles set no numeric `fontWeight`.
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const headingFont = fontFamilyForRole('title2', fontsReady);
+  const nameFont = fontFamilyForRole('display2', fontsReady);
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
   const queryClient = useQueryClient();
 
   const cachedFestival = festivalSlug
@@ -134,13 +145,13 @@ export default function FestivalHomeScreen() {
 
       {showTransportError ? (
         <View style={styles.centered}>
-          <Text style={[styles.error, { fontFamily: bodyFont }]}>
+          <Text style={[styles.error, { fontFamily: bodySmFont }]}>
             <Trans>
               Can't reach the server — make sure your device is on the same Wi-Fi as the dev API.
             </Trans>
           </Text>
           <Pressable style={styles.retryButton} onPress={() => query.refetch()}>
-            <Text style={[styles.retryButtonText, { fontFamily: bodyFont }]}>
+            <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
               <Trans>Retry</Trans>
             </Text>
           </Pressable>
@@ -149,7 +160,7 @@ export default function FestivalHomeScreen() {
 
       {showNotFound ? (
         <View style={styles.centered}>
-          <Text style={[styles.heading, { fontFamily: displayFont }]}>
+          <Text style={[styles.heading, { fontFamily: headingFont }]}>
             <Trans>Festival not found</Trans>
           </Text>
           <Text style={[styles.helper, { fontFamily: bodyFont }]}>
@@ -161,7 +172,7 @@ export default function FestivalHomeScreen() {
       {showContent && festival ? (
         <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.identityBlock}>
-            <Text style={[styles.name, { fontFamily: displayFont }]} numberOfLines={2}>
+            <Text style={[styles.name, { fontFamily: nameFont }]} numberOfLines={2}>
               {festival.name}
             </Text>
             {/* UI-SPEC §Accent + key-fact contract: the festival-home identity
@@ -171,14 +182,14 @@ export default function FestivalHomeScreen() {
             <View style={styles.keyFacts}>
               <View style={styles.keyFactRow}>
                 <CalendarClock size={18} color={colors.primary} strokeWidth={2} />
-                <Text style={[styles.keyFactText, { fontFamily: bodyFont }]} numberOfLines={1}>
+                <Text style={[styles.keyFactText, { fontFamily: bodySmFont }]} numberOfLines={1}>
                   {formatDateRange(festival.startDate, festival.endDate, i18n.locale)}
                 </Text>
               </View>
               {festival.place ? (
                 <View style={styles.keyFactRow}>
                   <MapPin size={18} color={colors.primary} strokeWidth={2} />
-                  <Text style={[styles.keyFactText, { fontFamily: bodyFont }]} numberOfLines={1}>
+                  <Text style={[styles.keyFactText, { fontFamily: bodySmFont }]} numberOfLines={1}>
                     {festival.place}
                   </Text>
                 </View>
@@ -198,82 +209,83 @@ export default function FestivalHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bgApp },
-  headerBack: {
-    width: layout.hitMin,
-    height: layout.hitMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  centered: {
-    flex: 1,
-    padding: layout.screenPad,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacingScale['sp-5'],
-  },
-  helper: {
-    fontSize: typeRoles.body.size,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.danger,
-    textAlign: 'center',
-  },
-  heading: {
-    fontSize: typeRoles.title2.size,
-    fontWeight: typeRoles.title2.weight,
-    lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  retryButton: {
-    minHeight: layout.hitMin,
-    paddingHorizontal: spacingScale['sp-8'],
-    backgroundColor: colors.primary,
-    borderRadius: radiiScale['r-pill'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  retryButtonText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-  content: {
-    paddingHorizontal: layout.screenPad,
-    paddingTop: spacingScale['sp-7'],
-    paddingBottom: layout.scrollBottomPad,
-  },
-  identityBlock: {
-    gap: spacingScale['sp-4'],
-  },
-  name: {
-    fontSize: typeRoles.display2.size,
-    fontWeight: typeRoles.display2.weight,
-    lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
-    color: colors.textPrimary,
-  },
-  keyFacts: {
-    gap: spacingScale['sp-3'],
-  },
-  keyFactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacingScale['sp-4'],
-  },
-  keyFactText: {
-    flex: 1,
-    fontSize: typeRoles.bodySm.size,
-    color: colors.textMuted,
-  },
-  tileGrid: {
-    marginTop: spacingScale['sp-9'],
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacingScale['sp-5'],
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.bgApp },
+    headerBack: {
+      width: layout.hitMin,
+      height: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    centered: {
+      flex: 1,
+      padding: layout.screenPad,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-5'],
+    },
+    helper: {
+      fontSize: typeRoles.body.size,
+      color: colors.textSecondary,
+      textAlign: 'center',
+    },
+    // Same E5/error rule as the list screens: a status hue used as TEXT
+    // resolves through `dangerText`, never the bare `danger` fill.
+    error: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
+      textAlign: 'center',
+    },
+    heading: {
+      fontSize: typeRoles.title2.size,
+      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      color: colors.textPrimary,
+      textAlign: 'center',
+    },
+    retryButton: {
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    retryButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    content: {
+      paddingHorizontal: layout.screenPad,
+      paddingTop: spacingScale['sp-7'],
+      paddingBottom: layout.scrollBottomPad,
+    },
+    identityBlock: {
+      gap: spacingScale['sp-4'],
+    },
+    name: {
+      fontSize: typeRoles.display2.size,
+      lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
+      color: colors.textPrimary,
+    },
+    keyFacts: {
+      gap: spacingScale['sp-3'],
+    },
+    keyFactRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-4'],
+    },
+    keyFactText: {
+      flex: 1,
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textMuted,
+    },
+    tileGrid: {
+      marginTop: spacingScale['sp-9'],
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacingScale['sp-5'],
+    },
+  });
+}

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -12,11 +13,15 @@ import { festivalKeys } from '../../lib/festival-queries';
 import { syncActiveFestivalOnEnter } from '../../lib/active-festival-storage';
 import { requestFestivalsSegment } from '../../lib/festivals-segment-request';
 import { orderFestivalsForHome } from '../../lib/select-next-festival';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import type { ThemeColors } from '../../lib/theme';
+import { useTheme } from '../../lib/theme-context';
 import { FestivalCard } from '../../components/FestivalCard';
 
-const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
+// 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
+// mode-invariant scales stay destructured at module scope.
+const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 const RAIL_ITEM_WIDTH = 268;
 
@@ -39,9 +44,17 @@ type HomeViewState =
  */
 export default function HomeScreen() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
-  const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
+  // Role-resolved families (05.1 D-10) — the family IS the weight, so no style
+  // below sets a numeric `fontWeight` on top of one.
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const eyebrowFont = fontFamilyForRole('micro', fontsReady);
+  const headingFont = fontFamilyForRole('title2', fontsReady);
+  const labelFont = fontFamilyForRole('label', fontsReady);
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
 
   const myFestivalsQuery = useQuery({
     queryKey: festivalKeys.mine,
@@ -128,7 +141,7 @@ export default function HomeScreen() {
 
         {viewState.kind === 'error' ? (
           <View style={styles.stateBlock}>
-            <Text style={[styles.error, { fontFamily: bodyFont }]}>
+            <Text style={[styles.error, { fontFamily: bodySmFont }]}>
               {viewState.variant === 'transport' ? (
                 <Trans>
                   Can't reach the server — make sure your device is on the same Wi-Fi as the dev
@@ -139,7 +152,7 @@ export default function HomeScreen() {
               )}
             </Text>
             <Pressable style={styles.button} onPress={viewState.retry}>
-              <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+              <Text style={[styles.buttonText, { fontFamily: buttonFont }]}>
                 <Trans>Retry</Trans>
               </Text>
             </Pressable>
@@ -148,14 +161,14 @@ export default function HomeScreen() {
 
         {viewState.kind === 'empty' ? (
           <View style={styles.stateBlock}>
-            <Text style={[styles.heading, { fontFamily: displayFont }]}>
+            <Text style={[styles.heading, { fontFamily: headingFont }]}>
               <Trans>No festival saved yet</Trans>
             </Text>
             <Text style={[styles.helper, { fontFamily: bodyFont }]}>
               <Trans>Browse all festivals and save your first one.</Trans>
             </Text>
             <Pressable style={styles.button} onPress={goToAllFestivals}>
-              <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+              <Text style={[styles.buttonText, { fontFamily: buttonFont }]}>
                 <Trans>Browse festivals</Trans>
               </Text>
             </Pressable>
@@ -165,7 +178,7 @@ export default function HomeScreen() {
         {viewState.kind === 'ready' ? (
           <>
             <View style={styles.heroSection}>
-              <Text style={[styles.eyebrow, { fontFamily: bodyFont }]}>
+              <Text style={[styles.eyebrow, { fontFamily: eyebrowFont }]}>
                 <Trans>Your next festival</Trans>
               </Text>
               <FestivalCard
@@ -181,11 +194,11 @@ export default function HomeScreen() {
             {viewState.rail.length > 0 ? (
               <View style={styles.railSection}>
                 <View style={styles.railHeader}>
-                  <Text style={[styles.sectionHead, { fontFamily: displayFont }]}>
+                  <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
                     <Trans>My festivals</Trans>
                   </Text>
                   <Pressable onPress={goToAllFestivals} accessibilityRole="button">
-                    <Text style={[styles.seeAll, { fontFamily: bodyFont }]}>
+                    <Text style={[styles.seeAll, { fontFamily: labelFont }]}>
                       <Trans>All</Trans>
                     </Text>
                   </Pressable>
@@ -216,68 +229,67 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.bgApp },
-  content: {
-    paddingHorizontal: layout.screenPad,
-    paddingTop: layout.screenPad,
-    paddingBottom: layout.scrollBottomPad,
-    gap: layout.sectionGap,
-  },
-  stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
-  heroSection: { gap: spacingScale['sp-4'] },
-  eyebrow: {
-    fontSize: typeRoles.micro.size,
-    fontWeight: typeRoles.micro.weight,
-    lineHeight: typeRoles.micro.size * typeRoles.micro.lineHeight,
-    color: colors.textMuted,
-    textTransform: 'uppercase',
-    letterSpacing: typeRoles.micro.size * 0.09,
-  },
-  railSection: { gap: spacingScale['sp-5'] },
-  railHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  sectionHead: {
-    fontSize: typeRoles.title2.size,
-    fontWeight: typeRoles.title2.weight,
-    lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
-    color: colors.textPrimary,
-  },
-  seeAll: {
-    fontSize: typeRoles.label.size,
-    fontWeight: typeRoles.label.weight,
-    color: colors.primary,
-  },
-  railContent: { gap: spacingScale['sp-5'] },
-  railItem: { width: RAIL_ITEM_WIDTH },
-  helper: {
-    fontSize: typeRoles.body.size,
-    color: colors.textSecondary,
-  },
-  heading: {
-    fontSize: typeRoles.title2.size,
-    fontWeight: typeRoles.title2.weight,
-    lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
-    color: colors.textPrimary,
-  },
-  error: {
-    color: colors.danger,
-    fontSize: typeRoles.bodySm.size,
-  },
-  button: {
-    minHeight: layout.hitMin,
-    paddingHorizontal: spacingScale['sp-8'],
-    backgroundColor: colors.primary,
-    borderRadius: radiiScale['r-pill'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    screen: { flex: 1, backgroundColor: colors.bgApp },
+    content: {
+      paddingHorizontal: layout.screenPad,
+      paddingTop: layout.screenPad,
+      paddingBottom: layout.scrollBottomPad,
+      gap: layout.sectionGap,
+    },
+    stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
+    heroSection: { gap: spacingScale['sp-4'] },
+    eyebrow: {
+      fontSize: typeRoles.micro.size,
+      lineHeight: typeRoles.micro.size * typeRoles.micro.lineHeight,
+      color: colors.textMuted,
+      textTransform: 'uppercase',
+      letterSpacing: typeRoles.micro.size * 0.09,
+    },
+    railSection: { gap: spacingScale['sp-5'] },
+    railHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    sectionHead: {
+      fontSize: typeRoles.title2.size,
+      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      color: colors.textPrimary,
+    },
+    seeAll: {
+      fontSize: typeRoles.label.size,
+      color: colors.primary,
+    },
+    railContent: { gap: spacingScale['sp-5'] },
+    railItem: { width: RAIL_ITEM_WIDTH },
+    helper: {
+      fontSize: typeRoles.body.size,
+      color: colors.textSecondary,
+    },
+    heading: {
+      fontSize: typeRoles.title2.size,
+      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      color: colors.textPrimary,
+    },
+    // UI-SPEC E1/error — the hero-replacing error branch is TEXT on Papier, so
+    // it resolves through `dangerText`, not the `danger` fill hue (2.98:1).
+    error: {
+      color: colors.dangerText,
+      fontSize: typeRoles.bodySm.size,
+    },
+    button: {
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+  });
+}

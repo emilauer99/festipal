@@ -1,12 +1,12 @@
+import { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Redirect } from 'expo-router';
-import { tokens } from '@quiks/ui';
 
 import { useAuthState } from '../lib/auth-state';
 import { useColdStartTarget } from '../lib/cold-start-target';
 import { rootRedirectTarget } from '../lib/root-redirect';
-
-const { colors } = tokens;
+import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme-context';
 
 /**
  * first-login-unmatched-route (round 3) — the SINGLE owner of path `/`.
@@ -42,6 +42,8 @@ export default function RootIndex() {
   const authState = useAuthState();
   const coldStartTarget = useColdStartTarget();
   const target = rootRedirectTarget(authState, coldStartTarget);
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (target) {
     return <Redirect href={target} />;
@@ -50,9 +52,16 @@ export default function RootIndex() {
   return <View style={styles.splash} />;
 }
 
-const styles = StyleSheet.create({
-  splash: {
-    flex: 1,
-    backgroundColor: colors.bgAppDeep,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    splash: {
+      flex: 1,
+      // 05.1 D-01 — resolved per render, so this holding frame is Papier in
+      // light mode instead of a frozen Ink value. The role stays `bgAppDeep`
+      // (unchanged from before the migration); the splash in `_layout.tsx`
+      // uses `bgApp`, a pre-existing one-step difference left untouched here
+      // because this plan is a colour-resolution migration, not a re-design.
+      backgroundColor: colors.bgAppDeep,
+    },
+  });
+}
