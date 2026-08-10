@@ -103,6 +103,9 @@ export class MeService {
       defaultLocale: f.defaultLocale,
       supportedLocales: localesByFestival.get(f.id) ?? [],
       cashlessUrl: f.cashlessUrl,
+      startDate: f.startDate,
+      endDate: f.endDate,
+      place: f.place,
     }));
   }
 }

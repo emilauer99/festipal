@@ -23,15 +23,15 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 ### Festival Selection
 
-- [ ] **FEST-01**: A visitor can browse all festivals, each showing name, dates, and place
-- [ ] **FEST-02**: The Festivals tab offers a Meine/Alle segment (default Meine), distinguishing saved festivals
-- [ ] **FEST-03**: A visitor can save a festival to "Meine Festivals" in one tap
-- [ ] **FEST-04**: A visitor can enter a festival gate-lessly (no ticket/approval) and return to the list without a dead-end
+- [x] **FEST-01**: A visitor can browse all festivals, each showing name, dates, and place
+- [x] **FEST-02**: The Festivals tab offers a Meine/Alle segment (default Meine), distinguishing saved festivals
+- [x] **FEST-03**: A visitor can save a festival to "Meine Festivals" in one tap
+- [x] **FEST-04**: A visitor can enter a festival gate-lessly (no ticket/approval) and return to the list without a dead-end
 
 ### Home & Navigation
 
-- [ ] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
-- [ ] **HOME-02**: The home shows a basic festival overview (identity + key facts) the visitor can open
+- [x] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
+- [x] **HOME-02**: The home shows a basic festival overview (identity + key facts) the visitor can open
 - [ ] **HOME-03**: The home provides navigation to Profile and Friends
 
 ### Friends (placeholder)
@@ -104,12 +104,12 @@ Which phases cover which requirements.
 | AUTH-04 | Phase 4 | Complete |
 | AUTH-05 | Phase 4 | Complete |
 | IDN-01 | Phase 4 | Complete |
-| FEST-01 | Phase 5 | Pending |
-| FEST-02 | Phase 5 | Pending |
-| FEST-03 | Phase 5 | Pending |
-| FEST-04 | Phase 5 | Pending |
-| HOME-01 | Phase 5 | Pending |
-| HOME-02 | Phase 5 | Pending |
+| FEST-01 | Phase 5 | Complete |
+| FEST-02 | Phase 5 | Complete |
+| FEST-03 | Phase 5 | Complete |
+| FEST-04 | Phase 5 | Complete |
+| HOME-01 | Phase 5 | Complete |
+| HOME-02 | Phase 5 | Complete |
 | HOME-03 | Phase 6 | Pending |
 | PROF-01 | Phase 6 | Pending |
 | FRND-01 | Phase 6 | Pending |

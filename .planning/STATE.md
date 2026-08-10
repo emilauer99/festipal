@@ -2,35 +2,35 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_phase: 5
-current_phase_name: Festival Selection & Home
-status: "Phase 04 shipped — PR #9"
-stopped_at: "Completed 04-07-PLAN.md (gap closure: AUTH-04 server revocation + font-family application)"
-last_updated: "2026-08-05T14:10:38.946Z"
-last_activity: 2026-08-05
+current_phase: 6
+current_phase_name: Profile & Friends Placeholders
+status: planning
+stopped_at: Phase 05 complete & verified (UAT round 3 pass, security clean); ready to plan Phase 6
+last_updated: "2026-08-09T18:38:36.027Z"
+last_activity: 2026-08-09
+last_activity_desc: Phase 05 complete, transitioned to Phase 6
 progress:
-  total_phases: 4
-  completed_phases: 4
-  total_plans: 22
-  completed_plans: 22
-last_activity_desc: Phase 04 complete, transitioned to Phase 5
+  total_phases: 5
+  completed_phases: 5
+  total_plans: 33
+  completed_plans: 33
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-07-30 — reconciled with concept phase)
+See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 04 — visitor-auth-profile-completion
+**Current focus:** Phase 06 — Profile & Friends Placeholders
 
 ## Current Position
 
-Phase: 5 — Festival Selection & Home
+Phase: 6 — Profile & Friends Placeholders
 Plan: Not started
-Status: Phase 04 shipped — PR #9
-Last activity: 2026-08-05
+Status: Ready to plan
+Last activity: 2026-08-09 — Phase 05 complete, transitioned to Phase 6
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 22
+- Total plans completed: 33
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -50,6 +50,7 @@ Progress: [██████████] 100%
 | 02 | 6 | - | - |
 | 03 | 6 | - | - |
 | 04 | 7 | - | - |
+| 05 | 11 | - | - |
 
 **Recent Trend:**
 
@@ -83,6 +84,17 @@ Progress: [██████████] 100%
 | Phase 04 P05 | ~40min | 3 tasks | 7 files |
 | Phase 04 P06 | ~35min | 3 tasks | 5 files |
 | Phase 04 P07 | ~25min | 2 tasks | 13 files |
+| Phase 05 P01 | ~20min | 4 tasks | 6 files |
+| Phase 05 P02 | ~10min | 2 tasks | 5 files |
+| Phase 05 P03 | ~35min | 3 tasks | 11 files |
+| Phase 05 P04 | ~15min | 2 tasks | 4 files |
+| Phase 05 P05 | ~30min | 3 tasks | 6 files |
+| Phase 05 P06 | ~15min | 2 tasks | 3 files |
+| Phase 05 P07 | ~20min | 2 tasks | 5 files |
+| Phase 05 P08 | ~5min | 2 tasks | 1 files |
+| Phase 05 P09 | ~15min | 3 tasks | 5 files |
+| Phase 05 P10 | ~10min | 2 tasks | 3 files |
+| Phase 05 P11 | ~15min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -146,6 +158,32 @@ Recent decisions affecting current work:
 - [Phase ?]: 04-07: Added advanced.disableOriginCheck: false to auth.instance.ts — better-auth defaults origin-check off under NODE_ENV=test unless set, which would make signout-origin.spec.ts's negative control pass regardless of the expo() fix; explicit false matches the existing implicit production default (no CSRF weakening)
 - [Phase ?]: 04-07: expo() server plugin installed in apps/api's betterAuth plugins array (AUTH-04, WINDOWS id 2) — translates apps/mobile's expo-origin header to origin so cookie-bearing sign-out requests pass the origin-check instead of 403ing; proven headlessly via signout-origin.spec.ts
 - [Phase ?]: 04-07: FontsReadyProvider/useFontsReady context (apps/mobile/lib/fonts-context.tsx) shares the root useAppFonts() readiness boolean; all eight restyled Phase-4 screens/components now resolve fontFamily inline via resolveFontFamily(FONT_DISPLAY|FONT_BODY|FONT_MONO, fontsReady) instead of the generic typeRoles.*.family name (WINDOWS id 15)
+- [Phase ?]: 05-01: startDate/endDate/place all nullable at DB+contract (DATE-NULLABILITY) — single additive migration, client renders fallback when absent
+- [Phase ?]: 05-01: drizzle-zod .extend() overrides also needed for date({mode:'string'}) columns, not just text() — verified via generated .d.ts (startDate/endDate resolved to ZodType<Buffer,...> without an explicit override)
+- [Phase ?]: 05-02: radiiScale added as its own export (mirroring spacingScale) wired into the public tokens aggregate object, not merged into the generic radii object (UI-SPEC + REVIEW 05-02 MEDIUM)
+- [Phase ?]: 05-02: Fixed a typedRoutes-caused typecheck break in app/_layout.tsx (deep-link replay href cast to Href) — Rule 3, required for Task 2's own verify to pass
+- [Phase ?]: 05-03: cachedFestival instant-paint scans festivalKeys.all/mine caches directly (status===200 + Array.isArray guard) rather than initialData/placeholderData of a mismatched shape (REVIEW 05-03 HIGH)
+- [Phase ?]: 05-03: leaveFestival(router) (canGoBack ? back : replace('/festivals')) backs the festival-home Stack.Screen headerLeft, not a bare router.back() — required for cold-start router.replace('/f/:slug') entry (FEST-04, REVIEW 05-03/05-05 HIGH)
+- [Phase ?]: 05-03: festival-queries.ts (festivalKeys + unwrapOk) kept framework-free (no React import) so 05-06's save mutation can reuse it directly
+- [Phase ?]: 05-04: FestivalCard's enter Pressable wraps name+caption as a sibling to the Save/Badge slot (non-nested), avoiding any stopPropagation() dependency
+- [Phase ?]: 05-04: FestivalCard owns its Save/Saved/Open-festival copy via Trans macros; SegmentedControl takes caller-supplied localized labels instead (per-instance wording)
+- [Phase ?]: [Phase 05]: 05-05: BottomTabBarProps imported from expo-router/build/react-navigation/bottom-tabs (verified in node_modules) since the top-level expo-router package only re-exports the Tabs binding, not this type
+- [Phase ?]: [Phase 05]: 05-05: FloatingNav maps state.routes directly (home/festivals) instead of filtering, since Friends/Profil have no backing Tabs.Screen at all; clearActiveFestivalSlug() added to handleLogout (REVIEW 05-05 LOW)
+- [Phase ?]: [Phase 05]: 05-05: cold-start redirect guarded by coldStartRedirectRef (mirrors splashHiddenRef) so a same-session logout/login cycle never re-hijacks tab navigation; pending deep-link href always checked and replayed before the active-festival slug is read
+- [Phase ?]: 05-06: onSave/handleSave takes the full Festival row (not just an id) so the 'all-list row must exist before mutate' requirement is satisfied structurally by the render loop's own cache source, not a second lookup
+- [Phase ?]: 05-06: onError restores the exact prior mine-cache snapshot via removeQueries when it was previously absent (not setQueryData with undefined), avoiding react-query's undefined-write ambiguity
+- [Phase ?]: 05-06: Left 05-05's 4 pre-existing untranslated FloatingNav DE msgids (Home/Friends/Profile/coming soon) untouched — out of this task's scope, logged to WINDOWS.md id 17 for a follow-up translation pass
+- [Phase ?]: 05-07: selectNextFestival is a first-item projection of orderFestivalsForHome so hero and rail share one deterministic ordering source (never the API's unspecified listMyFestivals row order)
+- [Phase ?]: 05-07: rail/hero cards always pass saved={true} via a shared noopSave() no-op -- no Save affordance is ever wired on already-saved rows
+- [Phase ?]: 05-08: Task 2 on-device 8-step acceptance flow deferred to persisted UAT (05-UAT.md) by explicit user decision at checkpoint, consistent with Phase 3/4 device-UAT convention
+- [Phase ?]: 05-08: Task 1 full monorepo gate green -- typecheck/lint/test 10/10+10/10+7/7, frozen install no lockfile drift, mobile build/export both platforms OK
+- [Phase ?]: 05-09: G-05-2 fixed via useFocusEffect consuming a module-level consume-once segment-request singleton (mirrors pending-destination.ts) instead of a URL nonce param
+- [Phase ?]: 05-09: G-05-5b gated the cold-start-restore PERSIST on the row's already-known saved-state at enter time, keeping _layout.tsx's synchronous cold-start read unchanged
+- [Phase ?]: 05-09: G-05-5a changed only leaveFestival's no-history fallback to router.replace('/home'); the canGoBack() in-tab-history branch is untouched
+- [Phase ?]: 05-10: hostname rejoined into the deep-link route ONLY for the app's own custom scheme (Constants.expoConfig scheme, festipal fallback); https hostname never prepended (G-05-7)
+- [Phase ?]: 05-10: capture effect's authState.status===unauthenticated gate removed entirely — content-leak boundary preserved at replay (redirect effect), not capture (G-05-7b)
+- [Phase ?]: 05-11: nextActiveFestivalSlug's return depends only on entered.saved (not prior) -- an unsaved entry ALWAYS clears the persisted slug, reversing 05-09's 'only persist when saved' semantics that made the persisted slug a sticky last-SAVED-festival-ever-entered value (G-05-5b-r2)
+- [Phase ?]: 05-11: syncActiveFestivalOnEnter is now the single persist/clear authority shared by festivals.tsx and home.tsx handleEnter -- home.tsx passes saved=true (behavior-preserving) purely so no future entry path can bypass the shared invariant
 
 ### Pending Todos
 
@@ -158,7 +196,7 @@ None yet.
 [Issues that affect future work]
 
 - Phase 2 (MEDIUM, downgraded 2026-07-30): `@thallesp/nestjs-better-auth` × ts-rest body parsing — current wrapper (`better-auth >= 1.5.0`) auto-re-applies `express.json()` for non-auth routes, so no manual exclusion needed; ts-rest controllers just consume `req.body`. Spike = *confirm* (2-request body proof + resolve `/api/v1` vs `/api/auth` global-prefix collision + version-pin), not *design*. Hand-rolled `@All('auth/*path')` catch-all is Plan-C fallback. See PITFALLS.md Pitfall 3 update.
-- Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated and inherited by all later content reads — verify with a cross-festival data-isolation test. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
+- Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated — **baseline proven in Phase 5** (`apps/api/test/festival-isolation.spec.ts`: festival B's dates/place never leak to a visitor who saved only festival A). This isolation obligation is INHERITED by all later content reads (timetable, map, news) — re-assert the cross-tenant test as new tenant-scoped tables land. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
 - Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
@@ -180,6 +218,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-05T11:29:43.636Z
-Stopped at: Completed 04-07-PLAN.md (gap closure: AUTH-04 server revocation + font-family application)
+Last session: 2026-08-09T18:38:36Z
+Stopped at: Phase 05 complete & verified — UAT round 3 passed (G-05-5b-r2 cold-start fix re-confirmed on device), security threats_open: 0; ready to plan Phase 6
 Resume file: None

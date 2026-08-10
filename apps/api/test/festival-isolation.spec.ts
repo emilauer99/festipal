@@ -92,6 +92,7 @@ describe('festival isolation (SEC-02 cross-tenant denial)', () => {
 
   let festivalAId: string;
   let festivalBId: string;
+  let festivalASlug: string;
   let visitor1: { accountId: string; cookie: string };
   let visitor2: { accountId: string; cookie: string };
 
@@ -105,6 +106,9 @@ describe('festival isolation (SEC-02 cross-tenant denial)', () => {
         slug: `isolation-test-a-${randomUUID()}`,
         name: 'Isolation Test Festival A',
         defaultLocale: 'de',
+        startDate: '2026-08-13',
+        endDate: '2026-08-16',
+        place: 'Wiesen, Burgenland',
       })
       .returning();
     const [festB] = await db
@@ -113,11 +117,15 @@ describe('festival isolation (SEC-02 cross-tenant denial)', () => {
         slug: `isolation-test-b-${randomUUID()}`,
         name: 'Isolation Test Festival B',
         defaultLocale: 'de',
+        startDate: '2026-09-03',
+        endDate: '2026-09-06',
+        place: 'Tenant B Test Place',
       })
       .returning();
     if (!festA || !festB) throw new Error('festival fixture insert returned no row');
     festivalAId = festA.id;
     festivalBId = festB.id;
+    festivalASlug = festA.slug;
 
     visitor1 = await createVisitor(app, db, 'visitor1');
     visitor2 = await createVisitor(app, db, 'visitor2');
@@ -151,6 +159,21 @@ describe('festival isolation (SEC-02 cross-tenant denial)', () => {
     expect(res.body[0].id).toBe(festivalAId);
     const ids = (res.body as Array<{ id: string }>).map((f) => f.id);
     expect(ids).not.toContain(festivalBId);
+
+    // D-08 round-trip: festival A's date/place fields survive through the
+    // caller-scoped listMyFestivals projection unchanged.
+    expect(res.body[0].startDate).toBe('2026-08-13');
+    expect(res.body[0].endDate).toBe('2026-08-16');
+    expect(res.body[0].place).toBe('Wiesen, Burgenland');
+
+    // SEC-02 for D-08: festival B's distinct date/place values (and its id)
+    // never leak into a visitor who saved only A — check the SERIALIZED
+    // response body, not just the parsed array, so no shape survives.
+    const serialized = JSON.stringify(res.body);
+    expect(serialized).not.toContain(festivalBId);
+    expect(serialized).not.toContain('2026-09-03');
+    expect(serialized).not.toContain('2026-09-06');
+    expect(serialized).not.toContain('Tenant B Test Place');
   });
 
   it('visitor 2 (no saves) sees []', async () => {
@@ -171,5 +194,29 @@ describe('festival isolation (SEC-02 cross-tenant denial)', () => {
     expect(res.status).toBe(200);
     const ids = (res.body as Array<{ id: string }>).map((f) => f.id);
     expect(ids).toEqual(expect.arrayContaining([festivalAId, festivalBId]));
+
+    // D-08 round-trip on the browse endpoint: locate each row by id (never
+    // by array position/length) and assert its OWN distinct date/place.
+    type BrowseRow = { id: string; startDate: string | null; endDate: string | null; place: string | null };
+    const rows = res.body as BrowseRow[];
+    const rowA = rows.find((r) => r.id === festivalAId);
+    const rowB = rows.find((r) => r.id === festivalBId);
+    expect(rowA?.startDate).toBe('2026-08-13');
+    expect(rowA?.endDate).toBe('2026-08-16');
+    expect(rowA?.place).toBe('Wiesen, Burgenland');
+    expect(rowB?.startDate).toBe('2026-09-03');
+    expect(rowB?.endDate).toBe('2026-09-06');
+    expect(rowB?.place).toBe('Tenant B Test Place');
+  });
+
+  it('GET /api/v1/festivals/:slug (single-festival read) round-trips D-08 fields for festival A', async () => {
+    const res = await request(app.getHttpServer())
+      .get(`/api/v1/festivals/${festivalASlug}`)
+      .set('cookie', visitor1.cookie);
+    expect(res.status).toBe(200);
+    expect(res.body.id).toBe(festivalAId);
+    expect(res.body.startDate).toBe('2026-08-13');
+    expect(res.body.endDate).toBe('2026-08-16');
+    expect(res.body.place).toBe('Wiesen, Burgenland');
   });
 });

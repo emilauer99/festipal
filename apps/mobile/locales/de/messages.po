@@ -25,36 +25,57 @@ msgstr "@{username} ist frei"
 msgid "3–20 characters: a-z 0-9 _ ."
 msgstr "3–20 Zeichen: a–z 0–9 _ ."
 
+#: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
+msgid "All"
+msgstr "Alle"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Almost done"
 msgstr "Fast fertig"
 
 #: app/(auth)/email.tsx
+#: app/(festival)/f/[festivalSlug].tsx
 msgid "Back"
 msgstr "Zurück"
 
 #: app/(festival)/index.tsx
-msgid "Back to festivals"
-msgstr "Zurück zu den Festivals"
+#~ msgid "Back to festivals"
+#~ msgstr "Zurück zu den Festivals"
 
-#: app/festivals/index.tsx
+#: app/(tabs)/home.tsx
+msgid "Browse all festivals and save your first one."
+msgstr "Durchstöber alle Festivals und speichere dein erstes."
+
+#: app/(tabs)/home.tsx
+msgid "Browse festivals"
+msgstr "Alle Festivals ansehen"
+
+#: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
+#: app/(festival)/f/[festivalSlug].tsx
 #: app/(profile-setup)/complete-profile.tsx
-#: app/festivals/index.tsx
+#: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Cashless"
+msgstr "Cashless"
 
 #: app/(auth)/verify.tsx
 msgid "Change email"
 msgstr "E-Mail ändern"
 
 #: app/festivals/index.tsx
-msgid "Check back soon — new festivals will appear here."
-msgstr "Schau bald wieder vorbei — neue Festivals erscheinen hier."
+#~ msgid "Check back soon — new festivals will appear here."
+#~ msgstr "Schau bald wieder vorbei — neue Festivals erscheinen hier."
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Checking…"
@@ -64,6 +85,10 @@ msgstr "prüfe…"
 msgid "Choose photo"
 msgstr "Foto wählen"
 
+#: components/FloatingNav.tsx
+msgid "coming soon"
+msgstr "bald verfügbar"
+
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Continue"
 #~ msgstr "Weiter"
@@ -71,6 +96,10 @@ msgstr "Foto wählen"
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Couldn't complete your profile — tap Done to try again."
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Fertig“, um es noch einmal zu versuchen."
+
+#: app/(tabs)/festivals.tsx
+msgid "Couldn't save festival — try again."
+msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
@@ -97,8 +126,8 @@ msgid "Enter code"
 msgstr "Code eingeben"
 
 #: app/festivals/index.tsx
-msgid "Enter festival"
-msgstr "Festival betreten"
+#~ msgid "Enter festival"
+#~ msgstr "Festival betreten"
 
 #: app/(auth)/verify.tsx
 #~ msgid "Enter the 6-digit code we sent to {email}"
@@ -108,13 +137,27 @@ msgstr "Festival betreten"
 #~ msgid "Enter your code"
 #~ msgstr "Gib deinen Code ein"
 
-#: app/(festival)/index.tsx
-msgid "Festival home"
-msgstr "Festival-Startseite"
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Festival"
+msgstr "Festival"
 
-#: app/festivals/index.tsx
+#: app/(festival)/index.tsx
+#~ msgid "Festival home"
+#~ msgstr "Festival-Startseite"
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Festival not found"
+msgstr "Festival nicht gefunden"
+
+#: app/(tabs)/_layout.tsx
+#: app/(tabs)/festivals.tsx
+#: components/FloatingNav.tsx
 msgid "Festivals"
 msgstr "Festivals"
+
+#: components/FloatingNav.tsx
+msgid "Friends"
+msgstr "Freunde"
 
 #: app/(auth)/verify.tsx
 msgid "Get a new code."
@@ -124,7 +167,16 @@ msgstr "Hol dir einen neuen Code."
 msgid "Get started"
 msgstr "Los geht's"
 
-#: app/festivals/index.tsx
+#: components/FloatingNav.tsx
+msgid "Home"
+msgstr "Start"
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Loading festival…"
+msgstr "Festival wird geladen…"
+
+#: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Loading festivals…"
 msgstr "Festivals werden geladen…"
 
@@ -132,21 +184,57 @@ msgstr "Festivals werden geladen…"
 #~ msgid "Log in"
 #~ msgstr "Anmelden"
 
-#: app/festivals/index.tsx
+#: app/(tabs)/festivals.tsx
 msgid "Log out"
 msgstr "Abmelden"
 
-#: app/festivals/index.tsx
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Map"
+msgstr "Lageplan"
+
+#: app/(tabs)/festivals.tsx
+msgid "Mine"
+msgstr "Meine"
+
+#: app/(tabs)/home.tsx
+msgid "My festivals"
+msgstr "Meine Festivals"
+
+#: app/(tabs)/festivals.tsx
+msgid "New festivals will show up here."
+msgstr "Neue Festivals erscheinen hier."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "News"
+msgstr "News"
+
+#: app/(tabs)/home.tsx
+msgid "No festival saved yet"
+msgstr "Noch kein Festival gespeichert"
+
+#: app/(tabs)/festivals.tsx
 msgid "No festivals yet"
 msgstr "Noch keine Festivals"
+
+#: app/(tabs)/festivals.tsx
+msgid "No saved festivals yet"
+msgstr "Noch keine gespeicherten Festivals"
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "One more step"
 #~ msgstr "Nur noch ein Schritt"
 
+#: components/FestivalCard.tsx
+msgid "Open festival"
+msgstr "Festival öffnen"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Optional. You can add this later."
 msgstr "Optional. Geht auch später."
+
+#: components/FloatingNav.tsx
+msgid "Profile"
+msgstr "Profil"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Required"
@@ -160,13 +248,19 @@ msgstr "Code erneut senden"
 msgid "Resend in {countdownLabel}"
 msgstr "Erneut senden in {countdownLabel}"
 
-#: app/festivals/index.tsx
+#: app/(festival)/f/[festivalSlug].tsx
+#: app/(tabs)/festivals.tsx
+#: app/(tabs)/home.tsx
 msgid "Retry"
 msgstr "Erneut versuchen"
 
-#: app/festivals/index.tsx
+#: components/FestivalCard.tsx
 msgid "Save"
 msgstr "Speichern"
+
+#: components/FestivalCard.tsx
+msgid "Saved"
+msgstr "Gespeichert"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Saving…"
@@ -188,6 +282,18 @@ msgstr "Code kommt"
 msgid "Six digits sent to {email}."
 msgstr "Sechs Ziffern an {email}."
 
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Soon"
+msgstr "Bald"
+
+#: app/(tabs)/festivals.tsx
+msgid "Switch to 'All' and save one with a tap."
+msgstr "Wechsle zu 'Alle' und speichere eins mit einem Tipp."
+
+#: app/(tabs)/festivals.tsx
+msgid "Switch to All"
+msgstr "Zu Alle wechseln"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Take photo"
 msgstr "Foto aufnehmen"
@@ -207,6 +313,14 @@ msgstr "Sag uns, wie du in der App heißt."
 #: app/(auth)/verify.tsx
 msgid "That code is wrong or has expired."
 msgstr "Der Code ist falsch oder abgelaufen."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "This festival may have been removed or the link is out of date."
+msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
+
+#: app/(festival)/f/[festivalSlug].tsx
+msgid "Timetable"
+msgstr "Timetable"
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
@@ -258,9 +372,13 @@ msgid "Your email"
 msgstr "Deine E-Mail"
 
 #: app/(festival)/index.tsx
-msgid "Your festival overview is coming soon."
-msgstr "Deine Festival-Übersicht kommt in Kürze."
+#~ msgid "Your festival overview is coming soon."
+#~ msgstr "Deine Festival-Übersicht kommt in Kürze."
 
 #: app/(auth)/index.tsx
 msgid "Your festivals, your crew, your plan."
 msgstr "Deine Festivals, deine Crew, dein Plan."
+
+#: app/(tabs)/home.tsx
+msgid "Your next festival"
+msgstr "Dein nächstes Festival"
