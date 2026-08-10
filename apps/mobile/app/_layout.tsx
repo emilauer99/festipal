@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Stack, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization';
 import * as Linking from 'expo-linking';
 import Constants from 'expo-constants';
+import { StatusBar } from 'expo-status-bar';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from '@lingui/react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -22,13 +23,15 @@ import { type AuthState, AuthStateContext } from '../lib/auth-state';
 import { isIgnorableDeepLinkRoute, reconstructDeepLinkRoute } from '../lib/deep-link';
 import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider } from '../lib/fonts-context';
+import { ThemeProvider, useTheme } from '../lib/theme-context';
+import type { ThemeColors } from '../lib/theme';
 
-const { colors, typeRoles } = tokens;
+const { typeRoles } = tokens;
 
 // D-04: held until BOTH the UI locale (ADR-012 axis 1) AND the four-state
 // auth guard below resolve, so no protected route ever flashes on cold start
-// (Pitfall 5). The presentation shown while held is restyled to the real
-// brand tokens (dark bgAppDeep + Outfit wordmark, see SplashView below).
+// (Pitfall 5). The presentation shown while held is the real brand tokens —
+// since 05.1/D-02 mode-dependent (`bgApp` + Outfit wordmark, see SplashView).
 SplashScreen.preventAutoHideAsync();
 
 // D-04 / Pitfall 5 backstop — the cold-start session/festival resolve must
@@ -118,7 +121,31 @@ const AUTH_FLOW_PATHS = new Set(['welcome', 'email', 'verify', 'complete-profile
 // app.json's `expo.scheme` ("quiks", ADR-024).
 const APP_SCHEME_FALLBACK = 'quiks';
 
+/**
+ * D-01 (05.1) — the root is now a thin provider shell so that BOTH branches of
+ * `RootNavigation` below (the splash hold AND the bootstrapped app tree) render
+ * inside `ThemeProvider`. A provider placed below the `bootstrapped` gate would
+ * leave the splash — the very first surface a visitor sees — unthemed, which is
+ * exactly the frame D-02 makes mode-dependent.
+ *
+ * `StatusBar style="auto"` lives here for the same reason: hell-first makes
+ * Papier the default surface, and without an explicit status-bar style the
+ * platform default keeps light icons that are unreadable on it. `"auto"` flips
+ * the icons off the resolved colour scheme, so it needs no separate wiring to
+ * `useTheme()`.
+ */
 export default function RootLayout() {
+  return (
+    <SafeAreaProvider>
+      <ThemeProvider>
+        <StatusBar style="auto" />
+        <RootNavigation />
+      </ThemeProvider>
+    </SafeAreaProvider>
+  );
+}
+
+function RootNavigation() {
   const [localeReady, setLocaleReady] = useState(false);
   const [authState, setAuthState] = useState<AuthState>({ status: 'loading' });
   const [meRefreshToken, setMeRefreshToken] = useState(0);
@@ -374,21 +401,20 @@ export default function RootLayout() {
   }, [bootstrapped]);
 
   // Splash stays up until locale + auth + profile are all resolved — this is
-  // the load-bearing "no auth-flash" guarantee (SC-2). D-04: the presentation
-  // is the real brand tokens (dark bgAppDeep + Outfit wordmark); this is
-  // strictly a presentation change — `bootstrapped` (locale + auth state)
-  // stays the SOLE gate, never a `useFonts()` gate (Pitfall 5).
+  // the load-bearing "no auth-flash" guarantee (SC-2). D-04 / 05.1 D-02: the
+  // presentation is the real brand tokens, resolved per mode (`bgApp` + Outfit
+  // wordmark); this is strictly a presentation change — `bootstrapped` (locale
+  // + auth state) stays the SOLE gate, never a `useFonts()` gate (Pitfall 5).
   if (!bootstrapped) return <SplashView fontsLoaded={fontsLoaded} />;
 
   return (
-    <SafeAreaProvider>
-      <FontsReadyProvider ready={fontsLoaded}>
-        <QueryClientProvider client={queryClient}>
-          <I18nProvider i18n={i18n}>
-            <AuthStateContext.Provider value={authState}>
-              <ColdStartTargetContext.Provider value={coldStartTarget}>
-                <Stack>
-                  {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
+    <FontsReadyProvider ready={fontsLoaded}>
+      <QueryClientProvider client={queryClient}>
+        <I18nProvider i18n={i18n}>
+          <AuthStateContext.Provider value={authState}>
+            <ColdStartTargetContext.Provider value={coldStartTarget}>
+              <Stack>
+                {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
                       is the SINGLE owner of path `/` and is declared OUTSIDE every
                       Stack.Protected block, so it is mounted in ALL auth states.
                       Expo Router resolves `/` from a static, guard-agnostic linking
@@ -397,61 +423,70 @@ export default function RootLayout() {
                       Unmatched Route screen. It reads AuthStateContext +
                       ColdStartTargetContext and hands off with a declarative
                       <Redirect>. */}
-                  <Stack.Screen name="index" />
-                  <Stack.Protected guard={authState.status === 'unauthenticated'}>
-                    <Stack.Screen name="(auth)" />
-                  </Stack.Protected>
-                  <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
-                    <Stack.Screen name="(profile-setup)" />
-                  </Stack.Protected>
-                  <Stack.Protected guard={authState.status === 'authenticated'}>
-                    <Stack.Screen name="(tabs)" />
-                    <Stack.Screen name="(festival)" />
-                  </Stack.Protected>
-                </Stack>
-              </ColdStartTargetContext.Provider>
-            </AuthStateContext.Provider>
-          </I18nProvider>
-        </QueryClientProvider>
-      </FontsReadyProvider>
-    </SafeAreaProvider>
+                <Stack.Screen name="index" />
+                <Stack.Protected guard={authState.status === 'unauthenticated'}>
+                  <Stack.Screen name="(auth)" />
+                </Stack.Protected>
+                <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
+                  <Stack.Screen name="(profile-setup)" />
+                </Stack.Protected>
+                <Stack.Protected guard={authState.status === 'authenticated'}>
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="(festival)" />
+                </Stack.Protected>
+              </Stack>
+            </ColdStartTargetContext.Provider>
+          </AuthStateContext.Provider>
+        </I18nProvider>
+      </QueryClientProvider>
+    </FontsReadyProvider>
   );
 }
 
 /**
- * D-04 — the splash-hold presentation: dark `bgAppDeep` background + the
- * "quiks." wordmark in Outfit, falling back to the system font until
- * Outfit resolves (`resolveFontFamily`, non-blocking — Pitfall 5). The
- * wordmark brand name is NOT wrapped in Lingui (UI-SPEC Copywriting
- * Contract), matching the Welcome screen's identical pattern.
+ * D-04 / D-02 (05.1) — the splash-hold presentation: the "quiks." wordmark in
+ * Outfit, falling back to the system font until Outfit resolves
+ * (`resolveFontFamily`, non-blocking — Pitfall 5). The wordmark brand name is
+ * NOT wrapped in Lingui (UI-SPEC Copywriting Contract), matching the Welcome
+ * screen's identical pattern.
+ *
+ * D-02: background and wordmark colour now FOLLOW THE MODE — Papier `bgApp` +
+ * Ink text in light, Ink `bgApp` + light text in dark. The trailing dot stays
+ * `primary` (Beere) in BOTH modes; per CI §7 the dot must never be coloured
+ * like the word. Styles are built inside the component off `useTheme()`, not in
+ * a module-level `StyleSheet.create` — a module-level object freezes its
+ * colours at import time and can never follow the mode.
  */
 function SplashView({ fontsLoaded }: { fontsLoaded: boolean }) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createSplashStyles(colors), [colors]);
+
   return (
-    <View style={splashStyles.screen}>
-      <Text
-        style={[splashStyles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsLoaded) }]}
-      >
+    <View style={styles.screen}>
+      <Text style={[styles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsLoaded) }]}>
         quiks
-        <Text style={splashStyles.wordmarkDot}>.</Text>
+        <Text style={styles.wordmarkDot}>.</Text>
       </Text>
     </View>
   );
 }
 
-const splashStyles = StyleSheet.create({
-  screen: {
-    flex: 1,
-    backgroundColor: colors.bgAppDeep,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  wordmark: {
-    fontSize: typeRoles.wordmark.size,
-    fontWeight: typeRoles.wordmark.weight,
-    lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
-    color: colors.textPrimary,
-  },
-  wordmarkDot: {
-    color: colors.primary,
-  },
-});
+function createSplashStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: colors.bgApp,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    wordmark: {
+      fontSize: typeRoles.wordmark.size,
+      fontWeight: typeRoles.wordmark.weight,
+      lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
+      color: colors.textPrimary,
+    },
+    wordmarkDot: {
+      color: colors.primary,
+    },
+  });
+}
