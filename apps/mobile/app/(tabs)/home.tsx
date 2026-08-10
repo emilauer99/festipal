@@ -68,7 +68,17 @@ export default function HomeScreen() {
     if (saved.length === 0) return { kind: 'empty' };
     const ordered = orderFestivalsForHome(saved, today);
     const [hero, ...rail] = ordered;
-    return { kind: 'ready', hero: hero as Festival, rail };
+    // WR-08 (05-REVIEW.md) — `hero` types as `Festival | undefined` under
+    // `noUncheckedIndexedAccess: true` for this array destructure; the
+    // `saved.length === 0` guard above makes it safe TODAY only because
+    // `orderFestivalsForHome` is assumed to return exactly as many items as
+    // it received. An explicit runtime check (rather than an `as Festival`
+    // assertion) enforces that invariant at the boundary, so a future
+    // regression in `orderFestivalsForHome` (e.g. a filtering bug dropping
+    // an item) fails closed into the empty state instead of crashing later
+    // at `viewState.hero.slug`.
+    if (!hero) return { kind: 'empty' };
+    return { kind: 'ready', hero, rail };
   }
 
   const viewState = computeState();
