@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Stack, useRouter, type Href } from 'expo-router';
+import { Stack, type Href } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Localization from 'expo-localization';
 import * as Linking from 'expo-linking';
@@ -16,7 +16,10 @@ import { authClient } from '../lib/auth-client';
 import { apiClient } from '../lib/api-client';
 import { capturePendingDestination, consumePendingDestination } from '../lib/pending-destination';
 import { getActiveFestivalSlug } from '../lib/active-festival-storage';
-import { reconstructDeepLinkRoute } from '../lib/deep-link';
+import { coldStartRedirectHref, resolveColdStartRedirect } from '../lib/cold-start-redirect';
+import { ColdStartTargetContext } from '../lib/cold-start-target';
+import { type AuthState, AuthStateContext } from '../lib/auth-state';
+import { isIgnorableDeepLinkRoute, reconstructDeepLinkRoute } from '../lib/deep-link';
 import { FONT_DISPLAY, resolveFontFamily, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider } from '../lib/fonts-context';
 
@@ -36,18 +39,13 @@ SplashScreen.preventAutoHideAsync();
 // slightly after, its result still wins (no additional gate is added).
 const AUTH_RESOLVE_TIMEOUT_MS = 8000;
 
-/**
- * Pitfall B / PITFALLS.md #5 — a route guard MUST branch on more than
- * `!!session`. A brand-new OTP account's `GET /me` returns `profile: null`
- * (Phase 2), so there are FOUR states, not two: still resolving, no session,
- * session-but-no-profile, and fully authenticated. `Stack.Protected` guards
- * below are driven by this discriminated union, never a boolean flag.
- */
-type AuthState =
-  | { status: 'loading' }
-  | { status: 'unauthenticated' }
-  | { status: 'authenticated-no-profile' }
-  | { status: 'authenticated' };
+// first-login-unmatched-route (round 3) — the four-state `AuthState` union
+// (Pitfall B / PITFALLS.md #5: a brand-new OTP account's `GET /me` returns
+// `profile: null`, so there are FOUR states, not two) now lives in
+// `lib/auth-state.ts` so the single `/` owner (`app/index.tsx`) can read the
+// resolved state via `AuthStateContext` and pick its declarative redirect. The
+// `Stack.Protected` guards below are still driven by this discriminated union,
+// never a boolean flag.
 
 // 03-04 addition — `GET /me`'s `profile` field lives entirely outside
 // better-auth's own session atom (it's our own NestJS endpoint, not a
@@ -81,7 +79,7 @@ export function forceUnauthenticated(): void {
 // whole point of the group syntax), so the "never capture an (auth)/
 // (profile-setup) href itself" rule is enforced by the actual route paths
 // those screens resolve to, not the folder names.
-const AUTH_FLOW_PATHS = new Set(['', 'email', 'verify', 'complete-profile']);
+const AUTH_FLOW_PATHS = new Set(['', 'welcome', 'email', 'verify', 'complete-profile']);
 
 // G-05-7 — fallback app scheme when `Constants.expoConfig?.scheme` is
 // unavailable at runtime (e.g. a bare/unexpected config shape); matches
@@ -101,7 +99,15 @@ export default function RootLayout() {
   // re-trigger the redirect and hijack normal tab navigation later in the
   // session (REVIEW 05-05 HIGH acceptance note).
   const coldStartRedirectRef = useRef(false);
-  const router = useRouter();
+  // first-login-unmatched-route (round 3) — the resolved cold-start redirect
+  // TARGET (Home / active festival / deep link). The guard-resolve effect below
+  // decides it ONCE (consuming the pending deep-link href with the correct
+  // ordering + one-shot guard) and stores it here; the single `/` owner
+  // (app/index.tsx) reads it via ColdStartTargetContext and replays it with a
+  // DECLARATIVE <Redirect>. This replaces the previous imperative
+  // router.replace, which lost the race against Stack.Protected's guard-flip
+  // reconciliation and left the app on the unmatched root path `/`.
+  const [coldStartTarget, setColdStartTarget] = useState<Href | null>(null);
   // D-04 / Pitfall 5 — non-blocking: `fontsLoaded` gates ONLY which
   // `fontFamily` the SplashView's wordmark style resolves, never the
   // `bootstrapped`/`hideAsync()` decision below.
@@ -139,6 +145,13 @@ export default function RootLayout() {
     const appScheme = (Array.isArray(rawScheme) ? rawScheme[0] : rawScheme) ?? APP_SCHEME_FALLBACK;
     const route = reconstructDeepLinkRoute(Linking.parse(linkingUrl), appScheme);
     if (!route) return;
+    // first-login-unmatched-route (round 4) — Expo's Dev Client launches the
+    // app via `festipal:///expo-development-client/?url=<metro-host>`; without
+    // this guard that route was captured as a pending destination and replayed
+    // as `/expo-development-client`, dead-ending on Expo's Unmatched Route on
+    // every dev launch. Filtered here ALONGSIDE the AUTH_FLOW_PATHS guard so no
+    // Expo-internal launch path is ever captured.
+    if (isIgnorableDeepLinkRoute(route)) return;
     if (AUTH_FLOW_PATHS.has(route)) return;
     capturePendingDestination(`/${route}`);
   }, [linkingUrl, authState.status]);
@@ -221,36 +234,50 @@ export default function RootLayout() {
   //
   // 05-05 / D-06 (HOME-01) — extended with the active-festival cold-start
   // focus: the pending deep-link destination takes STRICT precedence
-  // (REVIEW 05-05 HIGH) — if one exists, replay it and `return` IMMEDIATELY,
-  // before the active-festival slug is ever read, so the deep link always
-  // wins. Only when there is no pending href does the effect read the
-  // persisted `active-festival-slug` (synchronous MMKV read, no new gate
-  // before `SplashScreen.hideAsync()` — RESEARCH Pattern 4) and, if present,
-  // open that festival's home directly. Both branches are guarded by
-  // `coldStartRedirectRef` so this whole block runs at most once per cold
-  // start.
+  // (REVIEW 05-05 HIGH) — if one exists, replay it, so the deep link always
+  // wins. Otherwise open the persisted `active-festival-slug` (synchronous
+  // MMKV read, no new gate before `SplashScreen.hideAsync()` — RESEARCH
+  // Pattern 4). This whole block is guarded by `coldStartRedirectRef` so it
+  // runs at most once per cold start.
+  //
+  // first-login-unmatched-route (round 3) — this effect now only DECIDES the
+  // cold-start redirect target; the navigation itself is performed
+  // declaratively by the single `/` owner (app/index.tsx) via <Redirect>,
+  // reading `coldStartTarget` through ColdStartTargetContext.
+  //
+  // Why the change: the previous imperative `router.replace(...)` here was
+  // issued in the same commit as the `Stack.Protected` guard flip and lost the
+  // race against Expo Router's own reconciliation, which reset the URL to `/`.
+  // Expo Router resolves `/` from a STATIC, guard-agnostic linking map
+  // (matchForEmptyPath), so with the only `/` route ((auth)/index) render-
+  // filtered off once authenticated, Expo Router rendered its Unmatched Route
+  // screen for festipal:/// — the reported bug, which neither the round-1
+  // empty-state `router.replace('/home')` nor the round-2 second group-index
+  // ((root)/index, which never won the static empty-path match) fixed. app/index
+  // is now the SINGLE `/` owner, declared OUTSIDE every guard so it is mounted in
+  // all auth states, and hands off with a declarative redirect immune to that
+  // reconciliation race.
+  //
+  // The decision stays HERE (not in the route's render) deliberately:
+  // `consumePendingDestination()` is a one-shot side effect and MUST run after
+  // the deep-link capture effect above has stored the pending href (declaration
+  // order guarantees capture-before-consume on the authenticated transition),
+  // and exactly once (the coldStartRedirectRef one-shot also absorbs React
+  // StrictMode's dev double-invoke). The pure, unit-tested resolver + mapper
+  // turn that into the concrete href stored in state.
   useEffect(() => {
     if (authState.status !== 'authenticated') return;
     if (coldStartRedirectRef.current) return;
     coldStartRedirectRef.current = true;
 
-    const href = consumePendingDestination();
-    if (href) {
-      // Deep-link path captured at runtime (Linking.parse) — cannot be a typed-route literal
-      // union member statically; typedRoutes (05-02) still validates every literal route
-      // elsewhere in the app, this is the one intentionally-dynamic exception.
-      router.replace(href as Href);
-      return;
-    }
-
-    const activeFestivalSlug = getActiveFestivalSlug();
-    if (activeFestivalSlug) {
-      router.replace(`/f/${activeFestivalSlug}`);
-    }
-    // No pending href and no persisted slug: fall through to the guard's
-    // default authenticated route — the Home tab (`(tabs)/_layout.tsx`
-    // `initialRouteName="home"`).
-  }, [authState.status, router]);
+    const redirect = resolveColdStartRedirect(consumePendingDestination(), getActiveFestivalSlug());
+    // coldStartRedirectHref returns a runtime string (a deep-link path is
+    // captured via Linking.parse and cannot be a typed-route literal union
+    // member statically); typedRoutes (05-02) still validates every literal
+    // route elsewhere — this is the one intentionally-dynamic exception.
+    const resolvedHref = coldStartRedirectHref(redirect) as Href;
+    setColdStartTarget(resolvedHref);
+  }, [authState.status]);
 
   const bootstrapped = localeReady && authState.status !== 'loading';
 
@@ -273,18 +300,32 @@ export default function RootLayout() {
       <FontsReadyProvider ready={fontsLoaded}>
         <QueryClientProvider client={queryClient}>
           <I18nProvider i18n={i18n}>
-            <Stack>
-              <Stack.Protected guard={authState.status === 'unauthenticated'}>
-                <Stack.Screen name="(auth)" />
-              </Stack.Protected>
-              <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
-                <Stack.Screen name="(profile-setup)" />
-              </Stack.Protected>
-              <Stack.Protected guard={authState.status === 'authenticated'}>
-                <Stack.Screen name="(tabs)" />
-                <Stack.Screen name="(festival)" />
-              </Stack.Protected>
-            </Stack>
+            <AuthStateContext.Provider value={authState}>
+              <ColdStartTargetContext.Provider value={coldStartTarget}>
+                <Stack>
+                  {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
+                      is the SINGLE owner of path `/` and is declared OUTSIDE every
+                      Stack.Protected block, so it is mounted in ALL auth states.
+                      Expo Router resolves `/` from a static, guard-agnostic linking
+                      map; keeping exactly one always-mounted `/` route means the
+                      cold-start / guard-flip URL `/` can never dead-end on the
+                      Unmatched Route screen. It reads AuthStateContext +
+                      ColdStartTargetContext and hands off with a declarative
+                      <Redirect>. */}
+                  <Stack.Screen name="index" />
+                  <Stack.Protected guard={authState.status === 'unauthenticated'}>
+                    <Stack.Screen name="(auth)" />
+                  </Stack.Protected>
+                  <Stack.Protected guard={authState.status === 'authenticated-no-profile'}>
+                    <Stack.Screen name="(profile-setup)" />
+                  </Stack.Protected>
+                  <Stack.Protected guard={authState.status === 'authenticated'}>
+                    <Stack.Screen name="(tabs)" />
+                    <Stack.Screen name="(festival)" />
+                  </Stack.Protected>
+                </Stack>
+              </ColdStartTargetContext.Provider>
+            </AuthStateContext.Provider>
           </I18nProvider>
         </QueryClientProvider>
       </FontsReadyProvider>

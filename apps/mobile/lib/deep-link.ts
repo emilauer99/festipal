@@ -50,3 +50,27 @@ export function reconstructDeepLinkRoute(
     .filter((segment): segment is string => segment !== null);
   return segments.length > 0 ? segments.join('/') : null;
 }
+
+/**
+ * first-login-unmatched-route (round 4, confirmed root cause) — Expo's own
+ * tooling launches the app through internal deep links that are NOT app routes
+ * and must never be captured/replayed as a pending destination:
+ *   - `festipal:///expo-development-client/?url=<metro-host>` — the Expo Dev
+ *     Client launch link. Its first route segment is `expo-development-client`;
+ *     replaying it as `/expo-development-client` hits Expo's Unmatched Route
+ *     screen on EVERY dev-client launch (the reported bug — a dev-only artifact,
+ *     since a production standalone launch is a bare `festipal://` that
+ *     `reconstructDeepLinkRoute` already maps to `null`).
+ *   - `festipal:///_expo/...` — Expo's internal dev/runtime namespace.
+ *   - `festipal:///--/...` — the Expo Go `--/` deep-link separator prefix.
+ *
+ * Operates on the already-reconstructed route (no leading slash, segments
+ * joined by '/'), i.e. exactly what {@link reconstructDeepLinkRoute} returns —
+ * so it composes with the `AUTH_FLOW_PATHS` guard at the capture site.
+ */
+const IGNORED_DEEP_LINK_SEGMENTS = new Set(['expo-development-client', '_expo', '--']);
+
+export function isIgnorableDeepLinkRoute(route: string): boolean {
+  const firstSegment = route.replace(/^\/+/, '').split('/')[0] ?? '';
+  return IGNORED_DEEP_LINK_SEGMENTS.has(firstSegment);
+}

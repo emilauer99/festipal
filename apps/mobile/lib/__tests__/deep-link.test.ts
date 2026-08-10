@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { reconstructDeepLinkRoute } from '../deep-link';
+import { isIgnorableDeepLinkRoute, reconstructDeepLinkRoute } from '../deep-link';
 
 const APP_SCHEME = 'festipal';
 
@@ -63,5 +63,56 @@ describe('reconstructDeepLinkRoute (G-05-7 — pure route reconstruction from Li
     // not hardcoded to the literal 'festipal' string.
     const parsed = { scheme: 'other-app', hostname: 'f', path: 'nova-sound-2026' };
     expect(reconstructDeepLinkRoute(parsed, 'other-app')).toBe('f/nova-sound-2026');
+  });
+});
+
+/**
+ * first-login-unmatched-route (round 4 — confirmed root cause) — the Expo Dev
+ * Client launches the app via `festipal:///expo-development-client/?url=<host>`,
+ * which `reconstructDeepLinkRoute` maps to the route `expo-development-client`.
+ * Without this predicate the capture effect stored it as a pending destination
+ * and replayed it on the authenticated transition, dead-ending on Expo's
+ * Unmatched Route screen on EVERY dev launch (the reported "every time" symptom).
+ *
+ * oracle_type: specified — an Expo-internal launch path must never be captured
+ * as an app route; app routes still are.
+ */
+describe('isIgnorableDeepLinkRoute (round 4 — never capture Expo tooling launch links)', () => {
+  it('ignores the Expo Dev Client launch route (expo-development-client)', () => {
+    expect(isIgnorableDeepLinkRoute('expo-development-client')).toBe(true);
+  });
+
+  it('ignores the Expo Dev Client launch route even with trailing segments', () => {
+    // Real link reconstructs to just the first segment, but the predicate must
+    // also hold if a trailing segment survives reconstruction.
+    expect(isIgnorableDeepLinkRoute('expo-development-client/bundle')).toBe(true);
+  });
+
+  it("ignores Expo's internal _expo namespace", () => {
+    expect(isIgnorableDeepLinkRoute('_expo/loading')).toBe(true);
+  });
+
+  it('ignores the Expo Go -- deep-link separator prefix', () => {
+    expect(isIgnorableDeepLinkRoute('--/f/nova-sound-2026')).toBe(true);
+  });
+
+  it('tolerates a leading slash on the reconstructed route', () => {
+    expect(isIgnorableDeepLinkRoute('/expo-development-client')).toBe(true);
+  });
+
+  it('does NOT ignore a real festival deep-link route (regression guard)', () => {
+    // The load-bearing negative case: a genuine app route must still be
+    // captured/replayed, so the fix cannot swallow real deep links.
+    expect(isIgnorableDeepLinkRoute('f/nova-sound-2026')).toBe(false);
+  });
+
+  it('does NOT ignore a route that merely contains an ignored word downstream', () => {
+    // Only the FIRST segment gates ignoring — a route like
+    // `f/expo-development-client` (hypothetical festival slug) is a real route.
+    expect(isIgnorableDeepLinkRoute('f/expo-development-client')).toBe(false);
+  });
+
+  it('does NOT ignore the empty root route', () => {
+    expect(isIgnorableDeepLinkRoute('')).toBe(false);
   });
 });
