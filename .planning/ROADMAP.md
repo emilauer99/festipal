@@ -235,7 +235,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
 **Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
 **Depends on:** Phase 5
-**Plans:** 5/7 plans executed
+**Plans:** 6/7 plans executed
 
 Plans:
 
@@ -252,7 +252,7 @@ Plans:
 
 - [x] 05.1-04-PLAN.md — Component re-theme: `createStyles(colors)` migration, mode-aware nav glass + blur tint, Sunset hero gradient on `FestivalCard`, raw-literal tokenisation
 - [x] 05.1-05-PLAN.md — Screen re-theme: `createStyles(colors)` migration across all 8 screens, light-mode-legible status text, last raw literals removed
-- [ ] 05.1-06-PLAN.md — Brand mark: shared glyph geometry, font-gated `WordmarkGlyph`, deterministic SVG→PNG icon generator, six regenerated app icons
+- [x] 05.1-06-PLAN.md — Brand mark: shared glyph geometry, font-gated `WordmarkGlyph`, deterministic SVG→PNG icon generator, six regenerated app icons
 
 **Wave 4** *(blocked on Wave 3)*
 

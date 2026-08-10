@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 24
+open_count: 26
 waived_count: 0
 fixed_count: 3
-total_count: 27
-last_updated: 2026-08-10T21:53:55.129Z
+total_count: 29
+last_updated: 2026-08-10T22:10:54.014Z
 ---
 
 # Broken Windows Ledger
@@ -42,6 +42,8 @@ last_updated: 2026-08-10T21:53:55.129Z
 | 25 | 05.1 | deviation | apps/mobile/lib/fonts.ts |  | otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance | open |  | 2026-08-10T21:14:08.388Z |  |
 | 26 | 05.1 | unrun-verify | apps/mobile/components/FestivalCard.tsx |  | 05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07 | open |  | 2026-08-10T21:39:45.181Z |  |
 | 27 | 05.1 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07 | open |  | 2026-08-10T21:53:55.129Z |  |
+| 28 | 05.1 | unrun-verify | apps/mobile/assets/icon.png |  | 05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07 | open |  | 2026-08-10T22:10:53.619Z |  |
+| 29 | 05.1 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07 | open |  | 2026-08-10T22:10:54.014Z |  |
 
 ````json
 [
@@ -367,6 +369,30 @@ last_updated: 2026-08-10T21:53:55.129Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-10T21:53:55.129Z",
+    "resolved_at": null
+  },
+  {
+    "id": 28,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/assets/icon.png",
+    "line": null,
+    "description": "05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-10T22:10:53.619Z",
+    "resolved_at": null
+  },
+  {
+    "id": 29,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-10T22:10:54.014Z",
     "resolved_at": null
   }
 ]

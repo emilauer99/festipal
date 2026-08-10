@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 05.1
 current_phase_name: quiks-rename-ci-v1-0-rollout
 status: executing
-stopped_at: Completed 05.1-05-PLAN.md
-last_updated: "2026-08-10T21:56:31.038Z"
+stopped_at: Completed 05.1-06-PLAN.md
+last_updated: "2026-08-10T22:14:17.614Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 38
+  completed_plans: 39
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 ## Current Position
 
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
-Plan: 6 of 7
+Plan: 7 of 7
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [██████████] 95%
+Progress: [██████████] 98%
 
 ## Performance Metrics
 
@@ -100,6 +100,7 @@ Progress: [██████████] 95%
 | Phase 05.1 P02 | ~15min | 3 tasks | 1 files |
 | Phase 05.1 P04 | ~15min | 3 tasks | 12 files |
 | Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
+| Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
 
 ## Accumulated Context
 
@@ -206,6 +207,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-05: Screens auf fontFamilyForRole umgestellt statt nur numerisches fontWeight zu streichen — sonst wäre D-10 trivial erfüllt und faux-bold geblieben
 - [Phase ?]: 05.1-05: Statushue als Text/Icon/1px-Rand geht immer über die *Text-Variante (dangerText/successText), bare Hue nur für gefüllte Flächen
 - [Phase ?]: 05.1-05: app/_layout.tsx (Splash-Wortmarke, letztes numerisches fontWeight) bewusst nicht angefasst — gehört Plan 05.1-06
+- [Phase ?]: Markenglyphe: EIN Geometriemodul (lib/wordmark-glyph.ts) speist Runtime-SVG und Icon-Rasterizer; Farben nur aus Tokens
+- [Phase ?]: Icon-Generator misst Tintengrenzen per resvg getBBox statt geschaetzter Crop-Box; @resvg/resvg-js exakt auf 2.6.2 gepinnt, PNGs committet
 
 ### Pending Todos
 
@@ -245,6 +248,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T21:56:22.058Z
-Stopped at: Completed 05.1-05-PLAN.md
+Last session: 2026-08-10T22:14:17.582Z
+Stopped at: Completed 05.1-06-PLAN.md
 Resume file: None
