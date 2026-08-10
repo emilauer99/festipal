@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 05.1
 current_phase_name: quiks-rename-ci-v1-0-rollout
 status: executing
-stopped_at: Completed 05.1-02-PLAN.md
-last_updated: "2026-08-10T21:27:40.349Z"
+stopped_at: Completed 05.1-04-PLAN.md
+last_updated: "2026-08-10T21:42:11.521Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 40
-  completed_plans: 36
+  completed_plans: 37
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 ## Current Position
 
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
-Plan: 4 of 7
+Plan: 5 of 7
 Status: Ready to execute
 Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -98,6 +98,7 @@ Progress: [█████████░] 90%
 | Phase 05.1 P01 | ~30min | 2 tasks | 89 files |
 | Phase 05.1 P03 | ~20min | 3 tasks | 8 files |
 | Phase 05.1 P02 | ~15min | 3 tasks | 1 files |
+| Phase 05.1 P04 | ~15min | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -197,6 +198,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-02: docker-compose.yml traegt einen expliziten top-level 'name: quiks' — Compose-Projektname haengt nicht mehr am Ordnernamen, der D-15-Ordner-Rename kann das lokale Volume nicht mehr verwaisen lassen (RESEARCH Pitfall 1)
 - [Phase ?]: 05.1-02: Teardown des alten Stacks per 'docker compose -p festipal down -v --remove-orphans' statt des geplanten 'docker compose down -v' — nach dem name:-Key sieht compose den alten Stack nicht mehr; der zusaetzlich freigegebene explizite 'docker volume rm' war ein No-op, weil down -v Volumes ueber ihr Projekt-Label abraeumt
 - [Phase ?]: 05.1-02: lokale DB destruktiv zurueckgesetzt (D-13/T-05.1-06 akzeptiert) und per db:migrate + db:seed wiederhergestellt; apps/api 45/45 gruen gegen die neuen Credentials — das ist der Beweis, dass die .env-Aenderung gegriffen hat statt still zurueckzufallen
+- [Phase ?]: DisabledNavItem erhaelt styles + mutedColor als Props statt eigenem useTheme() - eine Stylesheet-Konstruktion pro Moduswechsel statt drei
+- [Phase ?]: Sunset-Rect traegt rx/ry = r-card zusaetzlich zum overflow:hidden der Hero-Karte - doppelt abgesichertes Clipping
+- [Phase ?]: otpDigit und countdown behalten explizit FONT_MONO + numerisches fontWeight (Rolle deklariert 500, Datei ist 400 - von 05.1-03 geparkt)
+- [Phase ?]: WINDOWS-Eintrag 17 war veraltet: die vier DE-Uebersetzungen existieren seit dem Phase-5-Merge - verifiziert statt neu geschrieben
 
 ### Pending Todos
 
@@ -236,6 +241,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T21:27:40.329Z
-Stopped at: Completed 05.1-02-PLAN.md
+Last session: 2026-08-10T21:42:01.737Z
+Stopped at: Completed 05.1-04-PLAN.md
 Resume file: None

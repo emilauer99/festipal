@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 22
+open_count: 23
 waived_count: 0
 fixed_count: 3
-total_count: 25
-last_updated: 2026-08-10T21:34:39.942Z
+total_count: 26
+last_updated: 2026-08-10T21:39:45.181Z
 ---
 
 # Broken Windows Ledger
@@ -40,6 +40,7 @@ last_updated: 2026-08-10T21:34:39.942Z
 | 23 | 05 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05-UAT.md test 7: on-device deep-link verification (logged-out festipal://f/:slug double-slash, and already-authenticated cold-start festipal:///f/:slug) not run headlessly — requires real device | open |  | 2026-08-09T14:33:18.123Z |  |
 | 24 | 05.1 | unrun-verify | docker-compose.yml |  | Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs. | open |  | 2026-08-10T20:57:29.452Z |  |
 | 25 | 05.1 | deviation | apps/mobile/lib/fonts.ts |  | otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance | open |  | 2026-08-10T21:14:08.388Z |  |
+| 26 | 05.1 | unrun-verify | apps/mobile/components/FestivalCard.tsx |  | 05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07 | open |  | 2026-08-10T21:39:45.181Z |  |
 
 ````json
 [
@@ -341,6 +342,18 @@ last_updated: 2026-08-10T21:34:39.942Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-10T21:14:08.388Z",
+    "resolved_at": null
+  },
+  {
+    "id": 26,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/components/FestivalCard.tsx",
+    "line": null,
+    "description": "05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-10T21:39:45.181Z",
     "resolved_at": null
   }
 ]
