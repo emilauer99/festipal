@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowLeft } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { authClient } from '../../lib/auth-client';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';

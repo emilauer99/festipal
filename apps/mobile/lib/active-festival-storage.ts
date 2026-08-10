@@ -10,12 +10,12 @@ import type { createMMKV as CreateMMKVFn, MMKV } from 'react-native-mmkv';
  * {@link getStorage}, never a top-level import, so this module stays
  * importable in a non-native/test context.
  *
- * Own storage id (`festipal-active-festival`, distinct from
- * `avatar-storage.ts`'s `festipal-avatar`) and own key namespace — a slug is
+ * Own storage id (`quiks-active-festival`, distinct from
+ * `avatar-storage.ts`'s `quiks-avatar`) and own key namespace — a slug is
  * not a secret and grants no privilege the visitor lacked via the gate-less
  * `getFestival(slug)` browse endpoint it only ever feeds (T-05-02, accepted).
  */
-const ACTIVE_FESTIVAL_STORAGE_ID = 'festipal-active-festival';
+const ACTIVE_FESTIVAL_STORAGE_ID = 'quiks-active-festival';
 const ACTIVE_FESTIVAL_SLUG_KEY = 'active-festival-slug';
 
 // RN/Metro provides `require` at runtime; no node types in this project's

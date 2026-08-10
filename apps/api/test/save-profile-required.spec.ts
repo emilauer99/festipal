@@ -8,7 +8,7 @@ import type { INestApplication } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { festival, myFestival, user, type Database } from '@festipal/db';
+import { festival, myFestival, user, type Database } from '@quiks/db';
 
 import { createTestApp, createTestDatabase } from './setup';
 
@@ -63,7 +63,7 @@ describe('POST /festivals/:festivalId/save (profile-required 409, CR-01)', () =>
   let app: INestApplication;
   let db: Database;
 
-  const testEmail = `save-profile-required-${randomUUID()}@festipal.dev`;
+  const testEmail = `save-profile-required-${randomUUID()}@quiks.dev`;
   let accountId: string;
   let cookie: string;
   let festivalId: string;

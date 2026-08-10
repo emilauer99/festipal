@@ -8,7 +8,7 @@ import Constants from 'expo-constants';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { I18nProvider } from '@lingui/react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { queryClient } from '../lib/query-client';
 import { activateUiLocale, i18n } from '../lib/i18n';
@@ -420,7 +420,7 @@ export default function RootLayout() {
 
 /**
  * D-04 — the splash-hold presentation: dark `bgAppDeep` background + the
- * "festipal." wordmark in Outfit, falling back to the system font until
+ * "quiks." wordmark in Outfit, falling back to the system font until
  * Outfit resolves (`resolveFontFamily`, non-blocking — Pitfall 5). The
  * wordmark brand name is NOT wrapped in Lingui (UI-SPEC Copywriting
  * Contract), matching the Welcome screen's identical pattern.
@@ -431,7 +431,7 @@ function SplashView({ fontsLoaded }: { fontsLoaded: boolean }) {
       <Text
         style={[splashStyles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsLoaded) }]}
       >
-        festipal
+        quiks
         <Text style={splashStyles.wordmarkDot}>.</Text>
       </Text>
     </View>

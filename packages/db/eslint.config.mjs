@@ -1,1 +1,1 @@
-export { default } from '@festipal/config/eslint';
+export { default } from '@quiks/config/eslint';

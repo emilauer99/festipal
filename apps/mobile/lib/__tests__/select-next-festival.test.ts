@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Festival } from '@festipal/contracts';
+import type { Festival } from '@quiks/contracts';
 
 import { orderFestivalsForHome, selectNextFestival } from '../select-next-festival';
 

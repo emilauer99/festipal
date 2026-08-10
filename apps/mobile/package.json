@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/mobile",
+  "name": "@quiks/mobile",
   "version": "0.0.0",
   "private": true,
   "main": "expo-router/entry",
@@ -19,9 +19,9 @@
     "@expo-google-fonts/jetbrains-mono": "^0.4.1",
     "@expo-google-fonts/outfit": "^0.4.3",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
-    "@festipal/contracts": "workspace:*",
-    "@festipal/i18n": "workspace:*",
-    "@festipal/ui": "workspace:*",
+    "@quiks/contracts": "workspace:*",
+    "@quiks/i18n": "workspace:*",
+    "@quiks/ui": "workspace:*",
     "@lingui/core": "^6.6.0",
     "@lingui/react": "^6.6.0",
     "@tanstack/react-query": "^5.101.4",
@@ -52,7 +52,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "@lingui/babel-plugin-lingui-macro": "^6.6.0",
     "@lingui/cli": "^6.6.0",
     "@lingui/format-po": "^6.6.0",

@@ -17,7 +17,7 @@ const errorSchema = z.object({ message: z.string() });
 
 /**
  * The single source of truth for the REST API. NestJS implements this contract
- * (@festipal/api) and admin/mobile derive fully typed clients from it (ADR-006).
+ * (@quiks/api) and admin/mobile derive fully typed clients from it (ADR-006).
  */
 export const contract = c.router(
   {

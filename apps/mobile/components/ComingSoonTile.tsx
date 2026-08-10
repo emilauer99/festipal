@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import type { LucideIcon } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_BODY, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';

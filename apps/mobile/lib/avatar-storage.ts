@@ -14,7 +14,7 @@ import type { createMMKV as CreateMMKVFn, MMKV } from 'react-native-mmkv';
  * ONLY the URI string is stored here — never image bytes, never the session
  * token (Pitfall 2 boundary; the session stays on expo-secure-store).
  */
-const AVATAR_STORAGE_ID = 'festipal-avatar';
+const AVATAR_STORAGE_ID = 'quiks-avatar';
 
 // RN/Metro provides `require` at runtime; no node types in this project's
 // tsconfig (types: ["react"] only) — declared ambiently so the lazy load

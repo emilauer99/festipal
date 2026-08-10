@@ -7,7 +7,7 @@
  * fresh account with no saved festival and no deep link) was a silent
  * fall-through that relied on `(tabs)/_layout.tsx` `initialRouteName="home"`.
  * But `initialRouteName` only picks a navigator group's default CHILD — it
- * does NOT redirect the cold-launch root URL `/` (from `festipal:///`) to
+ * does NOT redirect the cold-launch root URL `/` (from `quiks:///`) to
  * `/home`. Since no route serves `/` under the `authenticated` guard set (the
  * only `/` route is `(auth)/index.tsx`, guarded off once authenticated), the
  * router was left on an unmatched root path and Expo Router rendered the

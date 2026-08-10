@@ -3,8 +3,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { Trans } from '@lingui/react/macro';
-import { tokens } from '@festipal/ui';
-import type { Festival } from '@festipal/contracts';
+import { tokens } from '@quiks/ui';
+import type { Festival } from '@quiks/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { i18n } from '../../lib/i18n';

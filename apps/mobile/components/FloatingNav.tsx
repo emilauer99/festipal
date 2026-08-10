@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Home, Tent, UserRound, Users, type LucideIcon } from 'lucide-react-native';
 import { useLingui } from '@lingui/react/macro';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
 
 import { FONT_BODY, resolveFontFamily } from '../lib/fonts';

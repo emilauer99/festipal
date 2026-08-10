@@ -38,7 +38,7 @@ export const festival = pgTable('festival', {
  * `GetZodType`/`GetEnumValuesFromColumn`). This is purely a static-type bug —
  * the RUNTIME schema (and therefore all request/response validation) was
  * always correct — but it makes the exported `Festival` type in
- * `@festipal/contracts` unusable for anything beyond return-position
+ * `@quiks/contracts` unusable for anything beyond return-position
  * assignment (Pitfall 1/6). `startDate`/`endDate` ALSO need an override:
  * verified against the generated `.d.ts` that `date({ mode: 'string' })`
  * infers as `z.ZodType<Buffer, ZodTypeDef, Buffer>` with an `unknown` input

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_MONO, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';

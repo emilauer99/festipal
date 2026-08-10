@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { emailOTP } from 'better-auth/plugins';
 import { expo } from '@better-auth/expo';
-import { account, createDatabase, session, user, verification } from '@festipal/db';
+import { account, createDatabase, session, user, verification } from '@quiks/db';
 
 import { env } from '../config/env';
 import { createOtpEmailProvider } from './email/otp-email-provider';

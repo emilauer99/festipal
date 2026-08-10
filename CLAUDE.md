@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working in the **festipal** repository.
+Guidance for Claude Code when working in the **quiks** repository.
 
 ## Project Overview
 
@@ -23,8 +23,12 @@ before making architectural changes.
 - Hell-first (light-first): Papier `#F7F5F2` is the default surface; dark mode is the "night shift".
   Light mode is not wired up in code today (`lightColors` exported from `packages/ui/src/tokens.ts`
   but unused in `apps/mobile`) — that is follow-up phase work.
-- Package/bundle names (`@festipal/*`, `at.festipal.app`) intentionally stay old until the rename
-  phase (ADR-024) runs — do NOT rename them ad hoc alongside unrelated changes.
+- The ADR-024 rename has LANDED (phase 05.1): packages are `@quiks/*`, the bundle ID is
+  `at.quiks.app` and the app URL scheme is `quiks`. Nothing in the codebase carries the old
+  product name any more — historical design assets under `docs/concept/designs/` keep their
+  original filenames on purpose and are the only exception.
+- The wordmark renders as lowercase `quiks` with a separately-coloured trailing period; it is
+  a proper noun and is never wrapped in Lingui.
 
 ## Tech Stack
 

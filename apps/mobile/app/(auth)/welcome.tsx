@@ -2,7 +2,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
@@ -31,7 +31,7 @@ export default function WelcomeScreen() {
         {/* Brand wordmark is NOT wrapped in Lingui (UI-SPEC Copywriting
             Contract) — the trailing dot renders in the accent color. */}
         <Text style={[styles.wordmark, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsReady) }]}>
-          festipal
+          quiks
           <Text style={styles.wordmarkDot}>.</Text>
         </Text>
         <Text style={[styles.tagline, { fontFamily: resolveFontFamily(FONT_DISPLAY, fontsReady) }]}>

@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Image } from 'expo-image';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_DISPLAY, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';

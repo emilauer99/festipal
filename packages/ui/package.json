@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/ui",
+  "name": "@quiks/ui",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -20,7 +20,7 @@
     "lint": "eslint ."
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "tsup": "^8.5.1",
     "typescript": "6.0.3"
   }

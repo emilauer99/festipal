@@ -5,8 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { LogOut } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { tokens } from '@festipal/ui';
-import type { Festival } from '@festipal/contracts';
+import { tokens } from '@quiks/ui';
+import type { Festival } from '@quiks/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
@@ -22,7 +22,7 @@ import { SegmentedControl } from '../../components/SegmentedControl';
 
 // IN-02 (05-REVIEW.md) — `radiiScale['r-pill']`, not the generic `radii.pill`,
 // for the pill-radius CTA button: matches home.tsx's identical CTA and the
-// `@festipal/ui` intent (see tokens.ts's `radiiScale` docstring — "used by
+// `@quiks/ui` intent (see tokens.ts's `radiiScale` docstring — "used by
 // Phase 5 primitives... do not overload the generic `radii` object above").
 const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
 

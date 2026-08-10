@@ -2,7 +2,7 @@
 // Live end-to-end smoke proof for Phase 2 Plan 02's OTP -> session -> GET /me
 // tracer slice (02-02-PLAN.md Task 1/2). Run against a live dev API:
 //
-//   pnpm --filter @festipal/api dev     (in one terminal)
+//   pnpm --filter @quiks/api dev     (in one terminal)
 //   node apps/api/test/smoke/otp-me-smoke.mjs
 //
 // Proves: OTP request always succeeds; the dev transport captures a
@@ -26,7 +26,7 @@ const CAPTURE_FILE = join(__dirname, '..', '..', '.otp-dev-transport.local.json'
 
 const PORT = process.env.PORT ?? '8081';
 const BASE_URL = process.env.SMOKE_BASE_URL ?? `http://localhost:${PORT}`;
-const TEST_EMAIL = process.env.SMOKE_OTP_EMAIL ?? 'otp-smoke-test@festipal.dev';
+const TEST_EMAIL = process.env.SMOKE_OTP_EMAIL ?? 'otp-smoke-test@quiks.dev';
 
 let failures = 0;
 

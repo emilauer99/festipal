@@ -360,8 +360,8 @@ msgid "Welcome"
 msgstr "Willkommen"
 
 #: app/index.tsx
-#~ msgid "Welcome to festipal"
-#~ msgstr "Willkommen bei festipal"
+#~ msgid "Welcome to quiks"
+#~ msgstr "Willkommen bei quiks"
 
 #: app/(auth)/email.tsx
 msgid "you@example.com"

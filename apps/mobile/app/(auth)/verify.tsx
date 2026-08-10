@@ -3,7 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { AlertCircle } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { authClient } from '../../lib/auth-client';
 import { mapOtpError, type OtpErrorInput, type OtpErrorKind } from '../../lib/otp-error';

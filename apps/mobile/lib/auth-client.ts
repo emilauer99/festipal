@@ -25,7 +25,7 @@ export const authClient = createAuthClient({
       // header, so it MUST stay in sync with apps/mobile/app.json's
       // `expo.scheme` and apps/api's auth.instance.ts trustedOrigins entry.
       scheme: 'quiks',
-      storagePrefix: 'festipal',
+      storagePrefix: 'quiks',
       // Pitfall 2 — expo-secure-store (encrypted OS keychain) is the ONLY
       // acceptable session store; never AsyncStorage/MMKV.
       storage: SecureStore,

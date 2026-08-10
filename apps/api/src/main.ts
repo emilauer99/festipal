@@ -13,7 +13,7 @@ async function bootstrap(): Promise<void> {
   // every non-auth route.
   const app = await NestFactory.create(AppModule, { bodyParser: false });
   await app.listen(env.PORT);
-  console.log(`festipal api listening on http://localhost:${env.PORT}`);
+  console.log(`quiks api listening on http://localhost:${env.PORT}`);
 }
 
 void bootstrap();

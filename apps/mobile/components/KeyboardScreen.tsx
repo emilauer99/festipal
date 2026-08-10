@@ -8,7 +8,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 const { colors, layout, spacingScale } = tokens;
 

@@ -1,8 +1,8 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { ArrowRight, Check, Plus } from 'lucide-react-native';
 import { Trans } from '@lingui/react/macro';
-import { tokens } from '@festipal/ui';
-import type { Festival } from '@festipal/contracts';
+import { tokens } from '@quiks/ui';
+import type { Festival } from '@quiks/contracts';
 
 import { formatDateRange } from '../lib/date-range';
 import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../lib/fonts';
@@ -15,7 +15,7 @@ const SAVE_ICON_SIZE = 14;
 const HERO_CTA_ICON_SIZE = 18;
 
 export type FestivalCardProps = {
-  /** Shared `@festipal/contracts` shape — never redeclared locally (Pitfall 6). */
+  /** Shared `@quiks/contracts` shape — never redeclared locally (Pitfall 6). */
   festival: Festival;
   /** Whether THIS festival is already saved (drives the Badge/Save-affordance split). */
   saved: boolean;

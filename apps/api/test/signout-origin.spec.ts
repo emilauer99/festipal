@@ -83,7 +83,7 @@ describe('sign-out with expo-origin header (AUTH-04 server revocation)', () => {
   it(
     'accepts expo-origin + cookie sign-out (non-403) and genuinely revokes the session',
     async () => {
-      const email = `signout-origin-${randomUUID()}@festipal.dev`;
+      const email = `signout-origin-${randomUUID()}@quiks.dev`;
       const cookie = await signInWithOtp(app, email);
 
       // (2) The exact device request shape: session cookie + `expo-origin`,
@@ -112,7 +112,7 @@ describe('sign-out with expo-origin header (AUTH-04 server revocation)', () => {
       // assertion above — proves the origin-check is still active on
       // cookie-bearing requests and that `expo-origin` is exactly what made
       // the previous request pass, not some blanket loosening (T-4-07-I).
-      const email = `signout-origin-negctrl-${randomUUID()}@festipal.dev`;
+      const email = `signout-origin-negctrl-${randomUUID()}@quiks.dev`;
       const cookie = await signInWithOtp(app, email);
 
       const res = await request(app.getHttpServer())

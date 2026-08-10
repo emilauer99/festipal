@@ -1,5 +1,5 @@
 {
-  "extends": "@festipal/config/tsconfig.base.json",
+  "extends": "@quiks/config/tsconfig.base.json",
   "compilerOptions": {
     "module": "CommonJS",
     "moduleResolution": "node10",

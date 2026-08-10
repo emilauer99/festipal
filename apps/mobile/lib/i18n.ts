@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-import { resolveUiLocale } from '@festipal/i18n';
+import { resolveUiLocale } from '@quiks/i18n';
 
 import { messages as deMessages } from '../locales/de/messages.po';
 import { messages as enMessages } from '../locales/en/messages.po';

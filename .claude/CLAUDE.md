@@ -11,8 +11,9 @@ swap marketplace** and **activities + connecting with friends**. It ships as an 
 for visitors, a Next.js admin web for festival organizers, and a NestJS backend, all in one
 Turborepo. This build cycle focuses on the **visitor mobile app**.
 
-The repo and its packages still carry the old name (`@festipal/*`, `at.festipal.app`) until the
-rename phase (ADR-024) runs — do not rename them ad hoc.
+The ADR-024 rename has landed (phase 05.1): workspace packages are `@quiks/*`, the bundle ID is
+`at.quiks.app` and the app URL scheme is `quiks`. Historical design assets under
+`docs/concept/designs/` deliberately keep their original filenames as history.
 
 **Core Value:** A festival visitor can get into the app, connect to their festival, and reach everything about
 their festival experience from one home screen. If everything else fails, that entry-and-home
@@ -25,7 +26,7 @@ path must work.
 - **Architecture (non-negotiable)**: multi-tenancy from day 1 (every domain model/query festival-scoped) · offline-first by design (don't assume network) · end-to-end type safety via `packages/contracts` · i18n from day 1 (no hardcoded user-facing strings) · tenant-aware auth · no secrets in repo.
 - **Git**: trunk-based, short-lived feature branches, Conventional Commits, squash-merge via PR — never commit to `main` (`docs/GIT_CONVENTIONS.md`).
 - **Validation**: Zod schemas in `packages/contracts` are the source of truth; reuse, don't re-declare.
-- **Brand/Design**: ADR-023 + `docs/brand/quiks-ci-v1.md` — Beere/Amber; Sunset is the only allowed gradient; hell-first (light-first); Limette/Violett are now CI-token fallback only, not brand colors. Rename is ADR-024 and runs as its own phase — don't rename ad hoc.
+- **Brand/Design**: ADR-023 + `docs/brand/quiks-ci-v1.md` — Beere/Amber; Sunset is the only allowed gradient; hell-first (light-first); Limette/Violett are now CI-token fallback only, not brand colors. The ADR-024 rename has landed in phase 05.1 — `@quiks/*` / `at.quiks.app` / scheme `quiks` are the current names.
 
 <!-- GSD:project-end -->
 
@@ -109,11 +110,11 @@ path must work.
 
 ## Workspace Scripts
 
-- `pnpm --filter @festipal/api dev` — NestJS dev server with watch
-- `pnpm --filter @festipal/api build` — NestJS build
-- `pnpm --filter @festipal/db db:generate` — Generate Drizzle types
-- `pnpm --filter @festipal/db db:push` — Push schema to Neon
-- `pnpm --filter @festipal/db db:migrate` — Run migrations
+- `pnpm --filter @quiks/api dev` — NestJS dev server with watch
+- `pnpm --filter @quiks/api build` — NestJS build
+- `pnpm --filter @quiks/db db:generate` — Generate Drizzle types
+- `pnpm --filter @quiks/db db:push` — Push schema to Neon
+- `pnpm --filter @quiks/db db:migrate` — Run migrations
 - Similar for other packages once scaffolded
 
 ## Key Constraints & Decisions
@@ -138,7 +139,7 @@ path must work.
 - Destructuring preferred: `const { id, slug, name } = festival`
 - PascalCase for types, interfaces, classes: `Festival`, `Locale`, `LocalizedText`, `Tag`
 - Schema types inferred from Zod: `export type Festival = z.infer<typeof festivalSchema>`
-- Type imports explicit: `import type { Festival } from '@festipal/contracts'`
+- Type imports explicit: `import type { Festival } from '@quiks/contracts'`
 - Enum members SCREAMING_SNAKE_CASE: `SUPPORTED_LOCALES = ['de', 'en']`, `DEFAULT_LOCALE = 'en'`
 
 ## Code Style
@@ -158,7 +159,7 @@ path must work.
 ## Import Organization
 
 - No path aliases configured currently in monorepo
-- Use workspace package names: `@festipal/contracts`, `@festipal/db`, `@festipal/config`
+- Use workspace package names: `@quiks/contracts`, `@quiks/db`, `@quiks/config`
 - Within a package, use relative paths: `./locale`, `../db/db.module`
 
 ## Error Handling
@@ -171,7 +172,7 @@ path must work.
 ## Logging
 
 - Use `console.error()` for errors: `console.error('Invalid environment:', ...)`
-- Use `console.log()` for startup info: `console.log('festipal api listening on...')`
+- Use `console.log()` for startup info: `console.log('quiks api listening on...')`
 - Avoid logging in libraries; let callers decide
 - Structured logging (e.g., bunyan, pino) planned for production API, not yet enforced
 
@@ -223,7 +224,7 @@ path must work.
 ## Monorepo (Turborepo + pnpm)
 
 - Located in `apps/*` and `packages/*`
-- Prefixed with `@festipal/`: `@festipal/api`, `@festipal/contracts`, `@festipal/db`
+- Prefixed with `@quiks/`: `@quiks/api`, `@quiks/contracts`, `@quiks/db`
 - Internal dependencies via `workspace:*` protocol in package.json
 - ESLint base: `packages/config/eslint.config.base.mjs`
 - TypeScript base: `packages/config/tsconfig.base.json`
@@ -290,7 +291,7 @@ path must work.
 - Purpose: REST API server using NestJS + ts-rest
 - Location: `apps/api/src/`
 - Contains:
-- Depends on: `@festipal/contracts`, `@festipal/db`, NestJS
+- Depends on: `@quiks/contracts`, `@quiks/db`, NestJS
 - Output: Node.js runtime (port 8081 by default)
 - Purpose: Shared TypeScript config, design tokens, and i18n setup
 - Used by: All apps in the monorepo

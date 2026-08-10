@@ -5,8 +5,8 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { ArrowLeft, CalendarClock, MapPin, Newspaper, Wallet } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
-import type { Festival } from '@festipal/contracts';
+import { tokens } from '@quiks/ui';
+import type { Festival } from '@quiks/contracts';
 
 import { apiClient } from '../../../lib/api-client';
 import { i18n } from '../../../lib/i18n';

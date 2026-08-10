@@ -17,9 +17,9 @@ export function createResendOtpEmailProvider(apiKey: string): OtpEmailProvider {
     async send({ email, otp, type }) {
       try {
         await resend.emails.send({
-          from: 'festipal <onboarding@resend.dev>',
+          from: 'quiks <onboarding@resend.dev>',
           to: email,
-          subject: 'Your festipal sign-in code',
+          subject: 'Your quiks sign-in code',
           text: `Your code: ${otp}\n\n(type: ${type})`,
         });
       } catch (err) {

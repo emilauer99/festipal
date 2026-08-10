@@ -8,7 +8,7 @@ import type { INestApplication } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { festival, myFestival, user, visitorProfile, type Database } from '@festipal/db';
+import { festival, myFestival, user, visitorProfile, type Database } from '@quiks/db';
 
 import { createTestApp, createTestDatabase } from './setup';
 
@@ -63,7 +63,7 @@ describe('POST /festivals/:festivalId/save (gate-less idempotent save)', () => {
   let app: INestApplication;
   let db: Database;
 
-  const testEmail = `save-idempotency-${randomUUID()}@festipal.dev`;
+  const testEmail = `save-idempotency-${randomUUID()}@quiks.dev`;
   const username = `visitor-${randomUUID().slice(0, 8)}`;
   let accountId: string;
   let cookie: string;

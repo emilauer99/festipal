@@ -2,14 +2,19 @@
  * Platform-neutral design tokens, consumed by admin (Tailwind v4 `@theme`) and
  * mobile (React Native styles).
  *
- * These are the REAL festipal design system values, ported 1:1 from the approved
- * Claude Design brand system (binding source: `docs/concept/03-design-system.md`
- * §3, ADR-015) and its token file
- * `docs/concept/designs/auth/source/festipal-tokens.css` (ADR-015). Festipal is
- * dark-first: `colors` below are the dark (default) palette; `lightColors`
- * mirrors the same semantic role names for the `[data-theme="light"]` scope so
- * screens can resolve either set via `useColorScheme()`. Do not add a
- * competing/second token set — extend this one.
+ * BINDING BRAND SOURCE: quiks CI v1.0 — `docs/brand/quiks-ci-v1.md` (ADR-023),
+ * which supersedes the earlier ADR-015 brand system. The VALUES below are still
+ * the legacy ADR-015 ones, ported 1:1 from the historical token file under
+ * `docs/concept/designs/auth/source/` (kept under its original filename as
+ * history, ADR-024); the CI v1.0 colour/typography swap onto these same role
+ * names lands in plan 05.1-03.
+ *
+ * The legacy system is dark-first: `colors` below are the dark (default)
+ * palette; `lightColors` mirrors the same semantic role names for the
+ * `[data-theme="light"]` scope so screens can resolve either set via
+ * `useColorScheme()`. quiks CI v1.0 is hell-first — that inversion is also
+ * plan 05.1-03/05 work. Do not add a competing/second token set — extend this
+ * one.
  */
 
 export const spacing = {
@@ -21,7 +26,7 @@ export const spacing = {
   '2xl': 48,
 } as const;
 
-/** Full ported `--sp-*` ramp (festipal-tokens.css) — brand system, not rounded to 4/8/16/24/32/48. */
+/** Full ported `--sp-*` ramp (the legacy ADR-015 token CSS) — brand system, not rounded to 4/8/16/24/32/48. */
 export const spacingScale = {
   'sp-0': 0,
   'sp-1': 2,
@@ -56,12 +61,12 @@ export const radii = {
   md: 8,
   lg: 16,
   full: 9999,
-  // real brand radii ramp (festipal-tokens.css --r-*)
+  // real brand radii ramp (the legacy ADR-015 token CSS --r-*)
   control: 12,
   pill: 999,
 } as const;
 
-/** Full ported `--r-*` radii ramp used by Phase 5 primitives (festipal-tokens.css). Mirrors the
+/** Full ported `--r-*` radii ramp used by Phase 5 primitives (the legacy ADR-015 token CSS). Mirrors the
  * `spacingScale` export pattern — do not overload the generic `radii` object above. */
 export const radiiScale = {
   'r-card': 22,
@@ -86,7 +91,7 @@ export const fontWeights = {
   black: '800',
 } as const;
 
-/** Real brand fonts (festipal-tokens.css `--font-*`). Google Fonts OFL, bundled via expo-font. */
+/** Real brand fonts (the legacy ADR-015 token CSS `--font-*`). Google Fonts OFL, bundled via expo-font. */
 export const fontFamilies = {
   display: 'Outfit',
   body: 'Plus Jakarta Sans',
@@ -113,13 +118,13 @@ export const typeRoles = {
 } as const;
 
 export const colors = {
-  // brand — real values (festipal-tokens.css --brand-*, --green-*, --violet-*)
+  // brand — real values (the legacy ADR-015 token CSS --brand-*, --green-*, --violet-*)
   primary: '#74CC1F',
   primaryPress: '#63B117',
   primaryForeground: '#07080B',
   secondary: '#5A4DFF',
   secondaryPress: '#4A3CEB',
-  // neutrals — dark-first (festipal is dark-first, see file header)
+  // neutrals — dark-first (the legacy ADR-015 system is dark-first, see file header)
   background: '#0C0E13',
   foreground: '#E9ECF2',
   muted: '#14161D',
@@ -139,7 +144,7 @@ export const colors = {
   textSecondary: '#9FA6B6',
   textMuted: '#7C8394',
   textOnPrimary: '#07080B',
-  // translucent border/fill/glass roles (festipal-tokens.css --border-subtle/--border-brand/
+  // translucent border/fill/glass roles (the legacy ADR-015 token CSS --border-subtle/--border-brand/
   // --fill-quiet/--fill-brand-quiet/--glass-fill/--glass-border) — Phase 5 UI-SPEC ## Color
   borderSubtle: 'rgba(233,236,242,.08)',
   borderBrand: 'rgba(116,204,31,.45)',
@@ -150,7 +155,7 @@ export const colors = {
 } as const;
 
 /**
- * Light-mode variant of the semantic role names above (festipal-tokens.css
+ * Light-mode variant of the semantic role names above (the legacy ADR-015 token CSS
  * `[data-theme="light"]` scope). Brand hues (primary/secondary/success/danger)
  * stay the same across modes (UI-SPEC Scope note #8) — only the
  * background/surface/text roles change.

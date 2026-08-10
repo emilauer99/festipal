@@ -1,12 +1,12 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_BODY, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';
 
 const { colors, typeRoles, radiiScale, spacingScale, layout } = tokens;
 
-// Track inset padding — mirrors `festipal-ds.js`'s SegmentedControl (3px),
+// Track inset padding — mirrors the legacy ADR-015 design-system source (docs/concept/designs/festival/)'s SegmentedControl (3px),
 // not part of the ported `spacingScale` ramp (closest step is 4px), kept
 // exact for design fidelity (ADR-015).
 const TRACK_PADDING = 3;
@@ -24,7 +24,7 @@ export type SegmentedControlProps<TValue extends string> = {
 
 /**
  * Owned pill primitive (UI-SPEC Component Contract references, FEST-02).
- * Prop names mirror `festipal-ds.js`'s `SegmentedControl` exactly
+ * Prop names mirror the legacy ADR-015 design-system source (docs/concept/designs/festival/)'s `SegmentedControl` exactly
  * (`options`/`value`/`onChange` — do not invent divergent names). Labels
  * arrive already-localized from the caller; this component hardcodes no
  * copy of its own. A press on the already-active value is a no-op, an empty

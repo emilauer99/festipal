@@ -5,7 +5,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useQuery } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, ImagePlus } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { apiClient } from '../../lib/api-client';
 import { getLocalAvatarUri, saveLocalAvatarUri } from '../../lib/avatar-storage';

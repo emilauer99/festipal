@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /**
  * Supported locales — the API-facing source of truth (mirrored by the Postgres
- * enum in @festipal/db and the catalogs in @festipal/i18n; keep them in sync).
+ * enum in @quiks/db and the catalogs in @quiks/i18n; keep them in sync).
  */
 export const SUPPORTED_LOCALES = ['de', 'en'] as const;
 export type Locale = (typeof SUPPORTED_LOCALES)[number];

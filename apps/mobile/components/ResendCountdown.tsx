@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Timer } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { FONT_BODY, FONT_MONO, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';

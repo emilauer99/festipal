@@ -1,6 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 import { Redirect } from 'expo-router';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { useAuthState } from '../lib/auth-state';
 import { useColdStartTarget } from '../lib/cold-start-target';
@@ -19,7 +19,7 @@ const { colors } = tokens;
  * mutually-exclusive guards. The static winner was always `(auth)/index`, which
  * is render-filtered out once authenticated, so on the profile-submit guard flip
  * (which reconciles the URL to `/`) Expo Router rendered its Unmatched Route
- * screen for `festipal:///`. Adding `(root)/index` never helped because it never
+ * screen for `quiks:///`. Adding `(root)/index` never helped because it never
  * won the empty-path match.
  *
  * This file is declared OUTSIDE every `Stack.Protected` block in
