@@ -211,11 +211,22 @@ export default function FestivalsScreen() {
     saveMutation.mutate(festival);
   }
 
-  function handleEnter(slug: string, saved: boolean) {
+  function handleEnter(festival: Festival, saved: boolean) {
     // D-06 / D-08 — entry is gate-less (ADR-014): no saved-state check gates
     // this navigation; entering an unsaved festival always still works.
     // G-05-5b-r2 — the cold-start RESTORE must only ever bring back the
     // LAST-entered festival, and only when it was saved.
+    //
+    // WR-04 (05-REVIEW.md) — `saved` is computed from the CURRENT render's
+    // `savedIds` snapshot, but a just-tapped Save's optimistic cache write
+    // lands in a later microtask (TanStack Query's `onMutate`), not
+    // synchronously with the tap. Tapping Save then immediately Enter on the
+    // same card can therefore reach here with `saved: false` for a festival
+    // that IS, in fact, about to be saved — treat an in-flight save
+    // (`inFlightIdsRef`) as saved for persistence purposes so the cold-start
+    // focus isn't wrongly cleared. Enter itself stays gate-less/instant
+    // either way — this only affects what gets persisted.
+    const effectivelySaved = saved || inFlightIdsRef.current.has(festival.id);
     // syncActiveFestivalOnEnter is the single persist/clear authority
     // (lib/active-festival-storage.ts): a SAVED entry persists this slug; an
     // UNSAVED entry now CLEARS any previously-persisted slug instead of
@@ -223,8 +234,8 @@ export default function FestivalsScreen() {
     // the cold-start restore target (the 05-09 regression). This keeps
     // _layout's cold-start read fully synchronous — no new gate, no async
     // dependency (offline-first).
-    syncActiveFestivalOnEnter(slug, saved);
-    router.push(`/f/${slug}`);
+    syncActiveFestivalOnEnter(festival.slug, effectivelySaved);
+    router.push(`/f/${festival.slug}`);
   }
 
   function renderCard({ item }: { item: Festival }) {
@@ -235,7 +246,7 @@ export default function FestivalsScreen() {
         saved={saved}
         saving={savingIds.has(item.id)}
         locale={i18n.locale}
-        onEnter={() => handleEnter(item.slug, saved)}
+        onEnter={() => handleEnter(item, saved)}
         onSave={() => handleSave(item)}
       />
     );
