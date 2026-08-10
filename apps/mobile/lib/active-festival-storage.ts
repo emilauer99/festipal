@@ -77,6 +77,12 @@ export function clearActiveFestivalSlug(): void {
  * Framework/storage-free (no react-native-mmkv reference) so this stays
  * importable under the node-env Vitest runner, same purity idiom as
  * `lib/select-next-festival.ts`.
+ *
+ * WR-01 (05-REVIEW.md) — `prior` is intentionally unused by the return value
+ * (see above: the outcome depends only on `entered.saved`); it is kept as a
+ * narration-only parameter so call sites/tests can express "a stale slug is
+ * present" without this function reading storage itself. Do not remove it
+ * to "simplify" the signature — that would drop the documented intent.
  */
 export function nextActiveFestivalSlug(
   prior: string | undefined,

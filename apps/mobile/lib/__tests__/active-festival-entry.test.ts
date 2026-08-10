@@ -23,12 +23,22 @@ describe('nextActiveFestivalSlug (G-05-5b-r2 — persist/clear-on-enter reducer)
     ).toBeUndefined();
   });
 
+  // WR-01 (05-REVIEW.md) — `prior` is documented (see the function's JSDoc)
+  // as intentionally UNUSED by the reducer's return value; it exists so a
+  // caller/test can narrate "a stale saved slug is present" even though the
+  // outcome only ever depends on `entered.saved`. This test therefore
+  // exercises the exact same `saved === true` branch as the very first test
+  // above — it documents that a DIFFERENT prior slug doesn't change the
+  // outcome, rather than adding distinct branch coverage.
   it('overwrites a stale saved slug when a DIFFERENT saved festival is entered', () => {
     expect(
       nextActiveFestivalSlug('frequency-2026', { slug: 'nova-sound-2026', saved: true }),
     ).toBe('nova-sound-2026');
   });
 
+  // WR-01 (05-REVIEW.md) — same note as above: documents that re-entering the
+  // SAME saved festival (prior === entered.slug) is a no-op, not a distinct
+  // reducer branch (`saved` alone still decides the outcome).
   it('is idempotent when re-entering the SAME saved festival', () => {
     expect(
       nextActiveFestivalSlug('frequency-2026', { slug: 'frequency-2026', saved: true }),
