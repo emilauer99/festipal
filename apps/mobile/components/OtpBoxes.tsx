@@ -1,11 +1,15 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { tokens } from '@quiks/ui';
 
 import { FONT_MONO, resolveFontFamily } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';
+import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme-context';
 
-const { colors, typeRoles, radii, spacingScale } = tokens;
+// Colour roles resolve per render via `useTheme()` (05.1 D-01) — only the
+// mode-invariant scales stay at module scope.
+const { typeRoles, radii, spacingScale } = tokens;
 
 const BOX_SIZE = 46;
 const DEFAULT_LENGTH = 6;
@@ -31,6 +35,13 @@ export type OtpBoxesProps = {
  * the mockup's six-separate-box visual. `onComplete` is the auto-submit
  * trigger (UI-SPEC Scope note #5) — there is no Verify button anywhere in
  * this tree.
+ *
+ * 05.1 / UI-SPEC E6: the error border resolves through `dangerText`, not the
+ * bare `danger` FILL hue. As a 1px border it is a non-text UI component at the
+ * 3:1 threshold and the fill hue reaches only 2.98:1 on Papier — the surface
+ * hell-first makes the default (T-05.1-10). The active border and caret stay
+ * 1px Beere: 3.37:1 on white clears the same threshold with NO margin, so they
+ * must not be lightened.
  */
 export function OtpBoxes({
   value,
@@ -40,6 +51,8 @@ export function OtpBoxes({
   hasError = false,
   length = DEFAULT_LENGTH,
 }: OtpBoxesProps) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
   const inputRef = useRef<TextInput>(null);
   const caretOpacity = useRef(new Animated.Value(1)).current;
@@ -83,6 +96,12 @@ export function OtpBoxes({
               disabled ? styles.boxDisabled : null,
             ]}
           >
+            {/* `otpDigit` keeps the explicit FONT_MONO + numeric weight: its
+                role maps to the 400 file while the role declares 500, the
+                documented pre-existing gap 05.1-03 parked as a KNOWN
+                FOLLOW-UP. Routing it through `fontFamilyForRole` and dropping
+                the weight would change the OTP boxes' rendering, which no
+                plan in this phase has accepted. */}
             {digit ? (
               <Text style={[styles.digit, { fontFamily: resolveFontFamily(FONT_MONO, fontsReady) }]}>
                 {digit}
@@ -109,46 +128,51 @@ export function OtpBoxes({
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    gap: spacingScale['sp-4'],
-  },
-  box: {
-    width: BOX_SIZE,
-    height: BOX_SIZE,
-    borderRadius: radii.control,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceInset,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  boxActive: {
-    borderColor: colors.primary,
-  },
-  boxError: {
-    borderColor: colors.danger,
-  },
-  boxDisabled: {
-    opacity: 0.5,
-  },
-  digit: {
-    fontSize: typeRoles.otpDigit.size,
-    fontWeight: typeRoles.otpDigit.weight,
-    lineHeight: typeRoles.otpDigit.size * typeRoles.otpDigit.lineHeight,
-    color: colors.textPrimary,
-  },
-  caret: {
-    width: 2,
-    height: typeRoles.otpDigit.size,
-    backgroundColor: colors.primary,
-  },
-  hiddenInput: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    opacity: 0.01,
-    color: 'transparent',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      gap: spacingScale['sp-4'],
+    },
+    box: {
+      width: BOX_SIZE,
+      height: BOX_SIZE,
+      borderRadius: radii.control,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceInset,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    boxActive: {
+      // 1px Beere — 3.37:1 on white, no margin over the 3:1 UI threshold.
+      borderColor: colors.primary,
+    },
+    boxError: {
+      // dangerText, NOT the `danger` fill hue (UI-SPEC E6/error, T-05.1-10).
+      borderColor: colors.dangerText,
+    },
+    boxDisabled: {
+      opacity: 0.5,
+    },
+    digit: {
+      fontSize: typeRoles.otpDigit.size,
+      // Kept deliberately — see the KNOWN FOLLOW-UP note at the render site.
+      fontWeight: typeRoles.otpDigit.weight,
+      lineHeight: typeRoles.otpDigit.size * typeRoles.otpDigit.lineHeight,
+      color: colors.textPrimary,
+    },
+    caret: {
+      width: 2,
+      height: typeRoles.otpDigit.size,
+      backgroundColor: colors.primary,
+    },
+    hiddenInput: {
+      position: 'absolute',
+      width: '100%',
+      height: '100%',
+      opacity: 0.01,
+      color: 'transparent',
+    },
+  });
+}
