@@ -164,10 +164,26 @@ export default function FestivalHomeScreen() {
             <Text style={[styles.name, { fontFamily: displayFont }]} numberOfLines={2}>
               {festival.name}
             </Text>
-            <Text style={[styles.caption, { fontFamily: bodyFont }]} numberOfLines={1}>
-              {formatDateRange(festival.startDate, festival.endDate, i18n.locale)}
-              {festival.place ? ` · ${festival.place}` : ''}
-            </Text>
+            {/* UI-SPEC §Accent + key-fact contract: the festival-home identity
+                block shows two accent-icon key-fact rows (calendar-clock/map-pin
+                in colors.primary), NOT the flat FestivalCard's single muted
+                "{dates} · {place}" caption. */}
+            <View style={styles.keyFacts}>
+              <View style={styles.keyFactRow}>
+                <CalendarClock size={18} color={colors.primary} strokeWidth={2} />
+                <Text style={[styles.keyFactText, { fontFamily: bodyFont }]} numberOfLines={1}>
+                  {formatDateRange(festival.startDate, festival.endDate, i18n.locale)}
+                </Text>
+              </View>
+              {festival.place ? (
+                <View style={styles.keyFactRow}>
+                  <MapPin size={18} color={colors.primary} strokeWidth={2} />
+                  <Text style={[styles.keyFactText, { fontFamily: bodyFont }]} numberOfLines={1}>
+                    {festival.place}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
           </View>
 
           <View style={styles.tileGrid}>
@@ -241,7 +257,16 @@ const styles = StyleSheet.create({
     lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
     color: colors.textPrimary,
   },
-  caption: {
+  keyFacts: {
+    gap: spacingScale['sp-3'],
+  },
+  keyFactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacingScale['sp-4'],
+  },
+  keyFactText: {
+    flex: 1,
     fontSize: typeRoles.bodySm.size,
     color: colors.textMuted,
   },
