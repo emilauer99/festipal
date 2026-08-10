@@ -135,6 +135,21 @@ export default function RootLayout() {
   // reached 'authenticated' — the boundary is enforced at replay, not
   // capture.
   const linkingUrl = Linking.useLinkingURL();
+  // WR-02 (05-REVIEW.md) — `Linking.useLinkingURL()` resolves the initial
+  // launch URL ASYNCHRONOUSLY (a native bridge call under the hood), so on
+  // the very first render(s) `linkingUrl` is `undefined`. Declaration order
+  // alone only guarantees this capture effect and the redirect-decide effect
+  // below run in that order WITHIN THE SAME COMMIT — it does NOT guarantee
+  // `linkingUrl` has resolved before `resolveAuthState()`'s `GET /me` round
+  // trip settles and flips `authState.status` to 'authenticated' (e.g. a
+  // fast/local network, or a cached session skipping the round trip
+  // entirely). `linkingResolved` makes "has Linking finished resolving at
+  // least once" an explicit, observable flag instead of an incidental race,
+  // so the redirect-decide effect below can wait on it rather than assume it.
+  const [linkingResolved, setLinkingResolved] = useState(false);
+  useEffect(() => {
+    if (linkingUrl !== undefined) setLinkingResolved(true);
+  }, [linkingUrl]);
   useEffect(() => {
     if (!linkingUrl) return;
     // G-05-7 — reconstruct the FULL route, not just `Linking.parse`'s
@@ -260,13 +275,22 @@ export default function RootLayout() {
   //
   // The decision stays HERE (not in the route's render) deliberately:
   // `consumePendingDestination()` is a one-shot side effect and MUST run after
-  // the deep-link capture effect above has stored the pending href (declaration
-  // order guarantees capture-before-consume on the authenticated transition),
-  // and exactly once (the coldStartRedirectRef one-shot also absorbs React
-  // StrictMode's dev double-invoke). The pure, unit-tested resolver + mapper
-  // turn that into the concrete href stored in state.
+  // the deep-link capture effect above has stored the pending href. WR-02
+  // (05-REVIEW.md) — declaration order alone only orders these two effects
+  // WITHIN one commit; it does NOT guarantee `linkingUrl` has resolved before
+  // `authState.status` reaches 'authenticated' (a fast/local `GET /me`, or a
+  // cached session, can win that race). The explicit `linkingResolved` gate
+  // below closes that gap: this effect now waits for BOTH conditions before
+  // consuming, so a deep link that resolves slightly after auth still gets
+  // captured (by the effect above, re-firing on the `linkingUrl` change) and
+  // is guaranteed to still be pending when this effect re-fires on
+  // `linkingResolved` flipping true. Exactly once still holds (the
+  // coldStartRedirectRef one-shot also absorbs React StrictMode's dev
+  // double-invoke). The pure, unit-tested resolver + mapper turn that into
+  // the concrete href stored in state.
   useEffect(() => {
     if (authState.status !== 'authenticated') return;
+    if (!linkingResolved) return;
     if (coldStartRedirectRef.current) return;
     coldStartRedirectRef.current = true;
 
@@ -277,7 +301,7 @@ export default function RootLayout() {
     // route elsewhere — this is the one intentionally-dynamic exception.
     const resolvedHref = coldStartRedirectHref(redirect) as Href;
     setColdStartTarget(resolvedHref);
-  }, [authState.status]);
+  }, [authState.status, linkingResolved]);
 
   // CR-01 (05-REVIEW.md) — reset the one-shot cold-start redirect state on
   // EVERY transition to 'unauthenticated', not just at process start. Without
