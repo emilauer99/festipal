@@ -20,7 +20,11 @@ import { forceUnauthenticated } from '../_layout';
 import { FestivalCard } from '../../components/FestivalCard';
 import { SegmentedControl } from '../../components/SegmentedControl';
 
-const { colors, typeRoles, layout, radii, spacingScale } = tokens;
+// IN-02 (05-REVIEW.md) — `radiiScale['r-pill']`, not the generic `radii.pill`,
+// for the pill-radius CTA button: matches home.tsx's identical CTA and the
+// `@festipal/ui` intent (see tokens.ts's `radiiScale` docstring — "used by
+// Phase 5 primitives... do not overload the generic `radii` object above").
+const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 type Segment = 'meine' | 'alle';
 
@@ -416,7 +420,7 @@ const styles = StyleSheet.create({
     minHeight: layout.hitMin,
     paddingHorizontal: spacingScale['sp-8'],
     backgroundColor: colors.primary,
-    borderRadius: radii.pill,
+    borderRadius: radiiScale['r-pill'],
     alignItems: 'center',
     justifyContent: 'center',
   },
