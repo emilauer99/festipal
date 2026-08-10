@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "festipal",
-    "slug": "festipal",
-    "scheme": "festipal",
+    "name": "quiks",
+    "slug": "quiks",
+    "scheme": "quiks",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "at.festipal.app",
+      "bundleIdentifier": "at.quiks.app",
       "infoPlist": {
         "NSAppTransportSecurity": {
           "NSAllowsLocalNetworking": true
@@ -17,7 +17,7 @@
       }
     },
     "android": {
-      "package": "at.festipal.app",
+      "package": "at.quiks.app",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -39,8 +39,8 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "festipal needs access to your photos so you can pick an avatar for your profile.",
-          "cameraPermission": "festipal needs access to your camera so you can take an avatar photo for your profile."
+          "photosPermission": "quiks needs access to your photos so you can pick an avatar for your profile.",
+          "cameraPermission": "quiks needs access to your camera so you can take an avatar photo for your profile."
         }
       ],
       "./plugins/with-windows-long-path-fix.js"
@@ -49,7 +49,7 @@
       "typedRoutes": true
     },
     "extra": {
-      "_comment": "D-05 WORKING TITLE: name/slug/scheme/bundleIdentifier/package ('festipal' / 'at.festipal.app') are provisional until the first EAS Submit freezes the bundle ID. The 'scheme' value MUST stay in sync with apps/api's auth.instance.ts trustedOrigins if it ever changes.",
+      "_comment": "ADR-024 RENAME (was the D-05 working title): name/slug/scheme are 'quiks' and ios.bundleIdentifier/android.package are 'at.quiks.app'. These remain provisional until the first EAS Submit freezes the bundle ID. The 'scheme' value ('quiks') MUST stay in sync with apps/api's auth.instance.ts trustedOrigins entry ('quiks://') and with apps/mobile/lib/auth-client.ts's expoClient scheme — the mobile client sends it as the 'expo-origin' header and better-auth's origin/CSRF check rejects any value not on that allowlist.",
       "_devOnlyCleartextComment": "DEV-BUILD-ONLY (Pitfall G / D-10 / T-03-14): android.usesCleartextTraffic (via the expo-build-properties plugin) and ios.infoPlist.NSAppTransportSecurity.NSAllowsLocalNetworking exist ONLY to let a local dev build reach the LAN API over plain HTTP (EXPO_PUBLIC_API_URL=http://<lan-ip>:8081). NSAllowsLocalNetworking is Apple's narrowly-scoped local-network ATS exception (RFC1918/.local/loopback only) chosen over NSAllowsArbitraryLoads so public-internet ATS enforcement stays intact. This MUST NOT be carried into any release/EAS build profile — no such profile is configured this phase (JSON has no comment syntax, hence this documented _comment field, matching the _comment convention already used above)."
     }
   }

@@ -16,10 +16,10 @@ const CAPTURE_FILE = join(__dirname, '..', '.otp-dev-transport.local.json');
 // better-auth's CSRF check requires an Origin header on state-changing
 // /api/auth/* POSTs from a standard HTTP client (see me-endpoints.spec.ts).
 const ORIGIN = process.env.BETTER_AUTH_URL ?? `http://localhost:${process.env.PORT ?? '8081'}`;
-// D-05 — the trusted scheme apps/mobile's expoClient sends as `expo-origin`
-// (see apps/mobile/lib/auth-client.ts's `scheme: 'festipal'`); already
+// ADR-024 — the trusted scheme apps/mobile's expoClient sends as `expo-origin`
+// (see apps/mobile/lib/auth-client.ts's `scheme: 'quiks'`); already
 // whitelisted in apps/api/src/auth/auth.instance.ts's trustedOrigins.
-const EXPO_ORIGIN = 'festipal://';
+const EXPO_ORIGIN = 'quiks://';
 
 async function readCapturedOtp(email: string, { retries = 20, delayMs = 300 } = {}): Promise<string> {
   for (let attempt = 0; attempt < retries; attempt += 1) {

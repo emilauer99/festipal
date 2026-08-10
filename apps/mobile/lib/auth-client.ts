@@ -21,9 +21,10 @@ export const authClient = createAuthClient({
     // Verified: `authClient.getCookie()` resolves and type-checks after this
     // cast; remove it if a future @better-auth/expo release fixes its .d.ts.
     expoClient({
-      // D-05 working title — keep in sync with apps/api's auth.instance.ts
-      // trustedOrigins if the scheme ever changes before the first store submit.
-      scheme: 'festipal',
+      // ADR-024 — this value is what the client sends as the `expo-origin`
+      // header, so it MUST stay in sync with apps/mobile/app.json's
+      // `expo.scheme` and apps/api's auth.instance.ts trustedOrigins entry.
+      scheme: 'quiks',
       storagePrefix: 'festipal',
       // Pitfall 2 — expo-secure-store (encrypted OS keychain) is the ONLY
       // acceptable session store; never AsyncStorage/MMKV.

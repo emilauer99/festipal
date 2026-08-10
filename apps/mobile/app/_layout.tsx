@@ -115,8 +115,8 @@ const AUTH_FLOW_PATHS = new Set(['welcome', 'email', 'verify', 'complete-profile
 
 // G-05-7 — fallback app scheme when `Constants.expoConfig?.scheme` is
 // unavailable at runtime (e.g. a bare/unexpected config shape); matches
-// app.json's `expo.scheme` ("festipal").
-const APP_SCHEME_FALLBACK = 'festipal';
+// app.json's `expo.scheme` ("quiks", ADR-024).
+const APP_SCHEME_FALLBACK = 'quiks';
 
 export default function RootLayout() {
   const [localeReady, setLocaleReady] = useState(false);
@@ -204,7 +204,7 @@ export default function RootLayout() {
     const route = reconstructDeepLinkRoute(Linking.parse(linkingUrl), appScheme);
     if (!route) return;
     // first-login-unmatched-route (round 4) — Expo's Dev Client launches the
-    // app via `festipal:///expo-development-client/?url=<metro-host>`; without
+    // app via `quiks:///expo-development-client/?url=<metro-host>`; without
     // this guard that route was captured as a pending destination and replayed
     // as `/expo-development-client`, dead-ending on Expo's Unmatched Route on
     // every dev launch. Filtered here ALONGSIDE the AUTH_FLOW_PATHS guard so no
@@ -309,7 +309,7 @@ export default function RootLayout() {
   // Expo Router resolves `/` from a STATIC, guard-agnostic linking map
   // (matchForEmptyPath), so with the only `/` route ((auth)/index) render-
   // filtered off once authenticated, Expo Router rendered its Unmatched Route
-  // screen for festipal:/// — the reported bug, which neither the round-1
+  // screen for quiks:/// — the reported bug, which neither the round-1
   // empty-state `router.replace('/home')` nor the round-2 second group-index
   // ((root)/index, which never won the static empty-path match) fixed. app/index
   // is now the SINGLE `/` owner, declared OUTSIDE every guard so it is mounted in
