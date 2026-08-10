@@ -279,6 +279,24 @@ export default function RootLayout() {
     setColdStartTarget(resolvedHref);
   }, [authState.status]);
 
+  // CR-01 (05-REVIEW.md) — reset the one-shot cold-start redirect state on
+  // EVERY transition to 'unauthenticated', not just at process start. Without
+  // this, `coldStartRedirectRef.current` and `coldStartTarget` survive a
+  // logout that happens mid-session (no fresh app process): a subsequent
+  // login (same or different account, same device) hits the redirect-decide
+  // effect's one-shot guard and never recomputes, so `app/index.tsx` replays
+  // whatever the FIRST login of the process resolved to — including another
+  // account's active festival. This fires for both logout paths (the natural
+  // `!session` branch above and `forceUnauthenticated()`'s explicit
+  // `setAuthState({ status: 'unauthenticated' })`), since both funnel through
+  // the same `authState.status` transition this effect watches.
+  useEffect(() => {
+    if (authState.status === 'unauthenticated') {
+      coldStartRedirectRef.current = false;
+      setColdStartTarget(null);
+    }
+  }, [authState.status]);
+
   const bootstrapped = localeReady && authState.status !== 'loading';
 
   useEffect(() => {
