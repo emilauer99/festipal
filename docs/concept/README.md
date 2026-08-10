@@ -1,4 +1,7 @@
-# festipal — App-Konzept (aus Claude Design abgeleitet)
+# quiks — App-Konzept (aus Claude Design abgeleitet)
+
+> Das Konzept wurde unter dem Arbeitsnamen festipal erarbeitet; Marke und Name sind seit
+> 2026-08-10 **quiks** (ADR-023/024). Für Design-Fragen gilt [`../brand/quiks-ci-v1.md`](../brand/quiks-ci-v1.md).
 
 Dieser Ordner arbeitet den **kompletten App-Konzept** aus, bevor eine Zeile Produktionscode
 entsteht. Grundlage ist der erste Designentwurf aus Claude Design

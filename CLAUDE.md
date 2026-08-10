@@ -4,7 +4,7 @@ Guidance for Claude Code when working in the **festipal** repository.
 
 ## Project Overview
 
-festipal is a festival app: overview, site map (Lageplan), timetable, news/updates and
+quiks is a festival app: overview, site map (Lageplan), timetable, news/updates and
 cashless integration — plus two differentiating features: a **festival & camping-spot
 swap marketplace** and **activities / connecting with friends**. Long-term goal: one
 **multi-tenant** app reused across every partnering festival (one festival = one tenant).
@@ -14,6 +14,17 @@ before making architectural changes.
 
 > **Status: greenfield.** The monorepo is being scaffolded. Commands and paths below are
 > the intended structure; update this file with exact commands as scaffolding lands.
+
+## Brand & Design
+
+- Binding brand source: [`docs/brand/quiks-ci-v1.md`](docs/brand/quiks-ci-v1.md) (ADR-023, quiks CI v1.0).
+- Primary Beere `#E8559F`, secondary Amber `#FFC53D`.
+- Sunset (150° Amber → Beere) is the only allowed gradient — mark and hero surfaces only.
+- Hell-first (light-first): Papier `#F7F5F2` is the default surface; dark mode is the "night shift".
+  Light mode is not wired up in code today (`lightColors` exported from `packages/ui/src/tokens.ts`
+  but unused in `apps/mobile`) — that is follow-up phase work.
+- Package/bundle names (`@festipal/*`, `at.festipal.app`) intentionally stay old until the rename
+  phase (ADR-024) runs — do NOT rename them ad hoc alongside unrelated changes.
 
 ## Tech Stack
 

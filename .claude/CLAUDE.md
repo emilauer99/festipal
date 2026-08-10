@@ -2,14 +2,17 @@
 
 ## Project
 
-**festipal**
+**quiks**
 
-festipal is a **multi-tenant festival app** (one festival = one tenant, reused across every
+quiks is a **multi-tenant festival app** (one festival = one tenant, reused across every
 partnering festival). For visitors it brings the whole festival into one place: overview, site
 map, timetable, news/updates, and cashless — plus two differentiators, a **camping-spot / ticket
 swap marketplace** and **activities + connecting with friends**. It ships as an Expo mobile app
 for visitors, a Next.js admin web for festival organizers, and a NestJS backend, all in one
 Turborepo. This build cycle focuses on the **visitor mobile app**.
+
+The repo and its packages still carry the old name (`@festipal/*`, `at.festipal.app`) until the
+rename phase (ADR-024) runs — do not rename them ad hoc.
 
 **Core Value:** A festival visitor can get into the app, connect to their festival, and reach everything about
 their festival experience from one home screen. If everything else fails, that entry-and-home
@@ -22,6 +25,7 @@ path must work.
 - **Architecture (non-negotiable)**: multi-tenancy from day 1 (every domain model/query festival-scoped) · offline-first by design (don't assume network) · end-to-end type safety via `packages/contracts` · i18n from day 1 (no hardcoded user-facing strings) · tenant-aware auth · no secrets in repo.
 - **Git**: trunk-based, short-lived feature branches, Conventional Commits, squash-merge via PR — never commit to `main` (`docs/GIT_CONVENTIONS.md`).
 - **Validation**: Zod schemas in `packages/contracts` are the source of truth; reuse, don't re-declare.
+- **Brand/Design**: ADR-023 + `docs/brand/quiks-ci-v1.md` — Beere/Amber; Sunset is the only allowed gradient; hell-first (light-first); Limette/Violett are now CI-token fallback only, not brand colors. Rename is ADR-024 and runs as its own phase — don't rename ad hoc.
 
 <!-- GSD:project-end -->
 

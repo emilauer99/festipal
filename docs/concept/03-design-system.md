@@ -4,6 +4,12 @@
 > verbindliche Design- und Voice-Fundament. Basis für `packages/ui` und für die Content-Sprache.
 > Verbindlichkeit: Prinzip 5 (Design-Treue). Entscheidungen als **ADR-015**. Stand: 2026-07-28.
 
+> **Abgelöst (2026-08-10):** Farbe, Standardmodus, Wortmarke und Gradient-Regel sind durch
+> **ADR-023** (quiks CI v1.0) abgelöst; die verbindliche Quelle dafür ist jetzt
+> [`../brand/quiks-ci-v1.md`](../brand/quiks-ci-v1.md). Alles Übrige — Typografie-Familien,
+> Layout/Abstände/Radien, Motion, Voice & Tone, Theming-Mechanik, Lucide-Ikonografie — gilt
+> weiter wie unten beschrieben.
+
 ---
 
 ## 1. Zwei Ebenen — und wie sie sich zu unseren Beschlüssen verhalten
@@ -25,6 +31,9 @@ Screens/Komponenten, die wir bewusst weggelassen haben (Wallet, Artists, SafeNow
 ---
 
 ## 2. Farben & Tokens
+
+> **Abgelöst (ADR-023):** Marke ist Beere `#E8559F` / Amber `#FFC53D`; hell-first mit Papier
+> `#F7F5F2`; Beere ist nicht mehr „nur Data-Viz". Details: `../brand/quiks-ci-v1.md`.
 
 - **Marke:** Limette `#74CC1F` (primär) · Violett `#5A4DFF` (sekundär). „Ink"-Neutraltöne sind
   **kühl/leicht blau** (nicht grau), damit beide Markentöne darin sitzen.
@@ -87,6 +96,9 @@ Der Sprach-Teil des Brand Guides ist **verbindlich** und zugleich die Quelle uns
 
 ## 6. Ikonografie & Wortmarke
 
+> **Abgelöst (ADR-023):** Die Wortmarke ist `quiks.` (Punkt in Beere); der Icon-Teil bleibt
+> unverändert gültig. Details: `../brand/quiks-ci-v1.md`.
+
 - **Icons:** Lucide (24er Raster, Strichstärke 2; 2,4 aktives Nav-Glyph; 1,75 dekorativ ≥28px).
   Alles über `<Icon name="…" />` — kein Inline-SVG, keine PNG-Icons, keine Unicode-als-Icon, keine
   Emoji. Icons erben `currentColor`. TikTok/Spotify → `music-2`/`audio-lines` (Platzhalter); echte
@@ -96,6 +108,10 @@ Der Sprach-Teil des Brand Guides ist **verbindlich** und zugleich die Quelle uns
   50%. Nie andere Schrift, nie Großbuchstaben, nie Effekte.
 
 ## 7. Festival-Theming-Vertrag (ENTSCHIEDEN → ADR-015)
+
+> **Abgelöst (ADR-023):** Der Vertrag selbst bleibt in Kraft — nur der Fallback ändert sich:
+> Limette/Violett sind ab jetzt ausschließlich die Default-Werte der vier CI-Tokens, keine
+> Markenfarben. Details: `../brand/quiks-ci-v1.md`.
 
 **Ein Festival darf anpassen:**
 1. **Die 4 CI-Farbtokens:** `--ci-primary`, `--ci-secondary`, `--ci-tint`, `--ci-on-primary`.
