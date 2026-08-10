@@ -1,16 +1,16 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-current_phase: 6
-current_phase_name: Profile & Friends Placeholders
+milestone_name: Rollout
+current_phase: 5.1
+current_phase_name: quiks Rename & CI v1.0 Rollout
 status: planning
-stopped_at: Phase 05 complete & verified (UAT round 3 pass, security clean); ready to plan Phase 6
-last_updated: "2026-08-09T18:38:36.027Z"
-last_activity: 2026-08-09
-last_activity_desc: Phase 05 complete, transitioned to Phase 6
+stopped_at: Phase 5.1 context gathered
+last_updated: "2026-08-10T18:38:16.527Z"
+last_activity: 2026-08-10
+last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 5
   total_plans: 33
   completed_plans: 33
@@ -23,11 +23,11 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 06 — Profile & Friends Placeholders
+**Current focus:** Phase 5.1 — quiks Rename & CI v1.0 Rollout (INSERTED, urgent — vor Phase 6)
 
 ## Current Position
 
-Phase: 6 — Profile & Friends Placeholders
+Phase: 5.1 — quiks Rename & CI v1.0 Rollout (INSERTED)
 Plan: Not started
 Status: Ready to plan
 Last activity: 2026-08-10 — Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)
@@ -209,6 +209,10 @@ None yet.
 | 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
 | 260810-q31 | Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only) — docs/brand/, ADR-023 (CI v1.0, löst ADR-015 teilweise ab) + ADR-024 (Rename-Umfang), Superseded-Marker, beide CLAUDE.md | 2026-08-10 | b898985 | [260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc](./quick/260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc/) |
 
+### Roadmap Evolution
+
+- Phase 5.1 inserted after Phase 5: quiks Rename & CI v1.0 Rollout (ADR-023/024: @festipal/* -> @quiks/*, Beere/Amber-Token-Swap, hell-first) (URGENT)
+
 ## Deferred Items
 
 Items acknowledged and carried forward from previous milestone close:
@@ -219,6 +223,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T18:38:36Z
-Stopped at: Phase 05 complete & verified — UAT round 3 passed (G-05-5b-r2 cold-start fix re-confirmed on device), security threats_open: 0; ready to plan Phase 6
-Resume file: None
+Last session: 2026-08-10T18:38:16.509Z
+Stopped at: Phase 5.1 context gathered
+Resume file: .planning/phases/05.1-quiks-rename-ci-v1-0-rollout/05.1-CONTEXT.md
