@@ -51,3 +51,6 @@ Thumbs.db
 
 # ─── GSD Planning (lokale Research-Fetch-Caches) ────────────────
 .planning/research/.cache/
+
+# ─── GSD Runtime (lokale Laufzeit-Artefakte der gsd-tools) ──────
+.gsd/
