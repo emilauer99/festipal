@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 27
+open_count: 28
 waived_count: 0
 fixed_count: 8
-total_count: 35
-last_updated: 2026-08-11T23:20:45.929Z
+total_count: 36
+last_updated: 2026-08-11T23:45:01.968Z
 ---
 
 # Broken Windows Ledger
@@ -50,6 +50,7 @@ last_updated: 2026-08-11T23:20:45.929Z
 | 33 | 6 | unrun-verify | apps/mobile/lib/theme-override-storage.ts |  | 06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat | open |  | 2026-08-11T21:20:19.955Z |  |
 | 34 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile | open |  | 2026-08-11T23:20:45.525Z |  |
 | 35 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann | open |  | 2026-08-11T23:20:45.929Z |  |
+| 36 | 06 | stub | apps/mobile/app/(tabs)/friends.tsx |  | Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway | open |  | 2026-08-11T23:45:01.968Z |  |
 
 ````json
 [
@@ -471,6 +472,18 @@ last_updated: 2026-08-11T23:20:45.929Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-11T23:20:45.929Z",
+    "resolved_at": null
+  },
+  {
+    "id": 36,
+    "kind": "stub",
+    "phase": "06",
+    "file": "apps/mobile/app/(tabs)/friends.tsx",
+    "line": null,
+    "description": "Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T23:45:01.968Z",
     "resolved_at": null
   }
 ]

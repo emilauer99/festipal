@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
-stopped_at: Completed 06-05-PLAN.md
-last_updated: "2026-08-11T23:31:50.747Z"
+stopped_at: Completed 06-06-PLAN.md
+last_updated: "2026-08-11T23:44:49.916Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 46
+  completed_plans: 47
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 ## Current Position
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 7 of 9
+Plan: 8 of 9
 Status: Ready to execute
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [█████████░] 94%
+Progress: [██████████] 96%
 
 ## Performance Metrics
 
@@ -109,6 +109,7 @@ Progress: [█████████░] 94%
 | Phase 06 P04 | ~25min | 2 tasks | 4 files |
 | Phase 06 P08 | ~25min | 2 tasks | 4 files |
 | Phase 06 P05 | ~30min | 2 tasks | 2 files |
+| Phase 06 P06 | 8min | 2 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -241,6 +242,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-08: @react-native-community/datetimepicker 9.1.0 via expo install (SDK-57-aufgeloest); enthaelt nativen Code, braucht 'npx expo run:android' aus apps/mobile vor der Geraetepruefung
 - [Phase ?]: 06-05: Der Dunkle-Modus-Schalter spiegelt den effektiven Modus, schreibt aber immer explizit ('dark' beim Einschalten, 'system' beim Ausschalten) — der Hell-Zustand bleibt schreiberlos (D-08a)
 - [Phase ?]: 06-05: Abmelden ist aus dem Festivals-Header in die App-Sektion des Mehr-Screens gezogen; der gehärtete Handler-Körper wanderte byte-identisch mit, die native Rückfrage wickelt nur die Aufrufstelle ein (D-09)
+- [Phase ?]: 06-06: Friends-Screen traegt die Ehrlichkeit in der Copy, nicht in reduzierter Deckkraft — jeder Leerzustand benennt die Voraussetzung statt nur das Fehlen (D-11/T-06-27)
+- [Phase ?]: 06-06: Friends und Profil teilen Query-Key ['me'] und Client-Funktion — ein Cache-Eintrag, kein zweiter Netzabruf
+- [Phase ?]: 06-06: Die quiks-Code-Karte bekam minHeight statt harter height — feste Hoehe als Untergrenze, damit groessere Systemschrift die Copy nicht abschneidet
 
 ### Pending Todos
 
@@ -282,6 +286,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T23:31:50.701Z
-Stopped at: Completed 06-05-PLAN.md
+Last session: 2026-08-11T23:44:39.875Z
+Stopped at: Completed 06-06-PLAN.md
 Resume file: None

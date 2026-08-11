@@ -32,11 +32,11 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 
 - [x] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
 - [x] **HOME-02**: The home shows a basic festival overview (identity + key facts) the visitor can open
-- [ ] **HOME-03**: The home provides navigation to Profile and Friends
+- [x] **HOME-03**: The home provides navigation to Profile and Friends
 
 ### Friends (placeholder)
 
-- [ ] **FRND-01**: A visitor can open a Friends screen with a clear, non-broken empty state (friends who saved the same festival — none yet)
+- [x] **FRND-01**: A visitor can open a Friends screen with a clear, non-broken empty state (friends who saved the same festival — none yet)
 
 ### Platform & Security
 
@@ -110,9 +110,9 @@ Which phases cover which requirements.
 | FEST-04 | Phase 5 | Complete |
 | HOME-01 | Phase 5 | Complete |
 | HOME-02 | Phase 5 | Complete |
-| HOME-03 | Phase 6 | Pending |
+| HOME-03 | Phase 6 | Complete |
 | PROF-01 | Phase 6 | Pending |
-| FRND-01 | Phase 6 | Pending |
+| FRND-01 | Phase 6 | Complete |
 
 **Coverage:**
 
