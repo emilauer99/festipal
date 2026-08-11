@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Rollout
-current_phase: 6
-current_phase_name: Profile & Friends Placeholders
-status: "Phase 05.1 shipped — PR #11"
-stopped_at: Phase 6 UI-SPEC approved
-last_updated: "2026-08-11T18:02:44.085Z"
+current_phase: 06
+current_phase_name: profile-friends-placeholders
+status: executing
+stopped_at: Completed 06-01-PLAN.md (Tracer, Geraeteabnahme approved)
+last_updated: "2026-08-11T20:51:50.629Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 40
+  completed_plans: 41
 ---
 
 # Project State
@@ -23,16 +23,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgenommen)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 6 — Profile & Friends Placeholders
+**Current focus:** Phase 06 — profile-friends-placeholders
 
 ## Current Position
 
-Phase: 6 — Profile & Friends Placeholders
-Plan: Not started
-Status: Phase 05.1 shipped — PR #11
-Last activity: 2026-08-11 — Phase 6 planning complete
+Phase: 06 (profile-friends-placeholders) — EXECUTING
+Plan: 2 of 9
+Status: Ready to execute
+Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [██████████] 100%
+Progress: [████████░░] 84%
 
 ## Performance Metrics
 
@@ -103,6 +103,7 @@ Progress: [██████████] 100%
 | Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
 | Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
 | Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
+| Phase 06 P01 | ~2h50m | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -215,6 +216,13 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-07: Splash-Markenglyphe (Checkpoint-Punkt 11) BLEIBT montiert — User-Entscheidung; Entfernen bleibt ein Einzeiler in app/_layout.tsx, Komponente und Icon-Generator blieben ohnehin bestehen
 - [Phase ?]: 05.1-07: WINDOWS-Eintraege 24/26/27/28/29 geschlossen (24 per automatisiertem Sweep, 26-29 per Nutzerabnahme am Geraet); 25 bleibt offen (von der Abnahme nicht abgedeckt), neuer Eintrag 30 fuer den nicht abgedeckten Themed-Icons-Monochrome-Layer
 - [Phase ?]: 05.1-07: Phase-Gate bewusst uncached mit --force wiederholt — der erste Durchlauf kam vollstaendig aus dem Turbo-Cache und haette nichts bewiesen
+- [Phase ?]: 06-01: Vierter Tab ist Mehr, Profil wird Root-Level-Push-Screen (D-01) — app/profil.tsx liegt ausserhalb (tabs) und ist explizit im authentifizierten Stack.Protected-Block registriert; ohne diese Zeile landet router.push('/profil') auf Expo Routers Unmatched Route (Pitfall 1)
+- [Phase ?]: 06-01: Menu ist das Mehr-Glyph, UserRound bleibt fuer Avatar-/Profilkontext reserviert (RESEARCH Open Question 2 aufgeloest)
+- [Phase ?]: 06-01: Anzeigename nutzt die bestehende Rolle title2 statt eines neuen title1-Tokens — vermeidet die packages/ui-Kollisionszone mit dem Admin-Stream und den Umbau des type-tracking-Kopplungsgates fuer eine einzige Verwendungsstelle
+- [Phase ?]: 06-01 (Abweichung, vom User im Checkpoint abgenommen): Quellsprachen-Strings bleiben Englisch (lingui sourceLocale: 'en') statt der im Plan woertlich stehenden deutschen msgids — die deutschen Designtexte sind DE-Katalogwerte und landen erst in 06-09; bis dahin zeigt die App die neuen Strings auf Englisch
+- [Phase ?]: 06-01 (Abweichung, vom User im Checkpoint abgenommen): Header/Titel des Profil-Screens setzt app/profil.tsx per eigenem Stack.Screen options — useLingui() ist in app/_layout.tsx nicht aufrufbar, weil genau diese Komponente den I18nProvider rendert; die load-bearing Registrierung name="profil" bleibt im Root-Layout
+- [Phase ?]: 06-01: requirements mark-complete bewusst NICHT ausgefuehrt — HOME-03/PROF-01/FRND-01 stehen in der Plan-Frontmatter, werden aber von 06-05 bis 06-09 weitergebaut; ein Abhaken jetzt waere ein falsches Fertig-Signal an den Audit-Scanner
+- [Phase ?]: 06-01: Geraeteabnahme des Tracer-Pfads (8 Schritte) vom User als Ganzes mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine automatisierte Verifikation; der Executor hat den Geraetetest nicht selbst gefahren, keine Einzelbefunde je Schritt protokolliert (gleiche Lage wie 05.1-07)
 
 ### Pending Todos
 
@@ -255,6 +263,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T16:34:10.933Z
-Stopped at: Phase 6 UI-SPEC approved
-Resume file: .planning/workstreams/mobile/phases/06-profile-friends-placeholders/06-UI-SPEC.md
+Last session: 2026-08-11T20:51:50.590Z
+Stopped at: Completed 06-01-PLAN.md (Tracer, Geraeteabnahme approved)
+Resume file: .planning/workstreams/mobile/phases/06-profile-friends-placeholders/06-02-PLAN.md
