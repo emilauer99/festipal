@@ -145,9 +145,14 @@ Sichtbarkeits-Policy, Altersgrenze oder Signup-Disclaimer.
   — **Reversibility:** one-way — Schemaerweiterung auf `visitor_profile` plus eine Änderung an
   `packages/contracts`, die der Admin-Stream mitliest; ein Rückzieher braucht eine Migration und
   betrifft bereits erfasste personenbezogene Daten (Geburtsdatum/Geschlecht).
-  **Offene Planungsentscheidung:** Geburtsdatum speichern und Alter ableiten, oder Alter direkt
-  speichern (letzteres veraltet). Der User hat „Alter" gesagt, ohne die Speicherform zu wählen —
-  der Planner muss das explizit vorlegen, nicht still entscheiden.
+  **D-12a — Speicherform entschieden (User, 2026-08-11, plan-phase):** **Geburtsdatum speichern,
+  Alter ableiten.** `visitor_profile` bekommt eine nullable `birth_date`-Spalte (date); das im
+  Profilkopf angezeigte Alter wird daraus berechnet und nie als eigener Wert persistiert.
+  Begründung: der Wert veraltet nicht (Profil-Bearbeiten ist PROF-02, also erst später), und eine
+  spätere Altersgrenze / Jugendschutz-Policy aus Birgits Konzept (IDN-02) ist ohne Migration
+  möglich. Konsequenz für den Planner: der `complete-profile`-Screen braucht eine
+  Geburtsdatums-Eingabe (Date-Picker) statt eines Zahlenfelds, und die Ableitung des Alters gehört
+  als reine Logik nach `lib/` (node-env-Vitest deckt nur `lib/` ab).
 
 ### Platzhalter-Ton & Copy
 
