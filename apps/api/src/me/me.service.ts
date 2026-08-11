@@ -20,6 +20,12 @@ export class MeService {
         username: visitorProfile.username,
         displayName: visitorProfile.displayName,
         avatar: visitorProfile.avatar,
+        // D-12: optional identity fields. `birthDate` is a `YYYY-MM-DD` string
+        // (drizzle `date({ mode: 'string' })`), never a Date — no timezone
+        // shift can occur on the way out.
+        pronoun: visitorProfile.pronoun,
+        birthDate: visitorProfile.birthDate,
+        gender: visitorProfile.gender,
       })
       .from(visitorProfile)
       .where(eq(visitorProfile.accountId, accountId))
@@ -44,6 +50,9 @@ export class MeService {
           username: visitorProfile.username,
           displayName: visitorProfile.displayName,
           avatar: visitorProfile.avatar,
+          pronoun: visitorProfile.pronoun,
+          birthDate: visitorProfile.birthDate,
+          gender: visitorProfile.gender,
         });
       if (!row) {
         throw new Error('visitor_profile insert returned no row');

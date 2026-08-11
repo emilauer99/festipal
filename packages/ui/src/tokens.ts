@@ -269,6 +269,13 @@ export const colors = {
   fillBrandQuiet: 'rgba(232,85,159,.16)', // derived: Beere at 16%
   fillDangerQuiet: 'rgba(255,77,94,.12)', // derived: danger at 12%
   fillDangerSubtle: 'rgba(255,77,94,.08)', // derived: danger at 8%
+  // 06-UI-SPEC ## Color: the SafeNow callout's surface + hairline. Mode-invariant
+  // like every other status fill above, so light inherits both by spread. These
+  // are FILL/BORDER roles only — the SafeNow text and icon still resolve through
+  // `infoText`, because the bare `info` hue reaches just 2.04:1 on Papier and
+  // hell-first makes Papier the default surface.
+  fillInfoQuiet: 'rgba(95,180,255,.12)', // derived: info at 12%
+  borderInfo: 'rgba(95,180,255,.35)', // derived: info at 35%
   glassFill: 'rgba(12,14,19,.62)', // derived: CI §6 "Glas dunkel = Ink 62 %"
   glassBorder: 'rgba(255,255,255,.16)', // derived
 } as const;
