@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: Rollout
 current_phase: 05.1
 current_phase_name: quiks-rename-ci-v1-0-rollout
-status: executing
-stopped_at: Completed 05.1-06-PLAN.md
-last_updated: "2026-08-10T22:14:17.614Z"
+status: verifying
+stopped_at: Completed 05.1-07-PLAN.md (Phase 05.1 plans all executed)
+last_updated: "2026-08-11T11:58:46.526Z"
 last_activity: 2026-08-10
 last_activity_desc: "Completed quick task 260810-q31: Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only)"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 40
-  completed_plans: 39
+  completed_plans: 40
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
 Plan: 7 of 7
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-10 — Phase 05.1 execution started
 
-Progress: [██████████] 98%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -101,6 +101,7 @@ Progress: [██████████] 98%
 | Phase 05.1 P04 | ~15min | 3 tasks | 12 files |
 | Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
 | Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
+| Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -209,6 +210,10 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-05: app/_layout.tsx (Splash-Wortmarke, letztes numerisches fontWeight) bewusst nicht angefasst — gehört Plan 05.1-06
 - [Phase ?]: Markenglyphe: EIN Geometriemodul (lib/wordmark-glyph.ts) speist Runtime-SVG und Icon-Rasterizer; Farben nur aus Tokens
 - [Phase ?]: Icon-Generator misst Tintengrenzen per resvg getBBox statt geschaetzter Crop-Box; @resvg/resvg-js exakt auf 2.6.2 gepinnt, PNGs committet
+- [Phase ?]: 05.1-07: Geraeteabnahme der Phase vom User als Ganzes freigegeben ('approved') — keine Einzelbefunde zu den 19 Punkten protokolliert; der Executor hat den Geraetetest NICHT selbst gefahren
+- [Phase ?]: 05.1-07: Splash-Markenglyphe (Checkpoint-Punkt 11) BLEIBT montiert — User-Entscheidung; Entfernen bleibt ein Einzeiler in app/_layout.tsx, Komponente und Icon-Generator blieben ohnehin bestehen
+- [Phase ?]: 05.1-07: WINDOWS-Eintraege 24/26/27/28/29 geschlossen (24 per automatisiertem Sweep, 26-29 per Nutzerabnahme am Geraet); 25 bleibt offen (von der Abnahme nicht abgedeckt), neuer Eintrag 30 fuer den nicht abgedeckten Themed-Icons-Monochrome-Layer
+- [Phase ?]: 05.1-07: Phase-Gate bewusst uncached mit --force wiederholt — der erste Durchlauf kam vollstaendig aus dem Turbo-Cache und haette nichts bewiesen
 
 ### Pending Todos
 
@@ -248,6 +253,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-10T22:14:17.582Z
-Stopped at: Completed 05.1-06-PLAN.md
+Last session: 2026-08-11T11:56:05.707Z
+Stopped at: Completed 05.1-07-PLAN.md (Phase 05.1 plans all executed)
 Resume file: None

@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 26
+open_count: 22
 waived_count: 0
-fixed_count: 3
-total_count: 29
-last_updated: 2026-08-10T22:10:54.014Z
+fixed_count: 8
+total_count: 30
+last_updated: 2026-08-11T11:54:19.017Z
 ---
 
 # Broken Windows Ledger
@@ -38,12 +38,13 @@ last_updated: 2026-08-10T22:10:54.014Z
 | 21 | 05 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | G-05-5b on-device UAT not run headlessly: enter unsaved festival, force-quit, relaunch -> Home; save+enter+relaunch -> restores festival (05-09 task 2) | open |  | 2026-08-09T14:25:57.499Z |  |
 | 22 | 05 | unrun-verify | apps/mobile/lib/festival-navigation.ts |  | G-05-5a on-device UAT not run headlessly: cold-start Back -> Home tab; normal in-tab Back -> Festivals tab (05-09 task 3) | open |  | 2026-08-09T14:25:58.180Z |  |
 | 23 | 05 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05-UAT.md test 7: on-device deep-link verification (logged-out festipal://f/:slug double-slash, and already-authenticated cold-start festipal:///f/:slug) not run headlessly — requires real device | open |  | 2026-08-09T14:33:18.123Z |  |
-| 24 | 05.1 | unrun-verify | docker-compose.yml |  | Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs. | open |  | 2026-08-10T20:57:29.452Z |  |
-| 25 | 05.1 | deviation | apps/mobile/lib/fonts.ts |  | otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance | open |  | 2026-08-10T21:14:08.388Z |  |
-| 26 | 05.1 | unrun-verify | apps/mobile/components/FestivalCard.tsx |  | 05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07 | open |  | 2026-08-10T21:39:45.181Z |  |
-| 27 | 05.1 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07 | open |  | 2026-08-10T21:53:55.129Z |  |
-| 28 | 05.1 | unrun-verify | apps/mobile/assets/icon.png |  | 05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07 | open |  | 2026-08-10T22:10:53.619Z |  |
-| 29 | 05.1 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07 | open |  | 2026-08-10T22:10:54.014Z |  |
+| 24 | 05.1 | unrun-verify | docker-compose.yml |  | Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs. | fixed | Geschlossen durch den automatisierten Leftover-Sweep in 05.1-07 Task 1 (git grep -l -i festipal ausserhalb .planning/docs/lockfile = 0 Treffer), nachdem Plan 05.1-02 docker-compose.yml umbenannt hat. Schliessender Nachweis ist eine automatisierte Pruefung, keine Geraeteabnahme. | 2026-08-10T20:57:29.452Z | 2026-08-11T11:54:06.105Z |
+| 25 | 05.1 | deviation | apps/mobile/lib/fonts.ts |  | otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance | open | BLEIBT OFFEN: die Geraeteabnahme in 05.1-07 deckt diesen Punkt nicht ab. Checkpoint-Punkt 16 prueft Ueberschriftengroesse und faux-bold, nennt die Mono-Rollen (otpDigit/countdown) aber nicht; die 500-vs-400-Luecke ist per UI-SPEC D-10 ausdruecklich aus dieser Phase herausgehalten und braucht ihre eigene Abnahme. | 2026-08-10T21:14:08.388Z |  |
+| 26 | 05.1 | unrun-verify | apps/mobile/components/FestivalCard.tsx |  | 05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Checkpoint-Punkt 12, Sunset-Hero). Der User hat die Abnahme als Ganzes freigegeben; schliessender Nachweis ist diese Nutzerabnahme am Geraet, keine automatisierte Pruefung. | 2026-08-10T21:39:45.181Z | 2026-08-11T11:54:06.729Z |
+| 27 | 05.1 | unrun-verify | apps/mobile/app/(tabs)/festivals.tsx |  | 05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 8/9/15/16: alle Screens in Hell- und Dunkelmodus, erzwungene Fehlerkopie, Typografie). Der User hat die Abnahme als Ganzes freigegeben; schliessender Nachweis ist diese Nutzerabnahme am Geraet, keine automatisierte Pruefung. | 2026-08-10T21:53:55.129Z | 2026-08-11T11:54:07.424Z |
+| 28 | 05.1 | unrun-verify | apps/mobile/assets/icon.png |  | 05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 18/19: Launcher-Icon, Android-Adaptive-Masking in mehreren Formen, Recents/Settings) - damit ist die RESEARCH-A1-Safe-Zone-Annahme geklaert. Der nicht abgedeckte Teilanspruch (Monochrome-Layer unter Androids Themed Icons) laeuft als eigener offener Eintrag 30 weiter. Schliessender Nachweis ist die Nutzerabnahme am Geraet. | 2026-08-10T22:10:53.619Z | 2026-08-11T11:54:08.079Z |
+| 29 | 05.1 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 10/11). Der User hat die Abnahme als Ganzes freigegeben und entschieden, die Markenglyphe ueber der Splash-Wortmarke ZU BEHALTEN; ein Entfernen bleibt ein Einzeiler. Schliessender Nachweis ist diese Nutzerabnahme am Geraet. | 2026-08-10T22:10:54.014Z | 2026-08-11T11:54:08.803Z |
+| 30 | 05.1 | unrun-verify | apps/mobile/assets/android-icon-monochrome.png |  | Der Monochrome-Layer unter Androids Themed-Icons-Tint wurde von der Geraeteabnahme in 05.1-07 NICHT abgedeckt: die Checkpoint-Punkte 18/19 nennen Launcher-Icon, Adaptive-Masking und Recents/Settings, aber nicht die aktivierten Themed Icons. Restanspruch aus dem geschlossenen Eintrag 28 - braucht einen eigenen Blick mit eingeschalteten Themed Icons. | open |  | 2026-08-11T11:54:19.017Z |  |
 
 ````json
 [
@@ -330,10 +331,10 @@ last_updated: 2026-08-10T22:10:54.014Z
     "file": "docker-compose.yml",
     "line": null,
     "description": "Plan 05.1-01 acceptance criterion 'zero festipal hits outside .planning/docs/lockfile' is unmet by exactly one file: docker-compose.yml, owned by plan 05.1-02. Rename is only complete after 05.1-02 runs.",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Geschlossen durch den automatisierten Leftover-Sweep in 05.1-07 Task 1 (git grep -l -i festipal ausserhalb .planning/docs/lockfile = 0 Treffer), nachdem Plan 05.1-02 docker-compose.yml umbenannt hat. Schliessender Nachweis ist eine automatisierte Pruefung, keine Geraeteabnahme.",
     "recorded_at": "2026-08-10T20:57:29.452Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-11T11:54:06.105Z"
   },
   {
     "id": 25,
@@ -343,7 +344,7 @@ last_updated: 2026-08-10T22:10:54.014Z
     "line": null,
     "description": "otpDigit/countdown declare weight 500 but load JetBrainsMono_400Regular — pre-existing gap, scoped out by UI-SPEC D-10, needs its own device acceptance",
     "status": "open",
-    "reason": "",
+    "reason": "BLEIBT OFFEN: die Geraeteabnahme in 05.1-07 deckt diesen Punkt nicht ab. Checkpoint-Punkt 16 prueft Ueberschriftengroesse und faux-bold, nennt die Mono-Rollen (otpDigit/countdown) aber nicht; die 500-vs-400-Luecke ist per UI-SPEC D-10 ausdruecklich aus dieser Phase herausgehalten und braucht ihre eigene Abnahme.",
     "recorded_at": "2026-08-10T21:14:08.388Z",
     "resolved_at": null
   },
@@ -354,10 +355,10 @@ last_updated: 2026-08-10T22:10:54.014Z
     "file": "apps/mobile/components/FestivalCard.tsx",
     "line": null,
     "description": "05.1-04 Task 2: the new react-native-svg Sunset layer on the hero card has never been rendered on a device — that the gradient paints behind the card content (not over it), stays clipped to r-card, and carries legible Ink text at every point is an on-device claim this plan does not make; owned by plan 05.1-07",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Checkpoint-Punkt 12, Sunset-Hero). Der User hat die Abnahme als Ganzes freigegeben; schliessender Nachweis ist diese Nutzerabnahme am Geraet, keine automatisierte Pruefung.",
     "recorded_at": "2026-08-10T21:39:45.181Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-11T11:54:06.729Z"
   },
   {
     "id": 27,
@@ -366,10 +367,10 @@ last_updated: 2026-08-10T22:10:54.014Z
     "file": "apps/mobile/app/(tabs)/festivals.tsx",
     "line": null,
     "description": "05.1-05: die acht Screens wurden nie auf einem Gerät im Hellmodus gerendert — dass Papier als Fläche trägt, dass dangerText-Fehlerkopie auf Papier lesbar ist und dass die jetzt rollenaufgelösten Schriften (title3-CTAs = Jakarta 700 statt faux-bold 400, display2-Festivalname = Outfit 800 statt 700) korrekt und nicht zu schwer wirken, ist eine Geräteaussage; Abnahme gehört Plan 05.1-07",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 8/9/15/16: alle Screens in Hell- und Dunkelmodus, erzwungene Fehlerkopie, Typografie). Der User hat die Abnahme als Ganzes freigegeben; schliessender Nachweis ist diese Nutzerabnahme am Geraet, keine automatisierte Pruefung.",
     "recorded_at": "2026-08-10T21:53:55.129Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-11T11:54:07.424Z"
   },
   {
     "id": 28,
@@ -378,10 +379,10 @@ last_updated: 2026-08-10T22:10:54.014Z
     "file": "apps/mobile/assets/icon.png",
     "line": null,
     "description": "05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07",
-    "status": "open",
-    "reason": "",
+    "status": "fixed",
+    "reason": "Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 18/19: Launcher-Icon, Android-Adaptive-Masking in mehreren Formen, Recents/Settings) - damit ist die RESEARCH-A1-Safe-Zone-Annahme geklaert. Der nicht abgedeckte Teilanspruch (Monochrome-Layer unter Androids Themed Icons) laeuft als eigener offener Eintrag 30 weiter. Schliessender Nachweis ist die Nutzerabnahme am Geraet.",
     "recorded_at": "2026-08-10T22:10:53.619Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-11T11:54:08.079Z"
   },
   {
     "id": 29,
@@ -390,9 +391,21 @@ last_updated: 2026-08-10T22:10:54.014Z
     "file": "apps/mobile/app/_layout.tsx",
     "line": null,
     "description": "05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07",
+    "status": "fixed",
+    "reason": "Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 10/11). Der User hat die Abnahme als Ganzes freigegeben und entschieden, die Markenglyphe ueber der Splash-Wortmarke ZU BEHALTEN; ein Entfernen bleibt ein Einzeiler. Schliessender Nachweis ist diese Nutzerabnahme am Geraet.",
+    "recorded_at": "2026-08-10T22:10:54.014Z",
+    "resolved_at": "2026-08-11T11:54:08.803Z"
+  },
+  {
+    "id": 30,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/assets/android-icon-monochrome.png",
+    "line": null,
+    "description": "Der Monochrome-Layer unter Androids Themed-Icons-Tint wurde von der Geraeteabnahme in 05.1-07 NICHT abgedeckt: die Checkpoint-Punkte 18/19 nennen Launcher-Icon, Adaptive-Masking und Recents/Settings, aber nicht die aktivierten Themed Icons. Restanspruch aus dem geschlossenen Eintrag 28 - braucht einen eigenen Blick mit eingeschalteten Themed Icons.",
     "status": "open",
     "reason": "",
-    "recorded_at": "2026-08-10T22:10:54.014Z",
+    "recorded_at": "2026-08-11T11:54:19.017Z",
     "resolved_at": null
   }
 ]

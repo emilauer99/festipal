@@ -235,7 +235,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
 **Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
 **Depends on:** Phase 5
-**Plans:** 6/7 plans executed
+**Plans:** 7/7 plans executed
 
 Plans:
 
@@ -256,7 +256,7 @@ Plans:
 
 **Wave 4** *(blocked on Wave 3)*
 
-- [ ] 05.1-07-PLAN.md — Phase gate: frozen install + root lint/typecheck/test + mobile export, mandatory Android device acceptance (both modes, auth, deep link, icons), D-15 post-merge rename checklist
+- [x] 05.1-07-PLAN.md — Phase gate: frozen install + root lint/typecheck/test + mobile export, mandatory Android device acceptance (both modes, auth, deep link, icons), D-15 post-merge rename checklist
 
 ### Phase 6: Profile & Friends Placeholders
 
