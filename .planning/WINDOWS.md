@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 25
+open_count: 27
 waived_count: 0
 fixed_count: 8
-total_count: 33
-last_updated: 2026-08-11T21:20:19.955Z
+total_count: 35
+last_updated: 2026-08-11T23:20:45.929Z
 ---
 
 # Broken Windows Ledger
@@ -48,6 +48,8 @@ last_updated: 2026-08-11T21:20:19.955Z
 | 31 | 05.1 | unrun-verify | apps/mobile/app/(auth)/welcome.tsx |  | Das CI-Outfit-Tracking (typeRoles wordmark/display2/title2 letterSpacing) wurde in Quick-Task 260811-jz6 an allen 13 Style-Sites angewandt und headless abgesichert (Node/Vitest-Guard scannt app+components), aber NIE auf einem Geraet gesehen. Offen ist die reine Geraeteaussage: ob das engere Tracking auf Wortmarke, Display- und Titel-Zeilen Umbrueche kippt, Kartenhoehen (FestivalCard-Hero) oder die Splash-Wortmarke sichtbar verschiebt, und ob die zentrierten AvatarTile-Initialen durch das Tracking hinter dem letzten Zeichen sichtbar aus der Mitte laufen. Braucht einen Blick auf echten Screens in hell UND dunkel. | open |  | 2026-08-11T12:41:00.855Z |  |
 | 32 | 06 | deviation | packages/contracts/src/schemas.ts |  | T-06-06 accepted: visitorProfilePublicSchema carries birthDate/gender with no visibility policy; split into owner view and friend view before any endpoint serves a foreign profile (IDN-02 pending) | open |  | 2026-08-11T21:07:42.033Z |  |
 | 33 | 6 | unrun-verify | apps/mobile/lib/theme-override-storage.ts |  | 06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat | open |  | 2026-08-11T21:20:19.955Z |  |
+| 34 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile | open |  | 2026-08-11T23:20:45.525Z |  |
+| 35 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann | open |  | 2026-08-11T23:20:45.929Z |  |
 
 ````json
 [
@@ -445,6 +447,30 @@ last_updated: 2026-08-11T21:20:19.955Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-11T21:20:19.955Z",
+    "resolved_at": null
+  },
+  {
+    "id": 34,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T23:20:45.525Z",
+    "resolved_at": null
+  },
+  {
+    "id": 35,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T23:20:45.929Z",
     "resolved_at": null
   }
 ]
