@@ -30,7 +30,7 @@ See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
 Phase: 05.1 (quiks-rename-ci-v1-0-rollout) — EXECUTING
 Plan: 7 of 7
 Status: Phase complete — ready for verification
-Last activity: 2026-08-10 — Phase 05.1 execution started
+Last activity: 2026-08-11 — Completed quick task 260811-jz6: Phase 05.1 Verifikations-Gaps geschlossen (Outfit-Tracking + CLAUDE.md), Re-Verifikation ausstehend
 
 Progress: [██████████] 100%
 
@@ -238,6 +238,7 @@ None yet.
 | 260803-mz6 | Anchor UI component strategy in docs: ADR-022 (custom RN components for mobile, shadcn/ui for admin, minimize custom CSS) + CLAUDE.md tech stack update | 2026-08-03 | 56456a5 | [260803-mz6-anchor-ui-component-strategy-in-docs-adr](./quick/260803-mz6-anchor-ui-component-strategy-in-docs-adr/) |
 | 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
 | 260810-q31 | Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only) — docs/brand/, ADR-023 (CI v1.0, löst ADR-015 teilweise ab) + ADR-024 (Rename-Umfang), Superseded-Marker, beide CLAUDE.md | 2026-08-10 | b898985 | [260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc](./quick/260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc/) |
+| 260811-jz6 | Phase 05.1 Verifikations-Gaps schliessen: Outfit-Tracking anwenden + CLAUDE.md Light-Mode-Aussage korrigieren | 2026-08-11 | e28d150 | [260811-jz6-phase-05-1-verifikations-gaps-schliessen](./quick/260811-jz6-phase-05-1-verifikations-gaps-schliessen/) |
 
 ### Roadmap Evolution
 
