@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Home, Tent, UserRound, Users, type LucideIcon } from 'lucide-react-native';
+import { Home, Menu, Tent, Users, type LucideIcon } from 'lucide-react-native';
 import { useLingui } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
 import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
@@ -25,15 +25,24 @@ const INACTIVE_STROKE = 2;
 // invariant: only the `tint` and the glass fill/border follow the theme.
 const BLUR_INTENSITY = 60;
 
-type LiveRouteName = 'home' | 'festivals';
+type LiveRouteName = 'home' | 'festivals' | 'friends' | 'mehr';
 
+/**
+ * 06-01 (RESEARCH Open Question 2, resolved): `Menu` — not `UserRound` — is the
+ * Mehr glyph, so `UserRound` stays reserved for avatar/profile contexts (the
+ * Konto row inside Mehr and the Profil push screen behind it). Reusing one
+ * glyph for both would make the tab and its own first row read as the same
+ * destination.
+ */
 const LIVE_TAB_ICON: Record<LiveRouteName, LucideIcon> = {
   home: Home,
   festivals: Tent,
+  friends: Users,
+  mehr: Menu,
 };
 
 function isLiveRouteName(name: string): name is LiveRouteName {
-  return name === 'home' || name === 'festivals';
+  return name === 'home' || name === 'festivals' || name === 'friends' || name === 'mehr';
 }
 
 /**
@@ -41,12 +50,16 @@ function isLiveRouteName(name: string): name is LiveRouteName {
  * bar, rendered via `Tabs`' `tabBar` render prop (RESEARCH Pattern 1, stable
  * `expo-router` `Tabs`, NOT the experimental `expo-router/ui` headless API).
  *
- * Renders the 2 LIVE tabs straight from `state.routes` (Home, Festivals —
- * the only two `Tabs.Screen`s registered in `(tabs)/_layout.tsx`) plus 2
- * DECORATIVE Friends/Profil items that have no backing route at all (Phase
- * 6) — they cannot navigate by construction, on top of the explicit
- * `disabled` prop + `accessibilityState` belt-and-suspenders (REVIEW 05-05
- * MEDIUM: disabled must not rely on the a11y flag alone).
+ * 06-01 / D-01: ALL FOUR tabs now come straight from `state.routes` (Home,
+ * Festivals, Friends, Mehr — the four `Tabs.Screen`s registered in
+ * `(tabs)/_layout.tsx`) and flow through the SAME `Pressable`/pill/icon/label
+ * branch. The Phase-5 pair of non-navigating placeholder items is gone, and
+ * with it the whole second render branch: every item in this bar is a real
+ * route.
+ *
+ * UI-SPEC #41/#42: the four items share the fixed `layout.navHeight` bar at
+ * equal width (`flex: 1`, icons never shrink) and each label is single-line
+ * with tail truncation, so no locale's label length can break the bar.
  *
  * 05.1 D-03 + UI-SPEC E3: the glass follows the colour mode on BOTH axes —
  * `glassFill`/`glassBorder` come from the resolved theme AND the native
@@ -65,10 +78,23 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
   // numeric fontWeight (05.1 D-10 — an override on a real weight file is what
   // produces device faux-bold).
   const labelFont = fontFamilyForRole('micro', fontsReady);
-  // Pitfall 4 — accessibilityLabel is excluded from eslint's
-  // `no-literal-string` jsx-attributes check, so this suffix is routed
+  // Pitfall 4 — `accessibilityLabel` is excluded from eslint's
+  // `no-literal-string` jsx-attributes check, so every label below is routed
   // through Lingui explicitly rather than relied on as a lint-caught literal.
-  const comingSoonSuffix = t`coming soon`;
+  //
+  // Built as a fresh per-render record, one `t` call per route: `t` is a BABEL
+  // MACRO that must appear textually at each call site, so a module-level map
+  // of pre-resolved strings would freeze the labels at import time and never
+  // follow a UI-locale change.
+  //
+  // Source strings stay English (`lingui.config.ts` `sourceLocale: 'en'`) —
+  // the design's German "Mehr" is the DE catalog value for the `More` msgid.
+  const liveTabLabel: Record<LiveRouteName, string> = {
+    home: t`Home`,
+    festivals: t`Festivals`,
+    friends: t`Friends`,
+    mehr: t`More`,
+  };
 
   function handlePress(route: { key: string; name: string }, focused: boolean) {
     const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
@@ -98,7 +124,7 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
             const focused = index === state.index;
             const routeName = isLiveRouteName(route.name) ? route.name : 'home';
             const Icon = LIVE_TAB_ICON[routeName];
-            const label = routeName === 'home' ? t`Home` : t`Festivals`;
+            const label = liveTabLabel[routeName];
             return (
               <Pressable
                 key={route.key}
@@ -115,6 +141,8 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
                   strokeWidth={focused ? ACTIVE_STROKE : INACTIVE_STROKE}
                 />
                 <Text
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
                   style={[
                     styles.label,
                     { fontFamily: labelFont, color: focused ? colors.primary : colors.textMuted },
@@ -125,71 +153,11 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
               </Pressable>
             );
           })}
-
-          <DisabledNavItem
-            icon={Users}
-            label={t`Friends`}
-            comingSoonSuffix={comingSoonSuffix}
-            labelFont={labelFont}
-            styles={styles}
-            mutedColor={colors.textMuted}
-          />
-          <DisabledNavItem
-            icon={UserRound}
-            label={t`Profile`}
-            comingSoonSuffix={comingSoonSuffix}
-            labelFont={labelFont}
-            styles={styles}
-            mutedColor={colors.textMuted}
-          />
         </View>
       </BlurView>
     </View>
   );
 }
-
-/**
- * Friends/Profil — decorative, not in `state.routes`, no navigation target
- * this phase (Phase 6). `disabled` is set on the `Pressable` itself (not
- * only `accessibilityState`, REVIEW 05-05 MEDIUM) and the `onPress` is an
- * explicit no-op for clarity even though `disabled` already prevents it
- * firing.
- *
- * Takes the parent's resolved `styles` and muted colour as props rather than
- * calling `useTheme()` itself, so the whole nav builds exactly ONE stylesheet
- * per mode change instead of three.
- */
-function DisabledNavItem({
-  icon: Icon,
-  label,
-  comingSoonSuffix,
-  labelFont,
-  styles,
-  mutedColor,
-}: {
-  icon: LucideIcon;
-  label: string;
-  comingSoonSuffix: string;
-  labelFont: string | undefined;
-  styles: NavStyles;
-  mutedColor: string;
-}) {
-  return (
-    <Pressable
-      style={[styles.item, styles.itemDisabled]}
-      disabled
-      onPress={() => {}}
-      accessibilityRole="button"
-      accessibilityState={{ disabled: true }}
-      accessibilityLabel={`${label} — ${comingSoonSuffix}`}
-    >
-      <Icon size={ICON_SIZE} color={mutedColor} strokeWidth={INACTIVE_STROKE} />
-      <Text style={[styles.label, { fontFamily: labelFont, color: mutedColor }]}>{label}</Text>
-    </Pressable>
-  );
-}
-
-type NavStyles = ReturnType<typeof createStyles>;
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
@@ -211,15 +179,15 @@ function createStyles(colors: ThemeColors) {
       alignItems: 'stretch',
       paddingHorizontal: spacingScale['sp-3'],
     },
+    // UI-SPEC #41 — the four tabs split the fixed bar width evenly (`flex: 1`);
+    // `minWidth` keeps every one of them a real 44px tap target.
     item: {
       flex: 1,
       minWidth: layout.hitMin,
       alignItems: 'center',
       justifyContent: 'center',
       gap: spacingScale['sp-2'],
-    },
-    itemDisabled: {
-      opacity: 0.4,
+      paddingHorizontal: spacingScale['sp-2'],
     },
     activePill: {
       position: 'absolute',
@@ -230,8 +198,11 @@ function createStyles(colors: ThemeColors) {
       borderRadius: radiiScale['r-pill'],
       backgroundColor: colors.fillBrandQuiet,
     },
+    // UI-SPEC #42 — single line, tail-truncated (set on the `Text` itself);
+    // centring keeps a truncated label optically aligned under its icon.
     label: {
       fontSize: typeRoles.micro.size,
+      textAlign: 'center',
     },
   });
 }

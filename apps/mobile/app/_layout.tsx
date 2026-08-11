@@ -445,6 +445,22 @@ function RootNavigation() {
                 <Stack.Protected guard={authState.status === 'authenticated'}>
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="(festival)" />
+                  {/* 06-01 / D-01 + Pitfall 1 — `profil` is a root-level SIBLING
+                      of `(tabs)`, not a tab: pushing it therefore hides the
+                      FloatingNav on its own, exactly like `(festival)`, with no
+                      per-screen visibility logic. This registration is NOT
+                      optional and NOT implicit — this Stack lists its children
+                      exhaustively, so an unregistered sibling file dead-ends on
+                      Expo Router's Unmatched Route screen (the same failure
+                      class as the resolved first-login-unmatched-route bug).
+                      T-06-01: it lives INSIDE this authenticated guard, never
+                      beside it — `/profil` renders account data.
+
+                      Header/title are set by the SCREEN itself (`app/profil.tsx`'s
+                      own `<Stack.Screen options>`), matching every other screen in
+                      this app — `useLingui()` cannot be called here, since this
+                      component is the one that RENDERS `<I18nProvider>`. */}
+                  <Stack.Screen name="profil" />
                 </Stack.Protected>
               </Stack>
             </ColdStartTargetContext.Provider>
