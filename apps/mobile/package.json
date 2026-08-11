@@ -25,6 +25,7 @@
     "@quiks/contracts": "workspace:*",
     "@quiks/i18n": "workspace:*",
     "@quiks/ui": "workspace:*",
+    "@react-native-community/datetimepicker": "9.1.0",
     "@tanstack/react-query": "^5.101.4",
     "@ts-rest/core": "^3.52.1",
     "better-auth": "1.6.25",
