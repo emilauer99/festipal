@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Search } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
 import { useSoonToast } from '../../components/SoonToast';
+import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import type { ThemeColors } from '../../lib/theme';
@@ -16,6 +18,45 @@ import { useTheme } from '../../lib/theme-context';
 const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 const SEARCH_ICON_SIZE = 18;
+
+/** UI-SPEC Placeholder Pattern A — the dampening factor for a "not real yet"
+ * control, the same value `ListRow` already uses. On this screen it applies to
+ * exactly ONE element: the card's action button. */
+const PATTERN_A_OPACITY = 0.45;
+
+const QR_CELL_SIZE = 16;
+/** 3 cells + 2 gaps — the mark itself. */
+const QR_GRID_SIZE = QR_CELL_SIZE * 3 + spacingScale['sp-2'] * 2;
+/**
+ * The placeholder's fixed square. The inset is generous on purpose: the wrap
+ * container must have visibly more room than one row of cells needs, or a
+ * rounding difference could break the 3×3 into a ragged 2-per-row grid.
+ */
+const QR_PLACEHOLDER_SIZE = QR_GRID_SIZE + spacingScale['sp-6'] * 2;
+/**
+ * A FIXED, hand-written on/off pattern for the 3×3 placeholder mark. It encodes
+ * nothing and is not derived from any value — it exists only so the square reads
+ * as a deliberate stand-in for a scannable mark rather than as a loading
+ * skeleton or a broken image. Nothing generates a scannable mark this phase and
+ * no library capable of generating one is imported.
+ */
+const QR_PATTERN = [true, false, true, false, true, true, true, true, false] as const;
+
+/** UI-SPEC #54 — the card is one fixed-height surface. Expressed as a FLOOR
+ * rather than a hard height so a larger system font scale grows the card instead
+ * of clipping the copy inside it. */
+const QUIKS_CODE_CARD_MIN_HEIGHT = 200;
+
+/**
+ * The card's own view state. It is derived from the SINGLE `/me` query this
+ * screen runs, so the screen has exactly one loading surface and one error
+ * surface (UI-SPEC #50) — never one per block. The four list blocks below fetch
+ * nothing at all and therefore render regardless of what this state is.
+ */
+type QuiksCodeViewState =
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'data'; username: string | undefined };
 
 /**
  * D-10 / D-11 — the third tab, "Friends" (design `03 Friends`), in its full
@@ -52,8 +93,42 @@ export default function FriendsScreen() {
   const headingFont = fontFamilyForRole('title2', fontsReady);
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
   const microFont = fontFamilyForRole('micro', fontsReady);
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const cardTitleFont = fontFamilyForRole('bodyStrong', fontsReady);
+  const handleFont = fontFamilyForRole('countdown', fontsReady);
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
 
   const soonBadge = t`Soon`;
+
+  /**
+   * The ONE data source of this screen (D-10 keeps everything else offline) —
+   * and deliberately the SAME query key and client function the Profil screen
+   * uses, so both screens share one cache entry and opening Friends never fires
+   * a second request for the same body.
+   *
+   * T-06-24: `/me` is session-bound and returns only the signed-in account's own
+   * profile; there is no lookup of a foreign profile and no directory anywhere
+   * on this screen.
+   */
+  const meQuery = useQuery({ queryKey: ['me'], queryFn: () => apiClient.getMe() });
+
+  function computeQuiksCodeState(): QuiksCodeViewState {
+    if (meQuery.status === 'pending') return { kind: 'loading' };
+    if (meQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void meQuery.refetch() };
+    }
+    // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
+    // `status === 'error'` — branching it explicitly is what stops the card from
+    // rendering an empty identity on a real API failure.
+    if (meQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void meQuery.refetch() };
+    }
+    // `profile` is nullable in the contract (a brand-new OTP account has none),
+    // so the handle is optional all the way down to the render.
+    return { kind: 'data', username: meQuery.data.body.profile?.username };
+  }
+
+  const quiksCodeState = computeQuiksCodeState();
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
@@ -87,6 +162,99 @@ export default function FriendsScreen() {
             <Text style={[styles.badgeText, { fontFamily: microFont }]}>{soonBadge}</Text>
           </View>
         </Pressable>
+
+        {/* UI-SPEC #50 — the project-wide plain "Loading…" text pattern; ONE
+            query means ONE loading surface, never one per block. */}
+        {quiksCodeState.kind === 'loading' ? (
+          <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+            <Trans>Loading your quiks code…</Trans>
+          </Text>
+        ) : null}
+
+        {/* UI-SPEC #51 — the existing, word-for-word transport-error copy plus
+            one Retry, identical to the Profil screen's; no new wording is
+            invented for this surface. */}
+        {quiksCodeState.kind === 'error' ? (
+          <View style={styles.stateBlock}>
+            <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+              {quiksCodeState.variant === 'transport' ? (
+                <Trans>
+                  Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                  API.
+                </Trans>
+              ) : (
+                <Trans>Can't load your profile — check your connection and try again.</Trans>
+              )}
+            </Text>
+            <Pressable style={styles.retryButton} onPress={quiksCodeState.retry}>
+              <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                <Trans>Retry</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
+
+        {/* UI-SPEC #52 — the one surface on this screen that shows REAL data. */}
+        {quiksCodeState.kind === 'data' ? (
+          <View style={styles.codeCard}>
+            <View style={styles.codeCardBody}>
+              <View style={styles.codeCardText}>
+                <Text style={[styles.codeCardTitle, { fontFamily: cardTitleFont }]}>
+                  <Trans>Your quiks code</Trans>
+                </Text>
+                {/* UI-SPEC #49 — a missing handle omits this LINE entirely. It
+                    hangs on the value's own truthiness, never on a fallback
+                    string, so no empty slot and no placeholder dash can appear
+                    where an identity belongs. UI-SPEC #56 / ADR-012/020: the
+                    handle is single-line, tail-truncated and never translated. */}
+                {quiksCodeState.username ? (
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={[styles.handle, { fontFamily: handleFont }]}
+                  >
+                    @{quiksCodeState.username}
+                  </Text>
+                ) : null}
+                <Text style={[styles.codeCardBodyText, { fontFamily: bodySmFont }]}>
+                  <Trans>Show it, scan it, done — that's how you add each other.</Trans>
+                </Text>
+              </View>
+
+              {/* UI-SPEC #53 — a DELIBERATE static stand-in, badged as such, so
+                  it can never be read as an image that failed to load. */}
+              <View style={styles.qrColumn}>
+                <View
+                  style={styles.qrPlaceholder}
+                  accessible
+                  accessibilityLabel={t`Placeholder mark, coming soon`}
+                >
+                  {QR_PATTERN.map((filled, index) => (
+                    <View
+                      key={index}
+                      style={[styles.qrCell, filled ? styles.qrCellFilled : null]}
+                    />
+                  ))}
+                </View>
+                <View style={styles.badge}>
+                  <Text style={[styles.badgeText, { fontFamily: microFont }]}>{soonBadge}</Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Placeholder Pattern A — the ONLY dampened element on this screen. */}
+            <Pressable
+              style={styles.qrButton}
+              onPress={() => showSoonToast(t`Adding by QR is coming soon.`)}
+              accessibilityRole="button"
+              accessibilityLabel={t`Show QR, coming soon`}
+            >
+              <Text style={[styles.qrButtonText, { fontFamily: buttonFont }]}>
+                <Trans>Show QR</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        ) : null}
 
         <View style={styles.section}>
           <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
@@ -188,6 +356,92 @@ function createStyles(colors: ThemeColors) {
     badgeText: {
       fontSize: typeRoles.micro.size,
       color: colors.textMuted,
+    },
+    helper: {
+      fontSize: typeRoles.body.size,
+      color: colors.textSecondary,
+    },
+    stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
+    // The status-hue rule: an error rendered as TEXT always resolves through
+    // `dangerText`, never the bare `danger` fill (2.98:1 on Papier).
+    error: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
+    },
+    retryButton: {
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    retryButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    codeCard: {
+      minHeight: QUIKS_CODE_CARD_MIN_HEIGHT,
+      gap: spacingScale['sp-5'],
+      padding: spacingScale['sp-6'],
+      backgroundColor: colors.surfaceCard,
+      borderRadius: radiiScale['r-card'],
+      borderWidth: 1,
+      borderColor: colors.borderSubtle,
+    },
+    codeCardBody: {
+      flexGrow: 1,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-6'],
+    },
+    // `minWidth: 0` lets the text column actually wrap instead of pushing the
+    // row wider than the card.
+    codeCardText: { flexGrow: 1, flexShrink: 1, minWidth: 0, gap: spacingScale['sp-1'] },
+    codeCardTitle: {
+      fontSize: typeRoles.bodyStrong.size,
+      lineHeight: typeRoles.bodyStrong.size * typeRoles.bodyStrong.lineHeight,
+      color: colors.textPrimary,
+    },
+    // UI-SPEC § Color, accent item 4 — the handle is the brand-text precedent,
+    // identical to the Profil header's.
+    handle: {
+      fontSize: typeRoles.countdown.size,
+      lineHeight: typeRoles.countdown.size * typeRoles.countdown.lineHeight,
+      color: colors.primary,
+    },
+    codeCardBodyText: {
+      fontSize: typeRoles.bodySm.size,
+      lineHeight: typeRoles.bodySm.size * typeRoles.bodySm.lineHeight,
+      color: colors.textMuted,
+    },
+    qrColumn: { alignItems: 'center', gap: spacingScale['sp-2'] },
+    qrPlaceholder: {
+      width: QR_PLACEHOLDER_SIZE,
+      height: QR_PLACEHOLDER_SIZE,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignContent: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-2'],
+      padding: spacingScale['sp-4'],
+      backgroundColor: colors.fillQuiet,
+      borderRadius: radiiScale['r-md'],
+    },
+    qrCell: { width: QR_CELL_SIZE, height: QR_CELL_SIZE },
+    qrCellFilled: { backgroundColor: colors.textMuted },
+    qrButton: {
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.fillQuiet,
+      borderRadius: radiiScale['r-pill'],
+      opacity: PATTERN_A_OPACITY,
+    },
+    qrButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textPrimary,
     },
     section: { gap: spacingScale['sp-5'] },
     sectionHead: {
