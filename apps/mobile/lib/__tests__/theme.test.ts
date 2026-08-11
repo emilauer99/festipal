@@ -1,7 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { typeRoles } from '@quiks/ui';
 
-import { resolveTheme, resolveThemeColors, resolveThemeMode, type ThemeColors } from '../theme';
+import {
+  resolveEffectiveThemeMode,
+  resolveTheme,
+  resolveThemeColors,
+  resolveThemeMode,
+  type ThemeColors,
+  type ThemeOverride,
+} from '../theme';
 
 /** CI v1.0 literals (docs/brand/quiks-ci-v1.md §3/§6) — the values this suite gates. */
 const BEERE = '#E8559F';
@@ -184,5 +191,58 @@ describe('CI v1.0 type roles (CI §4 / D-08, D-09)', () => {
     expect(typeRoles.body.size).toBe(15);
     expect(typeRoles.body.weight).toBe('400');
     expect(typeRoles.body.lineHeight).toBe(1.45);
+  });
+});
+
+// 06-03 / D-08a — the persisted override is a LAYER ABOVE the 05.1 device
+// resolution, never a replacement for it. The `resolveThemeMode` describe block
+// at the top of this file is deliberately left untouched: it stays the gate on
+// the hell-first invariant, and the `'system'` branch below is asserted to
+// produce EXACTLY the same answers, so a future "simplification" that inlines
+// the scheme check into the override path fails here.
+describe('resolveEffectiveThemeMode (persisted override above the device scheme, D-08a)', () => {
+  it("forces dark even when the device says light — 'dark' wins over the scheme", () => {
+    expect(resolveEffectiveThemeMode('dark', 'light')).toBe('dark');
+  });
+
+  it("forces light even when the device says dark — 'light' wins over the scheme", () => {
+    expect(resolveEffectiveThemeMode('light', 'dark')).toBe('light');
+  });
+
+  it("follows a dark device in 'system'", () => {
+    expect(resolveEffectiveThemeMode('system', 'dark')).toBe('dark');
+  });
+
+  it("follows a light device in 'system'", () => {
+    expect(resolveEffectiveThemeMode('system', 'light')).toBe('light');
+  });
+
+  it("resolves an UNRESOLVED scheme (null) to light in 'system' — the 05.1 invariant", () => {
+    expect(resolveEffectiveThemeMode('system', null)).toBe('light');
+  });
+
+  it("resolves undefined to light in 'system' — same unresolved case, different shape", () => {
+    expect(resolveEffectiveThemeMode('system', undefined)).toBe('light');
+  });
+
+  it("resolves RN's 'unspecified' to light in 'system'", () => {
+    expect(resolveEffectiveThemeMode('system', 'unspecified')).toBe('light');
+  });
+
+  it("delegates the whole 'system' branch to resolveThemeMode, value for value", () => {
+    const schemes = ['light', 'dark', null, undefined, 'unspecified'] as const;
+    for (const scheme of schemes) {
+      expect(resolveEffectiveThemeMode('system', scheme)).toBe(resolveThemeMode(scheme));
+    }
+  });
+
+  it('ignores the device scheme entirely for both explicit overrides', () => {
+    const schemes = ['light', 'dark', null, undefined, 'unspecified'] as const;
+    const explicit: ThemeOverride[] = ['light', 'dark'];
+    for (const override of explicit) {
+      for (const scheme of schemes) {
+        expect(resolveEffectiveThemeMode(override, scheme)).toBe(override);
+      }
+    }
   });
 });
