@@ -88,6 +88,7 @@ All commands run from the repo root via pnpm + Turborepo (exact scripts finalize
 - **Shared code:** cross-app logic/types belong in `packages/*`, never copy-pasted between apps.
 - **UI components:** mobile uses owned RN-primitive components in `packages/ui` styled via shared tokens (no third-party UI kit); admin uses shadcn/ui + Tailwind with minimized custom CSS — see ADR-022.
 - **Git:** Trunk-based, short-lived feature branches, Conventional Commits, squash-merge via PR — **never commit directly to `main`**. Full rules in `docs/GIT_CONVENTIONS.md`.
+- **Parallel workstreams:** GSD planning is split into `.planning/workstreams/{mobile,admin}/` — the visitor app and the admin/staff UI are planned by two concurrent sessions. Scope every GSD command with `--ws`. `packages/contracts`, `packages/db` and `packages/ui` are the shared collision zones: only one stream changes them at a time, and admin's schema work must be additive. Details in `.claude/CLAUDE.md`.
 - **Before finishing a change:** run lint, typecheck and the relevant tests; report failures honestly.
 
 ## Claude Code Working Notes
