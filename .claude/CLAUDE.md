@@ -420,3 +420,38 @@ Do not make direct repo edits outside a GSD workflow unless the user explicitly 
 > Profile not yet configured. Run `/gsd-profile-user` to generate your developer profile.
 > This section is managed by `generate-claude-profile` -- do not edit manually.
 <!-- GSD:profile-end -->
+
+## Parallel Workstreams (GSD)
+
+> Hand-written section, deliberately placed after the last GSD marker block so a regeneration
+> cannot overwrite it.
+
+`.planning/` runs in **workstream mode**: two streams are planned concurrently by two Claude
+sessions against the same monorepo.
+
+| Workstream | Scope | Code |
+|---|---|---|
+| `mobile` | Visitor Expo app — v1.0 Rollout, Phase 6 next | `apps/mobile` |
+| `admin` | Admin/staff web UI — own milestone, not started | `apps/admin` (not scaffolded yet) |
+
+`ROADMAP.md`, `STATE.md`, `REQUIREMENTS.md` and `phases/` are per-stream under
+`.planning/workstreams/<name>/`. `PROJECT.md`, `config.json`, `codebase/`, `research/`, `quick/`,
+`debug/`, `scripts/`, `WINDOWS.md` and `ui-reviews/` stay shared at `.planning/` — both streams
+read the same ADRs and project decisions.
+
+**Scope every GSD command to a stream.** Pass `--ws mobile` / `--ws admin`, or set
+`GSD_WORKSTREAM` in the terminal before launching the session. Unscoped, GSD can resolve the other
+stream's `STATE.md`.
+
+**Serialize shared-package changes.** `packages/contracts` and `packages/db` are where the two
+streams genuinely collide: `drizzle-zod` propagates a schema change into every app, so concurrent
+edits break the other stream's typecheck. Only one stream touches them at a time. Admin's
+identity/staff-role work must be **additive** — new tables, no changes to `visitor_profile` or
+`my_festival` (ADR-014/016/021). `packages/ui` is shared as well: mobile consumes the RN tokens,
+admin consumes Tailwind/shadcn (ADR-022) — how CI v1.0 tokens bridge into Tailwind needs an ADR
+before admin styling starts.
+
+**Local infrastructure is shared.** Only one session runs the API on 8081 (Metro defaults to 8081
+too); admin's Next.js takes 3000. Both streams use the one local Docker Postgres — `docker-compose.yml`
+carries an explicit `name: quiks`, so the stack is controllable from either worktree and does not
+depend on the directory name.
