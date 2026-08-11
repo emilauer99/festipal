@@ -512,6 +512,7 @@ function createSplashStyles(colors: ThemeColors) {
     },
     wordmark: {
       fontSize: typeRoles.wordmark.size,
+      letterSpacing: typeRoles.wordmark.letterSpacing,
       lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
       color: colors.textPrimary,
     },

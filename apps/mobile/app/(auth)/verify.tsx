@@ -221,6 +221,7 @@ function createStyles(colors: ThemeColors) {
     },
     heading: {
       fontSize: typeRoles.display2.size,
+      letterSpacing: typeRoles.display2.letterSpacing,
       lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
       color: colors.textPrimary,
     },

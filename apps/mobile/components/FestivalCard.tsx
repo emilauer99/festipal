@@ -237,6 +237,7 @@ function createStyles(colors: ThemeColors) {
     },
     nameHero: {
       fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
       // On the raw Sunset fill, in BOTH modes — the gradient does not invert.
       color: colors.textOnGradient,
     },

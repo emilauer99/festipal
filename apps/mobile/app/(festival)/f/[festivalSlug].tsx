@@ -239,6 +239,7 @@ function createStyles(colors: ThemeColors) {
     },
     heading: {
       fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
       lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
       color: colors.textPrimary,
       textAlign: 'center',
@@ -265,6 +266,7 @@ function createStyles(colors: ThemeColors) {
     },
     name: {
       fontSize: typeRoles.display2.size,
+      letterSpacing: typeRoles.display2.letterSpacing,
       lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
       color: colors.textPrimary,
     },

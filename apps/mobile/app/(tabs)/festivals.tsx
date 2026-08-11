@@ -424,6 +424,7 @@ function createStyles(colors: ThemeColors) {
     },
     heading: {
       fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
       lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
       color: colors.textPrimary,
     },

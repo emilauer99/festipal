@@ -77,6 +77,7 @@ function createStyles(colors: ThemeColors) {
     // light text on Ink in dark)…
     wordmark: {
       fontSize: typeRoles.wordmark.size,
+      letterSpacing: typeRoles.wordmark.letterSpacing,
       lineHeight: typeRoles.wordmark.size * typeRoles.wordmark.lineHeight,
       color: colors.textPrimary,
     },
@@ -87,6 +88,7 @@ function createStyles(colors: ThemeColors) {
     },
     tagline: {
       fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
       lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
       color: colors.textSecondary,
       maxWidth: 300,

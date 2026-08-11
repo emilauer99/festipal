@@ -97,6 +97,7 @@ function createStyles(colors: ThemeColors) {
     },
     initialsText: {
       fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
       color: colors.primary,
     },
   });
