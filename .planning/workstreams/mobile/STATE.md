@@ -5,11 +5,11 @@ milestone_name: Rollout
 current_phase: 6
 current_phase_name: Profile & Friends Placeholders
 status: "Phase 05.1 shipped — PR #11"
-stopped_at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
-last_updated: "2026-08-11T14:11:28.137Z"
+stopped_at: Phase 6 context gathered
+last_updated: "2026-08-11T16:10:00.123Z"
 last_activity: 2026-08-11
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 6
   total_plans: 40
   completed_plans: 40
@@ -255,6 +255,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11
-Stopped at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
-Resume file: None
+Last session: 2026-08-11T16:10:00.082Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/workstreams/mobile/phases/06-profile-friends-placeholders/06-CONTEXT.md
