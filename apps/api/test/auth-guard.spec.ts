@@ -98,7 +98,7 @@ describe('auth guard (SEC-01 comprehensive)', () => {
       const res = await request(app.getHttpServer())
         .post('/api/auth/email-otp/send-verification-otp')
         .set('origin', origin)
-        .send({ email: `auth-guard-baseline-${randomUUID()}@festipal.dev`, type: 'sign-in' });
+        .send({ email: `auth-guard-baseline-${randomUUID()}@quiks.dev`, type: 'sign-in' });
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject({ success: true });
     });

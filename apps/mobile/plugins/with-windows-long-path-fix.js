@@ -10,7 +10,7 @@
 const { withProjectBuildGradle } = require('expo/config-plugins');
 const os = require('node:os');
 
-const MARKER = '// festipal-windows-long-path-fix';
+const MARKER = '// quiks-windows-long-path-fix';
 
 const GRADLE_BLOCK = `
 ${MARKER}

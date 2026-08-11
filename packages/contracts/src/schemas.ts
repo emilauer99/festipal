@@ -2,13 +2,13 @@ import {
   festivalSelectSchema,
   visitorProfileInsertSchema,
   visitorProfileSelectSchema,
-} from '@festipal/db/schema';
+} from '@quiks/db/schema';
 import { z } from 'zod';
 
 import { localeSchema } from './locale';
 
 /**
- * Drift-detection proof (D-08, Pitfall 1/6): composed on the `@festipal/db`
+ * Drift-detection proof (D-08, Pitfall 1/6): composed on the `@quiks/db`
  * drizzle-zod `festivalSelectSchema` base, NOT a hand-mirrored `z.object` —
  * renaming a `festival` column now breaks this typecheck instead of
  * drifting silently. `supportedLocales` is NOT a column on `festival`
@@ -42,7 +42,7 @@ export const tagSchema = z.object({
 export type Tag = z.infer<typeof tagSchema>;
 
 /**
- * Drift-detection proof (D-02, D-03): composed on the `@festipal/db` drizzle-zod
+ * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod
  * base — NOT a hand-mirrored `z.object` (PITFALLS.md Pitfall 6) — so renaming a
  * `visitor_profile` column breaks this typecheck instead of silently drifting.
  * Deliberately picks only the non-reserved columns: `socials`/`socialsVisibility`

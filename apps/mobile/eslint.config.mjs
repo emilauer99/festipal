@@ -1,4 +1,4 @@
-import base from '@festipal/config/eslint';
+import base from '@quiks/config/eslint';
 import i18next from 'eslint-plugin-i18next';
 
 export default [
@@ -57,7 +57,7 @@ export default [
             exclude: [
               '[0-9!-/:-@[-`{-~]+', // punctuation/symbols only (plugin default)
               '[A-Z_-]+', // SCREAMING_SNAKE_CASE / all-caps constants (plugin default)
-              'festipal', // UI-SPEC: brand/proper noun, never translated (D-04)
+              'quiks', // UI-SPEC: brand/proper noun, never translated (D-04)
             ],
           },
         },

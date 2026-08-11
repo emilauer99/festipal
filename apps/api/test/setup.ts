@@ -6,7 +6,7 @@ import './force-otp-dev-transport';
 
 import type { INestApplication } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { createDatabase, type Database } from '@festipal/db';
+import { createDatabase, type Database } from '@quiks/db';
 
 import { AppModule } from '../src/app.module';
 

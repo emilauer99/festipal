@@ -1,10 +1,10 @@
 # CLAUDE.md
 
-Guidance for Claude Code when working in the **festipal** repository.
+Guidance for Claude Code when working in the **quiks** repository.
 
 ## Project Overview
 
-festipal is a festival app: overview, site map (Lageplan), timetable, news/updates and
+quiks is a festival app: overview, site map (Lageplan), timetable, news/updates and
 cashless integration — plus two differentiating features: a **festival & camping-spot
 swap marketplace** and **activities / connecting with friends**. Long-term goal: one
 **multi-tenant** app reused across every partnering festival (one festival = one tenant).
@@ -14,6 +14,25 @@ before making architectural changes.
 
 > **Status: greenfield.** The monorepo is being scaffolded. Commands and paths below are
 > the intended structure; update this file with exact commands as scaffolding lands.
+
+## Brand & Design
+
+- Binding brand source: [`docs/brand/quiks-ci-v1.md`](docs/brand/quiks-ci-v1.md) (ADR-023, quiks CI v1.0).
+- Primary Beere `#E8559F`, secondary Amber `#FFC53D`.
+- Sunset (150° Amber → Beere) is the only allowed gradient — mark and hero surfaces only.
+- Hell-first (light-first): Papier `#F7F5F2` is the default surface; dark mode is the "night shift".
+  Wired up in phase 05.1: `apps/mobile/lib/theme.ts` resolves the device scheme, and only the exact
+  value `dark` yields the night-shift set — everything else, including an unresolved scheme, yields
+  `lightColors`. Both modes are live, so treat light as the case to check first.
+- The Outfit roles carry their CI tracking in the `typeRoles` tokens: a style that takes its size
+  from a tracked role must set that role's `letterSpacing` too — the `apps/mobile` suite fails if it
+  does not.
+- The ADR-024 rename has LANDED (phase 05.1): packages are `@quiks/*`, the bundle ID is
+  `at.quiks.app` and the app URL scheme is `quiks`. Nothing in the codebase carries the old
+  product name any more — historical design assets under `docs/concept/designs/` keep their
+  original filenames on purpose and are the only exception.
+- The wordmark renders as lowercase `quiks` with a separately-coloured trailing period; it is
+  a proper noun and is never wrapped in Lingui.
 
 ## Tech Stack
 

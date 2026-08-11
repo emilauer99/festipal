@@ -7,7 +7,7 @@
 // and cause drift from the library's real runtime schema.
 //
 // Regenerate after upgrading better-auth or changing plugins in auth.config.ts:
-//   pnpm --filter @festipal/db exec auth generate \
+//   pnpm --filter @quiks/db exec auth generate \
 //     --adapter drizzle --dialect postgresql \
 //     --config ./auth.config.ts --output ./src/schema/auth.ts --yes
 //

@@ -163,7 +163,7 @@ msgstr "Friends"
 msgid "Get a new code."
 msgstr "Get a new code."
 
-#: app/(auth)/index.tsx
+#: app/(auth)/welcome.tsx
 msgid "Get started"
 msgstr "Get started"
 
@@ -355,13 +355,13 @@ msgstr "We'll send you a 6-digit code — no password needed."
 msgid "We'll send you a code in a moment."
 msgstr "We'll send you a code in a moment."
 
-#: app/(auth)/index.tsx
+#: app/(auth)/welcome.tsx
 msgid "Welcome"
 msgstr "Welcome"
 
 #: app/index.tsx
-#~ msgid "Welcome to festipal"
-#~ msgstr "Welcome to festipal"
+#~ msgid "Welcome to quiks"
+#~ msgstr "Welcome to quiks"
 
 #: app/(auth)/email.tsx
 msgid "you@example.com"
@@ -375,7 +375,7 @@ msgstr "Your email"
 #~ msgid "Your festival overview is coming soon."
 #~ msgstr "Your festival overview is coming soon."
 
-#: app/(auth)/index.tsx
+#: app/(auth)/welcome.tsx
 msgid "Your festivals, your crew, your plan."
 msgstr "Your festivals, your crew, your plan."
 

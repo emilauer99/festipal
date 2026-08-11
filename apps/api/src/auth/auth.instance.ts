@@ -2,7 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { emailOTP } from 'better-auth/plugins';
 import { expo } from '@better-auth/expo';
-import { account, createDatabase, session, user, verification } from '@festipal/db';
+import { account, createDatabase, session, user, verification } from '@quiks/db';
 
 import { env } from '../config/env';
 import { createOtpEmailProvider } from './email/otp-email-provider';
@@ -26,7 +26,11 @@ export const auth = betterAuth({
   // D-05 — the Expo client's requests originate from the app scheme, not an
   // HTTP(S) Origin; better-auth's Origin/CSRF check needs these whitelisted.
   trustedOrigins: [
-    'festipal://', // D-05 working title — keep in sync if scheme changes
+    // ADR-024 — MUST stay in sync with apps/mobile/app.json's `expo.scheme`
+    // and apps/mobile/lib/auth-client.ts's expoClient `scheme`. Exactly ONE
+    // app-scheme entry: a transitional both-schemes state would be a
+    // permanently widened origin allowlist (T-05.1-02).
+    'quiks://',
     'exp://', // Expo dev-client (Metro) scheme during `expo run:*`
     'exp://**', // Metro dev-client wildcard — dev-only, never used in prod builds
   ],

@@ -5,8 +5,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { LogOut } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { tokens } from '@festipal/ui';
-import type { Festival } from '@festipal/contracts';
+import { tokens } from '@quiks/ui';
+import type { Festival } from '@quiks/contracts';
 
 import { apiClient } from '../../lib/api-client';
 import { authClient } from '../../lib/auth-client';
@@ -14,17 +14,22 @@ import { clearActiveFestivalSlug, syncActiveFestivalOnEnter } from '../../lib/ac
 import { festivalKeys, unwrapOk } from '../../lib/festival-queries';
 import { consumeFestivalsSegment } from '../../lib/festivals-segment-request';
 import { i18n } from '../../lib/i18n';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import type { ThemeColors } from '../../lib/theme';
+import { useTheme } from '../../lib/theme-context';
 import { forceUnauthenticated } from '../_layout';
 import { FestivalCard } from '../../components/FestivalCard';
 import { SegmentedControl } from '../../components/SegmentedControl';
 
 // IN-02 (05-REVIEW.md) — `radiiScale['r-pill']`, not the generic `radii.pill`,
 // for the pill-radius CTA button: matches home.tsx's identical CTA and the
-// `@festipal/ui` intent (see tokens.ts's `radiiScale` docstring — "used by
+// `@quiks/ui` intent (see tokens.ts's `radiiScale` docstring — "used by
 // Phase 5 primitives... do not overload the generic `radii` object above").
-const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
+//
+// 05.1 D-01: colour roles are deliberately NOT destructured here — they resolve
+// per render through `useTheme()`. Only the mode-invariant scales stay module-level.
+const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 type Segment = 'meine' | 'alle';
 
@@ -63,9 +68,16 @@ type SegmentViewState =
 export default function FestivalsScreen() {
   const router = useRouter();
   const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
-  const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
+  // Role-resolved families (05.1 D-10): every role maps to a REAL weight file,
+  // so the matching style objects carry no numeric `fontWeight` — an override
+  // on top of a real weight file is what makes the device synthesise faux-bold.
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const headingFont = fontFamilyForRole('title2', fontsReady);
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
   const queryClient = useQueryClient();
   const params = useLocalSearchParams<{ segment?: string | string[] }>();
 
@@ -330,7 +342,7 @@ export default function FestivalsScreen() {
       </View>
 
       {segment === 'alle' && saveError ? (
-        <Text style={[styles.error, styles.saveError, { fontFamily: bodyFont }]}>{saveError}</Text>
+        <Text style={[styles.error, styles.saveError, { fontFamily: bodySmFont }]}>{saveError}</Text>
       ) : null}
 
       {viewState.kind === 'loading' ? (
@@ -341,7 +353,7 @@ export default function FestivalsScreen() {
 
       {viewState.kind === 'error' ? (
         <View style={styles.stateBlock}>
-          <Text style={[styles.error, { fontFamily: bodyFont }]}>
+          <Text style={[styles.error, { fontFamily: bodySmFont }]}>
             {viewState.variant === 'transport' ? (
               <Trans>
                 Can't reach the server — make sure your device is on the same Wi-Fi as the dev API.
@@ -351,7 +363,7 @@ export default function FestivalsScreen() {
             )}
           </Text>
           <Pressable style={styles.button} onPress={viewState.retry}>
-            <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+            <Text style={[styles.buttonText, { fontFamily: buttonFont }]}>
               <Trans>Retry</Trans>
             </Text>
           </Pressable>
@@ -360,14 +372,14 @@ export default function FestivalsScreen() {
 
       {viewState.kind === 'empty' && segment === 'meine' ? (
         <View style={styles.stateBlock}>
-          <Text style={[styles.heading, { fontFamily: displayFont }]}>
+          <Text style={[styles.heading, { fontFamily: headingFont }]}>
             <Trans>No saved festivals yet</Trans>
           </Text>
           <Text style={[styles.helper, { fontFamily: bodyFont }]}>
             <Trans>Switch to 'All' and save one with a tap.</Trans>
           </Text>
           <Pressable style={styles.button} onPress={() => setSegment('alle')}>
-            <Text style={[styles.buttonText, { fontFamily: bodyFont }]}>
+            <Text style={[styles.buttonText, { fontFamily: buttonFont }]}>
               <Trans>Switch to All</Trans>
             </Text>
           </Pressable>
@@ -376,7 +388,7 @@ export default function FestivalsScreen() {
 
       {viewState.kind === 'empty' && segment === 'alle' ? (
         <View style={styles.stateBlock}>
-          <Text style={[styles.heading, { fontFamily: displayFont }]}>
+          <Text style={[styles.heading, { fontFamily: headingFont }]}>
             <Trans>No festivals yet</Trans>
           </Text>
           <Text style={[styles.helper, { fontFamily: bodyFont }]}>
@@ -397,49 +409,53 @@ export default function FestivalsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  screen: { flex: 1, padding: layout.screenPad, backgroundColor: colors.bgApp },
-  segmentedControlWrapper: { marginBottom: spacingScale['sp-6'] },
-  // 05-05 — this screen sits inside the (tabs) shell, under the floating
-  // nav; scrollBottomPad keeps the last row clear of it. sp-5 (12px) row gap
-  // per UI-SPEC `festivals-list` populated state.
-  listContent: { paddingBottom: layout.scrollBottomPad, gap: spacingScale['sp-5'] },
-  stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
-  helper: {
-    fontSize: typeRoles.body.size,
-    color: colors.textSecondary,
-  },
-  heading: {
-    fontSize: typeRoles.title2.size,
-    fontWeight: typeRoles.title2.weight,
-    lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
-    color: colors.textPrimary,
-  },
-  error: {
-    color: colors.danger,
-    fontSize: typeRoles.bodySm.size,
-  },
-  saveError: { marginBottom: spacingScale['sp-4'] },
-  button: {
-    minHeight: layout.hitMin,
-    paddingHorizontal: spacingScale['sp-8'],
-    backgroundColor: colors.primary,
-    borderRadius: radiiScale['r-pill'],
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  buttonText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-  // AUTH-04 — icon-only, neutral tint (NOT danger; logout is reversible, no
-  // confirmation dialog, UI-SPEC ## Color "Not used for logout"); 44px hit
-  // target per --hit-min even though the glyph itself is 20px.
-  logoutButton: {
-    width: layout.hitMin,
-    height: layout.hitMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    screen: { flex: 1, padding: layout.screenPad, backgroundColor: colors.bgApp },
+    segmentedControlWrapper: { marginBottom: spacingScale['sp-6'] },
+    // 05-05 — this screen sits inside the (tabs) shell, under the floating
+    // nav; scrollBottomPad keeps the last row clear of it. sp-5 (12px) row gap
+    // per UI-SPEC `festivals-list` populated state.
+    listContent: { paddingBottom: layout.scrollBottomPad, gap: spacingScale['sp-5'] },
+    stateBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
+    helper: {
+      fontSize: typeRoles.body.size,
+      color: colors.textSecondary,
+    },
+    heading: {
+      fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
+      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      color: colors.textPrimary,
+    },
+    // UI-SPEC E5/error — BOTH list error surfaces (this block and the
+    // saveError banner) are TEXT, so they resolve through `dangerText`
+    // (4.54:1 on Papier), never the bare `danger` fill hue (2.98:1).
+    error: {
+      color: colors.dangerText,
+      fontSize: typeRoles.bodySm.size,
+    },
+    saveError: { marginBottom: spacingScale['sp-4'] },
+    button: {
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    // AUTH-04 — icon-only, neutral tint (NOT danger; logout is reversible, no
+    // confirmation dialog, UI-SPEC ## Color "Not used for logout"); 44px hit
+    // target per --hit-min even though the glyph itself is 20px.
+    logoutButton: {
+      width: layout.hitMin,
+      height: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+  });
+}

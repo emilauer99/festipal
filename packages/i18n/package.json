@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/i18n",
+  "name": "@quiks/i18n",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -21,11 +21,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@festipal/contracts": "workspace:*",
+    "@quiks/contracts": "workspace:*",
     "@lingui/core": "^6.6.0"
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "tsup": "^8.5.1",
     "typescript": "6.0.3",
     "vitest": "^4.1.10"

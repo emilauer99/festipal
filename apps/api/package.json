@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/api",
+  "name": "@quiks/api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@better-auth/expo": "1.6.25",
-    "@festipal/contracts": "workspace:*",
-    "@festipal/db": "workspace:*",
+    "@quiks/contracts": "workspace:*",
+    "@quiks/db": "workspace:*",
     "@nestjs/common": "^11.1.28",
     "@nestjs/core": "^11.1.28",
     "@nestjs/platform-express": "^11.1.28",
@@ -30,7 +30,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "@nestjs/cli": "^11.0.24",
     "@nestjs/schematics": "^11.1.0",
     "@nestjs/testing": "^11.1.28",

@@ -2,8 +2,8 @@ import { randomUUID } from 'node:crypto';
 
 import { inArray } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { user, visitorProfile, type Database } from '@festipal/db';
-import { completeProfileBodySchema } from '@festipal/contracts';
+import { user, visitorProfile, type Database } from '@quiks/db';
+import { completeProfileBodySchema } from '@quiks/contracts';
 
 import { MeService } from '../src/me/me.service';
 import { createTestDatabase } from './setup';
@@ -29,8 +29,8 @@ describe('username-race (Pitfall 11 / SC-5)', () => {
     me = new MeService(db);
 
     await db.insert(user).values([
-      { id: accountA, name: 'Race Test A', email: `${accountA}@festipal.dev` },
-      { id: accountB, name: 'Race Test B', email: `${accountB}@festipal.dev` },
+      { id: accountA, name: 'Race Test A', email: `${accountA}@quiks.dev` },
+      { id: accountB, name: 'Race Test B', email: `${accountB}@quiks.dev` },
     ]);
   });
 

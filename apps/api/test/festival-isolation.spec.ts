@@ -8,7 +8,7 @@ import type { INestApplication } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { festival, myFestival, user, visitorProfile, type Database } from '@festipal/db';
+import { festival, myFestival, user, visitorProfile, type Database } from '@quiks/db';
 
 import { createTestApp, createTestDatabase } from './setup';
 
@@ -62,7 +62,7 @@ async function createVisitor(
   db: Database,
   label: string,
 ): Promise<{ accountId: string; cookie: string }> {
-  const email = `festival-isolation-${label}-${randomUUID()}@festipal.dev`;
+  const email = `festival-isolation-${label}-${randomUUID()}@quiks.dev`;
   const cookie = await signInWithOtp(app, email);
 
   const [u] = await db.select({ id: user.id }).from(user).where(eq(user.email, email)).limit(1);

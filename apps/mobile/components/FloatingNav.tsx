@@ -1,21 +1,28 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Home, Tent, UserRound, Users, type LucideIcon } from 'lucide-react-native';
 import { useLingui } from '@lingui/react/macro';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
 
-import { FONT_BODY, resolveFontFamily } from '../lib/fonts';
+import { fontFamilyForRole } from '../lib/fonts';
 import { useFontsReady } from '../lib/fonts-context';
+import type { ThemeColors } from '../lib/theme';
+import { useTheme } from '../lib/theme-context';
 
-const { colors, typeRoles, layout, radiiScale, spacingScale } = tokens;
+// Colour roles are deliberately NOT destructured here: they resolve per render
+// through `useTheme()` (05.1 D-01). Only the mode-invariant scales stay at
+// module scope.
+const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 const ICON_SIZE = 22;
 const ACTIVE_STROKE = 2.4;
 const INACTIVE_STROKE = 2;
 // Approximates the mockup's --glass-blur: 22px / --glass-saturate: 180% (UI-SPEC
 // Tab bar contract) — expo-blur's `intensity` has no 1:1 px mapping to CSS
-// `backdrop-filter: blur()`, tuned by eye against the source design.
+// `backdrop-filter: blur()`, tuned by eye against the source design. Mode-
+// invariant: only the `tint` and the glass fill/border follow the theme.
 const BLUR_INTENSITY = 60;
 
 type LiveRouteName = 'home' | 'festivals';
@@ -40,11 +47,24 @@ function isLiveRouteName(name: string): name is LiveRouteName {
  * 6) — they cannot navigate by construction, on top of the explicit
  * `disabled` prop + `accessibilityState` belt-and-suspenders (REVIEW 05-05
  * MEDIUM: disabled must not rely on the a11y flag alone).
+ *
+ * 05.1 D-03 + UI-SPEC E3: the glass follows the colour mode on BOTH axes —
+ * `glassFill`/`glassBorder` come from the resolved theme AND the native
+ * `BlurView` `tint` flips with it. Changing only the fill leaves the native
+ * blur reading dark under a light surface, so the two must never diverge.
+ * `useTheme()` falls back to the LIGHT set for an unresolved device scheme
+ * (lib/theme.ts), so neither role can ever be undefined and the nav can never
+ * paint transparent on its first frame (UI-SPEC E3/loading).
  */
 export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
   const { t } = useLingui();
+  const { mode, colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
+  // Role-resolved: `micro` maps to a real 700 file, so the style carries no
+  // numeric fontWeight (05.1 D-10 — an override on a real weight file is what
+  // produces device faux-bold).
+  const labelFont = fontFamilyForRole('micro', fontsReady);
   // Pitfall 4 — accessibilityLabel is excluded from eslint's
   // `no-literal-string` jsx-attributes check, so this suffix is routed
   // through Lingui explicitly rather than relied on as a lint-caught literal.
@@ -68,7 +88,11 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
         },
       ]}
     >
-      <BlurView intensity={BLUR_INTENSITY} tint="dark" style={styles.blur}>
+      <BlurView
+        intensity={BLUR_INTENSITY}
+        tint={mode === 'light' ? 'light' : 'dark'}
+        style={styles.blur}
+      >
         <View style={styles.row}>
           {state.routes.map((route, index) => {
             const focused = index === state.index;
@@ -93,7 +117,7 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
                 <Text
                   style={[
                     styles.label,
-                    { fontFamily: bodyFont, color: focused ? colors.primary : colors.textMuted },
+                    { fontFamily: labelFont, color: focused ? colors.primary : colors.textMuted },
                   ]}
                 >
                   {label}
@@ -106,13 +130,17 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
             icon={Users}
             label={t`Friends`}
             comingSoonSuffix={comingSoonSuffix}
-            bodyFont={bodyFont}
+            labelFont={labelFont}
+            styles={styles}
+            mutedColor={colors.textMuted}
           />
           <DisabledNavItem
             icon={UserRound}
             label={t`Profile`}
             comingSoonSuffix={comingSoonSuffix}
-            bodyFont={bodyFont}
+            labelFont={labelFont}
+            styles={styles}
+            mutedColor={colors.textMuted}
           />
         </View>
       </BlurView>
@@ -126,17 +154,25 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
  * only `accessibilityState`, REVIEW 05-05 MEDIUM) and the `onPress` is an
  * explicit no-op for clarity even though `disabled` already prevents it
  * firing.
+ *
+ * Takes the parent's resolved `styles` and muted colour as props rather than
+ * calling `useTheme()` itself, so the whole nav builds exactly ONE stylesheet
+ * per mode change instead of three.
  */
 function DisabledNavItem({
   icon: Icon,
   label,
   comingSoonSuffix,
-  bodyFont,
+  labelFont,
+  styles,
+  mutedColor,
 }: {
   icon: LucideIcon;
   label: string;
   comingSoonSuffix: string;
-  bodyFont: string | undefined;
+  labelFont: string | undefined;
+  styles: NavStyles;
+  mutedColor: string;
 }) {
   return (
     <Pressable
@@ -147,52 +183,55 @@ function DisabledNavItem({
       accessibilityState={{ disabled: true }}
       accessibilityLabel={`${label} — ${comingSoonSuffix}`}
     >
-      <Icon size={ICON_SIZE} color={colors.textMuted} strokeWidth={INACTIVE_STROKE} />
-      <Text style={[styles.label, { fontFamily: bodyFont, color: colors.textMuted }]}>{label}</Text>
+      <Icon size={ICON_SIZE} color={mutedColor} strokeWidth={INACTIVE_STROKE} />
+      <Text style={[styles.label, { fontFamily: labelFont, color: mutedColor }]}>{label}</Text>
     </Pressable>
   );
 }
 
-const styles = StyleSheet.create({
-  wrapper: {
-    position: 'absolute',
-    height: layout.navHeight,
-  },
-  blur: {
-    flex: 1,
-    borderRadius: radiiScale['r-pill'],
-    borderWidth: 1,
-    borderColor: colors.glassBorder,
-    backgroundColor: colors.glassFill,
-    overflow: 'hidden',
-  },
-  row: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'stretch',
-    paddingHorizontal: spacingScale['sp-3'],
-  },
-  item: {
-    flex: 1,
-    minWidth: layout.hitMin,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacingScale['sp-2'],
-  },
-  itemDisabled: {
-    opacity: 0.4,
-  },
-  activePill: {
-    position: 'absolute',
-    top: 4,
-    bottom: 4,
-    left: spacingScale['sp-3'],
-    right: spacingScale['sp-3'],
-    borderRadius: radiiScale['r-pill'],
-    backgroundColor: colors.fillBrandQuiet,
-  },
-  label: {
-    fontSize: typeRoles.micro.size,
-    fontWeight: typeRoles.micro.weight,
-  },
-});
+type NavStyles = ReturnType<typeof createStyles>;
+
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    wrapper: {
+      position: 'absolute',
+      height: layout.navHeight,
+    },
+    blur: {
+      flex: 1,
+      borderRadius: radiiScale['r-pill'],
+      borderWidth: 1,
+      borderColor: colors.glassBorder,
+      backgroundColor: colors.glassFill,
+      overflow: 'hidden',
+    },
+    row: {
+      flex: 1,
+      flexDirection: 'row',
+      alignItems: 'stretch',
+      paddingHorizontal: spacingScale['sp-3'],
+    },
+    item: {
+      flex: 1,
+      minWidth: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-2'],
+    },
+    itemDisabled: {
+      opacity: 0.4,
+    },
+    activePill: {
+      position: 'absolute',
+      top: 4,
+      bottom: 4,
+      left: spacingScale['sp-3'],
+      right: spacingScale['sp-3'],
+      borderRadius: radiiScale['r-pill'],
+      backgroundColor: colors.fillBrandQuiet,
+    },
+    label: {
+      fontSize: typeRoles.micro.size,
+    },
+  });
+}

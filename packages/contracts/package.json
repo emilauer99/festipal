@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/contracts",
+  "name": "@quiks/contracts",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -20,13 +20,13 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@festipal/db": "workspace:*",
+    "@quiks/db": "workspace:*",
     "@ts-rest/core": "^3.52.1",
     "drizzle-zod": "0.7.1",
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "tsup": "^8.5.1",
     "typescript": "6.0.3"
   }

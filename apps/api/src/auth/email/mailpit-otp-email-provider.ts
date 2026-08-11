@@ -21,9 +21,9 @@ export function createMailpitOtpEmailProvider(env: Env): OtpEmailProvider {
     async send({ email, otp, type }) {
       try {
         await transport.sendMail({
-          from: 'festipal <dev@festipal.local>',
+          from: 'quiks <dev@quiks.local>',
           to: email,
-          subject: 'Your festipal sign-in code',
+          subject: 'Your quiks sign-in code',
           text: `Your code: ${otp}\n\n(type: ${type})`,
         });
       } catch (err) {

@@ -1,4 +1,4 @@
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@festipal/contracts';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES, type Locale } from '@quiks/contracts';
 
 export { DEFAULT_LOCALE, SUPPORTED_LOCALES };
 export type { Locale };

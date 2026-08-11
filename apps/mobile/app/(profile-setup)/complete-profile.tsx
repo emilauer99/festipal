@@ -1,23 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useQuery } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
 import { Camera, ImagePlus } from 'lucide-react-native';
-import { tokens } from '@festipal/ui';
+import { tokens } from '@quiks/ui';
 
 import { apiClient } from '../../lib/api-client';
 import { getLocalAvatarUri, saveLocalAvatarUri } from '../../lib/avatar-storage';
 import { suggestAvailableUsername } from '../../lib/username-suggestion';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';
-import { FONT_BODY, FONT_DISPLAY, resolveFontFamily } from '../../lib/fonts';
+import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import type { ThemeColors } from '../../lib/theme';
+import { useTheme } from '../../lib/theme-context';
 import { AvatarTile } from '../../components/AvatarTile';
 import { KeyboardScreen } from '../../components/KeyboardScreen';
 import { refreshAuthState } from '../_layout';
 
-const { colors, typeRoles, layout, radii, spacingScale } = tokens;
+// 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
+// mode-invariant scales stay destructured at module scope.
+const { typeRoles, layout, radii, spacingScale } = tokens;
 
 // D-03 — client soft-caps mirroring the server's authoritative
 // packages/db/src/schema/visitor-profile.ts `.extend()` caps (04-02); the
@@ -46,9 +50,16 @@ type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken';
  */
 export default function CompleteProfileScreen() {
   const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const bodyFont = resolveFontFamily(FONT_BODY, fontsReady);
-  const displayFont = resolveFontFamily(FONT_DISPLAY, fontsReady);
+  // Role-resolved families (05.1 D-10) — no numeric `fontWeight` sits on top.
+  const headingFont = fontFamilyForRole('display2', fontsReady);
+  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const labelFont = fontFamilyForRole('label', fontsReady);
+  const microFont = fontFamilyForRole('micro', fontsReady);
+  const ctaFont = fontFamilyForRole('title3', fontsReady);
   // GET /me is the typed source of `accountId` (the avatar-storage MMKV key,
   // D-01/Open Question 1) — this screen only mounts once the root guard's own
   // GET /me call already resolved `authenticated-no-profile`, so this is a
@@ -220,11 +231,11 @@ export default function CompleteProfileScreen() {
     if (isUsernameTaken) {
       return (
         <View style={styles.helperTakenBlock}>
-          <Text style={[styles.helperDanger, { fontFamily: bodyFont }]}>
+          <Text style={[styles.helperDanger, { fontFamily: bodySmFont }]}>
             <Trans>@{username} is already taken.</Trans>
           </Text>
           {suggestion ? (
-            <Text style={[styles.helperDanger, { fontFamily: bodyFont }]}>
+            <Text style={[styles.helperDanger, { fontFamily: bodySmFont }]}>
               <Trans>Try something else, like @{suggestion}.</Trans>
             </Text>
           ) : null}
@@ -233,20 +244,20 @@ export default function CompleteProfileScreen() {
     }
     if (usernameStatus === 'checking') {
       return (
-        <Text style={[styles.helperMuted, { fontFamily: bodyFont }]}>
+        <Text style={[styles.helperMuted, { fontFamily: bodySmFont }]}>
           <Trans>Checking…</Trans>
         </Text>
       );
     }
     if (usernameStatus === 'available') {
       return (
-        <Text style={[styles.helperSuccess, { fontFamily: bodyFont }]}>
+        <Text style={[styles.helperSuccess, { fontFamily: bodySmFont }]}>
           <Trans>@{username} is available</Trans>
         </Text>
       );
     }
     return (
-      <Text style={[styles.helperMuted, { fontFamily: bodyFont }]}>
+      <Text style={[styles.helperMuted, { fontFamily: bodySmFont }]}>
         <Trans>3–20 characters: a-z 0-9 _ .</Trans>
       </Text>
     );
@@ -258,7 +269,7 @@ export default function CompleteProfileScreen() {
           the a11y label for iOS back-swipe / screen readers. */}
       <Stack.Screen options={{ headerShown: false, title: t`Almost done` }} />
       <View style={styles.content}>
-        <Text style={[styles.heading, { fontFamily: displayFont }]}>
+        <Text style={[styles.heading, { fontFamily: headingFont }]}>
           <Trans>Almost done</Trans>
         </Text>
         <Text style={[styles.subtitle, { fontFamily: bodyFont }]}>
@@ -274,7 +285,7 @@ export default function CompleteProfileScreen() {
               disabled={!accountId}
             >
               <ImagePlus size={18} color={colors.textPrimary} strokeWidth={2} />
-              <Text style={[styles.avatarActionText, { fontFamily: bodyFont }]}>
+              <Text style={[styles.avatarActionText, { fontFamily: bodySmFont }]}>
                 <Trans>Choose photo</Trans>
               </Text>
             </Pressable>
@@ -288,13 +299,13 @@ export default function CompleteProfileScreen() {
               <Camera size={20} color={colors.textPrimary} strokeWidth={2} />
             </Pressable>
           </View>
-          <Text style={[styles.avatarHelper, { fontFamily: bodyFont }]}>
+          <Text style={[styles.avatarHelper, { fontFamily: bodySmFont }]}>
             <Trans>Optional. You can add this later.</Trans>
           </Text>
         </View>
 
         <View style={styles.field}>
-          <Text style={[styles.label, { fontFamily: bodyFont }]}>
+          <Text style={[styles.label, { fontFamily: labelFont }]}>
             <Trans>Username</Trans>
           </Text>
           <TextInput
@@ -315,10 +326,10 @@ export default function CompleteProfileScreen() {
 
         <View style={styles.field}>
           <View style={styles.labelRow}>
-            <Text style={[styles.label, { fontFamily: bodyFont }]}>
+            <Text style={[styles.label, { fontFamily: labelFont }]}>
               <Trans>Display name</Trans>
             </Text>
-            <Text style={[styles.requiredBadge, { fontFamily: bodyFont }]}>
+            <Text style={[styles.requiredBadge, { fontFamily: microFont }]}>
               <Trans>Required</Trans>
             </Text>
           </View>
@@ -332,7 +343,7 @@ export default function CompleteProfileScreen() {
         </View>
 
         {submitError ? (
-          <Text style={[styles.error, { fontFamily: bodyFont }]}>{submitError}</Text>
+          <Text style={[styles.error, { fontFamily: bodySmFont }]}>{submitError}</Text>
         ) : null}
       </View>
 
@@ -341,7 +352,7 @@ export default function CompleteProfileScreen() {
         onPress={handleDone}
         disabled={!canSubmit}
       >
-        <Text style={[styles.ctaText, { fontFamily: bodyFont }]}>
+        <Text style={[styles.ctaText, { fontFamily: ctaFont }]}>
           {submitting ? t`Saving…` : t`Done`}
         </Text>
       </Pressable>
@@ -349,138 +360,141 @@ export default function CompleteProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  content: {
-    // flexGrow (not flex:1) so the block grows to fill and stays centered when
-    // content is short, but keeps its intrinsic height (RN default flexShrink:0)
-    // and overflows into a scroll when the soft keyboard shrinks the viewport —
-    // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
-    // the KeyboardScreen ScrollView has nothing to scroll. This screen (avatar +
-    // two fields) is the tallest, so it overflows first.
-    flexGrow: 1,
-    justifyContent: 'center',
-    gap: spacingScale['sp-8'],
-  },
-  heading: {
-    fontSize: typeRoles.display2.size,
-    fontWeight: typeRoles.display2.weight,
-    lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: typeRoles.body.size,
-    fontWeight: typeRoles.body.weight,
-    lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
-    color: colors.textSecondary,
-    marginTop: -spacingScale['sp-6'],
-  },
-  avatarBlock: {
-    alignItems: 'center',
-    gap: spacingScale['sp-5'],
-  },
-  avatarActions: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacingScale['sp-4'],
-  },
-  avatarActionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacingScale['sp-2'],
-    minHeight: layout.hitMin,
-    paddingHorizontal: spacingScale['sp-6'],
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceInset,
-  },
-  avatarActionText: {
-    fontSize: typeRoles.bodySm.size,
-    fontWeight: typeRoles.bodySm.weight,
-    color: colors.textPrimary,
-  },
-  avatarCameraButton: {
-    width: layout.hitMin,
-    height: layout.hitMin,
-    borderRadius: radii.pill,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.surfaceInset,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  avatarHelper: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.textMuted,
-    textAlign: 'center',
-  },
-  field: {
-    gap: spacingScale['sp-5'],
-  },
-  labelRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  label: {
-    fontSize: typeRoles.label.size,
-    fontWeight: typeRoles.label.weight,
-    lineHeight: typeRoles.label.size * typeRoles.label.lineHeight,
-    color: colors.textSecondary,
-  },
-  requiredBadge: {
-    fontSize: typeRoles.micro.size,
-    fontWeight: typeRoles.micro.weight,
-    lineHeight: typeRoles.micro.size * typeRoles.micro.lineHeight,
-    textTransform: 'uppercase',
-    letterSpacing: 0.09 * typeRoles.micro.size,
-    color: colors.textMuted,
-  },
-  input: {
-    minHeight: layout.hitMin,
-    backgroundColor: colors.surfaceInset,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radii.control,
-    paddingHorizontal: spacingScale['sp-6'],
-    fontSize: typeRoles.body.size,
-    color: colors.textPrimary,
-  },
-  inputDanger: {
-    borderColor: colors.danger,
-    // UI-SPEC ## Color — username-taken field: rgba(255,77,94,.08) fill.
-    backgroundColor: 'rgba(255,77,94,0.08)',
-  },
-  helperMuted: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.textMuted,
-  },
-  helperSuccess: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.success,
-  },
-  helperDanger: {
-    fontSize: typeRoles.bodySm.size,
-    color: colors.danger,
-  },
-  helperTakenBlock: {
-    gap: spacingScale['sp-2'],
-  },
-  error: {
-    color: colors.danger,
-    fontSize: typeRoles.bodySm.size,
-  },
-  cta: {
-    minHeight: layout.hitMin,
-    backgroundColor: colors.primary,
-    borderRadius: radii.pill,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ctaDisabled: { opacity: 0.45 },
-  ctaText: {
-    fontSize: typeRoles.title3.size,
-    fontWeight: typeRoles.title3.weight,
-    color: colors.textOnPrimary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    content: {
+      // flexGrow (not flex:1) so the block grows to fill and stays centered when
+      // content is short, but keeps its intrinsic height (RN default flexShrink:0)
+      // and overflows into a scroll when the soft keyboard shrinks the viewport —
+      // otherwise flex:1's flexShrink:1/flexBasis:0 clamps it to the viewport and
+      // the KeyboardScreen ScrollView has nothing to scroll. This screen (avatar +
+      // two fields) is the tallest, so it overflows first.
+      flexGrow: 1,
+      justifyContent: 'center',
+      gap: spacingScale['sp-8'],
+    },
+    heading: {
+      fontSize: typeRoles.display2.size,
+      letterSpacing: typeRoles.display2.letterSpacing,
+      lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: typeRoles.body.size,
+      lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
+      color: colors.textSecondary,
+      marginTop: -spacingScale['sp-6'],
+    },
+    avatarBlock: {
+      alignItems: 'center',
+      gap: spacingScale['sp-5'],
+    },
+    avatarActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-4'],
+    },
+    avatarActionButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-2'],
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-6'],
+      borderRadius: radii.pill,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceInset,
+    },
+    avatarActionText: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textPrimary,
+    },
+    avatarCameraButton: {
+      width: layout.hitMin,
+      height: layout.hitMin,
+      borderRadius: radii.pill,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surfaceInset,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    avatarHelper: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textMuted,
+      textAlign: 'center',
+    },
+    field: {
+      gap: spacingScale['sp-5'],
+    },
+    labelRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+    },
+    label: {
+      fontSize: typeRoles.label.size,
+      lineHeight: typeRoles.label.size * typeRoles.label.lineHeight,
+      color: colors.textSecondary,
+    },
+    requiredBadge: {
+      fontSize: typeRoles.micro.size,
+      lineHeight: typeRoles.micro.size * typeRoles.micro.lineHeight,
+      textTransform: 'uppercase',
+      letterSpacing: 0.09 * typeRoles.micro.size,
+      color: colors.textMuted,
+    },
+    input: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.surfaceInset,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radii.control,
+      paddingHorizontal: spacingScale['sp-6'],
+      fontSize: typeRoles.body.size,
+      color: colors.textPrimary,
+    },
+    inputDanger: {
+      // 1px border + tint on the taken-username field: both resolve from tokens
+      // (ADR-015). `fillDangerSubtle` IS danger at 8% — the exact value the
+      // mockup used — and the border takes `dangerText`, since the bare fill hue
+      // reaches only 2.98:1 on Papier and would vanish as a hairline.
+      borderColor: colors.dangerText,
+      backgroundColor: colors.fillDangerSubtle,
+    },
+    helperMuted: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textMuted,
+    },
+    helperSuccess: {
+      fontSize: typeRoles.bodySm.size,
+      // Status hue as TEXT -> the *Text variant: `success` measures 1.57:1 on
+      // Papier, `successText` 4.52:1 (tokens.ts, UI-SPEC ## Color amendment).
+      color: colors.successText,
+    },
+    helperDanger: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
+    },
+    helperTakenBlock: {
+      gap: spacingScale['sp-2'],
+    },
+    error: {
+      color: colors.dangerText,
+      fontSize: typeRoles.bodySm.size,
+    },
+    cta: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.primary,
+      borderRadius: radii.pill,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ctaDisabled: { opacity: 0.45 },
+    ctaText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+
+  });
+}

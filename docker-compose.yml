@@ -6,17 +6,23 @@
 #
 # Usage:
 #   docker compose up -d
-#   pnpm --filter @festipal/db db:push
-#   pnpm --filter @festipal/db db:seed
+#   pnpm --filter @quiks/db db:migrate
+#   pnpm --filter @quiks/db db:seed
+
+# Explicit project name (ADR-024 / D-13): without it Compose derives the project
+# name from the containing folder, so the repo-folder rename (D-15) would rebind
+# `docker compose up` to a second, empty volume and silently discard the local
+# database. Pinning it here decouples the two renames.
+name: quiks
 
 services:
   postgres:
     image: postgres:18
     restart: unless-stopped
     environment:
-      POSTGRES_USER: festipal
-      POSTGRES_PASSWORD: festipal
-      POSTGRES_DB: festipal
+      POSTGRES_USER: quiks
+      POSTGRES_PASSWORD: quiks
+      POSTGRES_DB: quiks
     ports:
       - '5432:5432'
     volumes:
@@ -24,9 +30,9 @@ services:
       # subdirectory of /var/lib/postgresql itself (not /var/lib/postgresql/data)
       # — mounting at /data would collide with that layout and crash-loop the
       # container on startup (docker-library/postgres#1259).
-      - festipal-postgres-data:/var/lib/postgresql
+      - quiks-postgres-data:/var/lib/postgresql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U festipal -d festipal']
+      test: ['CMD-SHELL', 'pg_isready -U quiks -d quiks']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -44,4 +50,4 @@ services:
       retries: 10
 
 volumes:
-  festipal-postgres-data:
+  quiks-postgres-data:

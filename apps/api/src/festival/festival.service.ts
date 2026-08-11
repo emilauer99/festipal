@@ -8,14 +8,14 @@ import {
   tag,
   tagTranslation,
   type Database,
-} from '@festipal/db';
+} from '@quiks/db';
 import {
   resolveLocalized,
   type Festival,
   type Locale,
   type LocalizedText,
   type Tag,
-} from '@festipal/contracts';
+} from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
 

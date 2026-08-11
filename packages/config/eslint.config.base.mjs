@@ -2,7 +2,7 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 /**
- * Shared flat ESLint config for all festipal packages and apps.
+ * Shared flat ESLint config for all quiks packages and apps.
  * Individual packages extend this and add framework-specific plugins
  * (e.g. react, react-native, next).
  */

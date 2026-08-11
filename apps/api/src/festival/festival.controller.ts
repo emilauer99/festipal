@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { contract } from '@festipal/contracts';
+import { contract } from '@quiks/contracts';
 import { Session, type UserSession } from '@thallesp/nestjs-better-auth';
 import { TsRestHandler, tsRestHandler } from '@ts-rest/nest';
 

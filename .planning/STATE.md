@@ -1,36 +1,36 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
+milestone_name: Rollout
 current_phase: 6
 current_phase_name: Profile & Friends Placeholders
-status: planning
-stopped_at: Phase 05 complete & verified (UAT round 3 pass, security clean); ready to plan Phase 6
-last_updated: "2026-08-09T18:38:36.027Z"
-last_activity: 2026-08-09
-last_activity_desc: Phase 05 complete, transitioned to Phase 6
+status: "Phase 05.1 shipped — PR #11"
+stopped_at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
+last_updated: "2026-08-11T14:11:28.137Z"
+last_activity: 2026-08-11
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 33
-  completed_plans: 33
+  total_phases: 6
+  completed_phases: 6
+  total_plans: 40
+  completed_plans: 40
+last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-09 — Phase 5 complete)
+See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgenommen)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 06 — Profile & Friends Placeholders
+**Current focus:** Phase 6 — Profile & Friends Placeholders
 
 ## Current Position
 
 Phase: 6 — Profile & Friends Placeholders
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-09 — Phase 05 complete, transitioned to Phase 6
+Status: Phase 05.1 shipped — PR #11
+Last activity: 2026-08-11
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 33
+- Total plans completed: 40
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -51,6 +51,7 @@ Progress: [██████████] 100%
 | 03 | 6 | - | - |
 | 04 | 7 | - | - |
 | 05 | 11 | - | - |
+| 05.1 | 7 | - | - |
 
 **Recent Trend:**
 
@@ -95,6 +96,13 @@ Progress: [██████████] 100%
 | Phase 05 P09 | ~15min | 3 tasks | 5 files |
 | Phase 05 P10 | ~10min | 2 tasks | 3 files |
 | Phase 05 P11 | ~15min | 2 tasks | 4 files |
+| Phase 05.1 P01 | ~30min | 2 tasks | 89 files |
+| Phase 05.1 P03 | ~20min | 3 tasks | 8 files |
+| Phase 05.1 P02 | ~15min | 3 tasks | 1 files |
+| Phase 05.1 P04 | ~15min | 3 tasks | 12 files |
+| Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
+| Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
+| Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -184,6 +192,29 @@ Recent decisions affecting current work:
 - [Phase ?]: 05-10: capture effect's authState.status===unauthenticated gate removed entirely — content-leak boundary preserved at replay (redirect effect), not capture (G-05-7b)
 - [Phase ?]: 05-11: nextActiveFestivalSlug's return depends only on entered.saved (not prior) -- an unsaved entry ALWAYS clears the persisted slug, reversing 05-09's 'only persist when saved' semantics that made the persisted slug a sticky last-SAVED-festival-ever-entered value (G-05-5b-r2)
 - [Phase ?]: 05-11: syncActiveFestivalOnEnter is now the single persist/clear authority shared by festivals.tsx and home.tsx handleEnter -- home.tsx passes saved=true (behavior-preserving) purely so no future entry path can bypass the shared invariant
+- [Phase ?]: 05.1-01: auth-client.ts's expoClient scheme moved in the SAME commit as app.json's scheme and auth.instance.ts's trustedOrigins — it produces the expo-origin header the allowlist validates, so splitting it would have left a 403-on-signout commit
+- [Phase ?]: 05.1-01: docker-compose.yml deliberately left untouched (owned by plan 05.1-02, which adds a top-level name: key and renames the volume) — this plan's 'zero festipal hits' acceptance criterion is therefore met except for that one file, by design
+- [Phase ?]: 05.1-01: comments citing the historical asset filenames festipal-tokens.css / festipal-ds.js were REPHRASED, not renamed — ADR-024 keeps those docs/ files under their original names, so a blind rename would have pointed at nothing
+- [Phase ?]: 05.1-01: MMKV ids switched to quiks-avatar / quiks-active-festival as a hard cut with no dual-read shim (D-14); the running Expo/Metro watcher had to be killed first or pnpm install fails ENOENT on *_tmp_*/node_modules
+- [Phase ?]: Hell-first Moduspfad: nur der exakte Gerätewert 'dark' ergibt Dunkel; 'light'/null/undefined/'unspecified' ergeben Hell (05.1-03, D-01)
+- [Phase ?]: ThemeColors als gewidmeter Mapped Type statt typeof colors — 'as const' macht die beiden Token-Sets sonst zueinander unzuweisbar (05.1-03)
+- [Phase ?]: gradientSunset liegt in colors und wird vom D-11-Gate rekursiv mitgeprüft; Limette/Violett sind per Test entfernt, kein ciFallbacks-Export (05.1-03)
+- [Phase ?]: 05.1-02: docker-compose.yml traegt einen expliziten top-level 'name: quiks' — Compose-Projektname haengt nicht mehr am Ordnernamen, der D-15-Ordner-Rename kann das lokale Volume nicht mehr verwaisen lassen (RESEARCH Pitfall 1)
+- [Phase ?]: 05.1-02: Teardown des alten Stacks per 'docker compose -p festipal down -v --remove-orphans' statt des geplanten 'docker compose down -v' — nach dem name:-Key sieht compose den alten Stack nicht mehr; der zusaetzlich freigegebene explizite 'docker volume rm' war ein No-op, weil down -v Volumes ueber ihr Projekt-Label abraeumt
+- [Phase ?]: 05.1-02: lokale DB destruktiv zurueckgesetzt (D-13/T-05.1-06 akzeptiert) und per db:migrate + db:seed wiederhergestellt; apps/api 45/45 gruen gegen die neuen Credentials — das ist der Beweis, dass die .env-Aenderung gegriffen hat statt still zurueckzufallen
+- [Phase ?]: DisabledNavItem erhaelt styles + mutedColor als Props statt eigenem useTheme() - eine Stylesheet-Konstruktion pro Moduswechsel statt drei
+- [Phase ?]: Sunset-Rect traegt rx/ry = r-card zusaetzlich zum overflow:hidden der Hero-Karte - doppelt abgesichertes Clipping
+- [Phase ?]: otpDigit und countdown behalten explizit FONT_MONO + numerisches fontWeight (Rolle deklariert 500, Datei ist 400 - von 05.1-03 geparkt)
+- [Phase ?]: WINDOWS-Eintrag 17 war veraltet: die vier DE-Uebersetzungen existieren seit dem Phase-5-Merge - verifiziert statt neu geschrieben
+- [Phase ?]: 05.1-05: Screens auf fontFamilyForRole umgestellt statt nur numerisches fontWeight zu streichen — sonst wäre D-10 trivial erfüllt und faux-bold geblieben
+- [Phase ?]: 05.1-05: Statushue als Text/Icon/1px-Rand geht immer über die *Text-Variante (dangerText/successText), bare Hue nur für gefüllte Flächen
+- [Phase ?]: 05.1-05: app/_layout.tsx (Splash-Wortmarke, letztes numerisches fontWeight) bewusst nicht angefasst — gehört Plan 05.1-06
+- [Phase ?]: Markenglyphe: EIN Geometriemodul (lib/wordmark-glyph.ts) speist Runtime-SVG und Icon-Rasterizer; Farben nur aus Tokens
+- [Phase ?]: Icon-Generator misst Tintengrenzen per resvg getBBox statt geschaetzter Crop-Box; @resvg/resvg-js exakt auf 2.6.2 gepinnt, PNGs committet
+- [Phase ?]: 05.1-07: Geraeteabnahme der Phase vom User als Ganzes freigegeben ('approved') — keine Einzelbefunde zu den 19 Punkten protokolliert; der Executor hat den Geraetetest NICHT selbst gefahren
+- [Phase ?]: 05.1-07: Splash-Markenglyphe (Checkpoint-Punkt 11) BLEIBT montiert — User-Entscheidung; Entfernen bleibt ein Einzeiler in app/_layout.tsx, Komponente und Icon-Generator blieben ohnehin bestehen
+- [Phase ?]: 05.1-07: WINDOWS-Eintraege 24/26/27/28/29 geschlossen (24 per automatisiertem Sweep, 26-29 per Nutzerabnahme am Geraet); 25 bleibt offen (von der Abnahme nicht abgedeckt), neuer Eintrag 30 fuer den nicht abgedeckten Themed-Icons-Monochrome-Layer
+- [Phase ?]: 05.1-07: Phase-Gate bewusst uncached mit --force wiederholt — der erste Durchlauf kam vollstaendig aus dem Turbo-Cache und haette nichts bewiesen
 
 ### Pending Todos
 
@@ -207,6 +238,12 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260803-mz6 | Anchor UI component strategy in docs: ADR-022 (custom RN components for mobile, shadcn/ui for admin, minimize custom CSS) + CLAUDE.md tech stack update | 2026-08-03 | 56456a5 | [260803-mz6-anchor-ui-component-strategy-in-docs-adr](./quick/260803-mz6-anchor-ui-component-strategy-in-docs-adr/) |
 | 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
+| 260810-q31 | Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only) — docs/brand/, ADR-023 (CI v1.0, löst ADR-015 teilweise ab) + ADR-024 (Rename-Umfang), Superseded-Marker, beide CLAUDE.md | 2026-08-10 | b898985 | [260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc](./quick/260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc/) |
+| 260811-jz6 | Phase 05.1 Verifikations-Gaps schliessen: Outfit-Tracking anwenden + CLAUDE.md Light-Mode-Aussage korrigieren | 2026-08-11 | e28d150 | [260811-jz6-phase-05-1-verifikations-gaps-schliessen](./quick/260811-jz6-phase-05-1-verifikations-gaps-schliessen/) |
+
+### Roadmap Evolution
+
+- Phase 5.1 inserted after Phase 5: quiks Rename & CI v1.0 Rollout (ADR-023/024: @festipal/* -> @quiks/*, Beere/Amber-Token-Swap, hell-first) (URGENT)
 
 ## Deferred Items
 
@@ -218,6 +255,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-09T18:38:36Z
-Stopped at: Phase 05 complete & verified — UAT round 3 passed (G-05-5b-r2 cold-start fix re-confirmed on device), security threats_open: 0; ready to plan Phase 6
+Last session: 2026-08-11
+Stopped at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
 Resume file: None

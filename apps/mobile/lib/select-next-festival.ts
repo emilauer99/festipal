@@ -1,4 +1,4 @@
-import type { Festival } from '@festipal/contracts';
+import type { Festival } from '@quiks/contracts';
 
 /**
  * Pure, tested hero-selection helper for the Home tab (HOME-01, D-04).

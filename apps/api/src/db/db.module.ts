@@ -1,5 +1,5 @@
 import { Global, Module } from '@nestjs/common';
-import { createDatabase, type Database } from '@festipal/db';
+import { createDatabase, type Database } from '@quiks/db';
 
 import { ENV } from '../config/config.module';
 import type { Env } from '../config/env';

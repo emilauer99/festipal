@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
-import { festival, festivalLocale, myFestival, visitorProfile, type Database } from '@festipal/db';
-import type { CompleteProfileBody, Festival, Locale, VisitorProfilePublic } from '@festipal/contracts';
+import { festival, festivalLocale, myFestival, visitorProfile, type Database } from '@quiks/db';
+import type { CompleteProfileBody, Festival, Locale, VisitorProfilePublic } from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
 

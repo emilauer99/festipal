@@ -11,7 +11,7 @@
 // edge cases identically to a real HTTP round-trip, so the ts-rest half is
 // ADDITIONALLY required to be run at least once against a live dev server:
 //
-//   pnpm --filter @festipal/api dev     (in one terminal)
+//   pnpm --filter @quiks/api dev     (in one terminal)
 //   node apps/api/test/smoke/otp-me-smoke.mjs
 //
 // (otp-me-smoke.mjs already exercises the full OTP request/verify body-parse
@@ -19,7 +19,7 @@
 // "session cookie set" checks ARE the live proof for the /api/auth half of
 // this same claim. A dedicated live-round-trip check for the ts-rest
 // festivals/:id/save half was additionally run manually against
-// `pnpm --filter @festipal/api dev` during this plan's execution — see
+// `pnpm --filter @quiks/api dev` during this plan's execution — see
 // 02-05-SUMMARY.md's Deviations/Decisions section for the transcript.)
 
 import { randomUUID } from 'node:crypto';
@@ -32,7 +32,7 @@ import type { INestApplication } from '@nestjs/common';
 import { and, eq } from 'drizzle-orm';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { festival, myFestival, user, visitorProfile, type Database } from '@festipal/db';
+import { festival, myFestival, user, visitorProfile, type Database } from '@quiks/db';
 
 import { createTestApp, createTestDatabase } from './setup';
 
@@ -63,7 +63,7 @@ describe('body-parser wiring (SC-4, two-POST proof)', () => {
   let app: INestApplication;
   let db: Database;
 
-  const testEmail = `bodyparser-smoke-${randomUUID()}@festipal.dev`;
+  const testEmail = `bodyparser-smoke-${randomUUID()}@quiks.dev`;
   let accountId: string;
   let cookie: string;
   let festivalId: string;

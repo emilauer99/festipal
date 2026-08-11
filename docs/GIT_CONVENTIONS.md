@@ -1,4 +1,4 @@
-# festipal — Git-Konventionen
+# quiks — Git-Konventionen
 
 > Verbindliche Regeln für Branching, Commits und Merges. Ziel: eine **lineare,
 > lesbare, automatisierbar auswertbare** Historie. Diese Regeln gelten für Menschen

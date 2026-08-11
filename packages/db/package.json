@@ -1,5 +1,5 @@
 {
-  "name": "@festipal/db",
+  "name": "@quiks/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -37,7 +37,7 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@festipal/config": "workspace:*",
+    "@quiks/config": "workspace:*",
     "auth": "1.6.25",
     "dotenv": "^17.4.2",
     "drizzle-kit": "^0.31.10",

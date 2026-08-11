@@ -1,10 +1,10 @@
 import { initClient } from '@ts-rest/core';
-import { contract } from '@festipal/contracts';
+import { contract } from '@quiks/contracts';
 
 import { authClient } from './auth-client';
 
 /**
- * Single shared ts-rest client, fully typed from `@festipal/contracts` — no
+ * Single shared ts-rest client, fully typed from `@quiks/contracts` — no
  * request/response shape is re-declared here (Pitfall 6 / CLAUDE.md
  * "Duplicating Contract Definitions" anti-pattern).
  *

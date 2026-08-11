@@ -1,4 +1,4 @@
-import base from '@festipal/config/eslint';
+import base from '@quiks/config/eslint';
 
 export default [
   ...base,

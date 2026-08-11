@@ -2,7 +2,7 @@
 //
 // Metro's default resolver targets npm/Yarn hoisted node_modules; pnpm's strict,
 // symlinked `node_modules/.pnpm` store needs unstable_enableSymlinks plus explicit
-// watchFolders/nodeModulesPaths so `@festipal/*` workspace packages resolve at
+// watchFolders/nodeModulesPaths so `@quiks/*` workspace packages resolve at
 // bundle time (and so edits to those packages hot-reload instead of resolving stale).
 const { getDefaultConfig } = require('expo/metro-config');
 const path = require('node:path');

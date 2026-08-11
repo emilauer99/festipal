@@ -5,7 +5,7 @@
  *
  * Root cause this fixes: `expo-linking`'s `Linking.parse()` is built on the
  * WHATWG `new URL()` parser. For a DOUBLE-slash custom-scheme link like
- * `festipal://f/nova-sound-2026`, `new URL()` treats the first path segment
+ * `quiks://f/nova-sound-2026`, `new URL()` treats the first path segment
  * ('f') as the URL AUTHORITY, not a path element — it lands in
  * `hostname`, and only ':slug' remains in `path`. Consuming `path` alone
  * (the pre-fix behavior) silently drops the 'f/' segment and the replayed
@@ -35,7 +35,7 @@ function normalizeSegment(segment: string | null | undefined): string | null {
 /**
  * Reconstructs the full route (no leading slash) from `Linking.parse()`'s
  * component parts, or `null` when nothing remains (root link, e.g.
- * `festipal:///`).
+ * `quiks:///`).
  */
 export function reconstructDeepLinkRoute(
   parsed: ParsedDeepLink,
@@ -55,14 +55,14 @@ export function reconstructDeepLinkRoute(
  * first-login-unmatched-route (round 4, confirmed root cause) — Expo's own
  * tooling launches the app through internal deep links that are NOT app routes
  * and must never be captured/replayed as a pending destination:
- *   - `festipal:///expo-development-client/?url=<metro-host>` — the Expo Dev
+ *   - `quiks:///expo-development-client/?url=<metro-host>` — the Expo Dev
  *     Client launch link. Its first route segment is `expo-development-client`;
  *     replaying it as `/expo-development-client` hits Expo's Unmatched Route
  *     screen on EVERY dev-client launch (the reported bug — a dev-only artifact,
- *     since a production standalone launch is a bare `festipal://` that
+ *     since a production standalone launch is a bare `quiks://` that
  *     `reconstructDeepLinkRoute` already maps to `null`).
- *   - `festipal:///_expo/...` — Expo's internal dev/runtime namespace.
- *   - `festipal:///--/...` — the Expo Go `--/` deep-link separator prefix.
+ *   - `quiks:///_expo/...` — Expo's internal dev/runtime namespace.
+ *   - `quiks:///--/...` — the Expo Go `--/` deep-link separator prefix.
  *
  * Operates on the already-reconstructed route (no leading slash, segments
  * joined by '/'), i.e. exactly what {@link reconstructDeepLinkRoute} returns —
