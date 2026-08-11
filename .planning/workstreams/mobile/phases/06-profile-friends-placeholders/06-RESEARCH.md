@@ -691,7 +691,10 @@ export const visitorProfileInsertSchema = createInsertSchema(visitorProfile).ext
 **Wenn diese Tabelle leer wäre:** Ist hier nicht der Fall — fünf Annahmen erfordern Bestätigung
 während Planning/Execution, primär rund um das neue externe Paket und die Lingui-Plural-API.
 
-## Open Questions
+## Open Questions (RESOLVED)
+
+> Beide Fragen sind beim Planen der Phase entschieden worden; die Antworten stehen verbindlich in
+> den Plänen. Dieser Abschnitt bleibt als Herleitung stehen — er ist NICHT offen.
 
 1. **Gerätequellen-übergreifende Theme-Override-Synchronisation**
    - What we know: D-08a verlangt einen persistierten, geräte-lokalen Override (MMKV).
@@ -701,6 +704,10 @@ während Planning/Execution, primär rund um das neue externe Paket und die Ling
    - Recommendation: Rein geräte-lokal behandeln (MMKV, kein Server-Feld) — das ist der
      günstigste, mit dem UI-SPEC-Contract konsistente Default und lässt sich später additiv um
      einen Server-Sync erweitern, ohne die Client-Logik umzubauen.
+   - **RESOLVED:** Der Override bleibt rein gerätelokal. Plan `06-03` legt ihn als MMKV-Schicht
+     (`apps/mobile/lib/theme-override-storage.ts`) über die bestehende Modusauflösung, ohne
+     Server-Feld und ohne Cross-Device-Abgleich; das entspricht dem Theme Override Contract der
+     `06-UI-SPEC.md`. Ein späterer Server-Sync bleibt additiv möglich.
 
 2. **Icon-Wahl für den „Mehr"-Tab vs. das Profil-Push-Screen-Icon**
    - What we know: UI-SPEC verlangt explizit unterschiedliche Icons für den Mehr-Tab und den
@@ -712,6 +719,9 @@ während Planning/Execution, primär rund um das neue externe Paket und die Ling
    - Recommendation: `Menu` für den Mehr-Tab wählen (klar von `UserRound`, das für den
      Profil-Avatar/-Kontext reserviert bleibt, unterscheidbar) — Executor soll dies gegen das
      gerenderte Icon-Set von `lucide-react-native` 0.470 final abgleichen.
+   - **RESOLVED:** `Menu` für den Mehr-Tab; `UserRound` bleibt dem Profil-/Avatar-Kontext
+     vorbehalten. Festgehalten in Plan `06-01` (Tab-Registrierung in `FloatingNav`); der
+     Profil-Push-Screen trägt einen reinen Titel-Header ohne eigenes Icon.
 
 ## Environment Availability
 
