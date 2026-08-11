@@ -25,6 +25,7 @@ import { fontFamilyForRole, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider, useFontsReady } from '../lib/fonts-context';
 import { ThemeProvider, useTheme } from '../lib/theme-context';
 import type { ThemeColors } from '../lib/theme';
+import { ToastProvider } from '../components/SoonToast';
 import { WordmarkGlyph } from '../components/WordmarkGlyph';
 
 const { typeRoles } = tokens;
@@ -134,13 +135,22 @@ const APP_SCHEME_FALLBACK = 'quiks';
  * platform default keeps light icons that are unreadable on it. `"auto"` flips
  * the icons off the resolved colour scheme, so it needs no separate wiring to
  * `useTheme()`.
+ *
+ * 06-04 / D-13 — `ToastProvider` is the app's ONE "kommt bald" mechanism, shared
+ * by Profil, Mehr and Friends. It sits INSIDE `ThemeProvider` because the pill
+ * resolves its colours through `useTheme()`, and inside `SafeAreaProvider`
+ * because it offsets itself by the bottom inset to clear the FloatingNav. It
+ * wraps `RootNavigation` rather than replacing any existing provider, so the
+ * order of everything above and the status-bar configuration are unchanged.
  */
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <StatusBar style="auto" />
-        <RootNavigation />
+        <ToastProvider>
+          <RootNavigation />
+        </ToastProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
