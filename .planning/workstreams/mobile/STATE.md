@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
-stopped_at: Completed 06-02-PLAN.md
-last_updated: "2026-08-11T21:07:34.391Z"
+stopped_at: Completed 06-03-PLAN.md
+last_updated: "2026-08-11T21:19:49.686Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 42
+  completed_plans: 43
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 ## Current Position
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 3 of 9
+Plan: 4 of 9
 Status: Ready to execute
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [█████████░] 86%
+Progress: [█████████░] 88%
 
 ## Performance Metrics
 
@@ -105,6 +105,7 @@ Progress: [█████████░] 86%
 | Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
 | Phase 06 P01 | ~2h50m | 2 tasks | 6 files |
 | Phase 06 P02 | ~35min | 3 tasks | 9 files |
+| Phase 06 P03 | ~20min | 2 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -226,6 +227,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-01: Geraeteabnahme des Tracer-Pfads (8 Schritte) vom User als Ganzes mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine automatisierte Verifikation; der Executor hat den Geraetetest nicht selbst gefahren, keine Einzelbefunde je Schritt protokolliert (gleiche Lage wie 05.1-07)
 - [Phase ?]: 06-02: birth_date wird gespeichert, das Alter abgeleitet (D-12a) — die Laengencaps pronoun 20 / gender 30 stehen serverseitig auf beiden drizzle-zod-Basen
 - [Phase ?]: 06-02: meSchema.createdAt ist ein ISO-String auf Top-Level, explizit im Controller konvertiert — der Contract transportiert Daten nie als Date
+- [Phase ?]: 06-03: Theme-Override ist eine Schicht ueber resolveThemeMode, kein Ersatz — der 05.1-Invariantentest bleibt unveraendert das Gate
+- [Phase ?]: 06-03: vi.mock kann einen lazy CJS-require nicht abfangen — MMKV-Module werden in reine Validierung plus echten Fehlerpfad gesplittet
+- [Phase ?]: 06-03: Alter wird via deriveAge aus birth_date abgeleitet (D-12a); Testreferenzdaten werden lokal konstruiert, nie aus einem Datums-String geparst
 
 ### Pending Todos
 
@@ -267,6 +271,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T21:07:22.797Z
-Stopped at: Completed 06-02-PLAN.md
+Last session: 2026-08-11T21:19:40.040Z
+Stopped at: Completed 06-03-PLAN.md
 Resume file: None

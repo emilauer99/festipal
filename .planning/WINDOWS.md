@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 24
+open_count: 25
 waived_count: 0
 fixed_count: 8
-total_count: 32
-last_updated: 2026-08-11T21:07:42.033Z
+total_count: 33
+last_updated: 2026-08-11T21:20:19.955Z
 ---
 
 # Broken Windows Ledger
@@ -47,6 +47,7 @@ last_updated: 2026-08-11T21:07:42.033Z
 | 30 | 05.1 | unrun-verify | apps/mobile/assets/android-icon-monochrome.png |  | Der Monochrome-Layer unter Androids Themed-Icons-Tint wurde von der Geraeteabnahme in 05.1-07 NICHT abgedeckt: die Checkpoint-Punkte 18/19 nennen Launcher-Icon, Adaptive-Masking und Recents/Settings, aber nicht die aktivierten Themed Icons. Restanspruch aus dem geschlossenen Eintrag 28 - braucht einen eigenen Blick mit eingeschalteten Themed Icons. | open |  | 2026-08-11T11:54:19.017Z |  |
 | 31 | 05.1 | unrun-verify | apps/mobile/app/(auth)/welcome.tsx |  | Das CI-Outfit-Tracking (typeRoles wordmark/display2/title2 letterSpacing) wurde in Quick-Task 260811-jz6 an allen 13 Style-Sites angewandt und headless abgesichert (Node/Vitest-Guard scannt app+components), aber NIE auf einem Geraet gesehen. Offen ist die reine Geraeteaussage: ob das engere Tracking auf Wortmarke, Display- und Titel-Zeilen Umbrueche kippt, Kartenhoehen (FestivalCard-Hero) oder die Splash-Wortmarke sichtbar verschiebt, und ob die zentrierten AvatarTile-Initialen durch das Tracking hinter dem letzten Zeichen sichtbar aus der Mitte laufen. Braucht einen Blick auf echten Screens in hell UND dunkel. | open |  | 2026-08-11T12:41:00.855Z |  |
 | 32 | 06 | deviation | packages/contracts/src/schemas.ts |  | T-06-06 accepted: visitorProfilePublicSchema carries birthDate/gender with no visibility policy; split into owner view and friend view before any endpoint serves a foreign profile (IDN-02 pending) | open |  | 2026-08-11T21:07:42.033Z |  |
+| 33 | 6 | unrun-verify | apps/mobile/lib/theme-override-storage.ts |  | 06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat | open |  | 2026-08-11T21:20:19.955Z |  |
 
 ````json
 [
@@ -432,6 +433,18 @@ last_updated: 2026-08-11T21:07:42.033Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-11T21:07:42.033Z",
+    "resolved_at": null
+  },
+  {
+    "id": 33,
+    "kind": "unrun-verify",
+    "phase": "6",
+    "file": "apps/mobile/lib/theme-override-storage.ts",
+    "line": null,
+    "description": "06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T21:20:19.955Z",
     "resolved_at": null
   }
 ]
