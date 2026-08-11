@@ -1,0 +1,2178 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="cff70419-d231-43aa-a64e-70f88b77c924"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>/* Festipal webfonts. NOTE: no brand font files were provided — these are Google Fonts stand-ins.
+   Outfit  -> display / headings (geometric, friendly, modern)
+   Plus Jakarta Sans -> UI + body
+   JetBrains Mono -> codes, ticket IDs, balances */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("787eba22-2f5e-4bd9-a447-58741262bbfe") format('woff');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("af77fd7d-6738-4078-85d1-0c41f899d10f") format('woff');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("71e5e40c-f4b5-4f0a-ab0c-522a88cb45cb") format('woff');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5cb5dfb3-a6c9-43f9-87de-b759a8730732") format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+</style>
+<style>:root{
+/* --- base ramps ------------------------------------------------------ */
+/* Ink: cool neutrals that carry both brand hues. Festipal is dark-first. */
+--ink-1000:#07080B;--ink-900:#0C0E13;--ink-800:#14161D;--ink-700:#1C1F28;--ink-600:#262A35;--ink-500:#363B49;--ink-400:#565C6E;--ink-300:#7C8394;--ink-200:#9FA6B6;--ink-100:#C9CEDA;--ink-050:#E9ECF2;--ink-000:#FFFFFF;
+
+/* Limette — primary brand green (#74CC1F) */
+--green-050:#F3FCE6;--green-100:#E1F8C4;--green-200:#C9F196;--green-300:#ABE663;--green-400:#8FDA3B;--green-500:#74CC1F;--green-600:#63B117;--green-700:#4F8F13;--green-800:#37630F;--green-900:#22400A;
+
+/* Violett — secondary brand purple (#5A4DFF) */
+--violet-050:#EEEDFF;--violet-100:#DAD7FF;--violet-200:#BDB8FF;--violet-300:#9E97FF;--violet-400:#7C72FF;--violet-500:#5A4DFF;--violet-600:#4A3CEB;--violet-700:#3B2ECB;--violet-800:#281E90;--violet-900:#17115C;
+
+/* Beere — tertiary, data viz / third series only */
+--dusk-300:#F79ACB;--dusk-500:#E8559F;--dusk-700:#B02D74;
+
+/* status */
+--amber-500:#FFC53D;--red-500:#FF4D5E;--blue-500:#5FB4FF;
+--red-300:#FF8792;--red-700:#C81E30;--amber-700:#A97400;--blue-700:#1F7CD0;
+
+/* --- semantic aliases (dark, the default) ---------------------------- */
+--brand-primary:var(--green-500);--brand-primary-press:var(--green-600);--brand-secondary:var(--violet-500);--brand-secondary-press:var(--violet-600);
+--bg-app:var(--ink-900);--bg-app-deep:var(--ink-1000);
+--surface-1:var(--ink-800);--surface-2:var(--ink-700);--surface-3:var(--ink-600);--surface-card:var(--ink-800);--surface-inset:var(--ink-1000);
+--text-primary:var(--ink-050);--text-secondary:var(--ink-200);--text-muted:var(--ink-300);--text-inverse:var(--ink-1000);
+/* dark ink on the bright green, white on the deep violet */
+--text-on-brand:var(--ink-1000);--text-on-primary:var(--ink-1000);--text-on-secondary:var(--ink-000);--text-link:var(--green-400);
+--border-subtle:rgba(233,236,242,.08);--border-medium:rgba(233,236,242,.14);--border-strong:rgba(233,236,242,.24);--border-brand:rgba(116,204,31,.45);
+--fill-quiet:rgba(233,236,242,.06);--fill-quiet-hover:rgba(233,236,242,.10);--fill-brand-quiet:rgba(116,204,31,.16);--fill-secondary-quiet:rgba(90,77,255,.20);
+--status-success:var(--green-400);--status-warning:var(--amber-500);--status-danger:var(--red-500);--status-info:var(--blue-500);
+/* live / alert accents — kept as tokens so they can flip per theme */
+--live-text:var(--red-300);--live-fill:rgba(255,77,94,.16);--live-fill-strong:rgba(255,77,94,.18);--live-border:rgba(255,77,94,.38);
+/* ink for text/glyphs that sit on a quiet brand tint (badges, avatars) */
+--text-brand:var(--green-300);--text-brand-secondary:var(--violet-300);--knob-off:var(--ink-100);
+/* festival CI hooks — a festival theme overrides only these four */
+--ci-primary:var(--brand-primary);--ci-secondary:var(--brand-secondary);--ci-tint:rgba(116,204,31,.16);--ci-on-primary:var(--text-on-primary);
+}
+
+/* Explicit dark scope. Same values as :root — set data-theme="dark" on any
+   subtree that must stay dark inside a light app (media overlays, map, hero). */
+[data-theme="dark"]{
+--bg-app:var(--ink-900);--bg-app-deep:var(--ink-1000);
+--surface-1:var(--ink-800);--surface-2:var(--ink-700);--surface-3:var(--ink-600);--surface-card:var(--ink-800);--surface-inset:var(--ink-1000);
+--text-primary:var(--ink-050);--text-secondary:var(--ink-200);--text-muted:var(--ink-300);--text-inverse:var(--ink-1000);--text-link:var(--green-400);
+--border-subtle:rgba(233,236,242,.08);--border-medium:rgba(233,236,242,.14);--border-strong:rgba(233,236,242,.24);--border-brand:rgba(116,204,31,.45);
+--fill-quiet:rgba(233,236,242,.06);--fill-quiet-hover:rgba(233,236,242,.10);--fill-brand-quiet:rgba(116,204,31,.16);--fill-secondary-quiet:rgba(90,77,255,.20);
+--status-success:var(--green-400);--status-warning:var(--amber-500);--status-danger:var(--red-500);--status-info:var(--blue-500);
+--live-text:var(--red-300);--live-fill:rgba(255,77,94,.16);--live-fill-strong:rgba(255,77,94,.18);--live-border:rgba(255,77,94,.38);
+--text-brand:var(--green-300);--text-brand-secondary:var(--violet-300);--knob-off:var(--ink-100);
+--ci-tint:rgba(116,204,31,.16);
+}
+
+/* Light surface scope: Tageslicht-Modus, print, marketing pages.
+   Set data-theme="light" on <html> (or any subtree) to flip. */
+[data-theme="light"]{
+--bg-app:var(--ink-000);--bg-app-deep:var(--green-050);
+--surface-1:var(--ink-000);--surface-2:var(--ink-050);--surface-3:var(--ink-100);--surface-card:var(--ink-000);--surface-inset:var(--ink-050);
+--text-primary:var(--ink-1000);--text-secondary:var(--ink-500);--text-muted:var(--ink-400);--text-inverse:var(--ink-000);
+--text-link:var(--green-700);
+--border-subtle:rgba(7,8,11,.08);--border-medium:rgba(7,8,11,.14);--border-strong:rgba(7,8,11,.24);--border-brand:rgba(79,143,19,.42);
+--fill-quiet:rgba(7,8,11,.05);--fill-quiet-hover:rgba(7,8,11,.09);--fill-brand-quiet:rgba(116,204,31,.20);--fill-secondary-quiet:rgba(90,77,255,.12);
+--status-success:var(--green-700);--status-warning:var(--amber-700);--status-danger:var(--red-700);--status-info:var(--blue-700);
+--live-text:var(--red-700);--live-fill:rgba(255,77,94,.12);--live-fill-strong:rgba(255,77,94,.16);--live-border:rgba(200,30,48,.30);
+--text-brand:var(--green-700);--text-brand-secondary:var(--violet-700);--knob-off:var(--ink-000);
+--ci-tint:rgba(116,204,31,.20);
+}
+
+/* Example festival CI theme (drop-in per event) */
+[data-festival="hoerspiel"]{--ci-primary:#F2C14E;--ci-secondary:#8B7CFF;--ci-tint:rgba(242,193,78,.16);--ci-on-primary:var(--ink-1000)}
+</style>
+<style>:root{
+--font-display:"Outfit","Segoe UI",system-ui,sans-serif;
+--font-body:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,monospace;
+
+--fs-display-1:44px;--fs-display-2:34px;--fs-title-1:26px;--fs-title-2:21px;--fs-title-3:17px;--fs-body:15px;--fs-body-sm:13.5px;--fs-label:12px;--fs-micro:10.5px;
+--lh-tight:1.06; /* @kind other */
+--lh-snug:1.2; /* @kind other */
+--lh-normal:1.45; /* @kind other */
+--lh-relaxed:1.6; /* @kind other */
+--fw-regular:400; /* @kind other */
+--fw-medium:500; /* @kind other */
+--fw-semibold:600; /* @kind other */
+--fw-bold:700; /* @kind other */
+--fw-black:800; /* @kind other */
+--ls-display:-.03em; /* @kind other */
+--ls-title:-.015em; /* @kind other */
+--ls-body:0em; /* @kind other */
+--ls-label:.02em; /* @kind other */
+--ls-caps:.09em; /* @kind other */
+
+--text-display-1:var(--fw-black) var(--fs-display-1)/var(--lh-tight) var(--font-display);
+--text-display-2:var(--fw-bold) var(--fs-display-2)/var(--lh-tight) var(--font-display);
+--text-title-1:var(--fw-bold) var(--fs-title-1)/var(--lh-snug) var(--font-display);
+--text-title-2:var(--fw-semibold) var(--fs-title-2)/var(--lh-snug) var(--font-display);
+--text-title-3:var(--fw-semibold) var(--fs-title-3)/var(--lh-snug) var(--font-body);
+--text-body:var(--fw-regular) var(--fs-body)/var(--lh-normal) var(--font-body);
+--text-body-strong:var(--fw-semibold) var(--fs-body)/var(--lh-normal) var(--font-body);
+--text-body-sm:var(--fw-regular) var(--fs-body-sm)/var(--lh-normal) var(--font-body);
+--text-label:var(--fw-semibold) var(--fs-label)/1.3 var(--font-body);
+--text-micro:var(--fw-bold) var(--fs-micro)/1.2 var(--font-body);
+--text-mono:var(--fw-medium) var(--fs-body-sm)/1.3 var(--font-mono);
+}
+</style>
+<style>:root{
+--sp-0:0px;--sp-1:2px;--sp-2:4px;--sp-3:6px;--sp-4:8px;--sp-5:12px;--sp-6:16px;--sp-7:20px;--sp-8:24px;--sp-9:32px;--sp-10:40px;--sp-11:56px;--sp-12:72px;
+/* layout constants */
+--screen-pad:18px;            /* horizontal gutter on every app screen */
+--stack-gap:12px;             /* default gap between list rows */
+--section-gap:28px;           /* gap between screen sections */
+--topbar-h:56px;
+--nav-h:64px;                 /* floating nav pill height */
+--nav-inset:14px;             /* distance from safe-area bottom */
+--scroll-bottom-pad:104px;    /* nav-h + nav-inset + breathing room */
+--hit-min:44px;               /* minimum tap target */
+--content-max:430px;          /* app design width */
+}
+</style>
+<style>:root{
+--r-xs:8px;--r-sm:12px;--r-md:16px;--r-lg:22px;--r-xl:28px;--r-2xl:36px;--r-pill:999px;
+--r-card:var(--r-lg);--r-sheet:28px;--r-control:var(--r-sm);--r-chip:var(--r-pill);--r-avatar:var(--r-pill);
+--stroke-hairline:1px; /* @kind other */
+--stroke-medium:1.5px; /* @kind other */
+--stroke-focus:2px; /* @kind other */
+}
+</style>
+<style>:root{
+--shadow-0:none;
+--shadow-1:0 1px 2px rgba(7,8,11,.4);
+--shadow-2:0 6px 18px -6px rgba(7,8,11,.65);
+--shadow-3:0 18px 40px -12px rgba(7,8,11,.8);
+--shadow-nav:0 12px 34px -8px rgba(7,8,11,.85),inset 0 1px 0 rgba(255,255,255,.14);
+--shadow-sheet:0 -20px 60px -18px rgba(7,8,11,.9);
+--glow-primary:0 8px 26px -10px rgba(116,204,31,.75);
+--glow-secondary:0 8px 26px -10px rgba(90,77,255,.7);
+--inset-hairline:inset 0 1px 0 rgba(255,255,255,.06);
+/* protection gradient behind text on imagery */
+--scrim-bottom:linear-gradient(to top,rgba(7,8,11,.92) 0%,rgba(7,8,11,.6) 42%,rgba(7,8,11,0) 100%); /* @kind other */
+--scrim-top:linear-gradient(to bottom,rgba(7,8,11,.8) 0%,rgba(7,8,11,0) 100%); /* @kind other */
+}
+/* Light theme: shadows carry the depth that the dark surfaces used to. */
+[data-theme="light"]{
+--shadow-1:0 1px 2px rgba(20,22,29,.10);
+--shadow-2:0 8px 20px -8px rgba(20,22,29,.20);
+--shadow-3:0 22px 44px -16px rgba(20,22,29,.26);
+--shadow-nav:0 14px 34px -10px rgba(20,22,29,.24),inset 0 1px 0 rgba(255,255,255,.9);
+--shadow-sheet:0 -20px 60px -20px rgba(20,22,29,.28);
+--inset-hairline:inset 0 1px 0 rgba(255,255,255,.8);
+}
+</style>
+<style>:root{
+--dur-instant:90ms; /* @kind other */
+--dur-fast:150ms; /* @kind other */
+--dur-base:220ms; /* @kind other */
+--dur-slow:340ms; /* @kind other */
+--dur-sheet:420ms; /* @kind other */
+--ease-out:cubic-bezier(.2,.8,.2,1); /* @kind other */
+--ease-in-out:cubic-bezier(.4,0,.2,1); /* @kind other */
+--ease-spring:cubic-bezier(.34,1.4,.5,1); /* @kind other */
+--press-scale:.965; /* @kind other */
+--transition-control:transform var(--dur-instant) var(--ease-out),background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),opacity var(--dur-fast) var(--ease-out); /* @kind other */
+}
+@media (prefers-reduced-motion:reduce){:root{
+--dur-instant:1ms; /* @kind other */
+--dur-fast:1ms; /* @kind other */
+--dur-base:1ms; /* @kind other */
+--dur-slow:1ms; /* @kind other */
+--dur-sheet:1ms; /* @kind other */
+--press-scale:1; /* @kind other */
+}}
+</style>
+<style>/* Liquid glass — the signature Festipal surface. Only for FLOATING, fixed
+   layers over content: bottom nav, top bar, sheet handles, map overlays.
+   Never for static cards in a scroll list. */
+:root{
+--glass-fill:rgba(20,22,29,.62);
+--glass-fill-strong:rgba(20,22,29,.82);
+--glass-tint-brand:rgba(116,204,31,.10);
+--glass-border:rgba(255,255,255,.16);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.22); /* @kind shadow */
+--glass-blur:22px; /* @kind other */
+--glass-saturate:180%; /* @kind other */
+}
+/* Light theme: milk glass instead of smoked glass. */
+[data-theme="dark"]{
+--glass-fill:rgba(20,22,29,.62);
+--glass-fill-strong:rgba(20,22,29,.82);
+--glass-border:rgba(255,255,255,.16);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.22); /* @kind shadow */
+}
+[data-theme="light"]{
+--glass-fill:rgba(255,255,255,.72);
+--glass-fill-strong:rgba(255,255,255,.90);
+--glass-tint-brand:rgba(116,204,31,.14);
+--glass-border:rgba(7,8,11,.10);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.9); /* @kind shadow */
+}
+.fp-glass{background:var(--glass-fill);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));border:var(--stroke-hairline) solid var(--glass-border);box-shadow:var(--shadow-nav)}
+</style>
+<style>*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg-app);color:var(--text-primary);font:var(--text-body);letter-spacing:var(--ls-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4{margin:0;letter-spacing:var(--ls-title)}
+h1{font:var(--text-display-2);letter-spacing:var(--ls-display)}
+h2{font:var(--text-title-1)}
+h3{font:var(--text-title-2)}
+h4{font:var(--text-title-3)}
+p{margin:0}
+a{color:var(--text-link);text-decoration:none;transition:color var(--dur-fast) var(--ease-out)}
+a:hover{color:var(--green-300)}
+button{font:inherit;color:inherit}
+::selection{background:var(--fill-brand-quiet);color:var(--text-primary)}
+.fp-eyebrow{font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-muted)}
+.fp-scroll{overflow-y:auto;scrollbar-width:none}
+.fp-scroll::-webkit-scrollbar{display:none}
+</style>
+<style>/* Festipal webfonts. NOTE: no brand font files were provided — these are Google Fonts stand-ins.
+   Outfit  -> display / headings (geometric, friendly, modern)
+   Plus Jakarta Sans -> UI + body
+   JetBrains Mono -> codes, ticket IDs, balances */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("adcdc83e-0fe8-4e0d-8075-86bea563c524") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("8b62a944-f929-4ed1-9966-80db017851e2") format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* greek */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("adf025fa-b6ef-4cbd-87e1-bc6fe3234eee") format('woff2');
+  unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("e7d2a18d-dcc0-4485-a2a7-b1915d22e72b") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("735dee87-5124-415a-a865-0b904634e9be") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("dfd40e8e-f985-4e0e-9667-90ae4d98ea38") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("5e8e85e0-a28a-4840-9fa1-7303215716b7") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Outfit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url("22046c00-3a6d-4b1a-8669-708f6d210f46") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("787eba22-2f5e-4bd9-a447-58741262bbfe") format('woff');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("af77fd7d-6738-4078-85d1-0c41f899d10f") format('woff');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("71e5e40c-f4b5-4f0a-ab0c-522a88cb45cb") format('woff');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("5cb5dfb3-a6c9-43f9-87de-b759a8730732") format('woff');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("a622921d-5fb3-4747-b1cf-f19d1e788206") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("d7c713ce-cfc0-4fcc-96b6-af474e084b8d") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("89a733c4-0edc-43b5-b4a9-d7424c912d7b") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Plus Jakarta Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("cbd62973-aceb-4513-87ea-93c99f4fa8bc") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+
+:root{
+/* --- base ramps ------------------------------------------------------ */
+/* Ink: cool neutrals that carry both brand hues. Festipal is dark-first. */
+--ink-1000:#07080B;--ink-900:#0C0E13;--ink-800:#14161D;--ink-700:#1C1F28;--ink-600:#262A35;--ink-500:#363B49;--ink-400:#565C6E;--ink-300:#7C8394;--ink-200:#9FA6B6;--ink-100:#C9CEDA;--ink-050:#E9ECF2;--ink-000:#FFFFFF;
+
+/* Limette — primary brand green (#74CC1F) */
+--green-050:#F3FCE6;--green-100:#E1F8C4;--green-200:#C9F196;--green-300:#ABE663;--green-400:#8FDA3B;--green-500:#74CC1F;--green-600:#63B117;--green-700:#4F8F13;--green-800:#37630F;--green-900:#22400A;
+
+/* Violett — secondary brand purple (#5A4DFF) */
+--violet-050:#EEEDFF;--violet-100:#DAD7FF;--violet-200:#BDB8FF;--violet-300:#9E97FF;--violet-400:#7C72FF;--violet-500:#5A4DFF;--violet-600:#4A3CEB;--violet-700:#3B2ECB;--violet-800:#281E90;--violet-900:#17115C;
+
+/* Beere — tertiary, data viz / third series only */
+--dusk-300:#F79ACB;--dusk-500:#E8559F;--dusk-700:#B02D74;
+
+/* status */
+--amber-500:#FFC53D;--red-500:#FF4D5E;--blue-500:#5FB4FF;
+--red-300:#FF8792;--red-700:#C81E30;--amber-700:#A97400;--blue-700:#1F7CD0;
+
+/* --- semantic aliases (dark, the default) ---------------------------- */
+--brand-primary:var(--green-500);--brand-primary-press:var(--green-600);--brand-secondary:var(--violet-500);--brand-secondary-press:var(--violet-600);
+--bg-app:var(--ink-900);--bg-app-deep:var(--ink-1000);
+--surface-1:var(--ink-800);--surface-2:var(--ink-700);--surface-3:var(--ink-600);--surface-card:var(--ink-800);--surface-inset:var(--ink-1000);
+--text-primary:var(--ink-050);--text-secondary:var(--ink-200);--text-muted:var(--ink-300);--text-inverse:var(--ink-1000);
+/* dark ink on the bright green, white on the deep violet */
+--text-on-brand:var(--ink-1000);--text-on-primary:var(--ink-1000);--text-on-secondary:var(--ink-000);--text-link:var(--green-400);
+--border-subtle:rgba(233,236,242,.08);--border-medium:rgba(233,236,242,.14);--border-strong:rgba(233,236,242,.24);--border-brand:rgba(116,204,31,.45);
+--fill-quiet:rgba(233,236,242,.06);--fill-quiet-hover:rgba(233,236,242,.10);--fill-brand-quiet:rgba(116,204,31,.16);--fill-secondary-quiet:rgba(90,77,255,.20);
+--status-success:var(--green-400);--status-warning:var(--amber-500);--status-danger:var(--red-500);--status-info:var(--blue-500);
+/* live / alert accents — kept as tokens so they can flip per theme */
+--live-text:var(--red-300);--live-fill:rgba(255,77,94,.16);--live-fill-strong:rgba(255,77,94,.18);--live-border:rgba(255,77,94,.38);
+/* ink for text/glyphs that sit on a quiet brand tint (badges, avatars) */
+--text-brand:var(--green-300);--text-brand-secondary:var(--violet-300);--knob-off:var(--ink-100);
+/* festival CI hooks — a festival theme overrides only these four */
+--ci-primary:var(--brand-primary);--ci-secondary:var(--brand-secondary);--ci-tint:rgba(116,204,31,.16);--ci-on-primary:var(--text-on-primary);
+}
+
+/* Explicit dark scope. Same values as :root — set data-theme="dark" on any
+   subtree that must stay dark inside a light app (media overlays, map, hero). */
+[data-theme="dark"]{
+--bg-app:var(--ink-900);--bg-app-deep:var(--ink-1000);
+--surface-1:var(--ink-800);--surface-2:var(--ink-700);--surface-3:var(--ink-600);--surface-card:var(--ink-800);--surface-inset:var(--ink-1000);
+--text-primary:var(--ink-050);--text-secondary:var(--ink-200);--text-muted:var(--ink-300);--text-inverse:var(--ink-1000);--text-link:var(--green-400);
+--border-subtle:rgba(233,236,242,.08);--border-medium:rgba(233,236,242,.14);--border-strong:rgba(233,236,242,.24);--border-brand:rgba(116,204,31,.45);
+--fill-quiet:rgba(233,236,242,.06);--fill-quiet-hover:rgba(233,236,242,.10);--fill-brand-quiet:rgba(116,204,31,.16);--fill-secondary-quiet:rgba(90,77,255,.20);
+--status-success:var(--green-400);--status-warning:var(--amber-500);--status-danger:var(--red-500);--status-info:var(--blue-500);
+--live-text:var(--red-300);--live-fill:rgba(255,77,94,.16);--live-fill-strong:rgba(255,77,94,.18);--live-border:rgba(255,77,94,.38);
+--text-brand:var(--green-300);--text-brand-secondary:var(--violet-300);--knob-off:var(--ink-100);
+--ci-tint:rgba(116,204,31,.16);
+}
+
+/* Light surface scope: Tageslicht-Modus, print, marketing pages.
+   Set data-theme="light" on <html> (or any subtree) to flip. */
+[data-theme="light"]{
+--bg-app:var(--ink-000);--bg-app-deep:var(--green-050);
+--surface-1:var(--ink-000);--surface-2:var(--ink-050);--surface-3:var(--ink-100);--surface-card:var(--ink-000);--surface-inset:var(--ink-050);
+--text-primary:var(--ink-1000);--text-secondary:var(--ink-500);--text-muted:var(--ink-400);--text-inverse:var(--ink-000);
+--text-link:var(--green-700);
+--border-subtle:rgba(7,8,11,.08);--border-medium:rgba(7,8,11,.14);--border-strong:rgba(7,8,11,.24);--border-brand:rgba(79,143,19,.42);
+--fill-quiet:rgba(7,8,11,.05);--fill-quiet-hover:rgba(7,8,11,.09);--fill-brand-quiet:rgba(116,204,31,.20);--fill-secondary-quiet:rgba(90,77,255,.12);
+--status-success:var(--green-700);--status-warning:var(--amber-700);--status-danger:var(--red-700);--status-info:var(--blue-700);
+--live-text:var(--red-700);--live-fill:rgba(255,77,94,.12);--live-fill-strong:rgba(255,77,94,.16);--live-border:rgba(200,30,48,.30);
+--text-brand:var(--green-700);--text-brand-secondary:var(--violet-700);--knob-off:var(--ink-000);
+--ci-tint:rgba(116,204,31,.20);
+}
+
+/* Example festival CI theme (drop-in per event) */
+[data-festival="hoerspiel"]{--ci-primary:#F2C14E;--ci-secondary:#8B7CFF;--ci-tint:rgba(242,193,78,.16);--ci-on-primary:var(--ink-1000)}
+
+:root{
+--font-display:"Outfit","Segoe UI",system-ui,sans-serif;
+--font-body:"Plus Jakarta Sans",system-ui,-apple-system,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,monospace;
+
+--fs-display-1:44px;--fs-display-2:34px;--fs-title-1:26px;--fs-title-2:21px;--fs-title-3:17px;--fs-body:15px;--fs-body-sm:13.5px;--fs-label:12px;--fs-micro:10.5px;
+--lh-tight:1.06; /* @kind other */
+--lh-snug:1.2; /* @kind other */
+--lh-normal:1.45; /* @kind other */
+--lh-relaxed:1.6; /* @kind other */
+--fw-regular:400; /* @kind other */
+--fw-medium:500; /* @kind other */
+--fw-semibold:600; /* @kind other */
+--fw-bold:700; /* @kind other */
+--fw-black:800; /* @kind other */
+--ls-display:-.03em; /* @kind other */
+--ls-title:-.015em; /* @kind other */
+--ls-body:0em; /* @kind other */
+--ls-label:.02em; /* @kind other */
+--ls-caps:.09em; /* @kind other */
+
+--text-display-1:var(--fw-black) var(--fs-display-1)/var(--lh-tight) var(--font-display);
+--text-display-2:var(--fw-bold) var(--fs-display-2)/var(--lh-tight) var(--font-display);
+--text-title-1:var(--fw-bold) var(--fs-title-1)/var(--lh-snug) var(--font-display);
+--text-title-2:var(--fw-semibold) var(--fs-title-2)/var(--lh-snug) var(--font-display);
+--text-title-3:var(--fw-semibold) var(--fs-title-3)/var(--lh-snug) var(--font-body);
+--text-body:var(--fw-regular) var(--fs-body)/var(--lh-normal) var(--font-body);
+--text-body-strong:var(--fw-semibold) var(--fs-body)/var(--lh-normal) var(--font-body);
+--text-body-sm:var(--fw-regular) var(--fs-body-sm)/var(--lh-normal) var(--font-body);
+--text-label:var(--fw-semibold) var(--fs-label)/1.3 var(--font-body);
+--text-micro:var(--fw-bold) var(--fs-micro)/1.2 var(--font-body);
+--text-mono:var(--fw-medium) var(--fs-body-sm)/1.3 var(--font-mono);
+}
+
+:root{
+--sp-0:0px;--sp-1:2px;--sp-2:4px;--sp-3:6px;--sp-4:8px;--sp-5:12px;--sp-6:16px;--sp-7:20px;--sp-8:24px;--sp-9:32px;--sp-10:40px;--sp-11:56px;--sp-12:72px;
+/* layout constants */
+--screen-pad:18px;            /* horizontal gutter on every app screen */
+--stack-gap:12px;             /* default gap between list rows */
+--section-gap:28px;           /* gap between screen sections */
+--topbar-h:56px;
+--nav-h:64px;                 /* floating nav pill height */
+--nav-inset:14px;             /* distance from safe-area bottom */
+--scroll-bottom-pad:104px;    /* nav-h + nav-inset + breathing room */
+--hit-min:44px;               /* minimum tap target */
+--content-max:430px;          /* app design width */
+}
+
+:root{
+--r-xs:8px;--r-sm:12px;--r-md:16px;--r-lg:22px;--r-xl:28px;--r-2xl:36px;--r-pill:999px;
+--r-card:var(--r-lg);--r-sheet:28px;--r-control:var(--r-sm);--r-chip:var(--r-pill);--r-avatar:var(--r-pill);
+--stroke-hairline:1px; /* @kind other */
+--stroke-medium:1.5px; /* @kind other */
+--stroke-focus:2px; /* @kind other */
+}
+
+:root{
+--shadow-0:none;
+--shadow-1:0 1px 2px rgba(7,8,11,.4);
+--shadow-2:0 6px 18px -6px rgba(7,8,11,.65);
+--shadow-3:0 18px 40px -12px rgba(7,8,11,.8);
+--shadow-nav:0 12px 34px -8px rgba(7,8,11,.85),inset 0 1px 0 rgba(255,255,255,.14);
+--shadow-sheet:0 -20px 60px -18px rgba(7,8,11,.9);
+--glow-primary:0 8px 26px -10px rgba(116,204,31,.75);
+--glow-secondary:0 8px 26px -10px rgba(90,77,255,.7);
+--inset-hairline:inset 0 1px 0 rgba(255,255,255,.06);
+/* protection gradient behind text on imagery */
+--scrim-bottom:linear-gradient(to top,rgba(7,8,11,.92) 0%,rgba(7,8,11,.6) 42%,rgba(7,8,11,0) 100%); /* @kind other */
+--scrim-top:linear-gradient(to bottom,rgba(7,8,11,.8) 0%,rgba(7,8,11,0) 100%); /* @kind other */
+}
+/* Light theme: shadows carry the depth that the dark surfaces used to. */
+[data-theme="light"]{
+--shadow-1:0 1px 2px rgba(20,22,29,.10);
+--shadow-2:0 8px 20px -8px rgba(20,22,29,.20);
+--shadow-3:0 22px 44px -16px rgba(20,22,29,.26);
+--shadow-nav:0 14px 34px -10px rgba(20,22,29,.24),inset 0 1px 0 rgba(255,255,255,.9);
+--shadow-sheet:0 -20px 60px -20px rgba(20,22,29,.28);
+--inset-hairline:inset 0 1px 0 rgba(255,255,255,.8);
+}
+
+:root{
+--dur-instant:90ms; /* @kind other */
+--dur-fast:150ms; /* @kind other */
+--dur-base:220ms; /* @kind other */
+--dur-slow:340ms; /* @kind other */
+--dur-sheet:420ms; /* @kind other */
+--ease-out:cubic-bezier(.2,.8,.2,1); /* @kind other */
+--ease-in-out:cubic-bezier(.4,0,.2,1); /* @kind other */
+--ease-spring:cubic-bezier(.34,1.4,.5,1); /* @kind other */
+--press-scale:.965; /* @kind other */
+--transition-control:transform var(--dur-instant) var(--ease-out),background-color var(--dur-fast) var(--ease-out),border-color var(--dur-fast) var(--ease-out),opacity var(--dur-fast) var(--ease-out); /* @kind other */
+}
+@media (prefers-reduced-motion:reduce){:root{
+--dur-instant:1ms; /* @kind other */
+--dur-fast:1ms; /* @kind other */
+--dur-base:1ms; /* @kind other */
+--dur-slow:1ms; /* @kind other */
+--dur-sheet:1ms; /* @kind other */
+--press-scale:1; /* @kind other */
+}}
+
+/* Liquid glass — the signature Festipal surface. Only for FLOATING, fixed
+   layers over content: bottom nav, top bar, sheet handles, map overlays.
+   Never for static cards in a scroll list. */
+:root{
+--glass-fill:rgba(20,22,29,.62);
+--glass-fill-strong:rgba(20,22,29,.82);
+--glass-tint-brand:rgba(116,204,31,.10);
+--glass-border:rgba(255,255,255,.16);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.22); /* @kind shadow */
+--glass-blur:22px; /* @kind other */
+--glass-saturate:180%; /* @kind other */
+}
+/* Light theme: milk glass instead of smoked glass. */
+[data-theme="dark"]{
+--glass-fill:rgba(20,22,29,.62);
+--glass-fill-strong:rgba(20,22,29,.82);
+--glass-border:rgba(255,255,255,.16);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.22); /* @kind shadow */
+}
+[data-theme="light"]{
+--glass-fill:rgba(255,255,255,.72);
+--glass-fill-strong:rgba(255,255,255,.90);
+--glass-tint-brand:rgba(116,204,31,.14);
+--glass-border:rgba(7,8,11,.10);
+--glass-highlight:inset 0 1px 0 rgba(255,255,255,.9); /* @kind shadow */
+}
+.fp-glass{background:var(--glass-fill);-webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-saturate));border:var(--stroke-hairline) solid var(--glass-border);box-shadow:var(--shadow-nav)}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg-app);color:var(--text-primary);font:var(--text-body);letter-spacing:var(--ls-body);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+h1,h2,h3,h4{margin:0;letter-spacing:var(--ls-title)}
+h1{font:var(--text-display-2);letter-spacing:var(--ls-display)}
+h2{font:var(--text-title-1)}
+h3{font:var(--text-title-2)}
+h4{font:var(--text-title-3)}
+p{margin:0}
+a{color:var(--text-link);text-decoration:none;transition:color var(--dur-fast) var(--ease-out)}
+a:hover{color:var(--green-300)}
+button{font:inherit;color:inherit}
+::selection{background:var(--fill-brand-quiet);color:var(--text-primary)}
+.fp-eyebrow{font:var(--text-micro);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-muted)}
+.fp-scroll{overflow-y:auto;scrollbar-width:none}
+.fp-scroll::-webkit-scrollbar{display:none}
+
+</style>
+<script src="168c7e64-f50f-47da-bb85-439e28e01e54"></script>
+<script src="c0ff4556-e4ff-4819-9b72-ad706622153f"></script>
+<style>
+body{margin:0;background:#EDEAE4}
+a{color:#B02D74;text-decoration:none}a:hover{color:#E8559F}
+[data-quiks]{
+--brand-primary:#E8559F;--brand-primary-press:#B02D74;--brand-secondary:#FFC53D;--brand-secondary-press:#D99A18;
+--text-on-primary:#FFFFFF;--text-on-brand:#FFFFFF;--text-on-secondary:#221A04;
+--ci-primary:#E8559F;--ci-secondary:#FFC53D;--ci-tint:rgba(232,85,159,.16);--ci-on-primary:#FFFFFF;
+--border-brand:rgba(232,85,159,.45);--fill-brand-quiet:rgba(232,85,159,.16);--fill-secondary-quiet:rgba(255,197,61,.22);
+--glow-primary:0 10px 26px -10px rgba(232,85,159,.55);--glow-secondary:0 10px 26px -10px rgba(255,197,61,.5);
+--text-link:#F79ACB;--text-brand:#F79ACB;--text-brand-secondary:#FFC53D;
+--q-sunset:linear-gradient(150deg,#FFC53D,#E8559F);--q-hero:var(--q-sunset);
+--violet-300:#F79ACB;--violet-500:#E8559F;--violet-600:#CE3E87;--violet-700:#B02D74;--violet-800:#7A1F52;--violet-900:#4A1332;
+}
+[data-quiks][data-mood="beere"]{--q-hero:linear-gradient(150deg,#E8559F,#CE3E87)}
+[data-quiks] [data-theme="light"],[data-quiks][data-theme="light"]{
+--text-link:#B02D74;--text-brand:#B02D74;--text-brand-secondary:#A97400;
+--bg-app:#F7F5F2;--surface-card:#FFFFFF;--surface-1:#FFFFFF;--surface-inset:#EFECE6;
+--brand-primary:#E8559F;--brand-primary-press:#B02D74;--brand-secondary:#FFC53D;--brand-secondary-press:#D99A18;
+--text-on-primary:#FFFFFF;--text-on-brand:#FFFFFF;--text-on-secondary:#221A04;
+--ci-primary:#E8559F;--ci-secondary:#FFC53D;--ci-tint:rgba(232,85,159,.16);--ci-on-primary:#FFFFFF;
+--border-brand:rgba(232,85,159,.42);--fill-brand-quiet:rgba(232,85,159,.16);--fill-secondary-quiet:rgba(255,197,61,.22);
+--glow-primary:0 10px 26px -10px rgba(232,85,159,.55);--glow-secondary:0 10px 26px -10px rgba(255,197,61,.5);
+}
+[data-quiks] [data-theme="dark"],[data-quiks][data-theme="dark"]{
+--text-link:#F79ACB;--text-brand:#F79ACB;--text-brand-secondary:#FFC53D;
+--brand-primary:#E8559F;--brand-primary-press:#B02D74;--brand-secondary:#FFC53D;--brand-secondary-press:#D99A18;
+--text-on-primary:#FFFFFF;--text-on-brand:#FFFFFF;--text-on-secondary:#221A04;
+--ci-primary:#E8559F;--ci-secondary:#FFC53D;--ci-tint:rgba(232,85,159,.16);--ci-on-primary:#FFFFFF;
+--border-brand:rgba(232,85,159,.45);--fill-brand-quiet:rgba(232,85,159,.16);--fill-secondary-quiet:rgba(255,197,61,.22);
+--glow-primary:0 10px 26px -10px rgba(232,85,159,.55);--glow-secondary:0 10px 26px -10px rgba(255,197,61,.5);
+}
+</style>
+</helmet>
+<div data-quiks="" data-mood="{{ mood }}" style="min-height:100vh;display:flex;align-items:flex-start;justify-content:center;gap:48px;padding:52px 40px;box-sizing:border-box;font:400 15px/1.45 var(--font-body)">
+
+<div style="width:216px;flex:none;position:sticky;top:52px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;align-items:center;gap:12px">
+<div style="width:46px;height:46px;border-radius:13px;background:var(--q-hero);position:relative;overflow:hidden;flex:none;box-shadow:0 8px 20px -8px rgba(232,85,159,.5)"><span style="position:absolute;left:9px;bottom:-8px;font:800 34px/1 var(--font-display);color:#fff">q</span><span style="position:absolute;right:9px;top:9px;width:7px;height:7px;border-radius:50%;background:#fff"></span></div>
+<div><div style="font:800 24px/1 var(--font-display);letter-spacing:-.04em;color:#14161D">quiks<span style="color:#E8559F">.</span></div><div style="font:500 11.5px/1.4 var(--font-mono);color:#7C8394;margin-top:3px">App-Prototyp · klickbar</div></div>
+</div>
+<div style="font:400 12.5px/1.5 var(--font-body);color:#565C6E;text-wrap:pretty">Nav, Karten, Merken, Tags und Sheets sind funktionstüchtig. Modus &amp; Farbstimmung über die Tweaks.</div>
+<div style="display:flex;flex-direction:column;gap:14px">
+<div><div class="fp-eyebrow" style="color:#9FA6B6;margin-bottom:6px">Global</div><div style="display:flex;flex-direction:column;gap:2px"><sc-for list="{{ jumpGlobal }}" as="j" hint-placeholder-count="4"><button sc-camel-on-click="{{ j.go }}" style="display:flex;align-items:center;gap:9px;padding:6px 10px;border:none;border-radius:999px;cursor:pointer;text-align:left;font:500 13.5px/1.2 var(--font-body);background:{{ j.bg }};color:{{ j.color }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ j.dot }}"></span>{{ j.label }}</button></sc-for></div></div>
+<div><div class="fp-eyebrow" style="color:#9FA6B6;margin-bottom:6px">Festival · Uferklang</div><div style="display:flex;flex-direction:column;gap:2px"><sc-for list="{{ jumpFest }}" as="j" hint-placeholder-count="4"><button sc-camel-on-click="{{ j.go }}" style="display:flex;align-items:center;gap:9px;padding:6px 10px;border:none;border-radius:999px;cursor:pointer;text-align:left;font:500 13.5px/1.2 var(--font-body);background:{{ j.bg }};color:{{ j.color }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ j.dot }}"></span>{{ j.label }}</button></sc-for></div></div>
+<div><div class="fp-eyebrow" style="color:#9FA6B6;margin-bottom:6px">Aus Inhalten</div><div style="display:flex;flex-direction:column;gap:2px"><sc-for list="{{ jumpPushed }}" as="j" hint-placeholder-count="3"><button sc-camel-on-click="{{ j.go }}" style="display:flex;align-items:center;gap:9px;padding:6px 10px;border:none;border-radius:999px;cursor:pointer;text-align:left;font:500 13.5px/1.2 var(--font-body);background:{{ j.bg }};color:{{ j.color }}"><span style="width:5px;height:5px;border-radius:50%;background:{{ j.dot }}"></span>{{ j.label }}</button></sc-for></div></div>
+</div>
+</div>
+
+<div data-theme="{{ theme }}" style="position:relative;width:430px;height:900px;flex:none;overflow:hidden;border-radius:42px;border:1px solid rgba(7,8,11,.16);box-shadow:var(--shadow-3);background:var(--bg-app);color:var(--text-primary)">
+<div style="position:absolute;top:0;left:0;right:0;z-index:50;background:var(--glass-fill);backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid var(--border-subtle)">
+<div style="position:relative;height:42px;display:flex;align-items:center;justify-content:space-between;padding:8px 20px 0">
+<span style="font:600 12px/1 var(--font-mono)">21:35</span>
+<div style="position:absolute;left:50%;transform:translateX(-50%);top:9px;width:110px;height:30px;border-radius:999px;background:#000;display:flex;align-items:center;justify-content:flex-end;padding:0 9px;box-sizing:border-box;gap:7px">
+<span style="width:34px;height:6px;border-radius:3px;background:#0B0C10"></span>
+<span style="width:11px;height:11px;border-radius:50%;background:#0F1218;border:1.5px solid #232838;box-shadow:inset 0 0 3px rgba(90,120,255,.35);flex:none"></span>
+</div>
+<span style="font:500 11px/1 var(--font-mono);color:var(--text-muted)">5G · 78 %</span>
+</div>
+<div style="height:52px;display:flex;align-items:center;gap:12px;padding:0 14px 6px">
+<div sc-camel-on-click="{{ topHome }}" style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--fill-quiet);flex:none" style-active="transform:scale(.92)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="{{ tbIcon }}" size="{{ 18 }}" hint-size="18px,18px"></x-import></div>
+<sc-if value="{{ showWordmark }}"><span style="font:800 21px/1 var(--font-display);letter-spacing:-.04em">quiks<span style="color:var(--ci-primary)">.</span></span></sc-if>
+<sc-if value="{{ showTitleText }}"><span style="font:800 17px/1.15 var(--font-display);letter-spacing:-.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">{{ tbTitle }}</span></sc-if>
+<span style="flex:1"></span>
+<sc-if value="{{ artistChipShow }}"><span sc-camel-on-click="{{ enterFest }}" style="display:inline-flex;align-items:center;gap:6px;padding:7px 11px;border-radius:999px;background:var(--live-fill);border:1px solid var(--live-border);cursor:pointer;flex:none" style-active="transform:scale(.94)"><span style="width:6px;height:6px;border-radius:50%;background:var(--status-danger)"></span><span style="font:600 10.5px/1 var(--font-mono);color:var(--live-text);white-space:nowrap">Vanta</span></span></sc-if>
+<div sc-camel-on-click="{{ openProfil }}" style="cursor:pointer;flex:none" style-active="transform:scale(.92)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="Feli Auer" size="{{ 32 }}" hint-size="32px,32px"></x-import></div>
+</div>
+</div>
+<div class="fp-scroll" style="position:absolute;top:94px;left:0;right:0;bottom:0;overflow-y:auto;padding:18px 18px 104px">
+
+<sc-if value="{{ scHome }}" hint-placeholder-val="{{ true }}">
+<div data-screen-label="01 Start" style="display:flex;flex-direction:column;gap:26px">
+<div sc-camel-on-click="{{ enterFest }}" style="position:relative;overflow:hidden;border-radius:22px;padding:20px;background:var(--q-hero);color:#fff;cursor:pointer;box-shadow:var(--shadow-2)" style-active="transform:scale(.985)">
+<span style="font:700 10.5px/1.2 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;opacity:.9">Läuft gerade · Tag 2</span>
+<div style="font:800 27px/1.08 var(--font-display);letter-spacing:-.02em;margin:8px 0 5px;max-width:280px">Uferklang wartet auf dich</div>
+<div style="font:var(--text-body-sm);opacity:.92;max-width:270px">Vanta live um 21:30 — deine Crew ist schon am Gelände.</div>
+<div style="display:flex;align-items:center;gap:6px;margin-top:16px;font:600 13.5px/1 var(--font-body)">Zum Festival <x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="arrow-right" size="{{ 14 }}" hint-size="14px,14px"></x-import></div>
+<div style="position:absolute;right:-4px;bottom:-38px;font:800 150px/1 var(--font-display);color:rgba(255,255,255,.16);pointer-events:none">q</div>
+</div>
+<sc-if value="{{ hasNextSaved }}">
+<div>
+<div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px"><span class="fp-eyebrow" style="color:var(--text-brand)">Als Nächstes für dich</span><span style="font:500 12px/1 var(--font-mono);color:var(--text-brand)">{{ nextIn }}</span></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.TimetableSlot" time="{{ nextT }}" end-time="{{ nextE }}" artist="{{ nextA }}" stage="{{ nextS }}" saved="{{ true }}" sc-camel-on-toggle-save="{{ nextToggle }}" sc-camel-on-click="{{ nextOpen }}" hint-size="100%,80px"></x-import>
+</div>
+</sc-if>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Meine Festivals</h3><span sc-camel-on-click="{{ goFestivals }}" style="font:var(--text-label);color:var(--text-link);cursor:pointer">Alle 3</span></div>
+<div class="fp-scroll" style="display:flex;gap:12px;overflow-x:auto;margin:0 -18px;padding:0 18px">
+<div style="width:210px;flex:none"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Uferklang" dates="Läuft · bis 30. Aug" place="Seewiese" status="angemeldet" friends="{{ 5 }}" ratio="4 / 3" sc-camel-on-click="{{ enterFest }}" hint-size="100%,240px"></x-import></div>
+<div style="width:210px;flex:none"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Steinbruch Sessions" dates="11. – 13. Sep 2026" place="Waldviertel" status="angemeldet" friends="{{ 3 }}" ratio="4 / 3" hint-size="100%,240px"></x-import></div>
+<div style="width:210px;flex:none"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Hügelrauschen" dates="25. – 27. Sep 2026" place="Steiermark" status="empfohlen" friends="{{ 2 }}" ratio="4 / 3" hint-size="100%,240px"></x-import></div>
+</div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 10px">Von quiks</h3>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.NewsCard" kind="info" time="gestern" title="Neu: Crew live auf der Karte" body="Du siehst deine Freunde jetzt am Lageplan — nur am Gelände, nur wenn beide es wollen." sc-camel-on-click="{{ openNews }}" hint-size="100%,150px"></x-import>
+</div>
+<div><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SocialRow" links="{{ socialsApp }}" label="quiks folgen" hint-size="100%,60px"></x-import></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scFest }}">
+<div data-screen-label="02 Festivals" style="display:flex;flex-direction:column;gap:20px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SegmentedControl" options="{{ segFest }}" value="{{ festSeg }}" sc-camel-on-change="{{ setFestSeg }}" hint-size="100%,40px"></x-import>
+<sc-if value="{{ festKommend }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Uferklang" dates="28. – 30. Aug 2026 · läuft" place="Seewiese, Kärnten" status="angemeldet" friends="{{ 5 }}" ratio="16 / 10" sc-camel-on-click="{{ enterFest }}" hint-size="100%,290px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Steinbruch Sessions" dates="11. – 13. Sep 2026" place="Waldviertel" status="angemeldet" friends="{{ 3 }}" countdown="{{ cdStein }}" ratio="16 / 10" hint-size="100%,290px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Hügelrauschen" dates="25. – 27. Sep 2026" place="Steiermark" status="empfohlen" friends="{{ 2 }}" ratio="16 / 10" hint-size="100%,290px"></x-import>
+</div>
+</sc-if>
+<sc-if value="{{ festVergangen }}">
+<div style="display:flex;flex-direction:column;gap:16px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FestivalCard" name="Frühjahrsklang" dates="15. – 17. Mai 2026" place="Wien" status="vorbei" friends="{{ 8 }}" ratio="16 / 10" hint-size="100%,290px"></x-import>
+<div style="font:var(--text-body-sm);color:var(--text-muted);text-align:center;padding:4px 24px">Dein Festivaljahr, gesammelt. Vergangene Wochenenden bleiben hier liegen.</div>
+</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ scFriends }}">
+<div data-screen-label="03 Friends" style="display:flex;flex-direction:column;gap:22px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" icon="search" placeholder="Name oder @handle" hint-size="100%,48px"></x-import>
+<div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);padding:16px;display:flex;align-items:center;gap:14px">
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">Dein quiks-Code</div><div style="font:500 12.5px/1.4 var(--font-mono);color:var(--text-brand);margin-top:2px">@feli.quiks</div><div style="font:var(--text-body-sm);color:var(--text-muted);margin-top:6px">Zeigen, scannen, fertig — so addet ihr euch.</div></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" size="sm" icon="qr-code" sc-camel-on-click="{{ openQR }}" hint-size="130px,36px">QR zeigen</x-import>
+</div>
+<div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Anfragen</h3><sc-if value="{{ reqHasOpen }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Badge" tone="brand" hint-size="26px,22px">{{ reqCount }}</x-import></sc-if></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ requestRows }}" as="r" hint-placeholder-count="1">
+<div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);padding:14px;display:flex;align-items:center;gap:12px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ r.name }}" size="{{ 40 }}" hint-size="40px,40px"></x-import>
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">{{ r.name }}</div><div style="font:var(--text-body-sm);color:var(--text-muted)">{{ r.note }}</div></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" size="sm" sc-camel-on-click="{{ r.accept }}" hint-size="110px,36px">{{ r.label }}</x-import>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Chats</h3><sc-if value="{{ chatHasUnread }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Badge" tone="brand" hint-size="26px,22px">{{ chatUnread }}</x-import></sc-if></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ chatRows }}" as="c" hint-placeholder-count="3">
+<div sc-camel-on-click="{{ c.open }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--surface-card);border:1px solid var(--border-subtle);box-shadow:var(--shadow-1);cursor:pointer" style-active="transform:scale(.985)">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ c.name }}" size="{{ 40 }}" hint-size="40px,40px"></x-import>
+<div style="flex:1;min-width:0">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:var(--text-body-strong)">{{ c.name }}</span><span style="font:500 11px/1.4 var(--font-mono);color:var(--text-muted)">{{ c.time }}</span></div>
+<div style="font:var(--text-body-sm);color:{{ c.lastColor }};margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.last }}</div>
+</div>
+<sc-if value="{{ c.unread }}"><span style="width:9px;height:9px;border-radius:50%;background:var(--ci-primary);flex:none"></span></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 10px">Deine Crew</h3>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ crewRows }}" as="f" hint-placeholder-count="5">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FriendRow" name="{{ f.name }}" status="{{ f.status }}" presence="{{ f.presence }}" sc-camel-on-click="{{ f.open }}" hint-size="100%,68px"></x-import>
+</sc-for>
+</div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 6px">Vielleicht kennst du</h3>
+<div style="font:var(--text-body-sm);color:var(--text-muted);margin:0 0 10px">Freunde deiner Freunde — mehr schlägt quiks nicht vor.</div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ suggRows }}" as="s" hint-placeholder-count="2">
+<div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);padding:14px;display:flex;align-items:center;gap:12px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ s.name }}" size="{{ 40 }}" hint-size="40px,40px"></x-import>
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">{{ s.name }}</div><div style="font:var(--text-body-sm);color:var(--text-muted)">{{ s.note }}</div></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" size="sm" variant="secondary" icon="user-plus" sc-camel-on-click="{{ s.add }}" hint-size="110px,36px">{{ s.label }}</x-import>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scMehr }}">
+<div data-screen-label="04 Mehr" style="display:flex;flex-direction:column;gap:26px">
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Konto</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="user-round" label="Profil" value="@feli.quiks" sc-camel-on-click="{{ openProfil }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="wallet" label="Zahlungsmittel" value="Apple Pay" sc-camel-on-click="{{ infoPay }}" hint-size="100%,58px"></x-import>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Darstellung</span>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Switch" checked="{{ isDark }}" sc-camel-on-change="{{ toggleTheme }}" label="Dunkler Modus" description="Die Nachtschicht für deine Augen" hint-size="100%,62px"></x-import>
+</div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Benachrichtigungen</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ notifRows }}" as="n" hint-placeholder-count="3">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Switch" checked="{{ n.checked }}" sc-camel-on-change="{{ n.toggle }}" label="{{ n.label }}" description="{{ n.desc }}" hint-size="100%,62px"></x-import>
+</sc-for>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Standort &amp; Sicherheit</span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Switch" checked="{{ locShare }}" sc-camel-on-change="{{ toggleLoc }}" label="Standort mit der Crew teilen" description="Nur am Gelände, nur mit Freunden" hint-size="100%,62px"></x-import>
+<div style="background:rgba(95,180,255,.12);border:1px solid rgba(95,180,255,.35);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+<span style="color:var(--status-info);flex:none;margin-top:1px"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="shield-alert" size="{{ 18 }}" hint-size="18px,18px"></x-import></span>
+<div style="flex:1;min-width:0">
+<div style="font:var(--text-body-strong)">Stay safe</div>
+<div style="font:var(--text-body-sm);color:var(--text-secondary);margin-top:2px;text-wrap:pretty">Wir stehen in keiner Verbindung zu SafeNow — finden die App aber richtig gut. Nutz sie am Gelände.</div>
+<a href="https://safenow.app" target="_blank" style="display:inline-block;margin-top:8px;font:600 12px/1 var(--font-body)">safenow.app öffnen</a>
+</div>
+</div>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">App</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="info" label="Sprache" value="Deutsch" sc-camel-on-click="{{ infoLang }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="share-2" label="quiks empfehlen" sc-camel-on-click="{{ infoShare }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="x" label="Abmelden" danger="{{ true }}" sc-camel-on-click="{{ infoLogout }}" hint-size="100%,58px"></x-import>
+</div></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scLive }}">
+<div data-screen-label="05 Live" style="display:flex;flex-direction:column;gap:26px">
+<div><span class="fp-eyebrow" style="display:block;color:var(--live-text);margin-bottom:10px">Live jetzt</span>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ActCard" artist="Vanta" stage="Ufer Bühne" time="21:30" end-time="22:45" genre="Techno" live="{{ true }}" saved="{{ true }}" hint-size="100%,260px"></x-import></div>
+<div style="display:flex;gap:10px">
+<div sc-camel-on-click="{{ openCashless }}" style="flex:1;cursor:pointer"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="wallet" label="Guthaben" value="36,50" unit="€" tone="brand" hint-size="100%,84px"></x-import></div>
+<div sc-camel-on-click="{{ goCrew }}" style="flex:1;cursor:pointer"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="users" label="Crew da" value="4" hint-size="100%,84px"></x-import></div>
+<div sc-camel-on-click="{{ goAkt }}" style="flex:1;cursor:pointer"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="sparkles" label="Aktiv" value="{{ actCount }}" tone="secondary" hint-size="100%,84px"></x-import></div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 10px">Auf den Bühnen</h3>
+<div class="fp-scroll" style="display:flex;gap:10px;overflow-x:auto;margin:0 -18px;padding:0 18px">
+<sc-for list="{{ stageNow }}" as="s" hint-placeholder-count="3">
+<div style="width:150px;flex:none;background:var(--surface-card);border:1px solid {{ s.border }};border-radius:18px;padding:12px;display:flex;flex-direction:column;gap:8px">
+<div style="height:64px;border-radius:12px;background:{{ s.tile }};position:relative;overflow:hidden"><span style="position:absolute;right:8px;bottom:-10px;font:800 46px/1 var(--font-display);color:rgba(255,255,255,.4)">{{ s.initial }}</span><sc-if value="{{ s.live }}"><span style="position:absolute;left:8px;top:8px;font:700 9px/1 var(--font-body);letter-spacing:.08em;padding:4px 7px;border-radius:999px;background:var(--live-fill-strong);color:#fff;border:1px solid var(--live-border)">LIVE</span></sc-if></div>
+<div style="min-width:0"><div style="font:700 10.5px/1.6 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-muted)">{{ s.stage }}</div><div style="font:600 13.5px/1.25 var(--font-body);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ s.artist }}</div><div style="font:500 11px/1.5 var(--font-mono);color:var(--text-muted)">{{ s.timeLabel }}</div></div>
+<sc-if value="{{ s.hasProgress }}"><div style="height:3px;border-radius:2px;background:var(--fill-quiet);overflow:hidden"><div style="width:{{ s.progress }};height:100%;background:var(--ci-primary)"></div></div></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Auf deiner Merkliste</h3><span sc-camel-on-click="{{ goTimetable }}" style="font:var(--text-label);color:var(--text-link);cursor:pointer">Timetable</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ savedToday }}" as="s" hint-placeholder-count="2">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.TimetableSlot" time="{{ s.time }}" end-time="{{ s.endTime }}" artist="{{ s.artist }}" stage="{{ s.stage }}" saved="{{ true }}" conflict="{{ s.conflict }}" sc-camel-on-toggle-save="{{ s.toggle }}" hint-size="100%,80px"></x-import>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Offizielle Events</h3><span sc-camel-on-click="{{ goAkt }}" style="font:var(--text-label);color:var(--text-link);cursor:pointer">Alle Aktivitäten</span></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ promoRows }}" as="a" hint-placeholder-count="1">
+<div sc-camel-on-click="{{ a.openDetail }}" style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);overflow:hidden;cursor:pointer" style-active="transform:scale(.985)">
+<sc-if value="{{ a.hasPhoto }}"><div style="height:80px;background:{{ a.photoBg }};position:relative"><span style="position:absolute;right:12px;bottom:-12px;font:800 54px/1 var(--font-display);color:rgba(255,255,255,.35)">{{ a.initial }}</span></div></sc-if>
+<div style="padding:14px 16px;display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:flex-start;gap:10px">
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">{{ a.title }}</div><div style="font:500 12px/1.5 var(--font-mono);color:var(--text-muted);margin-top:2px">{{ a.meta }}</div></div>
+<sc-if value="{{ a.joined }}"><span style="font:600 11px/1 var(--font-body);padding:5px 9px;border-radius:999px;background:var(--fill-brand-quiet);color:var(--text-brand);flex:none">Dabei</span></sc-if>
+</div>
+<div style="display:flex;align-items:center;gap:6px">
+<sc-for list="{{ a.goingChips }}" as="g"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ g }}" size="{{ 22 }}" hint-size="22px,22px"></x-import></sc-for>
+<span style="font:500 12px/1.3 var(--font-body);color:var(--text-secondary);margin-left:2px">{{ a.goingLabel }}</span>
+<span style="flex:1"></span>
+<span style="font:500 11px/1.3 var(--font-mono);color:var(--text-muted)">{{ a.spotsLabel }}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">News</h3><span sc-camel-on-click="{{ openNews }}" style="font:var(--text-label);color:var(--text-link);cursor:pointer">Alle</span></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.NewsCard" kind="warning" time="vor 20 Min" unread="{{ newsTopUnread }}" title="Gewitterzelle zieht vorbei" body="Ufer Bühne pausiert bis 18:30. Unterstell dich kurz — wir sagen Bescheid, sobald es weitergeht." sc-camel-on-click="{{ openNews }}" hint-size="100%,170px"></x-import>
+</div>
+<div><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SocialRow" links="{{ socialsFest }}" label="Uferklang folgen" hint-size="100%,60px"></x-import></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scAkt }}">
+<div data-screen-label="06 Aktivitäten" style="display:flex;flex-direction:column;gap:20px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" variant="secondary" icon="sparkles" full-width="{{ true }}" sc-camel-on-click="{{ startActivity }}" hint-size="100%,48px">Aktivität starten</x-import>
+<div>
+<span class="fp-eyebrow" style="display:block;color:var(--text-brand-secondary);margin-bottom:10px">Offizielle Events</span>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ promoRows }}" as="a" hint-placeholder-count="1">
+<div sc-camel-on-click="{{ a.openDetail }}" style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);overflow:hidden;cursor:pointer" style-active="transform:scale(.985)">
+<sc-if value="{{ a.hasPhoto }}"><div style="height:92px;background:{{ a.photoBg }};position:relative"><span style="position:absolute;right:12px;bottom:-12px;font:800 60px/1 var(--font-display);color:rgba(255,255,255,.35)">{{ a.initial }}</span></div></sc-if>
+<div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:flex-start;gap:10px">
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">{{ a.title }}</div><div style="font:500 12px/1.5 var(--font-mono);color:var(--text-muted);margin-top:2px">{{ a.meta }}</div></div>
+<sc-if value="{{ a.joined }}"><span style="font:600 11px/1 var(--font-body);padding:5px 9px;border-radius:999px;background:var(--fill-brand-quiet);color:var(--text-brand);flex:none">Dabei</span></sc-if>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ a.tags }}" as="t"><span style="font:600 11px/1 var(--font-body);letter-spacing:.02em;padding:5px 9px;border-radius:999px;background:var(--fill-secondary-quiet);color:var(--text-brand-secondary)">{{ t }}</span></sc-for></div>
+<div style="display:flex;align-items:center;gap:6px">
+<sc-for list="{{ a.goingChips }}" as="g"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ g }}" size="{{ 22 }}" hint-size="22px,22px"></x-import></sc-for>
+<span style="font:500 12px/1.3 var(--font-body);color:var(--text-secondary);margin-left:2px">{{ a.goingLabel }}</span>
+<span style="flex:1"></span>
+<span style="font:500 11px/1.3 var(--font-mono);color:var(--text-muted)">{{ a.spotsLabel }}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 10px">Wer kommt mit?</h3>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ actRows }}" as="a" hint-placeholder-count="3">
+<div sc-camel-on-click="{{ a.openDetail }}" style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);overflow:hidden;cursor:pointer" style-active="transform:scale(.985)">
+<sc-if value="{{ a.hasPhoto }}"><div style="height:92px;background:{{ a.photoBg }};position:relative"><span style="position:absolute;right:12px;bottom:-12px;font:800 60px/1 var(--font-display);color:rgba(255,255,255,.35)">{{ a.initial }}</span></div></sc-if>
+<div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px">
+<div style="display:flex;align-items:flex-start;gap:10px">
+<div style="flex:1;min-width:0"><div style="font:var(--text-body-strong)">{{ a.title }}</div><div style="font:500 12px/1.5 var(--font-mono);color:var(--text-muted);margin-top:2px">{{ a.meta }}</div></div>
+<sc-if value="{{ a.joined }}"><span style="font:600 11px/1 var(--font-body);padding:5px 9px;border-radius:999px;background:var(--fill-brand-quiet);color:var(--text-brand);flex:none">Dabei</span></sc-if>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ a.tags }}" as="t"><span style="font:600 11px/1 var(--font-body);letter-spacing:.02em;padding:5px 9px;border-radius:999px;background:var(--fill-secondary-quiet);color:var(--text-brand-secondary)">{{ t }}</span></sc-for></div>
+<div style="display:flex;align-items:center;gap:6px">
+<sc-for list="{{ a.goingChips }}" as="g"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ g }}" size="{{ 22 }}" hint-size="22px,22px"></x-import></sc-for>
+<span style="font:500 12px/1.3 var(--font-body);color:var(--text-secondary);margin-left:2px">{{ a.goingLabel }}</span>
+<span style="flex:1"></span>
+<span style="font:500 11px/1.3 var(--font-mono);color:var(--text-muted)">{{ a.spotsLabel }}</span>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scCrew }}">
+<div data-screen-label="06b Crew" style="display:flex;flex-direction:column;gap:20px">
+<div>
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><h3 style="font:var(--text-title-2);margin:0">Chats</h3><sc-if value="{{ chatHasUnread }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Badge" tone="brand" hint-size="26px,22px">{{ chatUnread }}</x-import></sc-if></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ chatRows }}" as="c" hint-placeholder-count="3">
+<div sc-camel-on-click="{{ c.open }}" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:18px;background:var(--surface-card);border:1px solid var(--border-subtle);box-shadow:var(--shadow-1);cursor:pointer" style-active="transform:scale(.985)">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ c.name }}" size="{{ 40 }}" hint-size="40px,40px"></x-import>
+<div style="flex:1;min-width:0">
+<div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px"><span style="font:var(--text-body-strong)">{{ c.name }}</span><span style="font:500 11px/1.4 var(--font-mono);color:var(--text-muted)">{{ c.time }}</span></div>
+<div style="font:var(--text-body-sm);color:{{ c.lastColor }};margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.last }}</div>
+</div>
+<sc-if value="{{ c.unread }}"><span style="width:9px;height:9px;border-radius:50%;background:var(--ci-primary);flex:none"></span></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+<div>
+<h3 style="font:var(--text-title-2);margin:0 0 10px">Gerade am Gelände</h3>
+<div style="display:flex;flex-direction:column;gap:10px">
+<sc-for list="{{ groundRows }}" as="f" hint-placeholder-count="4">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FriendRow" name="{{ f.name }}" at="{{ f.at }}" distance="{{ f.dist }}" presence="{{ f.presence }}" sc-camel-on-click="{{ f.open }}" hint-size="100%,68px"></x-import>
+</sc-for>
+</div>
+</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted);padding:0 4px">Standort ist geteilt — nur am Gelände, nur mit deiner Crew.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scTime }}">
+<div data-screen-label="07 Timetable" style="display:flex;flex-direction:column;gap:16px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SegmentedControl" options="{{ segDays }}" value="{{ day }}" sc-camel-on-change="{{ setDay }}" hint-size="100%,40px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SegmentedControl" options="{{ segMode }}" value="{{ mode }}" sc-camel-on-change="{{ setMode }}" hint-size="100%,40px"></x-import>
+<div class="fp-scroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px">
+<sc-for list="{{ stageChips }}" as="c" hint-placeholder-count="4"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="90px,34px">{{ c.label }}</x-import></sc-for>
+</div>
+<sc-if value="{{ ttEmpty }}"><div style="display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:24px"><div style="font:var(--text-body-sm);color:var(--text-muted);max-width:260px">{{ ttEmptyText }}</div><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" size="sm" variant="secondary" sc-camel-on-click="{{ ttReset }}" hint-size="200px,36px">Alle Acts durchstöbern</x-import></div></sc-if>
+<sc-if value="{{ ttShowGrid }}">
+<div style="display:flex;gap:8px">
+<div style="width:36px;flex:none;padding-top:24px;display:flex;flex-direction:column">
+<sc-for list="{{ hourMarks }}" as="h"><div style="height:56px;font:500 10px/1 var(--font-mono);color:var(--text-muted);text-align:right;padding-right:2px">{{ h }}</div></sc-for>
+</div>
+<sc-for list="{{ calCols }}" as="col" hint-placeholder-count="3">
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:6px">
+<div style="height:18px;font:700 10.5px/1.6 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:var(--text-muted);text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ col.stage }}</div>
+<div style="position:relative;height:{{ calH }};background:var(--surface-inset);border-radius:12px;overflow:hidden">
+<sc-for list="{{ hourLines }}" as="l"><div style="position:absolute;left:0;right:0;top:{{ l }};height:1px;background:var(--border-subtle)"></div></sc-for>
+<sc-for list="{{ col.blocks }}" as="b">
+<div sc-camel-on-click="{{ b.toggle }}" style="position:absolute;left:4px;right:4px;top:{{ b.top }};height:{{ b.h }};border-radius:10px;padding:6px 8px;overflow:hidden;cursor:pointer;background:{{ b.bg }};border:1px solid {{ b.bd }};box-sizing:border-box">
+<div style="font:600 12px/1.25 var(--font-body);color:var(--text-primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.artist }}</div>
+<div style="font:500 10px/1.4 var(--font-mono);color:var(--text-muted)">{{ b.time }}</div>
+<sc-if value="{{ b.showFriends }}"><div style="display:flex;gap:3px;margin-top:3px"><sc-for list="{{ b.friendChips }}" as="f"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ f }}" size="{{ 16 }}" hint-size="16px,16px"></x-import></sc-for></div></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+</sc-for>
+</div>
+<div style="font:500 11px/1.4 var(--font-body);color:var(--text-muted);padding:0 4px">Tippen merkt einen Act — Beere = gemerkt, Rot = live. Überschneidungen liegen nebeneinander.</div>
+</sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{ scMap }}">
+<div data-screen-label="08 Karte" style="display:flex;flex-direction:column;gap:16px">
+<div data-theme="dark" style="position:relative;height:440px;border-radius:22px;overflow:hidden;background:radial-gradient(400px 260px at 15% 0%,rgba(232,85,159,.14),transparent 70%),radial-gradient(420px 300px at 90% 100%,rgba(255,197,61,.10),transparent 72%),#0C0E13;border:1px solid var(--border-medium);color:#E9ECF2">
+<div style="position:absolute;left:0;top:0;width:100%;height:7%;background:rgba(95,180,255,.20)"><span style="position:absolute;left:12px;top:6px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#5FB4FF">See</span></div>
+<div style="position:absolute;left:7%;top:11%;width:50%;height:19%;border-radius:4px;background:rgba(232,85,159,.18);border:1px solid rgba(232,85,159,.45)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#F79ACB">Ufer Bühne</span></div>
+<div style="position:absolute;left:7%;top:36%;width:24%;height:20%;border-radius:4px;background:rgba(232,85,159,.14);border:1px solid rgba(232,85,159,.35)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#F79ACB">Wald Bühne</span></div>
+<div style="position:absolute;left:66%;top:32%;width:27%;height:16%;border-radius:4px;background:rgba(232,85,159,.14);border:1px solid rgba(232,85,159,.35)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#F79ACB">Nachtzelt</span></div>
+<div style="position:absolute;left:36%;top:38%;width:25%;height:16%;border-radius:4px;background:rgba(233,236,242,.07);border:1px solid rgba(233,236,242,.14)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#9FA6B6">Foodcourt</span></div>
+<div style="position:absolute;left:7%;top:62%;width:40%;height:30%;border-radius:4px;background:rgba(233,236,242,.05);border:1px dashed rgba(233,236,242,.18)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#9FA6B6">Camp A</span></div>
+<div style="position:absolute;left:52%;top:62%;width:41%;height:30%;border-radius:4px;background:rgba(233,236,242,.05);border:1px dashed rgba(233,236,242,.18)"><span style="position:absolute;left:10px;bottom:8px;font:700 10.5px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#9FA6B6">Camp B</span></div>
+<div style="position:absolute;left:49%;top:50%;width:3px;height:42%;background:rgba(233,236,242,.10);border-radius:2px;transform:rotate(7deg)"></div>
+<div style="position:absolute;left:18%;top:31%;width:46%;height:3px;background:rgba(233,236,242,.09);border-radius:2px;transform:rotate(-5deg)"></div>
+<span style="position:absolute;left:50%;bottom:56px;transform:translateX(-50%);font:700 9px/1 var(--font-body);letter-spacing:var(--ls-caps);text-transform:uppercase;color:#9FA6B6;background:rgba(20,22,29,.72);border:1px solid rgba(255,255,255,.18);padding:5px 8px;border-radius:999px;backdrop-filter:blur(8px)">Eingang</span>
+<sc-for list="{{ poiRows }}" as="p"><div style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(20,22,29,.72);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(8px)" title="{{ p.label }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="{{ p.icon }}" size="{{ 13 }}" hint-size="13px,13px"></x-import></div></sc-for>
+<sc-if value="{{ showCrewPins }}"><sc-for list="{{ crewPins }}" as="p"><div style="position:absolute;left:{{ p.x }};top:{{ p.y }};transform:translate(-50%,-50%);border-radius:50%;border:2px solid #E8559F;box-shadow:0 4px 12px rgba(0,0,0,.4)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ p.name }}" size="{{ 26 }}" hint-size="26px,26px"></x-import></div></sc-for></sc-if>
+<div style="position:absolute;left:44%;top:68%;transform:translate(-50%,-50%);pointer-events:none"><span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:34px;height:34px;border-radius:50%;background:rgba(95,180,255,.22)"></span><span style="position:relative;display:block;width:13px;height:13px;border-radius:50%;background:#5FB4FF;border:2.5px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5)"></span></div>
+<span style="position:absolute;right:12px;top:12px;font:500 10px/1 var(--font-mono);color:#9FA6B6;background:rgba(20,22,29,.72);border:1px solid rgba(255,255,255,.18);padding:6px 9px;border-radius:999px;backdrop-filter:blur(8px)">GPS · live</span>
+<div class="fp-scroll" style="position:absolute;left:12px;right:12px;bottom:12px;display:flex;gap:6px;overflow-x:auto">
+<sc-for list="{{ layerChips }}" as="c" hint-placeholder-count="5"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" icon="{{ c.icon }}" sc-camel-on-click="{{ c.toggle }}" hint-size="84px,34px">{{ c.label }}</x-import></sc-for>
+</div>
+</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted);padding:0 4px">Deine Crew siehst du live — nur am Gelände, nur wenn beide es teilen.</div>
+<div style="background:rgba(95,180,255,.12);border:1px solid rgba(95,180,255,.35);border-radius:16px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start">
+<span style="color:var(--status-info);flex:none;margin-top:1px"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="shield-alert" size="{{ 18 }}" hint-size="18px,18px"></x-import></span>
+<div style="flex:1;min-width:0">
+<div style="font:var(--text-body-strong)">Stay safe</div>
+<div style="font:var(--text-body-sm);color:var(--text-secondary);margin-top:2px;text-wrap:pretty">Wir stehen in keiner Verbindung zu SafeNow — finden die App aber richtig gut. Nutz sie am Gelände.</div>
+<a href="https://safenow.app" target="_blank" style="display:inline-block;margin-top:8px;font:600 12px/1 var(--font-body)">safenow.app öffnen</a>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scCash }}">
+<div data-screen-label="09 Cashless" style="display:flex;flex-direction:column;gap:16px">
+<div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);overflow:hidden">
+<div style="display:flex;align-items:center;gap:6px;padding:10px 14px;background:var(--surface-inset);border-bottom:1px solid var(--border-subtle)">
+<span style="width:8px;height:8px;border-radius:50%;background:var(--border-strong)"></span><span style="width:8px;height:8px;border-radius:50%;background:var(--border-medium)"></span><span style="width:8px;height:8px;border-radius:50%;background:var(--border-subtle)"></span>
+<span style="flex:1;text-align:center;font:500 12px/1 var(--font-mono);color:var(--text-muted)">pay.uferklang.at/wallet</span>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="globe" size="{{ 13 }}" hint-size="13px,13px"></x-import>
+</div>
+<div style="padding:20px;display:flex;flex-direction:column;gap:14px">
+<span class="fp-eyebrow" style="color:var(--text-muted)">Guthaben · Uferklang</span>
+<div style="font:800 36px/1 var(--font-mono);letter-spacing:-.02em">36,50 €</div>
+<div style="display:flex;gap:8px">
+<sc-for list="{{ payChips }}" as="c" hint-placeholder-count="3"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="72px,34px">{{ c.label }}</x-import></sc-for>
+</div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" full-width="{{ true }}" icon="wallet" hint-size="100%,48px">{{ payLabel }}</x-import>
+<div style="font:500 10.5px/1.4 var(--font-mono);color:var(--text-muted);text-align:center">powered by festkasse.at · externe Kasse des Festivals</div>
+</div>
+</div>
+<div style="font:var(--text-body-sm);color:var(--text-secondary);padding:0 4px;text-wrap:pretty">Cashless läuft direkt beim Festivalanbieter. quiks bettet nur die Kasse ein — dein Guthaben und deine Zahlungen bleiben dort, wir speichern nichts davon.</div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="globe" label="Im Anbieter-Portal öffnen" value="extern" sc-camel-on-click="{{ infoPortal }}" hint-size="100%,58px"></x-import>
+</div>
+</sc-if>
+
+<sc-if value="{{ scNews }}">
+<div data-screen-label="10 News" style="display:flex;flex-direction:column;gap:14px">
+<div class="fp-scroll" style="display:flex;gap:8px;overflow-x:auto;margin:0 -18px;padding:0 18px">
+<sc-for list="{{ newsChips }}" as="c" hint-placeholder-count="3"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="90px,34px">{{ c.label }}</x-import></sc-for>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<sc-for list="{{ newsRows }}" as="n" hint-placeholder-count="4">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.NewsCard" kind="{{ n.kind }}" time="{{ n.time }}" unread="{{ n.unread }}" title="{{ n.title }}" body="{{ n.body }}" sc-camel-on-click="{{ n.read }}" hint-size="100%,150px"></x-import>
+</sc-for>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scProfil }}">
+<div data-screen-label="11 Profil" style="display:flex;flex-direction:column;gap:22px">
+<div style="display:flex;align-items:center;gap:16px;padding:4px 2px">
+<div style="position:relative;flex:none"><div style="position:absolute;inset:-4px;border-radius:50%;background:var(--q-hero)"></div><div style="position:relative;border:3px solid var(--bg-app);border-radius:50%"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="Feli Auer" size="{{ 64 }}" hint-size="64px,64px"></x-import></div></div>
+<div style="flex:1;min-width:0">
+<div style="font:800 24px/1.1 var(--font-display);letter-spacing:-.02em">Feli Auer</div>
+<div style="font:500 13px/1.4 var(--font-mono);color:var(--text-brand);margin-top:2px">@feli.quiks</div>
+<div style="font:var(--text-body-sm);color:var(--text-secondary);margin-top:3px">sie/ihr · 23 · weiblich</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted);margin-top:2px">3 Festivals · 6 Friends · seit 2025 dabei</div>
+</div>
+</div>
+<div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:22px;box-shadow:var(--shadow-2);padding:16px;display:flex;align-items:center;gap:16px">
+<div style="width:92px;height:92px;flex:none;background:#fff;border-radius:12px;border:1px solid var(--border-subtle);position:relative;padding:8px;box-sizing:border-box">
+<div style="width:100%;height:100%;background-image:radial-gradient(circle at 4px 4px,#0C0E13 2.1px,transparent 2.5px);background-size:9px 9px"></div>
+<span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:1px 4px;font:800 17px/1 var(--font-display);color:#E8559F">q</span>
+</div>
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;align-items:flex-start">
+<div style="font:var(--text-body-strong)">Dein Code fürs Adden</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted)">Scannen reicht — kein Suchen, kein Tippen.</div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" size="sm" icon="share-2" sc-camel-on-click="{{ infoShareHandle }}" hint-size="150px,36px">Handle teilen</x-import>
+</div>
+</div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Konto</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="user-round" label="Name" value="Feli Auer" sc-camel-on-click="{{ infoEdit }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="qr-code" label="Handle" value="@feli.quiks" sc-camel-on-click="{{ infoEdit }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="message-circle" label="E-Mail" value="feli@quiks.app" sc-camel-on-click="{{ infoEdit }}" hint-size="100%,58px"></x-import>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Socials</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="instagram" label="Instagram" value="@feli.gram" sc-camel-on-click="{{ infoSocial }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="music-2" label="TikTok" value="@feli.quiks" sc-camel-on-click="{{ infoSocial }}" hint-size="100%,58px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.ListRow" icon="audio-lines" label="Spotify" value="Festival-Mix 2026" sc-camel-on-click="{{ infoSocial }}" hint-size="100%,58px"></x-import>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:10px">Vibe · von Spotify gesynct</span>
+<div style="display:flex;gap:6px;flex-wrap:wrap">
+<sc-for list="{{ favArtists }}" as="f"><span style="font:600 12px/1 var(--font-body);padding:7px 11px;border-radius:999px;background:var(--fill-brand-quiet);color:var(--text-brand)">{{ f }}</span></sc-for>
+</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted);margin-top:8px">Pronomen, Alter, Identität und Vibe sind optional — du entscheidest, was Freunde sehen.</div>
+</div>
+<div style="display:flex;gap:10px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="tent" label="Festivals" value="3" hint-size="100%,84px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="heart" label="Acts gemerkt" value="12" tone="brand" hint-size="100%,84px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.StatTile" icon="users" label="Friends" value="6" hint-size="100%,84px"></x-import>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ scCreate }}">
+<div data-screen-label="12 Aktivität erstellen" style="display:flex;flex-direction:column;gap:20px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" label="Was habt ihr vor?" placeholder="z. B. Beerpong am Pavillon" value="{{ caTitle }}" sc-camel-on-change="{{ setCaTitle }}" hint-size="100%,72px"></x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" label="Beschreibung · optional" placeholder="Kurz, was euch erwartet" value="{{ caDesc }}" sc-camel-on-change="{{ setCaDesc }}" hint-size="100%,72px"></x-import>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Treffpunkt</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><sc-for list="{{ spotChips }}" as="c" hint-placeholder-count="7"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="96px,34px">{{ c.label }}</x-import></sc-for></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" placeholder="Genauer, z. B. Reihe 3 · optional" icon="map-pin" value="{{ caPlace }}" sc-camel-on-change="{{ setCaPlace }}" hint-size="100%,48px"></x-import></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Wann</span>
+<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><sc-for list="{{ dayChips }}" as="c" hint-placeholder-count="3"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="82px,34px">{{ c.label }}</x-import></sc-for>
+<div style="width:132px;flex:none"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" type="time" value="{{ caClock }}" sc-camel-on-change="{{ setCaClock }}" hint-size="100%,48px"></x-import></div></div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Tags · mehrere möglich</span>
+<div style="display:flex;gap:8px;flex-wrap:wrap"><sc-for list="{{ tagChips }}" as="c" hint-placeholder-count="11"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" selected="{{ c.sel }}" sc-camel-on-click="{{ c.toggle }}" hint-size="94px,34px">{{ c.label }}</x-import></sc-for></div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Teilnehmer</span>
+<div style="display:flex;gap:10px">
+<div style="flex:1;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-body-sm);color:var(--text-muted)">Mindestens</span><div style="display:flex;align-items:center;justify-content:space-between"><button sc-camel-on-click="{{ decMin }}" style="width:34px;height:34px;border:none;border-radius:50%;background:var(--fill-quiet);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="minus" size="{{ 15 }}" hint-size="15px,15px"></x-import></button><span style="font:700 18px/1 var(--font-mono)">{{ caMin }}</span><button sc-camel-on-click="{{ incMin }}" style="width:34px;height:34px;border:none;border-radius:50%;background:var(--fill-quiet);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="plus" size="{{ 15 }}" hint-size="15px,15px"></x-import></button></div></div>
+<div style="flex:1;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:10px"><span style="font:var(--text-body-sm);color:var(--text-muted)">Maximal</span><div style="display:flex;align-items:center;justify-content:space-between"><button sc-camel-on-click="{{ decMax }}" style="width:34px;height:34px;border:none;border-radius:50%;background:var(--fill-quiet);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="minus" size="{{ 15 }}" hint-size="15px,15px"></x-import></button><span style="font:700 18px/1 var(--font-mono)">{{ caMax }}</span><button sc-camel-on-click="{{ incMax }}" style="width:34px;height:34px;border:none;border-radius:50%;background:var(--fill-quiet);color:var(--text-primary);cursor:pointer;display:flex;align-items:center;justify-content:center"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="plus" size="{{ 15 }}" hint-size="15px,15px"></x-import></button></div></div>
+</div></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Sichtbar für</span>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.SegmentedControl" options="{{ visSeg }}" value="{{ caVis }}" sc-camel-on-change="{{ setCaVis }}" hint-size="100%,40px"></x-import></div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Foto · optional</span>
+<sc-if value="{{ caNoPhoto }}"><div sc-camel-on-click="{{ togglePhoto }}" style="border:1.5px dashed var(--border-strong);border-radius:16px;padding:16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--text-muted);font:var(--text-body-sm)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="plus" size="{{ 16 }}" hint-size="16px,16px"></x-import>Foto hinzufügen — z. B. euer Treffpunkt</div></sc-if>
+<sc-if value="{{ caHasPhoto }}"><div sc-camel-on-click="{{ togglePhoto }}" style="background:var(--fill-brand-quiet);border:1px solid var(--border-brand);border-radius:16px;padding:16px;display:flex;align-items:center;gap:10px;cursor:pointer;color:var(--text-brand);font:var(--text-body-sm)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="check" size="{{ 16 }}" hint-size="16px,16px"></x-import>treffpunkt.jpg ist dabei — tippen zum Entfernen</div></sc-if></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" full-width="{{ true }}" icon="sparkles" sc-camel-on-click="{{ postActivity }}" hint-size="100%,48px">Los, posten</x-import>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ showNav }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.FloatingNav" items="{{ navItems }}" value="{{ navValue }}" sc-camel-on-change="{{ onNav }}" hint-size="100%,64px"></x-import></sc-if>
+
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Sheet" open="{{ sheetChat }}" title="{{ chatWith }}" sc-camel-on-close="{{ closeSheet }}" hint-size="100%,100%">
+<div style="display:flex;flex-direction:column;gap:12px">
+<div style="display:flex;flex-direction:column;gap:8px;min-height:160px;justify-content:flex-end">
+<sc-for list="{{ chatMsgs }}" as="m" hint-placeholder-count="2">
+<div style="display:flex;justify-content:{{ m.just }}"><div style="max-width:76%;padding:9px 13px;border-radius:16px;background:{{ m.bg }};color:{{ m.fg }};font:var(--text-body-sm)">{{ m.x }}<span style="display:block;font:500 10px/1 var(--font-mono);opacity:.65;margin-top:4px">{{ m.t }}</span></div></div>
+</sc-for>
+</div>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ quickChips }}" as="c" hint-placeholder-count="3"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Tag" sc-camel-on-click="{{ c.send }}" hint-size="100px,34px">{{ c.label }}</x-import></sc-for></div>
+<div style="display:flex;gap:8px;align-items:center">
+<div style="flex:1;min-width:0"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Input" placeholder="Schreib was …" value="{{ chatDraft }}" sc-camel-on-change="{{ setChatDraft }}" hint-size="100%,48px"></x-import></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" icon="arrow-right" sc-camel-on-click="{{ sendChat }}" hint-size="110px,48px">Senden</x-import>
+</div>
+<div style="height:6px"></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Sheet" open="{{ sheetPerson }}" title="{{ pName }}" sc-camel-on-close="{{ closeSheet }}" hint-size="100%,100%">
+<div style="display:flex;flex-direction:column;gap:16px">
+<div style="display:flex;align-items:center;gap:14px">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ pName }}" size="{{ 56 }}" hint-size="56px,56px"></x-import>
+<div style="flex:1;min-width:0">
+<div style="font:500 13px/1.4 var(--font-mono);color:var(--text-brand)">{{ pHandle }}</div>
+<div style="font:var(--text-body-sm);color:var(--text-secondary);margin-top:2px">{{ pLine }}</div>
+</div>
+</div>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<span style="font:600 12px/1 var(--font-body);padding:7px 11px;border-radius:999px;background:var(--fill-brand-quiet);color:var(--text-brand)">{{ pM1 }}</span>
+<span style="font:600 12px/1 var(--font-body);padding:7px 11px;border-radius:999px;background:var(--fill-quiet);color:var(--text-secondary)">{{ pM2 }}</span>
+</div>
+<sc-if value="{{ pHasActs }}">
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">{{ pActsLabel }}</span>
+<div style="display:flex;flex-direction:column;gap:8px">
+<sc-for list="{{ pActs }}" as="a"><div style="display:flex;align-items:baseline;gap:10px;padding:11px 14px;border-radius:14px;background:var(--surface-inset)"><span style="font:500 12px/1.3 var(--font-mono);color:var(--text-brand);flex:none">{{ a.time }}</span><span style="font:var(--text-body-sm);color:var(--text-primary)">{{ a.title }}</span></div></sc-for>
+</div></div>
+</sc-if>
+<sc-if value="{{ pIsCrew }}"><div style="display:flex;flex-direction:column;gap:10px"><div style="display:flex;gap:10px"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" variant="secondary" icon="message-circle" full-width="{{ true }}" sc-camel-on-click="{{ openChatFromPerson }}" hint-size="100%,48px">Nachricht</x-import><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" icon="locate-fixed" full-width="{{ true }}" sc-camel-on-click="{{ infoMeet }}" hint-size="100%,48px">Treffpunkt teilen</x-import></div><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" variant="secondary" icon="map-pin" full-width="{{ true }}" sc-camel-on-click="{{ goKarte }}" hint-size="100%,48px">Auf der Karte zeigen</x-import></div></sc-if>
+<sc-if value="{{ pNotCrew }}"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" icon="user-plus" full-width="{{ true }}" sc-camel-on-click="{{ addPerson }}" hint-size="100%,48px">{{ pAddLabel }}</x-import></sc-if>
+<div style="height:6px"></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Sheet" open="{{ sheetQR }}" title="Dein quiks-Code" sc-camel-on-close="{{ closeSheet }}" hint-size="100%,100%">
+<div style="display:flex;flex-direction:column;align-items:center;gap:16px;padding:8px 0 4px">
+<div style="width:200px;height:200px;background:#fff;border-radius:16px;border:1px solid var(--border-subtle);position:relative;padding:14px;box-sizing:border-box;box-shadow:var(--shadow-2)">
+<div style="width:100%;height:100%;background-image:radial-gradient(circle at 5px 5px,#0C0E13 2.4px,transparent 2.8px);background-size:11px 11px"></div>
+<div style="position:absolute;left:14px;top:14px;width:30px;height:30px;border:5px solid #0C0E13;border-radius:7px;background:#fff;box-sizing:border-box"></div>
+<div style="position:absolute;right:14px;top:14px;width:30px;height:30px;border:5px solid #0C0E13;border-radius:7px;background:#fff;box-sizing:border-box"></div>
+<div style="position:absolute;left:14px;bottom:14px;width:30px;height:30px;border:5px solid #0C0E13;border-radius:7px;background:#fff;box-sizing:border-box"></div>
+<span style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:#fff;padding:2px 6px;font:800 24px/1 var(--font-display);color:#E8559F">q</span>
+</div>
+<div style="font:500 14px/1 var(--font-mono);color:var(--text-brand)">@feli.quiks</div>
+<div style="font:var(--text-body-sm);color:var(--text-muted);text-align:center;max-width:260px">Scannen heißt adden. Der Code gilt fünf Minuten, dann dreht er sich weiter.</div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" icon="share-2" full-width="{{ true }}" sc-camel-on-click="{{ infoShareHandle }}" hint-size="100%,48px">Handle teilen</x-import>
+<div style="height:4px"></div>
+</div>
+</x-import>
+
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Sheet" open="{{ sheetInfo }}" title="{{ infoTitle }}" sc-camel-on-close="{{ closeSheet }}" hint-size="100%,100%">
+<div style="display:flex;flex-direction:column;gap:16px">
+<p style="font:var(--text-body);color:var(--text-secondary);margin:0;text-wrap:pretty">{{ infoBody }}</p>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" full-width="{{ true }}" sc-camel-on-click="{{ closeSheet }}" hint-size="100%,48px">Alles klar</x-import>
+<div style="height:6px"></div>
+</div>
+</x-import>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Sheet" open="{{ sheetAct }}" title="{{ dTitle }}" sc-camel-on-close="{{ closeSheet }}" hint-size="100%,100%">
+<div style="display:flex;flex-direction:column;gap:16px">
+<sc-if value="{{ dHasPhoto }}"><div style="height:110px;border-radius:16px;background:{{ dPhotoBg }};position:relative;overflow:hidden"><span style="position:absolute;right:14px;bottom:-14px;font:800 72px/1 var(--font-display);color:rgba(255,255,255,.35)">{{ dInitial }}</span></div></sc-if>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div style="display:flex;align-items:center;gap:10px"><span style="color:var(--text-brand)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="calendar-clock" size="{{ 16 }}" hint-size="16px,16px"></x-import></span><span style="font:500 13px/1.4 var(--font-mono)">{{ dTime }}</span></div>
+<div style="display:flex;align-items:center;gap:10px"><span style="color:var(--text-brand)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="map-pin" size="{{ 16 }}" hint-size="16px,16px"></x-import></span><span style="font:var(--text-body-sm)">{{ dPlace }}</span></div>
+<div style="display:flex;align-items:center;gap:10px"><span style="color:var(--text-brand)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="users" size="{{ 16 }}" hint-size="16px,16px"></x-import></span><span style="font:500 12px/1.4 var(--font-mono);color:var(--text-secondary)">{{ dSpots }}</span></div>
+</div>
+<sc-if value="{{ dHasDesc }}"><p style="font:var(--text-body-sm);color:var(--text-secondary);margin:0;text-wrap:pretty">{{ dDesc }}</p></sc-if>
+<div style="display:flex;gap:6px;flex-wrap:wrap"><sc-for list="{{ dTags }}" as="t"><span style="font:600 11px/1 var(--font-body);letter-spacing:.02em;padding:5px 9px;border-radius:999px;background:var(--fill-secondary-quiet);color:var(--text-brand-secondary)">{{ t }}</span></sc-for></div>
+<div sc-camel-on-click="{{ dHostOpen }}" style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px 12px;border-radius:14px;background:var(--surface-inset)">
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ dHost }}" size="{{ 32 }}" hint-size="32px,32px"></x-import>
+<div style="flex:1;min-width:0"><div style="font:600 13px/1.3 var(--font-body)">{{ dHost }}</div><div style="font:500 11px/1.4 var(--font-body);color:var(--text-muted)">organisiert das</div></div>
+<span style="color:var(--text-muted)"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Icon" name="chevron-right" size="{{ 14 }}" hint-size="14px,14px"></x-import></span>
+</div>
+<div><span class="fp-eyebrow" style="display:block;color:var(--text-muted);margin-bottom:8px">Wer dabei ist</span>
+<div style="display:flex;flex-direction:column;gap:4px">
+<sc-for list="{{ dGoing }}" as="g"><div style="display:flex;align-items:center;gap:10px;padding:6px 4px"><x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Avatar" name="{{ g }}" size="{{ 28 }}" hint-size="28px,28px"></x-import><span style="font:var(--text-body-sm)">{{ g }}</span></div></sc-for>
+</div></div>
+<x-import component-from-global-scope="FestipalDesignSystem_ee8ae6.Button" full-width="{{ true }}" icon="{{ dJoinIcon }}" sc-camel-on-click="{{ dJoin }}" hint-size="100%,48px">{{ dJoinLabel }}</x-import>
+<div style="height:6px"></div>
+</div>
+</x-import>
+<sc-if value="{{ navLiveDot }}"><span style="position:absolute;left:64px;bottom:64px;width:7px;height:7px;border-radius:50%;background:var(--status-danger);box-shadow:0 0 0 3px var(--live-fill);z-index:60;pointer-events:none"></span></sc-if>
+<sc-if value="{{ navFriendsDot }}"><span style="position:absolute;left:277px;bottom:64px;width:7px;height:7px;border-radius:50%;background:var(--ci-primary);box-shadow:0 0 0 3px var(--fill-brand-quiet);z-index:60;pointer-events:none"></span></sc-if>
+
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;modus&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;hell&quot;, &quot;dunkel&quot;], &quot;default&quot;: &quot;hell&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Darstellung&quot;}, &quot;stimmung&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;Sunset&quot;, &quot;Beere&quot;], &quot;default&quot;: &quot;Sunset&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Darstellung&quot;}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const T = (d, t, e, a, s, part, friends) => ({ id: d + '-' + a, d, t, e, a, s, part, friends: friends || [] });
+    this.slots = [
+      T('fr', '17:00', '18:00', 'Turbine', 'Wald Bühne', 'Nachmittag'),
+      T('fr', '20:30', '21:45', 'Die Späten', 'Ufer Bühne', 'Abend', ['Emma Lang', 'Noah Wieser']),
+      T('fr', '23:30', '01:00', 'Club Aurora', 'Nachtzelt', 'Nacht'),
+      T('sa', '16:00', '17:00', 'Rosa Rauschen', 'Wald Bühne', 'Nachmittag', ['Lea Brandt']),
+      T('sa', '17:30', '18:45', 'Die Späten', 'Nachtzelt', 'Nachmittag'),
+      T('sa', '19:00', '20:15', 'Turbine', 'Ufer Bühne', 'Abend'),
+      T('sa', '21:30', '22:45', 'Vanta', 'Ufer Bühne', 'Abend', ['Paul Steger', 'Emma Lang', 'Timo Fuchs']),
+      T('sa', '23:00', '00:15', 'Marlo Kern', 'Wald Bühne', 'Nacht', ['Paul Steger']),
+      T('sa', '23:15', '00:30', 'Club Aurora', 'Ufer Bühne', 'Nacht'),
+      T('sa', '00:30', '02:00', 'Fuchsbau b2b Nachteule', 'Nachtzelt', 'Nacht', ['Noah Wieser', 'Lea Brandt']),
+      T('so', '15:00', '16:00', 'Rosa Rauschen', 'Ufer Bühne', 'Nachmittag'),
+      T('so', '18:30', '19:45', 'Marlo Kern', 'Ufer Bühne', 'Abend', ['Emma Lang'])
+    ];
+    this.people = {
+      'Paul Steger': { handle: '@paul.steger', at: 'Ufer Bühne', dist: '120 m', presence: 'online', crew: true, m1: '6 gemeinsame Freunde', m2: '2 gemeinsame Festivals', acts: [{ time: '17:30', title: 'Beerpong-Turnier Camp B' }] },
+      'Emma Lang': { handle: '@emma.lang', at: 'Foodcourt', dist: '210 m', presence: 'online', crew: true, m1: '4 gemeinsame Freunde', m2: '3 gemeinsame Festivals', acts: [] },
+      'Noah Wieser': { handle: '@noahw', at: 'Camp B', dist: '340 m', presence: 'away', crew: true, m1: '3 gemeinsame Freunde', m2: '1 gemeinsames Festival', acts: [] },
+      'Lea Brandt': { handle: '@lea.b', at: 'Wald Bühne', dist: '400 m', presence: 'online', crew: true, m1: '5 gemeinsame Freunde', m2: '2 gemeinsame Festivals', acts: [{ time: 'Mo 15:00', title: 'Karaoke im Nachtzelt' }] },
+      'Timo Fuchs': { handle: '@timo.f', at: 'Steg', dist: '90 m', presence: 'online', crew: true, m1: '2 gemeinsame Freunde', m2: '2 gemeinsame Festivals', acts: [{ time: '20:15', title: 'Sonnenuntergang am Steg' }] },
+      'Mara Holle': { handle: '@mara.h', presence: 'none', crew: true, m1: '1 gemeinsame Freundin', m2: 'Nächstes: Steinbruch Sessions', acts: [] },
+      'Sina Kroll': { handle: '@sina.k', presence: 'none', crew: false, m1: '4 gemeinsame Freunde', m2: 'War am Frühjahrsklang', acts: [] },
+      'Jakob Rein': { handle: '@jakob.r', presence: 'none', crew: false, m1: '2 gemeinsame Freunde', m2: 'Über Paul Steger', acts: [] },
+      'Mia Ortner': { handle: '@mia.o', presence: 'none', crew: false, m1: '1 gemeinsame Freundin', m2: 'War am Frühjahrsklang', acts: [] }
+    };
+    this.state = {
+      ctx: 'global', tab: 'home', fTab: 'live', pushed: null, sheet: null, personId: null,
+      themeOverride: null, festSeg: 'kommend',
+      saved: ['sa-Vanta', 'sa-Marlo Kern', 'sa-Club Aurora'], day: 'sa', tmode: 'alle', stages: ['Ufer Bühne', 'Wald Bühne', 'Nachtzelt'],
+      layer: 'Alle', newsFilter: 'Alle', pay: '20 €',
+      accepted: [], added: [],
+      notif: [true, true, false], locShare: true,
+      readNews: [],
+      caTitle: '', caPlace: '', caDesc: '', caSpot: 'Foodcourt', caDay: 'Heute', caClock: '18:00', caMin: 2, caMax: 8, caVis: 'alle', caPhoto: false, caTags: [],
+      chatWith: null, chatDraft: '', infoT: '', infoB: '', actId: null, unreadChats: ['Paul Steger'],
+      chats: {
+        'Paul Steger': [{ me: false, t: '21:02', x: 'Bist du bei Vanta vorne?' }, { me: true, t: '21:04', x: 'Links vorm Pult — komm rüber!' }],
+        'Emma Lang': [{ me: false, t: '19:40', x: 'Foodcourt hat jetzt Kaiserschmarrn' }, { me: true, t: '19:41', x: 'Sofort da.' }],
+        'Lea Brandt': [{ me: false, t: '18:12', x: 'Karaoke morgen — bist du dabei?' }]
+      },
+      activities: [
+        { id: 0, promo: true, title: 'Secret Set — errate den Act', time: 'Heute 23:45', place: 'Nachtzelt', host: 'Uferklang Team', going: ['Lea Brandt', 'Noah Wieser'], spots: 60, joined: false, tags: ['Offiziell', 'Acts schauen'], photo: 'linear-gradient(150deg,#B02D74,#0C0E13)', desc: 'Der Act bleibt geheim bis zum ersten Drop. Komm früh — das Zelt ist klein, und wer richtig rät, gewinnt Getränkemarken.' },
+        { id: 1, title: 'Beerpong-Turnier Camp B', time: 'Heute 17:30', place: 'Camp B · Pavillon', host: 'Paul Steger', going: ['Paul Steger', 'Noah Wieser', 'Lea Brandt', 'Sina Kroll'], spots: 4, joined: false, tags: ['Spiele', 'Beerpong'], photo: null, desc: 'Zweier-Teams, Anmeldung vor Ort. Becher stellt Paul — Verlierer räumen auf.' },
+        { id: 2, title: 'Sonnenuntergang am Steg', time: 'Heute 20:15', place: 'Steg hinter Camp A', host: 'Timo Fuchs', going: ['Timo Fuchs', 'Emma Lang', 'Feli Auer'], spots: 5, joined: true, tags: ['Chillen'], photo: 'linear-gradient(150deg,#FFC53D,#E8559F)', desc: 'Decken mitnehmen, Blick auf den See. Danach gemeinsam rüber zu Vanta.' },
+        { id: 3, title: 'Karaoke im Nachtzelt-Vorraum', time: 'Morgen 15:00', place: 'Nachtzelt', host: 'Lea Brandt', going: ['Lea Brandt'], spots: 10, joined: false, tags: ['Karaoke', 'Kennenlernen'], photo: null, desc: null }
+      ],
+      news: [
+        { id: 1, kind: 'warning', time: 'vor 20 Min', title: 'Gewitterzelle zieht vorbei', body: 'Ufer Bühne pausiert bis 18:30. Unterstell dich kurz — wir sagen Bescheid, sobald es weitergeht.', src: 'Uferklang', unread: true },
+        { id: 2, kind: 'lineup', time: 'vor 1 Std', title: 'Nachtzelt: Fuchsbau b2b Nachteule', body: 'Neuer Slot heute 00:30 — deine gemerkten Acts bleiben unverändert.', src: 'Uferklang', unread: true },
+        { id: 3, kind: 'info', time: 'heute, 09:15', title: 'Shuttle fährt bis 3 Uhr', body: 'Ab Haupteingang alle 20 Minuten Richtung Bahnhof — auch für Camping-Gäste.', src: 'Uferklang', unread: false },
+        { id: 4, kind: 'info', time: 'gestern', title: 'Neu: Crew live auf der Karte', body: 'Du siehst deine Freunde jetzt am Lageplan — nur am Gelände, nur wenn beide es wollen.', src: 'quiks', unread: false }
+      ]
+    };
+  }
+  activeKey() { const S = this.state; return S.pushed ? 'p-' + S.pushed : (S.ctx === 'festival' ? 'f-' + S.fTab : 'g-' + S.tab); }
+  mins(t) { const [h, m] = t.split(':').map(Number); return (h < 6 ? h + 24 : h) * 60 + m; }
+  overlaps(a, b) { return this.mins(a.t) < this.mins(b.e) && this.mins(b.t) < this.mins(a.e); }
+  renderVals() {
+    const S = this.state, set = (o) => this.setState(o);
+    const theme = S.themeOverride ?? ((this.props.modus ?? 'hell') === 'dunkel' ? 'dark' : 'light');
+    const mood = (this.props.stimmung ?? 'Sunset') === 'Beere' ? 'beere' : 'sunset';
+    const go = (o) => () => set(Object.assign({ pushed: null, sheet: null }, o));
+    const jump = (label, key, o) => ({ label, go: go(o), color: this.activeKey() === key ? '#B02D74' : '#565C6E', bg: this.activeKey() === key ? 'rgba(232,85,159,.12)' : 'transparent', dot: this.activeKey() === key ? '#E8559F' : 'rgba(86,92,110,.35)' });
+    const openPerson = (name) => () => set({ sheet: 'person', personId: name });
+    const p = this.people[S.personId] || {};
+    const isCrew = !!p.crew || S.accepted.includes(S.personId);
+    const savedSet = new Set(S.saved);
+    const daySlots = this.slots.filter(s => s.d === S.day);
+    const conflict = (s) => savedSet.has(s.id) && daySlots.some(o => o.id !== s.id && savedSet.has(o.id) && this.overlaps(s, o));
+    const filt = daySlots.filter(s => S.stages.includes(s.s) && (S.tmode !== 'meine' || savedSet.has(s.id)) && (S.tmode !== 'friends' || s.friends.length));
+    const mkSlot = (s) => ({ time: s.t, endTime: s.e, artist: s.a, stage: s.s, live: s.d === 'sa' && s.a === 'Vanta', saved: savedSet.has(s.id), conflict: conflict(s), toggle: () => set({ saved: savedSet.has(s.id) ? S.saved.filter(x => x !== s.id) : S.saved.concat(s.id) }), resolve: () => set({ saved: S.saved.filter(id => { if (id === s.id) return true; const o = daySlots.find(x => x.id === id); return !o || !this.overlaps(s, o); }) }), showFriends: S.tmode === 'friends' && s.friends.length > 0, friendChips: s.friends.slice(0, 4), friendNote: s.friends.map(n => n.split(' ')[0]).join(' · ') + (savedSet.has(s.id) ? ' · und du' : '') });
+    const HPX = 56;
+    const calStartH = daySlots.length ? Math.floor(Math.min.apply(null, daySlots.map(s => this.mins(s.t))) / 60) : 16;
+    const calEndH = daySlots.length ? Math.ceil(Math.max.apply(null, daySlots.map(s => this.mins(s.e))) / 60) : 26;
+    const hourMarks = []; for (let h = calStartH; h < calEndH; h++) hourMarks.push(('0' + (h % 24)).slice(-2) + ':00');
+    const hourLines = hourMarks.map((x, i) => (i * HPX) + 'px');
+    const calH = ((calEndH - calStartH) * HPX) + 'px';
+    const calCols = ['Ufer Bühne', 'Wald Bühne', 'Nachtzelt'].filter(st => S.stages.includes(st)).map(st => ({ stage: st.replace(' Bühne', ''), blocks: filt.filter(s => s.s === st).map(s => { const sv = savedSet.has(s.id); const lv = s.d === 'sa' && s.a === 'Vanta'; return { artist: s.a, time: s.t + '–' + s.e, top: (((this.mins(s.t) - calStartH * 60) / 60) * HPX + 1) + 'px', h: ((((this.mins(s.e) - this.mins(s.t)) / 60) * HPX) - 3) + 'px', bg: lv ? 'var(--live-fill)' : (sv ? 'var(--fill-brand-quiet)' : 'var(--surface-card)'), bd: lv ? 'var(--live-border)' : (sv ? 'var(--border-brand)' : 'var(--border-subtle)'), showFriends: S.tmode === 'friends' && s.friends.length > 0, friendChips: s.friends.slice(0, 3), toggle: () => set({ saved: sv ? S.saved.filter(x => x !== s.id) : S.saved.concat(s.id) }) }; }) }));
+    const chip = (label, sel, on, icon) => ({ label, sel, toggle: on, icon });
+    const NOW = 21 * 60 + 35;
+    const nxt = this.slots.filter(s => s.d === 'sa' && savedSet.has(s.id) && this.mins(s.t) > NOW).sort((a, b) => this.mins(a.t) - this.mins(b.t))[0];
+    const nxtDiff = nxt ? this.mins(nxt.t) - NOW : 0;
+    const nxtIn = nxt ? (nxtDiff >= 60 ? 'in ' + Math.floor(nxtDiff / 60) + ' Std ' + (nxtDiff % 60) + ' Min' : 'in ' + nxtDiff + ' Min') : '';
+    const crewNames = ['Paul Steger', 'Emma Lang', 'Lea Brandt', 'Noah Wieser', 'Timo Fuchs', 'Mara Holle'].concat(S.accepted);
+    const crewSet = new Set(crewNames.concat('Sina Kroll'));
+    const navG = [{ value: 'home', icon: 'home', label: 'Home' }, { value: 'festivals', icon: 'tent', label: 'Festivals' }, { value: 'friends', icon: 'users', label: 'Friends' }, { value: 'mehr', icon: 'settings', label: 'Mehr' }];
+    const navF = [{ value: 'live', icon: 'audio-lines', label: 'Live' }, { value: 'aktivitaeten', icon: 'sparkles', label: 'Aktivitäten' }, { value: 'crew', icon: 'users', label: 'Crew' }, { value: 'timetable', icon: 'calendar-clock', label: 'Timetable' }, { value: 'karte', icon: 'map-pin', label: 'Karte' }];
+    const pushedTitles = { create: ['Aktivität starten', 'Wer kommt mit?'], cashless: ['Cashless', 'Uferklang · extern'], news: ['News', this.state.news.filter(n => n.unread && !S.readNews.includes(n.id)).length + ' ungelesen'], profil: ['Profil', '@feli.quiks'] };
+    const subG = { home: 'Hi Feli', festivals: '3 kommend · 1 vorbei', friends: crewNames.length + ' in deiner Crew', mehr: 'Einstellungen' };
+    const tb = S.pushed ? { t: pushedTitles[S.pushed][0], s: pushedTitles[S.pushed][1], b: 'arrow-left' } : S.ctx === 'festival' ? { t: 'Uferklang', s: 'Vanta läuft · Ufer Bühne', b: undefined } : { t: 'quiks', s: subG[S.tab], b: undefined };
+    const unread = S.news.filter(n => n.unread && !S.readNews.includes(n.id)).length;
+    const newsRows = S.news.filter(n => S.newsFilter === 'Alle' || n.src === S.newsFilter).map(n => ({ kind: n.kind, time: n.time, title: n.title, body: n.body, unread: n.unread && !S.readNews.includes(n.id), read: () => set({ readNews: S.readNews.concat(n.id) }) }));
+    const spotsLeft = (a) => Math.max(0, a.spots - (a.going.length - 1));
+    const mkAct = (a) => { const f = a.going.filter(g => g !== 'Feli Auer' && crewSet.has(g)); return { title: a.title, meta: a.time + ' · ' + a.place, tags: a.tags, joined: a.joined, hasPhoto: !!a.photo, photoBg: a.photo || '', initial: a.title.charAt(0), goingChips: a.going.slice(0, 4), goingLabel: f.length ? (f[0].split(' ')[0] + (f.length > 1 ? ' + ' + (f.length - 1) + ' aus deiner Crew' : ' ist dabei')) : a.going.length + ' dabei', spotsLabel: spotsLeft(a) + ' Plätze frei', fg: f.length, openDetail: () => set({ sheet: 'act', actId: a.id }) }; };
+    const dA = S.activities.find(x => x.id === S.actId) || null;
+    return {
+      mood, theme, isDark: theme === 'dark', toggleTheme: (v) => set({ themeOverride: v ? 'dark' : 'light' }),
+      jumpGlobal: [jump('Start', 'g-home', { ctx: 'global', tab: 'home' }), jump('Festivals', 'g-festivals', { ctx: 'global', tab: 'festivals' }), jump('Friends', 'g-friends', { ctx: 'global', tab: 'friends' }), jump('Mehr', 'g-mehr', { ctx: 'global', tab: 'mehr' })],
+      jumpFest: [jump('Live', 'f-live', { ctx: 'festival', fTab: 'live' }), jump('Aktivitäten', 'f-aktivitaeten', { ctx: 'festival', fTab: 'aktivitaeten' }), jump('Crew', 'f-crew', { ctx: 'festival', fTab: 'crew' }), jump('Timetable', 'f-timetable', { ctx: 'festival', fTab: 'timetable' }), jump('Karte', 'f-karte', { ctx: 'festival', fTab: 'karte' })],
+      jumpPushed: [jump('Cashless', 'p-cashless', { ctx: 'festival', fTab: 'live', pushed: 'cashless' }), jump('News', 'p-news', { ctx: 'festival', fTab: 'live', pushed: 'news' }), jump('Profil', 'p-profil', { pushed: 'profil' })],
+      tbTitle: tb.t, tbSub: tb.s, tbBack: tb.b, tbIcon: tb.b ? 'arrow-left' : 'home',
+      showWordmark: !S.pushed && S.ctx === 'global', showTitleText: !!S.pushed || S.ctx === 'festival',
+      artistChipShow: S.pushed !== 'create',
+      topHome: () => { if (S.pushed) set({ pushed: null }); else if (S.ctx === 'festival') set({ ctx: 'global', tab: 'home' }); else set({ tab: 'home' }); },
+      openProfil: () => set({ pushed: 'profil', sheet: null }),
+      showNav: !S.pushed,
+      navLiveDot: !S.pushed && S.ctx === 'festival' && S.fTab !== 'live',
+      navFriendsDot: !S.pushed && S.ctx === 'global' && S.tab !== 'friends' && S.unreadChats.length > 0,
+      navItems: S.ctx === 'festival' ? navF : navG,
+      navValue: S.ctx === 'festival' ? S.fTab : S.tab,
+      onNav: (v) => set(S.ctx === 'festival' ? { fTab: v, pushed: null } : { tab: v, pushed: null }),
+      scHome: !S.pushed && S.ctx === 'global' && S.tab === 'home',
+      scFest: !S.pushed && S.ctx === 'global' && S.tab === 'festivals',
+      scFriends: !S.pushed && S.ctx === 'global' && S.tab === 'friends',
+      scMehr: !S.pushed && S.ctx === 'global' && S.tab === 'mehr',
+      scLive: !S.pushed && S.ctx === 'festival' && S.fTab === 'live',
+      scAkt: !S.pushed && S.ctx === 'festival' && S.fTab === 'aktivitaeten',
+      scCrew: !S.pushed && S.ctx === 'festival' && S.fTab === 'crew',
+      scCreate: S.pushed === 'create',
+      scTime: !S.pushed && S.ctx === 'festival' && S.fTab === 'timetable',
+      scMap: !S.pushed && S.ctx === 'festival' && S.fTab === 'karte',
+      scCash: S.pushed === 'cashless', scNews: S.pushed === 'news', scProfil: S.pushed === 'profil',
+      hasNextSaved: !!nxt, nextIn: nxtIn,
+      nextA: nxt ? nxt.a : '', nextS: nxt ? nxt.s : '', nextT: nxt ? nxt.t : '', nextE: nxt ? nxt.e : '',
+      nextOpen: () => set({ ctx: 'festival', fTab: 'timetable', pushed: null }),
+      nextToggle: nxt ? () => set({ saved: S.saved.filter(x => x !== nxt.id) }) : () => {},
+      enterFest: () => set({ ctx: 'festival', fTab: 'live', pushed: null }),
+      goFestivals: () => set({ ctx: 'global', tab: 'festivals' }),
+      goCrew: () => set({ ctx: 'festival', fTab: 'crew' }),
+      goTimetable: () => set({ ctx: 'festival', fTab: 'timetable' }),
+      openCashless: () => set({ pushed: 'cashless' }),
+      openNews: () => set({ pushed: 'news' }),
+      openQR: () => set({ sheet: 'qr' }),
+      closeSheet: () => set({ sheet: null, personId: null }),
+      cdStein: [{ value: '31', label: 'Tage' }, { value: '09', label: 'Std' }],
+      socialsApp: ['instagram', 'tiktok', 'spotify'],
+      socialsFest: ['instagram', 'tiktok', 'youtube', 'web'],
+      segFest: [{ value: 'kommend', label: 'Kommend' }, { value: 'vergangen', label: 'Vergangen' }],
+      festSeg: S.festSeg, setFestSeg: (v) => set({ festSeg: v }),
+      festKommend: S.festSeg === 'kommend', festVergangen: S.festSeg === 'vergangen',
+      reqCount: String(Math.max(0, 1 - S.accepted.length)),
+      requestRows: [{ name: 'Sina Kroll', note: '4 gemeinsame Freunde', label: S.accepted.includes('Sina Kroll') ? 'In der Crew' : 'Annehmen', accept: () => set({ accepted: S.accepted.includes('Sina Kroll') ? S.accepted : S.accepted.concat('Sina Kroll') }) }],
+      crewRows: crewNames.map(n => { const q = this.people[n] || {}; return { name: n, status: q.at ? 'Auf Uferklang dabei' : (q.m2 || 'In deiner Crew'), presence: q.presence || 'none', open: openPerson(n) }; }),
+      suggRows: ['Jakob Rein', 'Mia Ortner'].map(n => ({ name: n, note: this.people[n].m2 + ' · ' + this.people[n].m1, label: S.added.includes(n) ? 'Angefragt' : 'Adden', add: () => set({ added: S.added.includes(n) ? S.added : S.added.concat(n) }) })),
+      notifRows: [['Push aktiv', 'Wetter, Lineup, Sicherheit'], ['Lineup-Änderungen', 'Nur für gemerkte Acts'], ['Aktivitäts-Anfragen', 'Wenn jemand mitkommen will']].map((x, i) => ({ label: x[0], desc: x[1], checked: S.notif[i], toggle: () => { const n = S.notif.slice(); n[i] = !n[i]; set({ notif: n }); } })),
+      locShare: S.locShare, toggleLoc: (v) => set({ locShare: v }),
+      actCount: S.activities.length,
+      savedToday: daySlots.filter(s => savedSet.has(s.id) && s.d === 'sa').map(mkSlot),
+      stageNow: [{ stage: 'Ufer', artist: 'Vanta', timeLabel: 'bis 22:45', live: true, hasProgress: true, progress: '62%', tile: 'linear-gradient(150deg,#B02D74,#4A1332)', initial: 'V', border: 'var(--live-border)' }, { stage: 'Wald', artist: 'Rosa Rauschen', timeLabel: 'bis 22:20', live: false, hasProgress: true, progress: '41%', tile: 'linear-gradient(150deg,#FFC53D,#B02D74)', initial: 'R', border: 'var(--border-subtle)' }, { stage: 'Nachtzelt', artist: 'Fuchsbau b2b Nachteule', timeLabel: 'ab 00:30', live: false, hasProgress: false, progress: '0%', tile: 'linear-gradient(150deg,#363B49,#0C0E13)', initial: 'F', border: 'var(--border-subtle)' }],
+      favArtists: ['Vanta', 'Rosa Rauschen', 'Marlo Kern', 'Club Aurora', 'Die Späten'],
+      newsTopUnread: unread > 0,
+      actRows: S.activities.filter(a => !a.promo).map(mkAct).sort((x, y) => y.fg - x.fg),
+      promoRows: S.activities.filter(a => a.promo).map(mkAct),
+      groundRows: [['Timo Fuchs'], ['Paul Steger'], ['Emma Lang'], ['Noah Wieser']].map(([n]) => { const q = this.people[n]; return { name: n, at: q.at, dist: q.dist, presence: q.presence, open: openPerson(n) }; }),
+      startActivity: () => set({ pushed: 'create' }),
+      goAkt: () => set({ ctx: 'festival', fTab: 'aktivitaeten', pushed: null }),
+      goFriends: () => set({ ctx: 'global', tab: 'friends', pushed: null, sheet: null }),
+      sheetPerson: S.sheet === 'person', sheetQR: S.sheet === 'qr', sheetChat: S.sheet === 'chat',
+      caTitle: S.caTitle, setCaTitle: (e) => set({ caTitle: e.target.value }),
+      caPlace: S.caPlace, setCaPlace: (e) => set({ caPlace: e.target.value }),
+      caDesc: S.caDesc, setCaDesc: (e) => set({ caDesc: e.target.value }),
+      caClock: S.caClock, setCaClock: (e) => set({ caClock: e.target.value }),
+      spotChips: ['Ufer Bühne', 'Wald Bühne', 'Nachtzelt', 'Foodcourt', 'Steg', 'Camp A', 'Camp B'].map(t => chip(t, S.caSpot === t, () => set({ caSpot: t }))),
+      dayChips: ['Heute', 'Morgen', 'Sonntag'].map(t => chip(t, S.caDay === t, () => set({ caDay: t }))),
+      tagChips: ['Chillen', 'Tanzen', 'Sport', 'Spiele', 'Essen & Trinken', 'Kennenlernen', 'Flunkyball', 'Beerpong', 'Rage Cage', 'Karaoke', 'Werwolf'].map(t => chip(t, S.caTags.includes(t), () => set({ caTags: S.caTags.includes(t) ? S.caTags.filter(x => x !== t) : S.caTags.concat(t) }))),
+      caMin: String(S.caMin), caMax: String(S.caMax),
+      decMin: () => set({ caMin: Math.max(2, S.caMin - 1) }),
+      incMin: () => set({ caMin: Math.min(S.caMax, S.caMin + 1) }),
+      decMax: () => set({ caMax: Math.max(S.caMin, S.caMax - 1) }),
+      incMax: () => set({ caMax: Math.min(99, S.caMax + 1) }),
+      visSeg: [{ value: 'alle', label: 'Alle am Festival' }, { value: 'crew', label: 'Nur Crew' }],
+      caVis: S.caVis, setCaVis: (v) => set({ caVis: v }),
+      caHasPhoto: S.caPhoto, caNoPhoto: !S.caPhoto, togglePhoto: () => set({ caPhoto: !S.caPhoto }),
+      postActivity: () => set({ pushed: null, ctx: 'festival', fTab: 'aktivitaeten', caTitle: '', caPlace: '', caDesc: '', caTags: [], caPhoto: false, activities: S.activities.filter(a => a.promo).concat([{ id: Date.now(), title: S.caTitle || 'Neue Aktivität', time: S.caDay + ' ' + S.caClock, place: S.caSpot + (S.caPlace ? ' · ' + S.caPlace : ''), host: 'Feli Auer', going: ['Feli Auer'], spots: S.caMax, joined: true, tags: S.caTags, photo: S.caPhoto ? 'linear-gradient(150deg,#FFC53D,#E8559F)' : null, desc: S.caDesc || null }]).concat(S.activities.filter(a => !a.promo)) }),
+      segDays: [{ value: 'fr', label: 'Freitag' }, { value: 'sa', label: 'Samstag' }, { value: 'so', label: 'Sonntag' }],
+      segMode: [{ value: 'alle', label: 'Alle' }, { value: 'meine', label: 'Meine' }, { value: 'friends', label: 'Friends' }],
+      day: S.day, setDay: (v) => set({ day: v }), mode: S.tmode, setMode: (v) => set({ tmode: v }),
+      stageChips: ['Ufer Bühne', 'Wald Bühne', 'Nachtzelt'].map(t => chip(t.replace(' Bühne', ''), S.stages.includes(t), () => set({ stages: S.stages.includes(t) ? (S.stages.length > 1 ? S.stages.filter(x => x !== t) : S.stages) : S.stages.concat(t) }))),
+      calCols, hourMarks, hourLines, calH, ttShowGrid: filt.length > 0, ttEmpty: !filt.length,
+      ttEmptyText: S.tmode === 'meine' ? 'Für diesen Tag hast du noch nichts gemerkt. Stern antippen, dann taucht es hier auf.' : S.tmode === 'friends' ? 'Deine Crew hat für diese Auswahl noch nichts gemerkt.' : 'Für diese Auswahl steht nichts im Plan.',
+      layerChips: [['Alle', undefined], ['Essen', 'utensils'], ['Wasser', 'droplet'], ['Sani', 'shield-alert'], ['Crew', 'users']].map(([t, ic]) => chip(t, S.layer === t, () => set({ layer: t }), ic)),
+      poiRows: [{ x: '44%', y: '58%', icon: 'utensils', label: 'Foodcourt', cat: 'Essen' }, { x: '58%', y: '44%', icon: 'utensils', label: 'Späti-Stand', cat: 'Essen' }, { x: '30%', y: '60%', icon: 'droplet', label: 'Wasser', cat: 'Wasser' }, { x: '88%', y: '54%', icon: 'droplet', label: 'Wasser', cat: 'Wasser' }, { x: '63%', y: '86%', icon: 'shield-alert', label: 'Sanitäter', cat: 'Sani' }].filter(q => S.layer === 'Alle' || S.layer === q.cat),
+      showCrewPins: S.locShare && (S.layer === 'Alle' || S.layer === 'Crew'),
+      crewPins: [{ x: '24%', y: '20%', name: 'Paul Steger' }, { x: '47%', y: '47%', name: 'Emma Lang' }, { x: '16%', y: '76%', name: 'Timo Fuchs' }],
+      payChips: ['10 €', '20 €', '50 €'].map(t => chip(t, S.pay === t, () => set({ pay: t }))),
+      payLabel: S.pay + ' aufladen',
+      newsChips: ['Alle', 'Uferklang', 'quiks'].map(t => chip(t, S.newsFilter === t, () => set({ newsFilter: t }))),
+      newsRows,
+      chatUnread: String(S.unreadChats.length), chatHasUnread: S.unreadChats.length > 0,
+      chatRows: Object.keys(S.chats).map(n => { const th = S.chats[n]; const last = th[th.length - 1]; const un = S.unreadChats.includes(n); return { name: n, last: (last.me ? 'Du: ' : '') + last.x, time: last.t, unread: un, lastColor: un ? 'var(--text-primary)' : 'var(--text-muted)', open: () => set({ sheet: 'chat', chatWith: n, unreadChats: S.unreadChats.filter(q => q !== n) }) }; }),
+      chatWith: S.chatWith || '', chatMsgs: (S.chats[S.chatWith] || []).map(m => ({ x: m.x, t: m.t, just: m.me ? 'flex-end' : 'flex-start', bg: m.me ? 'var(--ci-primary)' : 'var(--surface-inset)', fg: m.me ? '#FFFFFF' : 'var(--text-primary)' })),
+      chatDraft: S.chatDraft, setChatDraft: (e) => set({ chatDraft: e.target.value }),
+      sendChat: () => { const d = S.chatDraft.trim(); if (!d || !S.chatWith) return; const c = Object.assign({}, S.chats); c[S.chatWith] = (c[S.chatWith] || []).concat({ me: true, t: 'jetzt', x: d }); set({ chats: c, chatDraft: '' }); },
+      openChatFromPerson: () => set({ sheet: 'chat', chatWith: S.personId, unreadChats: S.unreadChats.filter(q => q !== S.personId) }),
+      quickChips: ['Bin in 5 da', 'Wo seid ihr?', 'Treffen am Foodcourt?'].map(t => ({ label: t, send: () => { if (!S.chatWith) return; const c = Object.assign({}, S.chats); c[S.chatWith] = (c[S.chatWith] || []).concat({ me: true, t: 'jetzt', x: t }); set({ chats: c }); } })),
+      sheetInfo: S.sheet === 'info', infoTitle: S.infoT, infoBody: S.infoB,
+      sheetAct: S.sheet === 'act',
+      dTitle: dA ? dA.title : '', dHasPhoto: !!(dA && dA.photo), dPhotoBg: (dA && dA.photo) || '', dInitial: dA ? dA.title.charAt(0) : '',
+      dTime: dA ? dA.time : '', dPlace: dA ? dA.place : '',
+      dSpots: dA ? (Math.max(0, dA.spots - (dA.going.length - 1)) + ' von ' + dA.spots + ' Plätzen frei') : '',
+      dTags: dA ? dA.tags : [], dHost: dA ? dA.host : '', dGoing: dA ? dA.going : [],
+      dHasDesc: !!(dA && dA.desc), dDesc: (dA && dA.desc) || '',
+      dJoinLabel: dA && dA.joined ? 'Bin raus' : 'Bin dabei', dJoinIcon: dA && dA.joined ? 'x' : 'plus',
+      dHostOpen: dA ? (dA.promo ? () => set({ sheet: 'info', infoT: 'Uferklang Team', infoB: 'Offizielles Event vom Veranstalter — Fragen beantwortet der Infopoint am Haupteingang.' }) : (dA.host === 'Feli Auer' ? () => set({ sheet: null, pushed: 'profil' }) : openPerson(dA.host))) : () => {},
+      dJoin: dA ? () => set({ activities: S.activities.map(x => x.id !== dA.id ? x : Object.assign({}, x, { joined: !x.joined, going: x.joined ? x.going.filter(g => g !== 'Feli Auer') : x.going.concat('Feli Auer') })) }) : () => {},
+      infoPay: () => set({ sheet: 'info', infoT: 'Zahlungsmittel', infoB: 'Apple Pay ist verknüpft. Ändern kommt im echten Build — hier nur angedeutet.' }),
+      infoLang: () => set({ sheet: 'info', infoT: 'Sprache', infoB: 'Deutsch. Englisch folgt im echten Build.' }),
+      infoShare: () => set({ sheet: 'info', infoT: 'quiks empfehlen', infoB: 'Dein Invite-Link läge jetzt im Share-Sheet deines Handys.' }),
+      infoLogout: () => set({ sheet: 'info', infoT: 'Abmelden', infoB: 'Im Prototyp bleibst du eingeloggt — deine Crew braucht dich noch.' }),
+      infoPortal: () => set({ sheet: 'info', infoT: 'Externes Portal', infoB: 'Öffnet pay.uferklang.at im Browser — außerhalb des Prototyps.' }),
+      infoShareHandle: () => set({ sheet: 'info', infoT: 'Handle teilen', infoB: '@feli.quiks läge jetzt im Share-Sheet deines Handys.' }),
+      infoMeet: () => set({ sheet: 'info', infoT: 'Treffpunkt teilen', infoB: 'Schickt deinen Standort als Pin in den Chat — im echten Build.' }),
+      infoSocial: () => set({ sheet: 'info', infoT: 'Öffnet extern', infoB: 'Führt zur verknüpften Social-App — außerhalb des Prototyps.' }),
+      ttReset: () => set({ tmode: 'alle', stages: ['Ufer Bühne', 'Wald Bühne', 'Nachtzelt'] }),
+      goKarte: () => set({ ctx: 'festival', fTab: 'karte', pushed: null, sheet: null, personId: null }),
+      infoEdit: () => set({ sheet: 'info', infoT: 'Profil bearbeiten', infoB: 'Name, Handle und E-Mail änderst du im echten Build direkt hier.' }),
+      reqHasOpen: S.accepted.length < 1,
+      pName: S.personId || '', pHandle: p.handle || '', pLine: p.at ? 'Gerade bei ' + p.at + ' · ' + p.dist : 'Nicht am Gelände',
+      pM1: p.m1 || '', pM2: p.m2 || '', pActs: p.acts || [], pHasActs: (p.acts || []).length > 0,
+      pActsLabel: 'Aktivitäten von ' + (S.personId || '').split(' ')[0],
+      pIsCrew: isCrew, pNotCrew: !!S.personId && !isCrew,
+      pAddLabel: S.added.includes(S.personId) ? 'Angefragt' : 'Adden',
+      addPerson: () => set({ added: S.added.includes(S.personId) ? S.added : S.added.concat(S.personId) })
+    };
+  }
+}
+</script>
+
+
+</body></html>
