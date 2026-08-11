@@ -1,10 +1,11 @@
 ---
 phase: 6
 slug: profile-friends-placeholders
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-11
+reviewed_at: 2026-08-11
 ---
 
 # Phase 6 — UI Design Contract
@@ -248,22 +249,106 @@ Visual: identical `SettingsSwitch` component as the dead notification switches, 
 
 ## UI Considerations
 
-Applicable state considerations resolved: 9 covered, 3 backstop, 0 unresolved.
+Produced by the ui-consideration-probe (post-verification, `ui-consideration-probe.cjs`) over the
+10 surfaces this phase describes. Element kinds were author-confirmed, not left to the prose
+heuristic: `E3`/`E9`/`E10` were widened beyond the detected `list-collection` so `long-text` was
+actually raised for the user-generated values they render, and `E7` was narrowed to `nav` (a fixed
+4-tab set is not a data collection).
 
-| Category | Element(s) | Status | Resolution / Reason |
-|---|---|---|---|
-| empty | Friends: Anfragen, Chats, Deine Crew, Vielleicht kennst du | ✅ covered | Each section renders its own honest empty-state copy from the Copywriting Contract — never a shared generic string, never a blank/missing block |
-| empty | Profil meta line — 0 saved festivals | ✅ covered | Renders "0 Festivals" via the Lingui `plural` macro (0 is a valid category), never omitted or dashed |
-| empty | Profil identity line — all three D-12 fields unset | ✅ covered | Line is omitted entirely (§ Meta Line Contract) — no dangling `·` separators |
-| zero-one-many | Profil meta line — Festivals count | ✅ covered | `plural` macro handles 0/1/n in both DE and EN |
-| long-text | Profil header `displayName` | 🧪 backstop | `numberOfLines={1}` + ellipsis on the header name (same guard `FestivalCard.tsx` already applies to festival names) — held-out UI-state test, no explicit truncation-width proof captured here |
-| long-text | Friends chat preview / row `bodySm` values | ✅ covered | `numberOfLines={1}` + `ellipsizeMode`, matches the design's own `text-overflow:ellipsis` (L1462) |
-| loading | Profil / GET /me | ✅ covered | Reuses the existing project-wide loading copy pattern ("Loading…" text, no skeleton) — same backstop level as `festivals.tsx`/`home.tsx`, not a new pattern |
-| error | Profil / GET /me failure | ✅ covered | Reuses the EXACT existing transport-error copy + Retry button pattern from `festivals.tsx`/`home.tsx` (Copywriting Contract row "Error state") |
-| overflow | Friends "Vielleicht kennst du" / "Deine Crew" row lists (once FRND-02 ships) | ⚠ unresolved | Out of this phase's scope (always empty this phase) — planner should treat "how a long friends list scrolls/paginates" as FRND-02's own assumption, not Phase 6's |
-| partial | Mehr — mixed live (Profil, Dark Mode, Sprache, Abmelden) + dead rows in the SAME section list | ✅ covered | § Placeholder Pattern Contract draws the exact Pattern A/B line per row — no section is "half-styled" by accident |
-| populated | Profil Konto rows with real `GET /me` data | ✅ covered | Full-opacity, tappable-with-toast (Pattern B) |
-| loading | Theme-override first read (MMKV) | 🧪 backstop | Falls back to `'system'` synchronously (no async gate) — same "never paint transparent on first frame" guarantee as `useTheme()`'s existing default; held-out, no separate loading-state test authored here |
+**Coverage: 64 applicable — 45 resolved (explicit) · 2 resolved (backstop) · 17 dismissed · 0 unresolved.**
+
+Empty-state and error-state COPY lives in § Copywriting Contract; the rows below fix STATE
+coverage and reference that copy rather than restating it.
+
+### Surfaces
+
+| id | Surface | Element kinds (author-confirmed) |
+|---|---|---|
+| E1 | Friends screen — 4 list sections + search input | form, list-collection |
+| E2 | Profil header — avatar, identity line, name, handle, meta line | media, static-content |
+| E3 | Profil "Konto" rows (Name / Handle / E-Mail) | list-collection, interactive-control, static-content |
+| E4 | Mehr settings screen — 4 grouped sections, SafeNow callout, logout | list-collection, interactive-control, static-content |
+| E5 | `SettingsSwitch` — Dark Mode + 4 dead switches | interactive-control, static-content |
+| E6 | `SoonToast` pill | interactive-control, static-content |
+| E7 | `FloatingNav` — 4 tabs | nav |
+| E8 | `complete-profile` — 3 new optional fields | form, static-content |
+| E9 | Friends "Dein quiks-Code" card | list-collection, media, interactive-control, static-content |
+| E10 | Profil placeholder blocks — Socials, Vibe chips, Stat-Tiles | list-collection, static-content |
+
+### Resolutions
+
+| # | Surface | Category | Status | Resolution / Reason |
+|---|---|---|---|---|
+| 1 | E1 | empty | ✅ resolved (explicit) | Each of the 4 sections renders its OWN section-specific empty copy (§ Copywriting Contract) — never a shared generic string, never a blank block. Unfilled search input shows placeholder "Name oder @handle" + static "Bald" badge. |
+| 2 | E1 | loading | ⊘ dismissed | The 4 Friends sections fetch nothing this phase (FRND-02 deferred). The screen's only network dependency is the quiks-code handle — covered at E9. |
+| 3 | E1 | error | ⊘ dismissed | Same: no fetch on the sections, so no failure surface. The `/me` error path is carried by E9. |
+| 4 | E1 | populated | ⊘ dismissed | Populated row rendering is FRND-02 scope; every section is structurally zero-item this phase. |
+| 5 | E1 | partial | ⊘ dismissed | Same as populated — there is no partial row data to render. |
+| 6 | E1 | overflow | ✅ resolved (explicit) | ScrollView with `layout.scrollBottomPad` (104px) so the last block clears `FloatingNav`. Sections stack vertically; no horizontal overflow exists. |
+| 7 | E1 | zero-one-many | ✅ resolved (explicit) | Only the zero category is reachable. No count-bearing copy exists on this screen — the Friends count lives in E2's meta line and is `plural`-wrapped there. |
+| 8 | E1 | long-text | ✅ resolved (explicit) | Section headings and empty-state body copy are Lingui strings that wrap freely (no `numberOfLines` on multi-line body copy); the search placeholder truncates natively. |
+| 9 | E2 | empty | ✅ resolved (explicit) | No avatar → `AvatarTile`'s existing `deriveInitials` fallback. Identity line omitted ENTIRELY when pronoun/age/gender are all empty — no dangling `·`. Meta line always renders ("0 Festivals" via `plural`). |
+| 10 | E2 | loading | ✅ resolved (explicit) | Project-wide "Loading…" text pattern from `festivals.tsx`/`home.tsx` — no skeleton, no new pattern invented. |
+| 11 | E2 | error | ✅ resolved (explicit) | Verbatim existing transport-error copy + Retry button (§ Copywriting Contract, row "Error state"). |
+| 12 | E2 | populated | ✅ resolved (explicit) | Sunset-ringed 88px avatar, `title1` (or `title2` fallback) name, `primary`-coloured mono handle, muted meta line — pinned to design L1773–1819. |
+| 13 | E2 | overflow | ✅ resolved (explicit) | Header is a fixed vertical stack with no scroll container of its own; values truncate per row 14. |
+| 14 | E2 | long-text | ✅ resolved (explicit) | **User decision:** app-wide rule — `displayName` and `@handle` get `numberOfLines={1}` + `ellipsizeMode="tail"`, the same guard `FestivalCard.tsx` already applies to festival names. No per-surface exceptions. |
+| 15 | E3 | empty | ✅ resolved (explicit) | A row whose value is absent renders label + chevron with the value slot omitted — never "—", same omit-if-empty precedent as the identity line. |
+| 16 | E3 | loading | ✅ resolved (explicit) | Rows sit behind the screen-level "Loading…" state of E2 (one `/me` query → one loading surface, not per-row). |
+| 17 | E3 | error | ✅ resolved (explicit) | Screen-level transport-error + Retry; rows are not individually retryable. |
+| 18 | E3 | populated | ✅ resolved (explicit) | Pattern B — full opacity, real value right-aligned in `bodySm` muted, chevron present, tap opens `SoonToast`. |
+| 19 | E3 | partial | ✅ resolved (explicit) | Rows render independently: a missing E-Mail does not blank the Name row (per-row omit-if-empty). |
+| 20 | E3 | overflow | ✅ resolved (explicit) | Fixed 3-row group inside the screen ScrollView; `minHeight: layout.hitMin` per row. |
+| 21 | E3 | zero-one-many | ⊘ dismissed | The Konto group is a fixed 3-row authored set, not a variable-length collection — no zero/one/many layout variance exists. |
+| 22 | E3 | long-text | ✅ resolved (explicit) | **User decision:** value text `numberOfLines={1}` + `ellipsizeMode="tail"`; the label keeps layout priority and the value flex-shrinks. |
+| 23 | E4 | empty | ⊘ dismissed | Sections are a fixed authored row set with no data source — a zero-row Mehr screen is unreachable. |
+| 24 | E4 | loading | ✅ resolved (explicit) | The only variable value is the Sprache row's resolved UI locale, available synchronously from the i18n runtime — no loading state ever renders. |
+| 25 | E4 | error | ✅ resolved (explicit) | No fetch on this screen. Logout failure falls back to the existing auth-flow error handling; SafeNow link failure is an OS concern, not a screen state. |
+| 26 | E4 | populated | ✅ resolved (explicit) | Four eyebrow-headed groups at `layout.sectionGap` (28px), `r-md` grouped containers, per-row Pattern A/B assignment from § Placeholder Pattern Contract. |
+| 27 | E4 | partial | ✅ resolved (explicit) | § Placeholder Pattern Contract draws the live-vs-dead line per ROW, so no group is half-styled by accident. |
+| 28 | E4 | overflow | ✅ resolved (explicit) | ScrollView + `layout.scrollBottomPad` (104px) clears `FloatingNav`. |
+| 29 | E4 | zero-one-many | ⊘ dismissed | Same as row 23 — fixed authored rows, no count variance. |
+| 30 | E4 | long-text | ✅ resolved (explicit) | `ListRow` labels `numberOfLines={1}`; `SettingsSwitch` description capped at 2 lines; SafeNow body copy wraps freely — the distancing sentence (D-14) must NEVER truncate. |
+| 31 | E5 | loading | ✅ resolved (explicit) | The MMKV override read is synchronous with a `'system'` default, so the switch never renders indeterminate and the first frame is never unthemed. |
+| 32 | E5 | error | ✅ resolved (explicit) | Storage read/write errors are swallowed per `active-festival-storage.ts`'s idiom and fall back to `'system'`. No error UI. |
+| 33 | E5 | overflow | ✅ resolved (explicit) | Label+description column flex-shrinks; the `Switch` has a fixed intrinsic width and never compresses. |
+| 34 | E5 | long-text | ✅ resolved (explicit) | Label `numberOfLines={1}`, description `numberOfLines={2}` (§ Component Inventory); the row grows to at least `layout.hitMin`. |
+| 35 | E6 | loading | ⊘ dismissed | The toast is a synchronous local UI signal with no data source — nothing can be in flight. |
+| 36 | E6 | error | ⊘ dismissed | Same — no async work, so no failure state. |
+| 37 | E6 | overflow | ✅ resolved (explicit) | **User decision:** pill `maxWidth` = screen width − 2 × `layout.screenPad`, positioned above `FloatingNav` per § Component Inventory. |
+| 38 | E6 | long-text | ✅ resolved (explicit) | **User decision:** `numberOfLines={2}` + `ellipsizeMode="tail"` — the pill grows to at most 2 lines, then truncates. |
+| 39 | E7 | loading | ⊘ dismissed | The tab set is statically authored; routes register at build time and nothing is fetched. |
+| 40 | E7 | error | ⊘ dismissed | Same — a static nav bar has no failure state. |
+| 41 | E7 | overflow | ✅ resolved (explicit) | **User decision:** 4 tabs each `flex: 1` at equal width inside the fixed `layout.navHeight` bar; icons never shrink. |
+| 42 | E7 | long-text | ✅ resolved (explicit) | **User decision:** label `numberOfLines={1}` + `ellipsizeMode="tail"` so no locale's label length can break the bar. |
+| 43 | E8 | empty | ✅ resolved (explicit) | All three fields are optional and submit blank; helper text "Optional", no Required badge (unlike `displayName`). |
+| 44 | E8 | loading | ✅ resolved (explicit) | Reuses the screen's existing submit-pending state — the three fields ride the same mutation, no new pattern. |
+| 45 | E8 | error | ✅ resolved (explicit) | Reuses the screen's existing submit-error surface; the server is the real validation gate (client caps are soft). |
+| 46 | E8 | partial | ✅ resolved (explicit) | Any subset of the three may be filled — that is the NORMAL case, not an error. E2's identity line renders whatever subset exists. |
+| 47 | E8 | overflow | ✅ resolved (explicit) | Fields sit inside the existing `KeyboardScreen` scroll container, appended before the submit CTA. |
+| 48 | E8 | long-text | 🧪 resolved (backstop) | Client soft-caps (~20 chars Pronomen · 3 digits Alter · ~30 chars Geschlecht) bound the input, but E2's identity line at cap-length values is not proven here. **Backstop: a held-out UI-state test rendering the identity line with all three fields at cap length.** |
+| 49 | E9 | empty | ✅ resolved (explicit) | Handle absent → the card renders without the handle line rather than an empty slot; the static QR placeholder graphic always renders. |
+| 50 | E9 | loading | ✅ resolved (explicit) | Gated behind the same screen-level `/me` loading as E2/E3 — one query, one loading surface. |
+| 51 | E9 | error | ✅ resolved (explicit) | Same transport-error copy + Retry pattern. |
+| 52 | E9 | populated | ✅ resolved (explicit) | `r-card` container, real `@username` in the `countdown` mono role at `colors.primary`, body line, Pattern-A dampened "QR zeigen" CTA. |
+| 53 | E9 | partial | ✅ resolved (explicit) | The QR graphic is a DELIBERATE static placeholder, not missing data — it carries the Pattern-A "Bald" badge so it can never read as a failed image load. |
+| 54 | E9 | overflow | ✅ resolved (explicit) | Single fixed-height card inside the Friends ScrollView. |
+| 55 | E9 | zero-one-many | ⊘ dismissed | The card is a singleton surface, not a collection — no count variance. |
+| 56 | E9 | long-text | ✅ resolved (explicit) | **User decision:** `@handle` `numberOfLines={1}` + ellipsize — same app-wide rule as rows 14/22. |
+| 57 | E10 | empty | ✅ resolved (explicit) | These blocks are structurally empty BY DESIGN and carry Pattern A (opacity 0.45 + static "Bald" badge), so the emptiness reads as intentional rather than broken. |
+| 58 | E10 | loading | ⊘ dismissed | No data source behind Socials / Vibe chips / Stat-Tiles this phase — nothing loads. |
+| 59 | E10 | error | ⊘ dismissed | Same — no fetch, no failure surface. |
+| 60 | E10 | populated | ⊘ dismissed | Populated rendering of these blocks belongs to their own later phase; only the dampened placeholder is in Phase 6 scope. |
+| 61 | E10 | partial | ⊘ dismissed | Same as populated — there is no real data to be partially present. |
+| 62 | E10 | overflow | ✅ resolved (explicit) | Stat-Tile grid is a 3-column `ComingSoonTile` row at ~31% `flexBasis`; Vibe chips wrap; all inside the screen ScrollView. |
+| 63 | E10 | zero-one-many | ⊘ dismissed | Counts are hardcoded placeholders this phase; no variable-length rendering exists. |
+| 64 | E10 | long-text | 🧪 resolved (backstop) | Chip and tile labels are short authored Lingui strings, but their behaviour at the longest supported catalog value is not pinned. **Backstop: a held-out visual check of the Vibe-chip row and Stat-Tile grid at the longest catalog value.** |
+
+### Out of scope (recorded, not raised as a Phase 6 consideration)
+
+How a long, populated friends list scrolls or paginates is FRND-02's own assumption — every Friends
+section is structurally zero-item this phase, so it is not a Phase 6 state. Recorded here so the
+planner does not mistake its absence for an oversight.
 
 ---
 
@@ -277,11 +362,40 @@ Applicable state considerations resolved: 9 covered, 3 backstop, 0 unresolved.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+Verified by `gsd-ui-checker` on 2026-08-11 (`ui_safety_gate: true` — all 6 dimensions applied).
 
-**Approval:** pending
+- [x] Dimension 1 Copywriting: **PASS**
+- [x] Dimension 2 Visuals: **PASS**
+- [x] Dimension 3 Color: **PASS**
+- [x] Dimension 4 Typography: **FLAG** (non-blocking — see recommendation below)
+- [x] Dimension 5 Spacing: **PASS**
+- [x] Dimension 6 Registry Safety: **PASS**
+
+**Approval:** APPROVED
+
+### Non-blocking recommendation (carry into PLAN.md)
+
+- **Typography — the `title1` name/derivation is inconsistent.** At 24/800 it sits 2px *below*
+  `title2` (26/700), so this doc's stated derivation ("gap between `title2` and `display2`") does
+  not hold on size, and the name `title1` conventionally implies larger-than-`title2`. Either take
+  the sanctioned fallback already recorded in § Typography (reuse `title2` unchanged — which also
+  avoids the admin-stream collision-zone coordination for a single usage), or keep the 24/800
+  design value and RENAME the role (e.g. `titleDisplayName` / `heading800`) with a corrected
+  derivation note, so `tokens.ts` stays self-explanatory. Do not land it as-is under the current
+  name.
+- **Minor, plan-time:** the § Spacing table lists `layout.hitMin` for a "toast-dismiss area", but
+  `SoonToast` declares no manual dismiss control. Reconcile that usage note (no value changes).
+
+### Checker notes carried forward
+
+- **Multi-tenancy / FRND-01 wording.** The roadmap's success criterion frames Friends as
+  festival-scoped ("friends who saved this festival"). User-locked **D-10 in `06-CONTEXT.md`
+  supersedes it** — Friends is global and reads no festival state. This spec follows D-10; the
+  roadmap SC needs reconciling at the phase hand-off. Not a spec defect.
+- **Collision-zone sequencing.** Three additive `packages/ui/src/tokens.ts` changes (`title1` or its
+  replacement, `fillInfoQuiet`, `borderInfo`) must be sequenced against the admin workstream per
+  `CLAUDE.md` § Parallel Workstreams before landing.
+- **Open decision for the planner:** whether `age` is stored raw or derived from a `birthDate`
+  column (D-12) — a data-model call this UI-SPEC deliberately leaves open.
+- **Docs follow-up:** D-07 requires widening the Sunset-usage rule in ADR-023 and
+  `docs/brand/quiks-ci-v1.md` to cover avatar/identity surfaces.
