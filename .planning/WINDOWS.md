@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 22
+open_count: 23
 waived_count: 0
 fixed_count: 8
-total_count: 30
-last_updated: 2026-08-11T11:54:19.017Z
+total_count: 31
+last_updated: 2026-08-11T12:41:00.855Z
 ---
 
 # Broken Windows Ledger
@@ -45,6 +45,7 @@ last_updated: 2026-08-11T11:54:19.017Z
 | 28 | 05.1 | unrun-verify | apps/mobile/assets/icon.png |  | 05.1-06: die sechs regenerierten App-Icons wurden nie in einem echten Launcher/Springboard gesehen — ob der Foreground im Android-Adaptive-Masking (Kreis/Squircle) unbeschnitten bleibt (RESEARCH A1: Safe-Zone-Prozentsatz unverifiziert), ob der Monochrome-Layer unter Androids Themed-Icons-Tint trägt und ob die Sunset-Marke auf Papier im Launcher-Raster liest, ist eine Geräteaussage; braucht expo prebuild/Rebuild, Abnahme gehört Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 18/19: Launcher-Icon, Android-Adaptive-Masking in mehreren Formen, Recents/Settings) - damit ist die RESEARCH-A1-Safe-Zone-Annahme geklaert. Der nicht abgedeckte Teilanspruch (Monochrome-Layer unter Androids Themed Icons) laeuft als eigener offener Eintrag 30 weiter. Schliessender Nachweis ist die Nutzerabnahme am Geraet. | 2026-08-10T22:10:53.619Z | 2026-08-11T11:54:08.079Z |
 | 29 | 05.1 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 10/11). Der User hat die Abnahme als Ganzes freigegeben und entschieden, die Markenglyphe ueber der Splash-Wortmarke ZU BEHALTEN; ein Entfernen bleibt ein Einzeiler. Schliessender Nachweis ist diese Nutzerabnahme am Geraet. | 2026-08-10T22:10:54.014Z | 2026-08-11T11:54:08.803Z |
 | 30 | 05.1 | unrun-verify | apps/mobile/assets/android-icon-monochrome.png |  | Der Monochrome-Layer unter Androids Themed-Icons-Tint wurde von der Geraeteabnahme in 05.1-07 NICHT abgedeckt: die Checkpoint-Punkte 18/19 nennen Launcher-Icon, Adaptive-Masking und Recents/Settings, aber nicht die aktivierten Themed Icons. Restanspruch aus dem geschlossenen Eintrag 28 - braucht einen eigenen Blick mit eingeschalteten Themed Icons. | open |  | 2026-08-11T11:54:19.017Z |  |
+| 31 | 05.1 | unrun-verify | apps/mobile/app/(auth)/welcome.tsx |  | Das CI-Outfit-Tracking (typeRoles wordmark/display2/title2 letterSpacing) wurde in Quick-Task 260811-jz6 an allen 13 Style-Sites angewandt und headless abgesichert (Node/Vitest-Guard scannt app+components), aber NIE auf einem Geraet gesehen. Offen ist die reine Geraeteaussage: ob das engere Tracking auf Wortmarke, Display- und Titel-Zeilen Umbrueche kippt, Kartenhoehen (FestivalCard-Hero) oder die Splash-Wortmarke sichtbar verschiebt, und ob die zentrierten AvatarTile-Initialen durch das Tracking hinter dem letzten Zeichen sichtbar aus der Mitte laufen. Braucht einen Blick auf echten Screens in hell UND dunkel. | open |  | 2026-08-11T12:41:00.855Z |  |
 
 ````json
 [
@@ -406,6 +407,18 @@ last_updated: 2026-08-11T11:54:19.017Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-11T11:54:19.017Z",
+    "resolved_at": null
+  },
+  {
+    "id": 31,
+    "kind": "unrun-verify",
+    "phase": "05.1",
+    "file": "apps/mobile/app/(auth)/welcome.tsx",
+    "line": null,
+    "description": "Das CI-Outfit-Tracking (typeRoles wordmark/display2/title2 letterSpacing) wurde in Quick-Task 260811-jz6 an allen 13 Style-Sites angewandt und headless abgesichert (Node/Vitest-Guard scannt app+components), aber NIE auf einem Geraet gesehen. Offen ist die reine Geraeteaussage: ob das engere Tracking auf Wortmarke, Display- und Titel-Zeilen Umbrueche kippt, Kartenhoehen (FestivalCard-Hero) oder die Splash-Wortmarke sichtbar verschiebt, und ob die zentrierten AvatarTile-Initialen durch das Tracking hinter dem letzten Zeichen sichtbar aus der Mitte laufen. Braucht einen Blick auf echten Screens in hell UND dunkel.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T12:41:00.855Z",
     "resolved_at": null
   }
 ]

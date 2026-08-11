@@ -21,8 +21,12 @@ before making architectural changes.
 - Primary Beere `#E8559F`, secondary Amber `#FFC53D`.
 - Sunset (150° Amber → Beere) is the only allowed gradient — mark and hero surfaces only.
 - Hell-first (light-first): Papier `#F7F5F2` is the default surface; dark mode is the "night shift".
-  Light mode is not wired up in code today (`lightColors` exported from `packages/ui/src/tokens.ts`
-  but unused in `apps/mobile`) — that is follow-up phase work.
+  Wired up in phase 05.1: `apps/mobile/lib/theme.ts` resolves the device scheme, and only the exact
+  value `dark` yields the night-shift set — everything else, including an unresolved scheme, yields
+  `lightColors`. Both modes are live, so treat light as the case to check first.
+- The Outfit roles carry their CI tracking in the `typeRoles` tokens: a style that takes its size
+  from a tracked role must set that role's `letterSpacing` too — the `apps/mobile` suite fails if it
+  does not.
 - The ADR-024 rename has LANDED (phase 05.1): packages are `@quiks/*`, the bundle ID is
   `at.quiks.app` and the app URL scheme is `quiks`. Nothing in the codebase carries the old
   product name any more — historical design assets under `docs/concept/designs/` keep their
