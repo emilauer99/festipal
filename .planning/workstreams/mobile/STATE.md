@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
-stopped_at: Completed 06-04-PLAN.md
-last_updated: "2026-08-11T21:31:01.453Z"
+stopped_at: Completed 06-08-PLAN.md
+last_updated: "2026-08-11T23:20:12.297Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 44
+  completed_plans: 45
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 ## Current Position
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 5 of 9
+Plan: 6 of 9
 Status: Ready to execute
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [█████████░] 90%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -107,6 +107,7 @@ Progress: [█████████░] 90%
 | Phase 06 P02 | ~35min | 3 tasks | 9 files |
 | Phase 06 P03 | ~20min | 2 tasks | 9 files |
 | Phase 06 P04 | ~25min | 2 tasks | 4 files |
+| Phase 06 P08 | ~25min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -234,6 +235,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-04: Der weisse Schalterdaumen nutzt colors.primaryForeground statt einer benannten Konstante — keine der drei neuen Komponentendateien enthaelt einen rohen Farbwert
 - [Phase ?]: 06-04: disabled ist bei ListRow visuell+assistiv (onPress feuert weiter, damit tote Zeilen mit dem Toast antworten), bei SettingsSwitch dagegen ein echt disabled Control
 - [Phase ?]: 06-04: Die SoonToast-Pille begrenzt ihre Breite ueber left/right: layout.screenPad des Wrappers statt ueber useWindowDimensions — rotations- und splitscreen-fest ohne Dimensions-Read
+- [Phase ?]: 06-08: maximumDate=heute am Geburtsdatums-Picker ist KEINE Altersgrenze, sondern ein Riegel gegen ein Datum in der Zukunft, das deriveAge() auf null abbildet
+- [Phase ?]: 06-08: Geburtsdatum wird aus lokalen Kalenderkomponenten zu YYYY-MM-DD serialisiert; der Weg ueber die ISO-/UTC-Darstellung ist ausgeschlossen (T-06-34)
+- [Phase ?]: 06-08: @react-native-community/datetimepicker 9.1.0 via expo install (SDK-57-aufgeloest); enthaelt nativen Code, braucht 'npx expo run:android' aus apps/mobile vor der Geraetepruefung
 
 ### Pending Todos
 
@@ -275,6 +279,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T21:31:01.402Z
-Stopped at: Completed 06-04-PLAN.md
+Last session: 2026-08-11T23:20:12.254Z
+Stopped at: Completed 06-08-PLAN.md
 Resume file: None
