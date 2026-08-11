@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: Rollout
 current_phase: 6
 current_phase_name: Profile & Friends Placeholders
-status: planning
+status: "Phase 05.1 shipped — PR #11"
 stopped_at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
-last_updated: "2026-08-11T14:02:04.567Z"
+last_updated: "2026-08-11T14:11:28.137Z"
 last_activity: 2026-08-11
-last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 6
   completed_phases: 6
   total_plans: 40
   completed_plans: 40
+last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 ---
 
 # Project State
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 
 Phase: 6 — Profile & Friends Placeholders
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-11 — Phase 05.1 complete, transitioned to Phase 6
+Status: Phase 05.1 shipped — PR #11
+Last activity: 2026-08-11
 
 Progress: [██████████] 100%
 
