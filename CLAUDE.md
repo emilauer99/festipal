@@ -19,7 +19,8 @@ before making architectural changes.
 
 - Binding brand source: [`docs/brand/quiks-ci-v1.md`](docs/brand/quiks-ci-v1.md) (ADR-023, quiks CI v1.0).
 - Primary Beere `#E8559F`, secondary Amber `#FFC53D`.
-- Sunset (150° Amber → Beere) is the only allowed gradient — mark and hero surfaces only.
+- Sunset (150° Amber → Beere) is the only allowed gradient — mark, hero and avatar/identity surfaces
+  only (list widened app-wide in phase 06 per D-07; ADR-023 carries the amendment note).
 - Hell-first (light-first): Papier `#F7F5F2` is the default surface; dark mode is the "night shift".
   Wired up in phase 05.1: `apps/mobile/lib/theme.ts` resolves the device scheme, and only the exact
   value `dark` yields the night-shift set — everything else, including an unresolved scheme, yields
