@@ -3,14 +3,12 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { LogOut } from 'lucide-react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { tokens } from '@quiks/ui';
 import type { Festival } from '@quiks/contracts';
 
 import { apiClient } from '../../lib/api-client';
-import { authClient } from '../../lib/auth-client';
-import { clearActiveFestivalSlug, syncActiveFestivalOnEnter } from '../../lib/active-festival-storage';
+import { syncActiveFestivalOnEnter } from '../../lib/active-festival-storage';
 import { festivalKeys, unwrapOk } from '../../lib/festival-queries';
 import { consumeFestivalsSegment } from '../../lib/festivals-segment-request';
 import { i18n } from '../../lib/i18n';
@@ -18,7 +16,6 @@ import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
-import { forceUnauthenticated } from '../_layout';
 import { FestivalCard } from '../../components/FestivalCard';
 import { SegmentedControl } from '../../components/SegmentedControl';
 
@@ -58,9 +55,10 @@ type SegmentViewState =
  * shape (Pitfall 6). Save is idempotent + optimistic + server-backed (FEST-03);
  * Enter is gate-less (ADR-014) regardless of saved-state.
  *
- * AUTH-04 — the icon-only logout control (UI-SPEC Scope note #9, neutral tint,
- * no confirmation dialog) lives in this screen's header, the only authenticated
- * shell surface that exists until Phase 6's real Profile screen.
+ * AUTH-04 / D-09 — the icon-only logout control this screen's header used to
+ * carry (Phase 5, when it was the only authenticated shell surface) moved to
+ * Mehr → App in 06-05, as a red row behind a native confirm. Its hardening
+ * moved with it unchanged; nothing about signing out lives here any more.
  *
  * 05-06 — rewritten from a single `listFestivals` list into the Meine/Alle
  * segmented D-05 experience over `FestivalCard` + `SegmentedControl`.
@@ -99,36 +97,6 @@ export default function FestivalsScreen() {
       if (requested) setSegment(requested);
     }, []),
   );
-
-  // Non-re-entrancy guard (UI-SPEC logout-robustness backstop) — a double-tap
-  // during the in-flight signOut() cannot fire a second concurrent call.
-  const signingOutRef = useRef(false);
-
-  async function handleLogout() {
-    if (signingOutRef.current) return;
-    signingOutRef.current = true;
-    try {
-      await authClient.signOut();
-    } catch (error) {
-      // Offline/network failure — no error UI for this action (UI-SPEC
-      // Copywriting Contract "Logout": immediate, no confirmation, reversible
-      // action); fall through to forceUnauthenticated() below regardless.
-      // IN-03 (05-REVIEW.md) — still log it (project convention: "Use
-      // console.error() for errors"), purely for debuggability; this does
-      // not change any user-facing behavior.
-      console.error('signOut failed:', error);
-    } finally {
-      // Reaches Welcome even if signOut()'s network call failed — see
-      // app/_layout.tsx forceUnauthenticated() for why this is required
-      // (better-auth only broadcasts its own session signal on success).
-      forceUnauthenticated();
-      // REVIEW 05-05 LOW — clear the persisted D-06 focus so a different
-      // account signing in on the same device does not inherit this
-      // account's active festival.
-      clearActiveFestivalSlug();
-      signingOutRef.current = false;
-    }
-  }
 
   const listFestivalsQuery = useQuery({
     queryKey: festivalKeys.all,
@@ -315,20 +283,10 @@ export default function FestivalsScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <Stack.Screen
-        options={{
-          title: t`Festivals`,
-          headerRight: () => (
-            <Pressable
-              onPress={() => void handleLogout()}
-              style={styles.logoutButton}
-              accessibilityLabel={t`Log out`}
-            >
-              <LogOut size={20} color={colors.textSecondary} strokeWidth={2} />
-            </Pressable>
-          ),
-        }}
-      />
+      {/* D-09 — the header carries the title ONLY. The sign-out affordance that
+          used to live in this slot moved to Mehr → App, behind a native
+          confirm; this screen has no logout control any more. */}
+      <Stack.Screen options={{ title: t`Festivals` }} />
 
       <View style={styles.segmentedControlWrapper}>
         <SegmentedControl
@@ -447,15 +405,6 @@ function createStyles(colors: ThemeColors) {
     buttonText: {
       fontSize: typeRoles.title3.size,
       color: colors.textOnPrimary,
-    },
-    // AUTH-04 — icon-only, neutral tint (NOT danger; logout is reversible, no
-    // confirmation dialog, UI-SPEC ## Color "Not used for logout"); 44px hit
-    // target per --hit-min even though the glyph itself is 20px.
-    logoutButton: {
-      width: layout.hitMin,
-      height: layout.hitMin,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
   });
 }

@@ -1,19 +1,22 @@
-import { useMemo } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo, useRef } from 'react';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Languages, Share2, ShieldAlert, UserRound, Wallet } from 'lucide-react-native';
+import { Languages, LogOut, Share2, ShieldAlert, UserRound, Wallet } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
 import { ListRow } from '../../components/ListRow';
 import { SettingsSwitch } from '../../components/SettingsSwitch';
 import { useSoonToast } from '../../components/SoonToast';
+import { authClient } from '../../lib/auth-client';
+import { clearActiveFestivalSlug } from '../../lib/active-festival-storage';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { i18n } from '../../lib/i18n';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme, useThemeOverride } from '../../lib/theme-context';
+import { forceUnauthenticated } from '../_layout';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
@@ -82,6 +85,55 @@ export default function MehrScreen() {
 
   function handleDarkModeChange(next: boolean) {
     setThemeOverride(next ? 'dark' : 'system');
+  }
+
+  // Non-re-entrancy guard (UI-SPEC logout-robustness backstop) — a double-tap
+  // during the in-flight signOut() cannot fire a second concurrent call.
+  const signingOutRef = useRef(false);
+
+  // D-09 — MOVED VERBATIM from (tabs)/festivals.tsx; the body is unchanged, only
+  // its home and its call site are new. All three hardenings below are the
+  // reason a failed sign-out cannot leave a session alive on a shared device
+  // (T-06-19) — do not "simplify" any of them away.
+  async function handleLogout() {
+    if (signingOutRef.current) return;
+    signingOutRef.current = true;
+    try {
+      await authClient.signOut();
+    } catch (error) {
+      // Offline/network failure — no error UI for this action; fall through to
+      // forceUnauthenticated() below regardless.
+      // IN-03 (05-REVIEW.md) — still log it (project convention: "Use
+      // console.error() for errors"), purely for debuggability; this does
+      // not change any user-facing behavior.
+      console.error('signOut failed:', error);
+    } finally {
+      // Reaches Welcome even if signOut()'s network call failed — see
+      // app/_layout.tsx forceUnauthenticated() for why this is required
+      // (better-auth only broadcasts its own session signal on success).
+      forceUnauthenticated();
+      // REVIEW 05-05 LOW — clear the persisted D-06 focus so a different
+      // account signing in on the same device does not inherit this
+      // account's active festival.
+      clearActiveFestivalSlug();
+      signingOutRef.current = false;
+    }
+  }
+
+  /**
+   * D-09 / T-06-21 — the CALL SITE, not the handler, gains the confirm. Signing
+   * out is only reversible through an e-mail code (ADR-009), so a mis-tap is
+   * expensive: cancelling is the passive choice and the confirming button is
+   * marked destructive. Only that button reaches the handler.
+   *
+   * The design opens an info sheet here instead — prototype behaviour, not a
+   * product decision.
+   */
+  function confirmLogout() {
+    Alert.alert(t`Log out?`, t`You can always sign back in with an email code.`, [
+      { text: t`Cancel`, style: 'cancel' },
+      { text: t`Log out`, style: 'destructive', onPress: () => void handleLogout() },
+    ]);
   }
 
   return (
@@ -246,6 +298,15 @@ export default function MehrScreen() {
               badge={soonBadge}
               onPress={() => showSoonToast(t`Recommending is coming soon.`)}
               accessibilityLabel={t`Recommend quiks, coming soon`}
+            />
+            {/* D-09 — the last row of the last section, in the danger TEXT
+                variant (never the bare danger fill as text). */}
+            <ListRow
+              icon={LogOut}
+              label={t`Log out`}
+              danger
+              onPress={confirmLogout}
+              accessibilityLabel={t`Log out`}
             />
           </View>
         </View>
