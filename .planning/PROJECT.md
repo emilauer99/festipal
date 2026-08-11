@@ -105,6 +105,9 @@ path must work.
 | Profile & Friends: Profile view-only, Friends placeholder this cycle | Real social/editing is meaningful scope; keep the first slice lean | — Pending |
 | Festival browse/save is list-based this cycle (no QR) | Avoids native camera/QR work; shared-link/QR save added later | ✓ Shipped Phase 5 |
 | Online-assumed for this slice (offline architected, not implemented) | Login needs network anyway; no cacheable content yet | — Pending |
+| Rename to **quiks** and CI v1.0 land together, not incrementally (ADR-023/ADR-024) | `scheme` ↔ `trustedOrigins` and bundle-ID ↔ native build are coupled; a partial rename breaks auth at runtime, not at build time | ✓ Shipped Phase 05.1 |
+| **Hell-first**: Papier is the default surface, dark mode is the "night shift" | CI v1.0 is light-first; `apps/mobile/lib/theme.ts` resolves the device scheme per render, only exact `dark` yields the night set | ✓ Shipped Phase 05.1 |
+| Repo folder + GitHub remote rename deferred to a **post-merge checklist** (D-15) | Renaming the remote mid-branch would break the open PR and every local clone; the ordered checklist is `05.1-RENAME-CHECKLIST.md` | — Pending |
 
 ## Evolution
 
@@ -124,4 +127,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-09 — Phase 5 (Festival Selection & Home) complete & verified: browse/save (Meine/Alle), gate-less enter, and basic festival home overview shipped; `festivalId` cross-tenant isolation proven (SEC-02); cold-start restores only the last-entered saved festival (G-05-5b-r2 fix re-confirmed on device, UAT round 3); security threats_open: 0. Phase 4 auth/profile requirements also moved to Validated. Next: Phase 6 — Profile & Friends placeholders.*
+*Last updated: 2026-08-11 — Phase 05.1 (quiks Rename & CI v1.0 Rollout) complete & verified, 16/16 must-haves (Verifikation Runde 2, nach Gap-Closure durch Quick-Task 260811-jz6). Der Code trägt durchgängig den Namen quiks (`@quiks/*`, Bundle-ID `at.quiks.app`, Scheme `quiks://` konsistent mit `trustedOrigins`), CI v1.0 ist verbindlich verdrahtet (Beere/Amber, Sunset als einziges Gradient-Token, Limette/Violett per Test ausgeschlossen), hell-first ist der Default, alle Screens und Komponenten lösen Farben pro Render auf, die Schriftrollen tragen echte Gewichte und ihr CI-Tracking (per Guard-Test gegen stilles Zurückfallen abgesichert), und sechs echte App-Icons ersetzen die Expo-Platzhalter. Geräteabnahme durch den Entwickler freigegeben. Offen: `05.1-SECURITY.md` (secure-phase), Repo-/Remote-Rename per D-15-Checkliste, sowie die Ledger-Einträge WINDOWS 25/30/31 (Mono-Rollen, Android Themed Icons, visuelle Wirkung des Trackings). Next: Phase 6 — Profile & Friends placeholders.*
