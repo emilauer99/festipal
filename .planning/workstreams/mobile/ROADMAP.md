@@ -270,7 +270,7 @@ Plans:
   3. The Friends screen renders a clear, non-broken empty state that reads as intentional — framed as "friends who saved this festival," with no real connections yet (FRND-01).
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: 3/9 plans executed in 5 waves
+**Plans**: 4/9 plans executed in 5 waves
 
 **Wave 1**
 
@@ -280,7 +280,7 @@ Plans:
 
 **Wave 2** *(blocked on Wave 1)*
 
-- [ ] 06-04-PLAN.md — Shared components: `ListRow`, `SettingsSwitch`, the single `SoonToast` mechanism (D-13)
+- [x] 06-04-PLAN.md — Shared components: `ListRow`, `SettingsSwitch`, the single `SoonToast` mechanism (D-13)
 
 **Wave 3** *(blocked on Wave 2)*
 
@@ -314,4 +314,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 3/9 | In Progress|  |
+| 6. Profile & Friends Placeholders | 4/9 | In Progress|  |
