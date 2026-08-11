@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
-stopped_at: Completed 06-01-PLAN.md (Tracer, Geraeteabnahme approved)
-last_updated: "2026-08-11T20:51:50.629Z"
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-08-11T21:07:34.391Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 41
+  completed_plans: 42
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 ## Current Position
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 2 of 9
+Plan: 3 of 9
 Status: Ready to execute
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [████████░░] 84%
+Progress: [█████████░] 86%
 
 ## Performance Metrics
 
@@ -104,6 +104,7 @@ Progress: [████████░░] 84%
 | Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
 | Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
 | Phase 06 P01 | ~2h50m | 2 tasks | 6 files |
+| Phase 06 P02 | ~35min | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -223,6 +224,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-01 (Abweichung, vom User im Checkpoint abgenommen): Header/Titel des Profil-Screens setzt app/profil.tsx per eigenem Stack.Screen options — useLingui() ist in app/_layout.tsx nicht aufrufbar, weil genau diese Komponente den I18nProvider rendert; die load-bearing Registrierung name="profil" bleibt im Root-Layout
 - [Phase ?]: 06-01: requirements mark-complete bewusst NICHT ausgefuehrt — HOME-03/PROF-01/FRND-01 stehen in der Plan-Frontmatter, werden aber von 06-05 bis 06-09 weitergebaut; ein Abhaken jetzt waere ein falsches Fertig-Signal an den Audit-Scanner
 - [Phase ?]: 06-01: Geraeteabnahme des Tracer-Pfads (8 Schritte) vom User als Ganzes mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine automatisierte Verifikation; der Executor hat den Geraetetest nicht selbst gefahren, keine Einzelbefunde je Schritt protokolliert (gleiche Lage wie 05.1-07)
+- [Phase ?]: 06-02: birth_date wird gespeichert, das Alter abgeleitet (D-12a) — die Laengencaps pronoun 20 / gender 30 stehen serverseitig auf beiden drizzle-zod-Basen
+- [Phase ?]: 06-02: meSchema.createdAt ist ein ISO-String auf Top-Level, explizit im Controller konvertiert — der Contract transportiert Daten nie als Date
 
 ### Pending Todos
 
@@ -239,6 +242,7 @@ None yet.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
 - Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
+- T-06-06 (aus 06-02, wissentlich akzeptiert): visitorProfilePublicSchema traegt jetzt birthDate und gender ohne jede Sichtbarkeits-Policy. Vor dem ERSTEN Endpunkt, der ein FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in eine Eigentuemer-Sicht und eine Freundes-Sicht getrennt werden. IDN-02 (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter, Signup-Disclaimer) bleibt offen und haengt an Birgits Konzept.
 
 ### Quick Tasks Completed
 
@@ -263,6 +267,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T20:51:50.590Z
-Stopped at: Completed 06-01-PLAN.md (Tracer, Geraeteabnahme approved)
-Resume file: .planning/workstreams/mobile/phases/06-profile-friends-placeholders/06-02-PLAN.md
+Last session: 2026-08-11T21:07:22.797Z
+Stopped at: Completed 06-02-PLAN.md
+Resume file: None

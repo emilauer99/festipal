@@ -270,12 +270,12 @@ Plans:
   3. The Friends screen renders a clear, non-broken empty state that reads as intentional — framed as "friends who saved this festival," with no real connections yet (FRND-01).
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: 1/9 plans executed in 5 waves
+**Plans**: 2/9 plans executed in 5 waves
 
 **Wave 1**
 
 - [x] 06-01-PLAN.md — Tracer: four real tabs + Mehr → Profil push screen on live `GET /me` (D-01)
-- [ ] 06-02-PLAN.md — [one-way] shared-package cut: `visitor_profile` identity columns, `meSchema.createdAt`, info tokens, `/me` widening, blocking Drizzle migration (D-04, D-12, D-12a)
+- [x] 06-02-PLAN.md — [one-way] shared-package cut: `visitor_profile` identity columns, `meSchema.createdAt`, info tokens, `/me` widening, blocking Drizzle migration (D-04, D-12, D-12a)
 - [ ] 06-03-PLAN.md — `lib/` logic: persisted theme override over the 05.1 resolver, age derivation, meta-line builders (D-08a, D-12a, D-04)
 
 **Wave 2** *(blocked on Wave 1)*
@@ -314,4 +314,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 1/9 | In Progress|  |
+| 6. Profile & Friends Placeholders | 2/9 | In Progress|  |
