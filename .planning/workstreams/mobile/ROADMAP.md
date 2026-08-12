@@ -265,12 +265,12 @@ Plans:
 **Requirements**: HOME-03, PROF-01, FRND-01
 **Success Criteria** (what must be TRUE):
 
-  1. The festival home provides clear navigation to both Profile and Friends (HOME-03).
+  1. ~~The festival home provides clear navigation to both Profile and Friends (HOME-03).~~ **Superseded by D-01** (user-locked): navigation to Profile and Friends is delivered by the **global tab bar** (`Start · Festivals · Friends · Mehr`), with Profil as a pushed screen behind Mehr → Konto → Profil — not from the festival home. HOME-03 is satisfied there. Verify against D-01, not against this wording.
   2. The Profile screen shows the visitor's username, displayName, avatar/initials, and email in a view-only layout, sourced from `GET /api/v1/me` (PROF-01).
-  3. The Friends screen renders a clear, non-broken empty state that reads as intentional — framed as "friends who saved this festival," with no real connections yet (FRND-01).
+  3. The Friends screen renders a clear, non-broken empty state that reads as intentional, with no real connections yet (FRND-01). ~~framed as "friends who saved this festival"~~ **Superseded by D-10** (user-locked): Friends is **global** and reads no festival state, so the festival-scoped framing no longer applies. Verify against D-10, not against this wording.
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: 8/9 plans executed in 5 waves
+**Plans**: 9/9 plans executed in 5 waves
 
 **Wave 1**
 
@@ -294,7 +294,7 @@ Plans:
 
 **Wave 5** *(blocked on Wave 4)*
 
-- [ ] 06-09-PLAN.md — Lingui catalogs, uncached monorepo gate, SC reconciliation, device UAT (D-14)
+- [x] 06-09-PLAN.md — Lingui catalogs, uncached monorepo gate, SC reconciliation, device UAT (D-14)
 
 **Notes**: Placeholder text still counts as shipped shell UI — do not skip i18n wrapping. `username`/`displayName` are user-generated and are NOT translated (ADR-012/020).
 

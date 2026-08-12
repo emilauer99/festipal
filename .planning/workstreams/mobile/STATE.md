@@ -6,7 +6,7 @@ current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
 stopped_at: Completed 06-07-PLAN.md
-last_updated: "2026-08-12T00:02:26.017Z"
+last_updated: "2026-08-12T00:13:52.770Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
@@ -265,6 +265,7 @@ None yet.
 - Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
 - T-06-06 (aus 06-02, wissentlich akzeptiert): visitorProfilePublicSchema traegt jetzt birthDate und gender ohne jede Sichtbarkeits-Policy. Vor dem ERSTEN Endpunkt, der ein FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in eine Eigentuemer-Sicht und eine Freundes-Sicht getrennt werden. IDN-02 (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter, Signup-Disclaimer) bleibt offen und haengt an Birgits Konzept.
+- Phase 6 (offene Frage, beim naechsten Phasenuebergang zu entscheiden): Der erste Tab heisst in der App weiterhin 'Home' (DE-Katalogwert 'Start'), das neue Design nennt ihn 'Start'. Die Umbenennung der Route/des msgid war in Phase 6 AUSDRUECKLICH NICHT beauftragt (06-CONTEXT Specifics, UI-SPEC Screens-Contract) und wurde bewusst nicht mitgemacht.
 
 ### Quick Tasks Completed
 

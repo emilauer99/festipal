@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 29
+open_count: 30
 waived_count: 0
 fixed_count: 8
-total_count: 37
-last_updated: 2026-08-12T00:02:55.728Z
+total_count: 38
+last_updated: 2026-08-12T00:13:36.212Z
 ---
 
 # Broken Windows Ledger
@@ -52,6 +52,7 @@ last_updated: 2026-08-12T00:02:55.728Z
 | 35 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann | open |  | 2026-08-11T23:20:45.929Z |  |
 | 36 | 06 | stub | apps/mobile/app/(tabs)/friends.tsx |  | Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway | open |  | 2026-08-11T23:45:01.968Z |  |
 | 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
+| 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | open |  | 2026-08-12T00:13:36.212Z |  |
 
 ````json
 [
@@ -497,6 +498,18 @@ last_updated: 2026-08-12T00:02:55.728Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-12T00:02:55.728Z",
+    "resolved_at": null
+  },
+  {
+    "id": 38,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(tabs)/mehr.tsx",
+    "line": null,
+    "description": "06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-12T00:13:36.212Z",
     "resolved_at": null
   }
 ]
