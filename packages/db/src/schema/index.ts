@@ -5,3 +5,5 @@ export * from './auth';
 export * from './auth-schemas';
 export * from './visitor-profile';
 export * from './my-festival';
+export * from './friendship';
+export * from './friend-request';
