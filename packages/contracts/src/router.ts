@@ -9,6 +9,7 @@ import {
   tagSchema,
   usernameAvailabilitySchema,
   visitorProfileOwnerSchema,
+  visitorSearchQuerySchema,
   visitorSummarySchema,
 } from './schemas';
 
@@ -55,6 +56,14 @@ export const contract = c.router(
       body: completeProfileBodySchema,
       responses: { 200: visitorProfileOwnerSchema, 409: errorSchema },
       summary: 'First-login profile completion (unique username + displayName, optional avatar)',
+    },
+    searchVisitors: {
+      method: 'GET',
+      path: '/visitors',
+      query: visitorSearchQuerySchema,
+      responses: { 200: z.array(visitorSummarySchema) },
+      summary:
+        'Case-insensitive PREFIX search over `username` only (D-06/D-09), max 20 hits ordered by username ascending (D-08); every hit embeds the FOREIGN view plus the caller’s relation. No 404 — a search without hits is an empty list, not an error. Sits beside `/visitors/:username`: distinct route keys, distinct segment counts, no collision',
     },
     lookupVisitor: {
       method: 'GET',

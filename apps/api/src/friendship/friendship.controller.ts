@@ -24,4 +24,18 @@ export class FriendshipController {
       return { status: 200, body: summary };
     });
   }
+
+  // Same posture: no anonymous-access decorator, so the global AuthGuard makes a
+  // sessionless request a 401 before this body runs. `q` is the only thing the
+  // request contributes (D-05: no visibility parameter exists to pass); the
+  // caller whose relation is resolved comes ONLY from `session.user.id`, so a
+  // client cannot ask for the relation graph from somebody else's perspective
+  // (T-07-11). No 404 branch — a search without hits is an empty list.
+  @TsRestHandler(contract.searchVisitors)
+  searchVisitors(@Session() session: UserSession) {
+    return tsRestHandler(contract.searchVisitors, async ({ query }) => {
+      const hits = await this.friendship.searchByUsername(session.user.id, query.q);
+      return { status: 200, body: hits };
+    });
+  }
 }

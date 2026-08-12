@@ -119,6 +119,23 @@ export const visitorSummarySchema = z.object({
 export type VisitorSummary = z.infer<typeof visitorSummarySchema>;
 
 /**
+ * `GET /visitors?q=` query (D-06/D-08/D-09). Exactly ONE key, and that is the
+ * whole point: D-05 rules out a discoverability opt-out for v1.1, so this
+ * contract deliberately carries no visibility, opt-in or exclusion parameter —
+ * there is no flag a client could set and none the server could read. Anyone
+ * with a completed profile is findable, and the exposure is documented openly
+ * in REQUIREMENTS.md § Future Requirements (FRND-09) rather than papered over
+ * with a half measure that has no UI behind it.
+ *
+ * `q` is intentionally an unconstrained string at the contract layer: the
+ * 2-character floor (D-08) is a SERVICE invariant, not a client convention. A
+ * `.min(2)` here would turn a too-short search into a 400 and let a client that
+ * skips the contract reach the database with a 1-character prefix.
+ */
+export const visitorSearchQuerySchema = z.object({ q: z.string() });
+export type VisitorSearchQuery = z.infer<typeof visitorSearchQuerySchema>;
+
+/**
  * `GET /me` response (RESEARCH.md A4 default, locked here per Open Question 1):
  * `profile: null` discriminates "first login, needs complete-profile" from a
  * returning visitor. Chosen over a separate `status` enum because it's the
