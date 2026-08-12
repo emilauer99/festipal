@@ -4,16 +4,16 @@ milestone: v1.0
 milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
-status: executing
-stopped_at: Completed 06-07-PLAN.md
-last_updated: "2026-08-12T00:13:52.770Z"
+status: verifying
+stopped_at: Completed 06-09-PLAN.md — Phase 06 alle 9 Plaene ausgefuehrt, Geraeteabnahme abgenommen, bereit fuer /gsd-verify-work 6 --ws mobile
+last_updated: "2026-08-12T09:31:15.995Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 49
-  completed_plans: 48
+  completed_plans: 49
 ---
 
 # Project State
@@ -29,10 +29,10 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
 Plan: 9 of 9
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [██████████] 98%
+Progress: [██████████] 100%
 
 ## Performance Metrics
 
@@ -111,6 +111,7 @@ Progress: [██████████] 98%
 | Phase 06 P05 | ~30min | 2 tasks | 2 files |
 | Phase 06 P06 | 8min | 2 tasks | 1 files |
 | Phase 06 P07 | ~35min | 2 tasks | 7 files |
+| Phase 06 P09 | ~35min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -248,6 +249,11 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-06: Die quiks-Code-Karte bekam minHeight statt harter height — feste Hoehe als Untergrenze, damit groessere Systemschrift die Copy nicht abschneidet
 - [Phase ?]: D-07 umgesetzt: Sunset-Flaechenliste in ADR-023, Markendokument und Wurzel-CLAUDE.md app-weit um Avatar-/Identitaetsflaechen erweitert
 - [Phase ?]: Profil-Kopfbereich folgt der Design-Reihenfolge (Name, Handle, Identitaetszeile, Meta-Zeile) statt der Aufzaehlung im Plan
+- [Phase ?]: 06-09: 'Friends' ist im DE-Katalog jetzt das unuebersetzte Markenwort (vorher 'Freunde'); im Fliesstext bleibt es beim deutschen 'Freunde' — genau die Aufteilung des Designs, vom User im Checkpoint mitfreigegeben
+- [Phase ?]: 06-09: Die SafeNow-Ueberschrift 'Stay safe' bleibt auch in DE englisch, weil das Design sie in seiner deutschen Fassung englisch fuehrt — vom User mitfreigegeben
+- [Phase ?]: 06-09: Die ueberholten Erfolgskriterien SC-1/SC-3 wurden INLINE durchgestrichen und mit D-01 bzw. D-10 annotiert statt geloescht — ein spaeterer Verifikationslauf sieht beides
+- [Phase ?]: 06-09: WINDOWS 33/34/35 wurden GEWAIVED statt fixed — nur 'waive' traegt eine Begruendung, und die Schliessung ruht auf einer Pauschalabnahme ohne Einzelbefunde; als 'fixed' haette es wie itemisierte Evidenz ausgesehen
+- [Phase ?]: 06-09: Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte) vom User pauschal mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine Einzelbefunde je Punkt, der Executor hat den Test nicht selbst gefahren (gleiche Lage wie 05.1-07 und 06-01)
 
 ### Pending Todos
 
@@ -290,6 +296,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-12T00:02:17.841Z
-Stopped at: Completed 06-07-PLAN.md
+Last session: 2026-08-12T09:31:15.958Z
+Stopped at: Completed 06-09-PLAN.md — Phase 06 alle 9 Plaene ausgefuehrt, Geraeteabnahme abgenommen, bereit fuer /gsd-verify-work 6 --ws mobile
 Resume file: None
