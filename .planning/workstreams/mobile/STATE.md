@@ -3,34 +3,34 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Rollout
 current_phase: 06
-current_phase_name: profile-friends-placeholders
-status: verifying
-stopped_at: Completed 06-10-PLAN.md (G-06-5 gap closure) — Geraeteverifikation abgenommen, UAT 5(c)/(d) und Meta-Zeile bleiben offen fuer /gsd-verify-work 06 --ws mobile
-last_updated: "2026-08-12T12:12:21.984Z"
+status: completed
+stopped_at: Phase 06 abgeschlossen und verifiziert — UAT 5/5, Verifikation 18/18 passed, Security 44/44 threats_open 0. Mobile-Workstream ist bei 7/7 Phasen; Milestone v1.0 wartet auf den Admin-Workstream.
+last_updated: "2026-08-12T14:50:00.000Z"
 last_activity: 2026-08-12
-last_activity_desc: 06-10 (G-06-5 gap closure) ausgefuehrt und geraeteverifiziert
+last_activity_desc: Phase 06 verifiziert, gesichert und als complete transitioniert
 progress:
   total_phases: 7
   completed_phases: 7
   total_plans: 50
   completed_plans: 50
+current_phase_name: profile-friends-placeholders
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgenommen)
+See: .planning/PROJECT.md (updated 2026-08-12 — Phase 06 complete & verified)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 06 — profile-friends-placeholders
+**Current focus:** Mobile-Workstream abgeschlossen (7/7 Phasen) — Milestone v1.0 wartet auf den Admin-Workstream
 
 ## Current Position
 
-Phase: 06 (profile-friends-placeholders) — VERIFYING
-Plan: 10 of 10
-Status: G-06-5 gap closure (06-10) complete, device-verified — ready for /gsd-verify-work 06 --ws mobile
-Last activity: 2026-08-12 — 06-10 (G-06-5 gap closure) executed and device-verified
+Phase: 06
+Plan: Not started
+Status: All phases complete
+Last activity: 2026-08-12 — Phase 06 complete (UAT 5/5, Verifikation 18/18 passed, Security threats_open 0)
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 40
+- Total plans completed: 50
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 | 04 | 7 | - | - |
 | 05 | 11 | - | - |
 | 05.1 | 7 | - | - |
+| 06 | 10 | - | - |
 
 **Recent Trend:**
 
@@ -272,10 +273,11 @@ None yet.
 - Phase 2 (MEDIUM, downgraded 2026-07-30): `@thallesp/nestjs-better-auth` × ts-rest body parsing — current wrapper (`better-auth >= 1.5.0`) auto-re-applies `express.json()` for non-auth routes, so no manual exclusion needed; ts-rest controllers just consume `req.body`. Spike = *confirm* (2-request body proof + resolve `/api/v1` vs `/api/auth` global-prefix collision + version-pin), not *design*. Hand-rolled `@All('auth/*path')` catch-all is Plan-C fallback. See PITFALLS.md Pitfall 3 update.
 - Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated — **baseline proven in Phase 5** (`apps/api/test/festival-isolation.spec.ts`: festival B's dates/place never leak to a visitor who saved only festival A). This isolation obligation is INHERITED by all later content reads (timetable, map, news) — re-assert the cross-tenant test as new tenant-scoped tables land. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
-- Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
 - T-06-06 (aus 06-02, wissentlich akzeptiert): visitorProfilePublicSchema traegt jetzt birthDate und gender ohne jede Sichtbarkeits-Policy. Vor dem ERSTEN Endpunkt, der ein FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in eine Eigentuemer-Sicht und eine Freundes-Sicht getrennt werden. IDN-02 (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter, Signup-Disclaimer) bleibt offen und haengt an Birgits Konzept.
-- Phase 6 (offene Frage, beim naechsten Phasenuebergang zu entscheiden): Der erste Tab heisst in der App weiterhin 'Home' (DE-Katalogwert 'Start'), das neue Design nennt ihn 'Start'. Die Umbenennung der Route/des msgid war in Phase 6 AUSDRUECKLICH NICHT beauftragt (06-CONTEXT Specifics, UI-SPEC Screens-Contract) und wurde bewusst nicht mitgemacht.
+- Phase 6 (offene PRODUKTFRAGE, jetzt faellig — der Phasenuebergang ist erfolgt): Der erste Tab heisst in der App weiterhin 'Home' (DE-Katalogwert 'Start'), das neue Design nennt ihn 'Start'. Die Umbenennung der Route/des msgid war in Phase 6 AUSDRUECKLICH NICHT beauftragt (06-CONTEXT Specifics, UI-SPEC Screens-Contract) und wurde bewusst nicht mitgemacht. Entscheidung des Users noetig, bevor Phase 7 Routen anfasst.
+- Phase 6 (LOW, aus 06-10-REVIEW): Der Rueckfall-Guard fuer den Intl-Polyfill (`lib/__tests__/intl-polyfill.test.ts`) matcht Quelltext als String inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — er wuerde einen auskommentierten Import und einen zusaetzlich eingeschleusten Import nicht fangen. Der Fix selbst ist davon nicht betroffen (geraetverifiziert), aber T-06-10-01 beansprucht diese Abdeckung. Haerten, wenn der Entry naechstes Mal angefasst wird.
+- Phase 6 (offen): `/gsd-ui-review 06` ist noch nicht gelaufen — der visuelle 6-Saeulen-Audit fehlt fuer die drei neuen Screens.
 
 ### Quick Tasks Completed
 
@@ -301,6 +303,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-12T12:12:21.924Z
-Stopped at: Completed 06-10-PLAN.md (G-06-5 gap closure) — Geraeteverifikation abgenommen, UAT 5(c)/(d) und Meta-Zeile bleiben offen fuer /gsd-verify-work 06 --ws mobile
+Last session: 2026-08-12T14:50:00.000Z
+Stopped at: Phase 06 abgeschlossen — UAT 5/5 (0 Befunde), Re-Verifikation 18/18 `passed` (Truth 18 fuer die Gap-Closure 06-10 ergaenzt), Security 44/44 geschlossen (`threats_open: 0`), ROADMAP/STATE/PROJECT transitioniert. Der Mobile-Workstream ist bei 7/7 Phasen; das Milestone v1.0 kann erst schliessen, wenn der Admin-Workstream durch ist.
 Resume file: None

@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
 - [x] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview (completed 2026-08-09)
 - [x] **Phase 5.1: quiks Rename & CI v1.0 Rollout** (INSERTED) - ADR-024 Code-Rename (`@festipal/*` → `@quiks/*`, `at.festipal.app`) + ADR-023 CI-v1.0-Token-Swap (Beere/Amber/Sunset) und hell-first Light-Mode-Wiring (completed 2026-08-11)
-- [ ] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home
+- [x] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home (completed 2026-08-12)
 
 ## Phase Details
 
@@ -318,4 +318,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 10/10 | In Progress|  |
+| 6. Profile & Friends Placeholders | 10/10 | Complete    | 2026-08-12 |
