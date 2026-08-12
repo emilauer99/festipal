@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 26
+open_count: 27
 waived_count: 3
 fixed_count: 9
-total_count: 38
-last_updated: 2026-08-12T09:28:04.240Z
+total_count: 39
+last_updated: 2026-08-12T15:56:38.397Z
 ---
 
 # Broken Windows Ledger
@@ -53,6 +53,7 @@ last_updated: 2026-08-12T09:28:04.240Z
 | 36 | 06 | stub | apps/mobile/app/(tabs)/friends.tsx |  | Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway | open |  | 2026-08-11T23:45:01.968Z |  |
 | 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
 | 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | fixed |  | 2026-08-12T00:13:36.212Z | 2026-08-12T09:28:01.642Z |
+| 39 | 7 | deviation | apps/api/src/friendship/friendship.service.ts |  | 07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht | open |  | 2026-08-12T15:56:38.397Z |  |
 
 ````json
 [
@@ -511,6 +512,18 @@ last_updated: 2026-08-12T09:28:04.240Z
     "reason": "",
     "recorded_at": "2026-08-12T00:13:36.212Z",
     "resolved_at": "2026-08-12T09:28:01.642Z"
+  },
+  {
+    "id": 39,
+    "kind": "deviation",
+    "phase": "7",
+    "file": "apps/api/src/friendship/friendship.service.ts",
+    "line": null,
+    "description": "07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-12T15:56:38.397Z",
+    "resolved_at": null
   }
 ]
 ````

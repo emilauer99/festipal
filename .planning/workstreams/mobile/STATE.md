@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 07
 current_phase_name: profile-visibility-friendship-backend
 status: executing
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-08-12T15:40:37.606Z"
+stopped_at: Completed 07-03-PLAN.md
+last_updated: "2026-08-12T15:56:07.447Z"
 last_activity: 2026-08-12
 last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 07 (profile-visibility-friendship-backend) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-12 — Phase 07 execution started
 
@@ -108,6 +108,20 @@ Milestone bindet:
   `.min(2)` hätte zu kurze Suchen zu 400ern gemacht und jeden contract-umgehenden Aufrufer mit
   einem Zeichen an die DB gelassen.
 
+- **Die `23505` auf `friend_request_pair_pk` IST der Auto-Accept-Auslöser** (Phase 07-03), kein
+  Fehlerfall. Das Reverse-Direction-Rennen ist damit im Schema aufgelöst statt in App-Logik: der
+  Composite-PK auf dem kanonisch geordneten Paar macht die zweite Zeile physisch unmöglich, und
+  beide parallelen Abläufe münden in dieselbe korrekte Wirkung (D-10). Belegt durch eine
+  25-Runden-Gegenprobe, in der der Auto-Accept-Zweig in jeder Runde betreten wurde.
+
+- **`sealFriendship` ist der EINE Schreibpfad „Anfrage → Freundschaft"** (Phase 07-03), geteilt von
+  `acceptRequest` und vom Auto-Accept-Zweig. Es bleiben zwei `db.transaction`-Stellen für drei
+  Übergänge — bewusst, statt den Schreibpfad zu duplizieren.
+
+- **Fehler-Diskriminierung läuft über `postgresErrorOf`, nicht über `err.cause`** (Phase 07-03).
+  Ein Statement, das innerhalb einer Transaktion scheitert, reist durch den `begin()`-Wrapper von
+  postgres.js zurück; der Cause-Chain-Walker ist eine Obermenge des `me.service.ts`-Idioms.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -168,8 +182,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T15:40:37.592Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-08-12T15:55:56.221Z
+Stopped at: Completed 07-03-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
@@ -183,3 +197,4 @@ Resume file: None
 |------|----------|-------|-------|
 | Phase 07 P01 | 25min | 2 tasks | 14 files |
 | Phase 07 P02 | 12min | 2 tasks | 5 files |
+| Phase 07 P03 | 11min | 2 tasks | 5 files |
