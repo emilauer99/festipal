@@ -281,6 +281,7 @@ None yet.
 | 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
 | 260810-q31 | Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only) — docs/brand/, ADR-023 (CI v1.0, löst ADR-015 teilweise ab) + ADR-024 (Rename-Umfang), Superseded-Marker, beide CLAUDE.md | 2026-08-10 | b898985 | [260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc](./quick/260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc/) |
 | 260811-jz6 | Phase 05.1 Verifikations-Gaps schliessen: Outfit-Tracking anwenden + CLAUDE.md Light-Mode-Aussage korrigieren | 2026-08-11 | e28d150 | [260811-jz6-phase-05-1-verifikations-gaps-schliessen](./quick/260811-jz6-phase-05-1-verifikations-gaps-schliessen/) |
+| 260812-ctx | GSD-Overhead senken: .claude/CLAUDE.md 25.3→8.7 KB (Duplikate zu .planning/codebase/ auf Pointer reduziert), auto_prune_state an, research/plan_bounce/nyquist als Opt-in, code_review standard, review-Agents auf fable gepinnt, Phase-Zuschnitt-Regeln in CLAUDE.md | 2026-08-12 | c6366ac | — (via /gsd-fast, kein quick/-Verzeichnis) |
 
 ### Roadmap Evolution
 
