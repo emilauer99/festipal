@@ -1,7 +1,7 @@
 ---
 phase: 07-profile-visibility-friendship-backend
 verified: 2026-08-12T17:35:00Z
-status: human_needed
+status: passed
 score: 7/7 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
@@ -12,28 +12,33 @@ re_verification:
   previous_status: gaps_found
   previous_score: 6/7
   gaps_closed:
+
     - "Kein Text behauptet mehr, der T-06-06-Split stehe aus — geschlossen durch Commit 988f73b (docs(07): discharge T-06-06 in the planning record); alle drei Fundstellen am Dateisystem gegengeprüft"
   gaps_remaining: []
   regressions: []
 gaps: []
 deferred: []
 prohibitions:
+
   - requirement_id: VIS-01
     statement: "MUST NOT let any response field, status value or error code allow a requester to distinguish 'my request was declined' from 'I never sent one'"
     verification: judgment
     disposition: "unverified-prohibition — human review recommended"
     llm_judge: "PASS (non-authoritative): decline/withdraw antworten immer 200 {result:'removed'} ohne 404-Zweig (friendship.controller.ts); accept kollabiert 'kein Request' und 'eigener Request' auf dieselbe 404-Message; relation nach Decline = 'none' — identisch zu 'nie gesendet'."
+
   - requirement_id: VIS-02
     statement: "MUST NOT let a friendship imply, enable or grow into a 1:1 message channel (ADR-020)"
     verification: judgment
     disposition: "unverified-prohibition — human review recommended"
     llm_judge: "PASS (non-authoritative): kein Message-/Chat-Endpunkt im Contract; zusätzlich mechanisch gestützt durch das DM-Segment-Inventar in projection-uniqueness.spec.ts (13 verbotene Pfadsegmente, alle Routen)."
+
   - requirement_id: VIS-01
     statement: "MUST NOT present or imply any protective control over who may find or contact a visitor (FRND-09 deferred)"
     verification: judgment
     disposition: "unverified-prohibition — human review recommended"
     llm_judge: "PASS (non-authoritative): grep 'searchable' über contracts/db/api-Quellen = 0 Treffer; visitorSearchQuerySchema trägt exakt {q}; keine Cooldown-/Block-/Report-Felder, -Flags oder -Fehlermeldungen; D-05/D-11/D-13 konsistent umgesetzt."
 human_verification:
+
   - test: "Die drei judgment-tier Prohibitions (siehe prohibitions-Block) am Ende der Phase bewusst freigeben"
     expected: "Ein Mensch bestätigt die drei nicht-mechanisierbaren Muss-nicht-Aussagen (Decline-Ununterscheidbarkeit, kein DM-Kanal, keine vorgetäuschte Schutzkontrolle)"
     why_human: "Per Plan 07-05 bewusst ohne check_*-Deskriptor geführt, damit sie als flagged-unverified disponieren und nie stillschweigend grün werden; die LLM-Judge-Einschätzungen oben sind NON-AUTHORITATIVE."
@@ -62,11 +67,13 @@ Dateisystem verifiziert, nicht aus der Commit-Message übernommen:
    „discharged in Phase 7 (2026-08-12)", `visitorProfilePublicSchema` existiert nicht mehr, Split
    in `visitorProfileForeignSchema` + `visitorProfileOwnerSchema`, 07-05 pinnt ihn per
    VIS-02-Invariantentest, IDN-02 bleibt ausdrücklich offen. ✓
+
 2. **`.planning/WINDOWS.md` Eintrag 32** — `open` → `resolved` in **beiden** Repräsentationen
    (Markdown-Tabellenzeile 49 UND JSON-Block, Einträge inhaltsgleich), jeweils mit `reason`
    (Discharge durch 07-01, Invariantentest 07-05, IDN-02 separat offen) und `resolved_at`. Die
    beiden Repräsentationen sind konsistent: je 26 open / 9 fixed / 1 resolved / 3 waived
    (39 Einträge), nachgezählt. ✓
+
 3. **`.planning/codebase/CONVENTIONS.md` §Drift Detection** — das Beispiel referenziert jetzt die
    beiden neuen Schemata statt des entfernten Symbols. ✓ (Dritte Fundstelle, in der
    Erstverifikation nicht entdeckt — der Grep dort war auf Pending-Formulierungen gerichtet,
@@ -88,9 +95,11 @@ Split korrekt als getilgt führt. Kein verbleibender Text behauptet, der Split s
   dekrementiert — tatsächlich offen sind 26 (in beiden Repräsentationen nachgezählt).
   Enforcement ist aus (`windows_enforce: false`), es blockiert also nichts; ein Ein-Zeilen-Fix
   beim nächsten Ledger-Touch.
+
 - `resolved_at` von Eintrag 32 ist der Mitternachts-Platzhalter `2026-08-12T00:00:00.000Z`
   (vor dem tatsächlichen Discharge-Zeitpunkt am selben Tag); in beiden Repräsentationen
   identisch — kosmetisch.
+
 - Der PROJECT.md-Abschnittsheader „Mobile — next milestone (Activities + Friends), requirements
   not yet written" ist weiterhin stale (die v1.1-Requirements SIND geschrieben) — betrifft aber
   nicht T-06-06 und behauptet keinen ausstehenden Split; gehört in die nächste
@@ -177,6 +186,7 @@ genau VIS-01/VIS-02 auf Phase 7.
    Non-Vacuum-Guard: `me.service.ts` muss weiterhin ≥2 Identitätsspalten führen, sonst schlägt der
    Test fehl und die Ausnahme muss gelöscht werden — sie kann nicht still zu einem Deckmantel für
    eine künftige zweite Projektion verkommen (projection-uniqueness.spec.ts:559-564).
+
 2. **Zwei unabhängige Prüfnetze decken das Restrisiko.** Ein Leak, der INNERHALB von
    `me.service.ts` entstünde, müsste über eine Route nach draußen: (a) der Contract-Walk pinnt
    Owner-only-Keys pro Route über ALLE Routen, mit aus dem Tabellenschema **abgeleiteter**
@@ -185,6 +195,7 @@ genau VIS-01/VIS-02 auf Phase 7.
    HTTP-Ebene (`friendship-isolation.spec.ts`) prüft die vier Fremd-Pfade zur Laufzeit am
    serialisierten Body — ein Runtime-Leak durch eine bestehende Fremd-Route würde dort rot,
    unabhängig davon, in welcher Quelldatei er wohnt.
+
 3. **Verbleibender Restsplitter (Info, kein Loch):** Ein Runtime-only-Leak eines *nicht* von den
    HTTP-Abwesenheitsprüfungen genannten Owner-Felds (z. B. `socials`) durch eine **bestehende**
    Fremd-Route, implementiert als bewusster Umbau in `me.service.ts` und ohne Contract-Änderung,
@@ -203,6 +214,7 @@ Route macht `exposes the owner-only key \`socials\` on no route…` rot, egal wi
 - **D-12**: kein `status` auf `friend_request` — Live-DB-Spaltenliste bestätigt; Lifecycle löscht.
 - **D-05**: kein Auffindbarkeits-Schalter — 0 `searchable`-Treffer, Suchvertrag exakt `{q}`; nichts
   im Code täuscht eine Schutzkontrolle vor (siehe Prohibition 3).
+
 - **D-14/D-15**: kein `festivalId` — das IST Erfolgskriterium 3, live bestätigt.
 
 ### Anti-Patterns Found

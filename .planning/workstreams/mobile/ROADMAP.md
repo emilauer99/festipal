@@ -30,7 +30,7 @@ Detail: [`milestones/v1.0-ROADMAP.md`](./milestones/v1.0-ROADMAP.md) · Summary:
 
 ### 🚧 v1.1 Activities & Friends (Phases 7–12)
 
-- [ ] **Phase 7: Profile Visibility & Friendship Backend** — owner-view/friend-view projection split, user-global friendship + request model
+- [x] **Phase 7: Profile Visibility & Friendship Backend** — owner-view/friend-view projection split, user-global friendship + request model (completed 2026-08-12)
 - [ ] **Phase 8: Friends** — the Phase-6 placeholder becomes real: add by handle, search, QR, requests, list
 - [ ] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename
 - [ ] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation

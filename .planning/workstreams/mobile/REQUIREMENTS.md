@@ -15,8 +15,8 @@
 Resolves **T-06-06**, the open obligation carried out of v1.0. This is the first milestone in which
 an endpoint serves a *foreign* profile, so the projection split is a prerequisite, not a polish item.
 
-- [ ] **VIS-01**: A visitor sees every field on their own profile; a *foreign* profile returns only the friend-view projection — no `birthDate`, no e-mail
-- [ ] **VIS-02**: Search results and request previews use that same friend-view projection — there is no second code path through which owner-only fields can escape
+- [x] **VIS-01**: A visitor sees every field on their own profile; a *foreign* profile returns only the friend-view projection — no `birthDate`, no e-mail
+- [x] **VIS-02**: Search results and request previews use that same friend-view projection — there is no second code path through which owner-only fields can escape
 
 ### Friends (FRND)
 
@@ -84,8 +84,8 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VIS-01 | Phase 7 | Planned |
-| VIS-02 | Phase 7 | Planned |
+| VIS-01 | Phase 7 | Complete |
+| VIS-02 | Phase 7 | Complete |
 | FRND-02 | Phase 8 | Planned |
 | FRND-03 | Phase 8 | Planned |
 | FRND-04 | Phase 8 | Planned |

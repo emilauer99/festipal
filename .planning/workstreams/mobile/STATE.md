@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 07
-current_phase_name: profile-visibility-friendship-backend
-status: verifying
-stopped_at: Completed 07-05-PLAN.md
-last_updated: "2026-08-12T16:27:21.368Z"
+current_phase: 8
+current_phase_name: Friends
+status: planning
+stopped_at: Phase 07 abgeschlossen (UAT 3/3, Verifikation passed) — Phase 8 bereit zur Planung
+last_updated: "2026-08-12T19:10:00.000Z"
 last_activity: 2026-08-12
-last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
+last_activity_desc: Phase 07 verifiziert und abgeschlossen (VIS-01/VIS-02 validiert, T-06-06 getilgt)
 progress:
   total_phases: 6
   completed_phases: 1
@@ -21,13 +21,13 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-12 — v1.0 milestone close)
+See: .planning/PROJECT.md (updated 2026-08-12 — nach Phase 7)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 07 — profile-visibility-friendship-backend
-6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Naechster Schritt: Phase 7.
+**Current focus:** Phase 8 — Friends (UI auf dem Phase-7-Backend)
+6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phase 7 ist durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
 > geplant und hat einen eigenen Milestone-Track — `mobile` wartet nicht auf `admin` und umgekehrt.
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 07 (profile-visibility-friendship-backend) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-08-12 — Phase 07 execution started
+Phase: 8 — Friends
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-08-12 — Phase 07 complete, transitioned to Phase 8
 
 ## Shipped
 
@@ -89,54 +89,45 @@ Milestone bindet:
   bekommt keine `status`-Spalte: Annehmen/Ablehnen/Zurückziehen löschen die Zeile, es gibt keine
   Historie und höchstens eine Request-Zeile pro Personenpaar.
 
-- **Die Fremd-View ist die Basis, die Owner-View ihre einzige benannte Erweiterung** (Phase 07-01).
-  Beide sind aus `visitorProfileSelectSchema` gepickt. Folge: eine neue `visitor_profile`-Spalte
-  erscheint per Konstruktion in KEINER der beiden Sichten, bis jemand sie explizit pickt.
+- **Die Fremd-View ist die Basis, die Owner-View ihre einzige benannte Erweiterung** (07-01).
+  Beide aus `visitorProfileSelectSchema` gepickt — eine neue `visitor_profile`-Spalte erscheint
+  per Konstruktion in KEINER Sicht, bis jemand sie explizit pickt. **T-06-06 ist damit getilgt**;
+  `visitorProfilePublicSchema` existiert nicht mehr.
 
-- **T-06-06 ist getilgt** (Phase 07-01). `visitorProfilePublicSchema` existiert nicht mehr — der Name
-  suggerierte Fremd-Sicherheit und trug trotzdem das Geburtsdatum. Beide Vorbehaltskommentare
-  (`packages/contracts/src/schemas.ts`, `packages/db/src/schema/visitor-profile.ts`) sind auf den
-  erledigten Stand gebracht.
+- **Die Fremd-View hat ZWEI Orte, und das ist Absicht** (07-01/07-04): `foreignProfileColumns`
+  liest sie, `pickForeignProfile` formt sie. Eine Abfrage, die zu viel liest, leckt durch jeden
+  durchreichenden Handler; ein Handler, der die Feldnamen erneut aufzählt, driftet ab, ohne dass
+  ein Endpunkt kaputt aussieht. Alle vier D-04-Zugriffspfade laufen darüber.
 
-- **Die Relationsauflösung existiert im `friendship`-Modul genau einmal** (Phase 07-02).
-  `resolveRelations(callerId, ids)` löst einen ganzen Trefferblock in zwei Abfragen auf;
-  `resolveRelation` (Einzahl) ist nur noch Delegator. Neue Zugriffspfade rufen sie auf, statt
-  `friend_request`-Zeilen selbst zu interpretieren.
+- **Die Relationsauflösung existiert genau einmal** (07-02). `resolveRelations(callerId, ids)`
+  löst einen Trefferblock in zwei Abfragen auf; `resolveRelation` ist nur Delegator. Neue
+  Zugriffspfade rufen sie auf, statt `friend_request`-Zeilen selbst zu interpretieren.
+  Die 2-Zeichen-Untergrenze der Suche ist Service-Invariante, **nicht** Vertrag — `q` bleibt
+  unbeschränktes `z.string()`.
 
-- **Die 2-Zeichen-Untergrenze der Username-Suche ist Service-Invariante, nicht Vertrag**
-  (Phase 07-02). `visitorSearchQuerySchema` hält `q` als unbeschränktes `z.string()` — ein
-  `.min(2)` hätte zu kurze Suchen zu 400ern gemacht und jeden contract-umgehenden Aufrufer mit
-  einem Zeichen an die DB gelassen.
+- **Die `23505` auf `friend_request_pair_pk` IST der Auto-Accept-Auslöser** (07-03), kein
+  Fehlerfall: das Reverse-Direction-Rennen ist im Schema aufgelöst statt in App-Logik (D-10),
+  belegt durch eine 25-Runden-Gegenprobe. `sealFriendship` ist der EINE Schreibpfad
+  „Anfrage → Freundschaft". Fehler-Diskriminierung läuft über `postgresErrorOf` (Cause-Chain-
+  Walker), nicht `err.cause` — Transaktionsfehler reisen durch den postgres.js-`begin()`-Wrapper.
 
-- **Die `23505` auf `friend_request_pair_pk` IST der Auto-Accept-Auslöser** (Phase 07-03), kein
-  Fehlerfall. Das Reverse-Direction-Rennen ist damit im Schema aufgelöst statt in App-Logik: der
-  Composite-PK auf dem kanonisch geordneten Paar macht die zweite Zeile physisch unmöglich, und
-  beide parallelen Abläufe münden in dieselbe korrekte Wirkung (D-10). Belegt durch eine
-  25-Runden-Gegenprobe, in der der Auto-Accept-Zweig in jeder Runde betreten wurde.
+- **Freundschafts-Symmetrie ist Join-Konstruktion, nicht Applikationslogik** (07-04): dieselbe
+  Zeile erscheint bei beiden Beteiligten, ein einzelnes DELETE entfreundet beide Seiten. Anfragen
+  partitionieren allein über `requesterId` — dieselbe Zeile ist einmal `outgoing`, einmal `incoming`.
 
-- **`sealFriendship` ist der EINE Schreibpfad „Anfrage → Freundschaft"** (Phase 07-03), geteilt von
-  `acceptRequest` und vom Auto-Accept-Zweig. Es bleiben zwei `db.transaction`-Stellen für drei
-  Übergänge — bewusst, statt den Schreibpfad zu duplizieren.
+- **VIS-02 ist als Invariante kodiert, nicht als Roh-Zählung von Aufrufstellen** (07-05): genau ein
+  `foreignProfileColumns`, genau ein `pickForeignProfile`, die vier Identitätsspalten in genau
+  einer Datei. Beide Beweis-Specs sind per eingebautem echten Verstoss als **nicht-vakuum** belegt
+  (zweite Projektion, Owner-Feld-Leak, DM-Route). SEC-02 ist für Phase 7 durch den umgekehrten
+  Nachweis erfüllt — keine tenant-gescopete Tabelle, dafür `information_schema`-Beleg plus
+  Festival-Unabhängigkeit der Freundschaft.
 
-- **Fehler-Diskriminierung läuft über `postgresErrorOf`, nicht über `err.cause`** (Phase 07-03).
-  Ein Statement, das innerhalb einer Transaktion scheitert, reist durch den `begin()`-Wrapper von
-  postgres.js zurück; der Cause-Chain-Walker ist eine Obermenge des `me.service.ts`-Idioms.
-
-- **Die Fremd-View hat ab jetzt ZWEI Orte, nicht einen** (Phase 07-04). `foreignProfileColumns`
-  liest sie, `pickForeignProfile` formt sie. Beides braucht es getrennt: eine Abfrage, die zu viel
-  liest, leckt durch jeden durchreichenden Handler; ein Handler, der die Feldnamen erneut
-  aufzählt, driftet ab, ohne dass ein Endpunkt kaputt aussieht. Alle vier D-04-Zugriffspfade
-  stehen jetzt — Handle-Lookup, Suche, Anfragelisten, Freundesliste.
-
-- **Freundschafts-Symmetrie ist Join-Konstruktion, nicht Applikationslogik** (Phase 07-04). Die
-  Join-Bedingung sucht den Aufrufer in einer der beiden Paarspalten und wählt die andere als
-  Gegenüber — dieselbe eine Zeile erscheint bei beiden Beteiligten, und ein einzelnes DELETE
-  entfreundet beide Seiten. Anfragen partitionieren perspektivabhängig allein über `requesterId`
-  (D-12): dieselbe Zeile ist für die eine Seite `outgoing`, für die andere `incoming`.
-
-- [Phase ?]: 07-05: VIS-02-Singularitaet ist als Invariante kodiert (genau ein foreignProfileColumns, genau ein pickForeignProfile, die vier Identitaetsspalten in genau einer Datei), nicht als Roh-Zaehlung von Aufrufstellen — vierter Fall dieser Kriteriums-Klasse in Phase 7
-- [Phase ?]: 07-05: Beide Beweis-Specs sind per eingebautem echten Verstoss als nicht-vakuum belegt (zweite Projektion, Owner-Feld-Leak, DM-Route) statt nur gruen gemeldet
-- [Phase ?]: 07-05: SEC-02 wird fuer Phase 7 durch den umgekehrten Nachweis erfuellt — keine tenant-gescopete Tabelle, dafuer information_schema-Beleg plus Festival-Unabhaengigkeit der Freundschaft
+- **VIS-01 ist zusätzlich am laufenden System belegt** (UAT 2026-08-12): drei echte Accounts,
+  A fragt B an, B lehnt ab — danach ist A's Sicht auf B feldgleich mit A's Sicht auf einem nie
+  kontaktierten C (200/200, `relation` beidseitig `none`, gleiche Feldnamen, leere Anfragelisten).
+  `decline`/`withdraw`/`unfriend` antworten immer `200 {"result":"removed"}`, auch ohne existierende
+  Anfrage. Skript-Muster für Wiederholung: OTP-Codes aus **Mailpit** (`localhost:8025`) lesen, nicht
+  aus `.otp-dev-transport.local.json` — der Dev-Transport ist lokal nicht aktiv.
 
 ### Blockers/Concerns
 
@@ -171,9 +162,22 @@ Milestone bindet:
   auskommentierten noch einen zusaetzlich eingeschleusten Import. Der Fix selbst ist
   geraeteverifiziert und davon unberuehrt. Haerten, wenn der Entry das naechste Mal angefasst wird.
 
-- 07-01: gsd-tools requirements.mark-complete findet VIS-01/VIS-02 in .planning/workstreams/mobile/REQUIREMENTS.md nicht (not_found, kein Write) — Workstream-Pfadaufloesung oder Abschnittsheading pruefen, bevor Phase 7 abgeschlossen wird
-- 07-02: Die Kommandoform 'pnpm --filter @quiks/api test -- <name>' filtert NICHT (führt die Gesamtsuite aus), steht aber unverändert in den verify-Blöcken von 07-03 bis 07-05. Korrekt ist 'cd apps/api && pnpm exec vitest run test/<spec>.spec.ts'.
-- 07-04: Dritter Fall in Folge, dass ein Akzeptanzkriterium rohe grep-Aufrufstellen zaehlt und dem eigenen Aktionstext widerspricht (07-02 inArray, 07-03 db.transaction, 07-04 from(visitorProfile)-Gleichstand). Fuer 07-05 sind die belastbaren VIS-02-Metriken: genau ein 'export const foreignProfileColumns', genau ein 'export function pickForeignProfile', kein Objektliteral der sechs Feldnamen ausserhalb visitor-projection.ts.
+- **`gsd-tools requirements.mark-complete` funktioniert im Workstream-Layout nicht** (07-01, weiterhin
+  offen): findet VIS-01/VIS-02 in `.planning/workstreams/mobile/REQUIREMENTS.md` nicht (`not_found`,
+  kein Write), und `phase.complete` meldet entsprechend `requirements_updated: false`. Beim
+  Phase-7-Abschluss wurden Checkbox und Traceability-Zeile **von Hand** gesetzt. Bei jedem weiteren
+  Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
+- **Testkommando:** `pnpm --filter @quiks/api test -- <name>` filtert NICHT (fuehrt die Gesamtsuite
+  aus), steht aber unveraendert in den verify-Bloecken von 07-03 bis 07-05. Korrekt ist
+  `cd apps/api && pnpm exec vitest run test/<spec>.spec.ts`.
+- **Akzeptanzkriterien nicht als rohe grep-Zaehlung formulieren** — vier Faelle in Folge in Phase 7
+  (07-02 `inArray`, 07-03 `db.transaction`, 07-04 `from(visitorProfile)`, 07-05 Aufrufstellen), in
+  denen die Zaehlung dem eigenen Aktionstext widersprach. Invariante formulieren, nicht zaehlen.
+- **`visitor_profile.socialsVisibility`** (Enum `everyone|friends`, Default `friends`) ist das einzige
+  Sichtbarkeits-Vokabular im Code, das keine echte Kontrolle ist: Reserved Field aus D-03, kein
+  Endpunkt liest oder schreibt es, in keiner der beiden Projektionen. Im Phase-7-UAT dem User
+  vorgelegt und als unschaedlich abgenommen (betrifft Social-Links, nicht Auffindbarkeit).
+  Wird IDN-02 mitentscheiden.
 
 ### Pending Todos
 
@@ -199,14 +203,15 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T16:27:00.320Z
-Stopped at: Completed 07-05-PLAN.md
+Last session: 2026-08-12T19:10:00.000Z
+Stopped at: Phase 07 abgeschlossen (UAT 3/3, Verifikation `passed`, Security 0 offene Threats) — bereit fuer Phase 8
 Resume file: None
 
 ## Operator Next Steps
 
-- `/gsd-discuss-phase 7 --ws mobile` — Kontext fuer die Sichtbarkeits-/Freundschafts-Backendphase
-- Alternativ direkt: `/gsd-plan-phase 7 --ws mobile`
+- `/gsd-discuss-phase 8 --ws mobile` — Kontext fuer die Friends-UI auf dem Phase-7-Backend
+- Alternativ direkt: `/gsd-plan-phase 8 --ws mobile`
+- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`, Tab-Rename `home` → `start` (vor neuen Routen)
 
 ## Performance Metrics
 
