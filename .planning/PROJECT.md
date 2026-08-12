@@ -45,9 +45,13 @@ path must work.
 
 **Mobile — next milestone (Activities + Friends), requirements not yet written:**
 
-- [ ] **Blocking prerequisite (T-06-06):** split `visitorProfilePublicSchema` into an owner view and a
-      friend view before any endpoint serves a *foreign* profile. It currently carries `birthDate`
-      and `gender` with no visibility policy — an unsplit Friends endpoint leaks birth dates.
+- [x] **Blocking prerequisite (T-06-06) — discharged in Phase 7 (2026-08-12):**
+      `visitorProfilePublicSchema` no longer exists. It is split into `visitorProfileForeignSchema`
+      (base, six fields) and `visitorProfileOwnerSchema` (= foreign + `birthDate`), both composed from
+      the drizzle-zod base via `.pick()`. Phase 07-05 pins the split with a VIS-02 single-code-path
+      invariant test, so a second projection cannot be added silently. `gender` is deliberately part of
+      the foreign view (D-02); the visibility *policy* question (IDN-02 — Flinta filter, age threshold)
+      is untouched and still open.
 - [ ] Real Friends: search, requests, connections (FRND-02)
 - [ ] Activities / connecting with friends (ADR-017) — the second differentiator
 - [ ] Tab route rename `home` → `start` (decided 2026-08-12; do it before new routes land)
