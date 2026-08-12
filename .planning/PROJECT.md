@@ -39,15 +39,20 @@ path must work.
 
 ### Active
 
-<!-- This build cycle: the "Visitor Shell" — a navigable, online vertical slice of the mobile app.
-     Reconciled 2026-07-30 with the binding concept phase (docs/concept/04–10, ADR-009/014/016/020).
-     Hypotheses until shipped and validated. -->
+<!-- v1.0 "Visitor Shell" shipped 2026-08-12 — every hypothesis of that cycle moved to Validated
+     above. The next mobile milestone is Activities + Friends (user decision, 2026-08-12); its
+     requirements are written by /gsd-new-milestone --ws mobile and land here. -->
 
-- [x] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email) — **done in Phase 6**
-- [x] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet) — **done in Phase 6**
-- [x] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts` — **done in Phase 3** (PLAT-02, I18N-01)
-- [x] Passwordless email-OTP login + first-login VisitorProfile completion + returning-user skip + long-lived session — **done in Phase 4**
-- [x] Browse/save festivals (Meine/Alle) + gate-less enter + basic festival home overview — **done in Phase 5**
+**Mobile — next milestone (Activities + Friends), requirements not yet written:**
+
+- [ ] **Blocking prerequisite (T-06-06):** split `visitorProfilePublicSchema` into an owner view and a
+      friend view before any endpoint serves a *foreign* profile. It currently carries `birthDate`
+      and `gender` with no visibility policy — an unsplit Friends endpoint leaks birth dates.
+- [ ] Real Friends: search, requests, connections (FRND-02)
+- [ ] Activities / connecting with friends (ADR-017) — the second differentiator
+- [ ] Tab route rename `home` → `start` (decided 2026-08-12; do it before new routes land)
+
+**Admin —** planned independently in `.planning/workstreams/admin/`, its own milestone track.
 
 ### Out of Scope
 
@@ -56,7 +61,7 @@ path must work.
 - Deep content features — timetable, site map (MapLibre), news/updates — deferred to later phases; the shell only shows basic overview info
 - Cashless integration (embedded per-festival WebView) — later phase; not needed for entry/home
 - Swap marketplace (camping-spot / ticket swaps) — differentiator, later milestone
-- Real Friends/social (search, requests, presence/map location) — placeholder only this cycle; "who's here" (friends ∩ saved festival) has no GPS ever
+- ~~Real Friends/social (search, requests, presence/map location) — placeholder only this cycle~~ → **moved into the next mobile milestone** (user decision 2026-08-12). "Who's here" (friends ∩ saved festival) still has no GPS, ever.
 - Profile editing + `socials[]` — first-login creation only; editing and socials deferred
 - Save via shared link / QR — list-based save this cycle (camera/scanner deferred)
 - `FestivalTicket` (display-only QR) and `MyFestival.camp` text UI — schema may reserve fields, no UI this cycle
@@ -68,9 +73,14 @@ path must work.
 
 ## Context
 
-- **Greenfield-for-product, brownfield-for-repo.** The monorepo is ~⅓ scaffolded: `apps/api` runs
-  with a festival module; `packages/*` exist at varying completeness. `apps/mobile` and `apps/admin`
-  do **not** exist yet. Auth, identity tables, and any tests are absent (see `.planning/codebase/CONCERNS.md`).
+- **State after v1.0 (2026-08-12).** `apps/api` (NestJS) and `apps/mobile` (Expo, RN New Arch) are
+  both live and talk to each other through `packages/contracts`; `apps/admin` is **not** scaffolded
+  yet and is the other workstream's job. ~13.8k LOC across `apps` + `packages` in 194 tracked files.
+  Auth (better-auth email-OTP), the identity/membership schema and test suites all exist — the
+  "auth, identity tables and tests are absent" note from the original scaffold is obsolete.
+  Test posture: `apps/api` has an integration suite against a real local Postgres; `apps/mobile`
+  runs a node-env Vitest scoped to pure `lib/` logic — **there is no RN component-test harness**, so
+  every screen-level truth is verified by on-device UAT, not automatically.
 - **Binding concept phase (2026-07-28 meeting → docs/concept/04–10, ADRs to 020).** These decisions
   are authoritative and this planning set was reconciled to them on 2026-07-30: login-first;
   passwordless email-OTP for visitors (password+OTP is staff/admin only); identity = `Account` →
@@ -131,11 +141,8 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-12 — **Phase 6 (Profile & Friends Placeholders) complete & verified.** Damit ist der Mobile-Workstream des Milestones v1.0 „Rollout" bei 7/7 Phasen und 50/50 Plänen. Verifikation `passed` (18/18 Muss-Kriterien, Re-Verifikation nach der Gap-Closure 06-10), UAT `complete` (5/5, 0 Befunde — darunter die vier Geräteprüfungen WR-01/CR-01/WR-04 und der Backstop-Layoutfall, alle als menschliche Abnahme geführt), Security-Review abgeschlossen (`06-SECURITY.md`, 44/44 Threats geschlossen, `threats_open: 0`). Die Phase brachte den vierten Tab (Mehr), den Profil-Push-Screen, den Friends-Screen und einen additiven Schema-Schnitt (`birthDate`/`gender`/`pronoun`, Migration 0004). Ein Blocker aus der UAT wurde unterwegs geschlossen: G-06-5 — der Profil-Screen crashte unter Hermes (`TypeError: undefined cannot be used as a constructor`), weil Lingui `plural()` `Intl.PluralRules` eager auswertet und Hermes das nicht kennt; Fix ist ein `@formatjs/intl-pluralrules`-Polyfill an einem neuen App-Entry, gerätverifiziert und durch einen Rückfall-Guard-Test abgesichert. **Offen und bewusst getragen:** T-06-06 — `visitorProfilePublicSchema` trägt jetzt `birthDate`/`gender` ohne jede Sichtbarkeits-Policy und MUSS vor dem ersten Endpunkt, der ein FREMDES Profil ausliefert, in Eigentümer- und Freundes-Sicht getrennt werden (IDN-02 hängt an Birgits Konzept). Ebenfalls offen: die Produktfrage, ob der erste Tab von „Home" auf „Start" umbenannt wird (in Phase 6 ausdrücklich nicht beauftragt), `/gsd-ui-review 06`, sowie aus Phase 05.1 der Repo-/Remote-Rename per D-15-Checkliste und die Ledger-Einträge WINDOWS 25/30/31. Next: Der Mobile-Workstream ist fertig — der Admin-Workstream hat noch nicht begonnen; das Milestone kann erst schließen, wenn beide durch sind.*
+*Last updated: 2026-08-12 — **Milestone v1.0 "Rollout" (Visitor Shell) closed for the mobile workstream.** 7/7 phases, 50/50 plans, 116 tasks, 20/20 v1 requirements; every phase `phase_complete` with `verification_status: passed`, so this is a `verified_closeout`, not an override. Shipped over 15 days (2026-07-28 → 2026-08-12) as PRs #4–#13, `main` at `44e7914`. Delivered end to end: identity/tenancy schema that cannot drift, passwordless email-OTP behind a login-first guard with `festivalId` isolation, the Expo shell with i18n enforced from the first line of UI, the full visitor path signed off on real Android hardware, the quiks rebrand + CI v1.0, and the global tab bar with Profile/Friends/Mehr. Archived to `workstreams/mobile/milestones/v1.0-*`; `REQUIREMENTS.md` removed so the next milestone starts fresh.*
 
-<details>
-<summary>Vorheriger Stand (Phase 05.1)</summary>
+*Two corrections recorded at close: (1) the two workstreams run **independently** — the earlier note that v1.0 could only close once admin was done was wrong, and mobile closed on its own; (2) the deferred FloatingNav DE-translation item was **stale** — the DE catalog has exactly one empty `msgstr` (the PO header), i.e. zero missing translations, verified against the catalog rather than assumed.*
 
-*2026-08-11 — Phase 05.1 (quiks Rename & CI v1.0 Rollout) complete & verified, 16/16 must-haves (Verifikation Runde 2, nach Gap-Closure durch Quick-Task 260811-jz6). Der Code trägt durchgängig den Namen quiks (`@quiks/*`, Bundle-ID `at.quiks.app`, Scheme `quiks://` konsistent mit `trustedOrigins`), CI v1.0 ist verbindlich verdrahtet (Beere/Amber, Sunset als einziges Gradient-Token, Limette/Violett per Test ausgeschlossen), hell-first ist der Default, alle Screens und Komponenten lösen Farben pro Render auf, die Schriftrollen tragen echte Gewichte und ihr CI-Tracking (per Guard-Test gegen stilles Zurückfallen abgesichert), und sechs echte App-Icons ersetzen die Expo-Platzhalter. Geräteabnahme durch den Entwickler freigegeben. Security-Review abgeschlossen (`05.1-SECURITY.md`, threats_open: 0) und UAT abgenommen (`05.1-UAT.md`, 42/42 — 32 automatisch abgedeckt, 10 Geräte-Checkpoints vom Entwickler bestätigt, 0 Befunde). Offen: Repo-/Remote-Rename per D-15-Checkliste, `/gsd-ui-review 05.1` (noch nicht gelaufen), sowie die Ledger-Einträge WINDOWS 25/30/31 (Mono-Rollen, Android Themed Icons, visuelle Wirkung des Trackings). Next: Phase 6 — Profile & Friends placeholders.*
-
-</details>
+*Carried forward, scheduled not forgotten: **T-06-06** (owner-vs-friend profile projection) is a hard prerequisite for the next milestone, since Activities + Friends is exactly the surface that serves foreign profiles; plus the `home`→`start` route rename (decided), `/gsd-ui-review 06` (never run), iOS device verification (deferred since Phase 3), and a `WINDOWS.md` reconciliation pass — its 26 open entries overstate real debt.*
