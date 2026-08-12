@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 07
 current_phase_name: profile-visibility-friendship-backend
 status: executing
-stopped_at: Completed 07-03-PLAN.md
-last_updated: "2026-08-12T15:56:07.447Z"
+stopped_at: Completed 07-04-PLAN.md
+last_updated: "2026-08-12T16:08:55.343Z"
 last_activity: 2026-08-12
 last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 4
   percent: 0
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 07 (profile-visibility-friendship-backend) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-12 — Phase 07 execution started
 
@@ -122,6 +122,18 @@ Milestone bindet:
   Ein Statement, das innerhalb einer Transaktion scheitert, reist durch den `begin()`-Wrapper von
   postgres.js zurück; der Cause-Chain-Walker ist eine Obermenge des `me.service.ts`-Idioms.
 
+- **Die Fremd-View hat ab jetzt ZWEI Orte, nicht einen** (Phase 07-04). `foreignProfileColumns`
+  liest sie, `pickForeignProfile` formt sie. Beides braucht es getrennt: eine Abfrage, die zu viel
+  liest, leckt durch jeden durchreichenden Handler; ein Handler, der die Feldnamen erneut
+  aufzählt, driftet ab, ohne dass ein Endpunkt kaputt aussieht. Alle vier D-04-Zugriffspfade
+  stehen jetzt — Handle-Lookup, Suche, Anfragelisten, Freundesliste.
+
+- **Freundschafts-Symmetrie ist Join-Konstruktion, nicht Applikationslogik** (Phase 07-04). Die
+  Join-Bedingung sucht den Aufrufer in einer der beiden Paarspalten und wählt die andere als
+  Gegenüber — dieselbe eine Zeile erscheint bei beiden Beteiligten, und ein einzelnes DELETE
+  entfreundet beide Seiten. Anfragen partitionieren perspektivabhängig allein über `requesterId`
+  (D-12): dieselbe Zeile ist für die eine Seite `outgoing`, für die andere `incoming`.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -157,6 +169,7 @@ Milestone bindet:
 
 - 07-01: gsd-tools requirements.mark-complete findet VIS-01/VIS-02 in .planning/workstreams/mobile/REQUIREMENTS.md nicht (not_found, kein Write) — Workstream-Pfadaufloesung oder Abschnittsheading pruefen, bevor Phase 7 abgeschlossen wird
 - 07-02: Die Kommandoform 'pnpm --filter @quiks/api test -- <name>' filtert NICHT (führt die Gesamtsuite aus), steht aber unverändert in den verify-Blöcken von 07-03 bis 07-05. Korrekt ist 'cd apps/api && pnpm exec vitest run test/<spec>.spec.ts'.
+- 07-04: Dritter Fall in Folge, dass ein Akzeptanzkriterium rohe grep-Aufrufstellen zaehlt und dem eigenen Aktionstext widerspricht (07-02 inArray, 07-03 db.transaction, 07-04 from(visitorProfile)-Gleichstand). Fuer 07-05 sind die belastbaren VIS-02-Metriken: genau ein 'export const foreignProfileColumns', genau ein 'export function pickForeignProfile', kein Objektliteral der sechs Feldnamen ausserhalb visitor-projection.ts.
 
 ### Pending Todos
 
@@ -182,8 +195,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T15:55:56.221Z
-Stopped at: Completed 07-03-PLAN.md
+Last session: 2026-08-12T16:08:40.163Z
+Stopped at: Completed 07-04-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
@@ -198,3 +211,4 @@ Resume file: None
 | Phase 07 P01 | 25min | 2 tasks | 14 files |
 | Phase 07 P02 | 12min | 2 tasks | 5 files |
 | Phase 07 P03 | 11min | 2 tasks | 5 files |
+| Phase 07 P04 | 16min | 2 tasks | 6 files |
