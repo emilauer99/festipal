@@ -13,6 +13,14 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/profil.tsx
+msgid "{festivalCount, plural, one {# Festival} other {# Festivals}}"
+msgstr "{festivalCount, plural, one {# Festival} other {# Festivals}}"
+
+#: app/profil.tsx
+msgid "{friendCount, plural, one {# Friend} other {# Friends}}"
+msgstr "{friendCount, plural, one {# Friend} other {# Friends}}"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "@{username} is already taken."
 msgstr "@{username} is already taken."
@@ -25,6 +33,19 @@ msgstr "@{username} is available"
 msgid "3–20 characters: a-z 0-9 _ ."
 msgstr "3–20 characters: a-z 0-9 _ ."
 
+#: app/(tabs)/mehr.tsx
+msgid "A nudge just before your acts start."
+msgstr "A nudge just before your acts start."
+
+#: app/(tabs)/mehr.tsx
+#: app/profil.tsx
+msgid "Account"
+msgstr "Account"
+
+#: app/(tabs)/friends.tsx
+msgid "Adding by QR is coming soon."
+msgstr "Adding by QR is coming soon."
+
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/home.tsx
 msgid "All"
@@ -33,6 +54,14 @@ msgstr "All"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Almost done"
 msgstr "Almost done"
+
+#: app/(tabs)/mehr.tsx
+msgid "App"
+msgstr "App"
+
+#: app/(tabs)/mehr.tsx
+msgid "Appearance"
+msgstr "Appearance"
 
 #: app/(auth)/email.tsx
 #: app/(festival)/f/[festivalSlug].tsx
@@ -56,14 +85,25 @@ msgstr "Browse festivals"
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Can't load festivals — check your connection and try again."
 
+#: app/(tabs)/friends.tsx
+#: app/profil.tsx
+msgid "Can't load your profile — check your connection and try again."
+msgstr "Can't load your profile — check your connection and try again."
+
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 #: app/(festival)/f/[festivalSlug].tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/profil.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
+
+#: app/(tabs)/mehr.tsx
+msgid "Cancel"
+msgstr "Cancel"
 
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Cashless"
@@ -72,6 +112,14 @@ msgstr "Cashless"
 #: app/(auth)/verify.tsx
 msgid "Change email"
 msgstr "Change email"
+
+#: app/(tabs)/friends.tsx
+msgid "Chats"
+msgstr "Chats"
+
+#: app/(tabs)/friends.tsx
+msgid "Chats unlock once you've added someone and can message them — coming soon."
+msgstr "Chats unlock once you've added someone and can message them — coming soon."
 
 #: app/festivals/index.tsx
 #~ msgid "Check back soon — new festivals will appear here."
@@ -82,12 +130,16 @@ msgid "Checking…"
 msgstr "Checking…"
 
 #: app/(profile-setup)/complete-profile.tsx
+msgid "Choose a date"
+msgstr "Choose a date"
+
+#: app/(profile-setup)/complete-profile.tsx
 msgid "Choose photo"
 msgstr "Choose photo"
 
 #: components/FloatingNav.tsx
-msgid "coming soon"
-msgstr "coming soon"
+#~ msgid "coming soon"
+#~ msgstr "coming soon"
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Continue"
@@ -105,6 +157,14 @@ msgstr "Couldn't save festival — try again."
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Couldn't set up your profile — tap Continue to try again."
 
+#: app/(tabs)/mehr.tsx
+msgid "Dark mode"
+msgstr "Dark mode"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Date of birth"
+msgstr "Date of birth"
+
 #: app/(auth)/verify.tsx
 #~ msgid "Didn't get a code? Resend"
 #~ msgstr "Didn't get a code? Resend"
@@ -117,9 +177,18 @@ msgstr "Display name"
 msgid "Done"
 msgstr "Done"
 
+#: app/profil.tsx
+msgid "Editing is coming soon."
+msgstr "Editing is coming soon."
+
 #: app/(auth)/email.tsx
+#: app/profil.tsx
 msgid "Email"
 msgstr "Email"
+
+#: app/(tabs)/mehr.tsx
+msgid "English"
+msgstr "English"
 
 #: app/(auth)/verify.tsx
 msgid "Enter code"
@@ -145,19 +214,46 @@ msgstr "Festival"
 #~ msgid "Festival home"
 #~ msgstr "Festival home"
 
+#: app/(tabs)/mehr.tsx
+msgid "Festival news"
+msgstr "Festival news"
+
+#: app/(tabs)/mehr.tsx
+msgid "Festival news, coming soon"
+msgstr "Festival news, coming soon"
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Festival not found"
 msgstr "Festival not found"
 
 #: app/(tabs)/_layout.tsx
 #: app/(tabs)/festivals.tsx
+#: app/profil.tsx
 #: components/FloatingNav.tsx
 msgid "Festivals"
 msgstr "Festivals"
 
+#: app/(tabs)/mehr.tsx
+msgid "Friend requests"
+msgstr "Friend requests"
+
+#: app/(tabs)/mehr.tsx
+msgid "Friend requests, coming soon"
+msgstr "Friend requests, coming soon"
+
+#: app/(tabs)/_layout.tsx
+#: app/profil.tsx
 #: components/FloatingNav.tsx
 msgid "Friends"
 msgstr "Friends"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Gender"
+msgstr "Gender"
+
+#: app/(tabs)/mehr.tsx
+msgid "German"
+msgstr "German"
 
 #: app/(auth)/verify.tsx
 msgid "Get a new code."
@@ -167,9 +263,25 @@ msgstr "Get a new code."
 msgid "Get started"
 msgstr "Get started"
 
+#: app/profil.tsx
+msgid "Handle"
+msgstr "Handle"
+
 #: components/FloatingNav.tsx
 msgid "Home"
 msgstr "Home"
+
+#: app/profil.tsx
+msgid "Instagram, coming soon"
+msgstr "Instagram, coming soon"
+
+#: app/(tabs)/mehr.tsx
+msgid "Language"
+msgstr "Language"
+
+#: app/(tabs)/mehr.tsx
+msgid "Language switching is coming soon."
+msgstr "Language switching is coming soon."
 
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Loading festival…"
@@ -180,25 +292,58 @@ msgstr "Loading festival…"
 msgid "Loading festivals…"
 msgstr "Loading festivals…"
 
+#: app/profil.tsx
+msgid "Loading profile…"
+msgstr "Loading profile…"
+
+#: app/(tabs)/friends.tsx
+msgid "Loading your quiks code…"
+msgstr "Loading your quiks code…"
+
+#: app/(tabs)/mehr.tsx
+msgid "Location & Safety"
+msgstr "Location & Safety"
+
 #: app/(auth)/index.tsx
 #~ msgid "Log in"
 #~ msgstr "Log in"
 
-#: app/(tabs)/festivals.tsx
+#: app/(tabs)/mehr.tsx
 msgid "Log out"
 msgstr "Log out"
+
+#: app/(tabs)/mehr.tsx
+msgid "Log out?"
+msgstr "Log out?"
 
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Map"
 msgstr "Map"
 
+#: app/profil.tsx
+msgid "member since {year}"
+msgstr "member since {year}"
+
 #: app/(tabs)/festivals.tsx
 msgid "Mine"
 msgstr "Mine"
 
+#: app/(tabs)/_layout.tsx
+#: components/FloatingNav.tsx
+msgid "More"
+msgstr "More"
+
 #: app/(tabs)/home.tsx
 msgid "My festivals"
 msgstr "My festivals"
+
+#: app/profil.tsx
+msgid "Name"
+msgstr "Name"
+
+#: app/(tabs)/friends.tsx
+msgid "Name or @handle"
+msgstr "Name or @handle"
 
 #: app/(tabs)/festivals.tsx
 msgid "New festivals will show up here."
@@ -216,25 +361,103 @@ msgstr "No festival saved yet"
 msgid "No festivals yet"
 msgstr "No festivals yet"
 
+#: app/(tabs)/friends.tsx
+msgid "No one in your crew yet. Once you've added each other, you'll show up here."
+msgstr "No one in your crew yet. Once you've added each other, you'll show up here."
+
+#: app/(tabs)/friends.tsx
+msgid "No requests yet. Once someone adds you, it'll show up here."
+msgstr "No requests yet. Once someone adds you, it'll show up here."
+
 #: app/(tabs)/festivals.tsx
 msgid "No saved festivals yet"
 msgstr "No saved festivals yet"
+
+#: app/profil.tsx
+msgid "Not connected"
+msgstr "Not connected"
+
+#: app/(tabs)/mehr.tsx
+msgid "Notifications"
+msgstr "Notifications"
+
+#: app/(tabs)/friends.tsx
+msgid "Once you have your first friends, we'll suggest more here."
+msgstr "Once you have your first friends, we'll suggest more here."
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "One more step"
 #~ msgstr "One more step"
 
+#: app/(tabs)/mehr.tsx
+msgid "Only on the festival grounds, only with friends."
+msgstr "Only on the festival grounds, only with friends."
+
 #: components/FestivalCard.tsx
 msgid "Open festival"
 msgstr "Open festival"
+
+#: app/(tabs)/mehr.tsx
+msgid "Open safenow.app"
+msgstr "Open safenow.app"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Optional"
+msgstr "Optional"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Optional. You can add this later."
 msgstr "Optional. You can add this later."
 
-#: components/FloatingNav.tsx
+#: app/(tabs)/mehr.tsx
+msgid "Payment methods"
+msgstr "Payment methods"
+
+#: app/(tabs)/mehr.tsx
+msgid "Payment methods are coming soon."
+msgstr "Payment methods are coming soon."
+
+#: app/(tabs)/mehr.tsx
+msgid "Payment methods, coming soon"
+msgstr "Payment methods, coming soon"
+
+#: app/(tabs)/friends.tsx
+msgid "People you may know"
+msgstr "People you may know"
+
+#: app/(tabs)/friends.tsx
+#: app/profil.tsx
+msgid "Placeholder mark, coming soon"
+msgstr "Placeholder mark, coming soon"
+
+#: app/(tabs)/mehr.tsx
+#: app/profil.tsx
 msgid "Profile"
 msgstr "Profile"
+
+#: app/(profile-setup)/complete-profile.tsx
+msgid "Pronouns"
+msgstr "Pronouns"
+
+#: app/profil.tsx
+msgid "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
+msgstr "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
+
+#: app/(tabs)/mehr.tsx
+msgid "Recommend quiks"
+msgstr "Recommend quiks"
+
+#: app/(tabs)/mehr.tsx
+msgid "Recommend quiks, coming soon"
+msgstr "Recommend quiks, coming soon"
+
+#: app/(tabs)/mehr.tsx
+msgid "Recommending is coming soon."
+msgstr "Recommending is coming soon."
+
+#: app/(tabs)/friends.tsx
+msgid "Requests"
+msgstr "Requests"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Required"
@@ -250,7 +473,9 @@ msgstr "Resend in {countdownLabel}"
 
 #: app/(festival)/f/[festivalSlug].tsx
 #: app/(tabs)/festivals.tsx
+#: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/profil.tsx
 msgid "Retry"
 msgstr "Retry"
 
@@ -262,9 +487,25 @@ msgstr "Save"
 msgid "Saved"
 msgstr "Saved"
 
+#: app/profil.tsx
+msgid "Saved acts"
+msgstr "Saved acts"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Saving…"
 msgstr "Saving…"
+
+#: app/profil.tsx
+msgid "Scanning is enough — no searching, no typing."
+msgstr "Scanning is enough — no searching, no typing."
+
+#: app/(tabs)/friends.tsx
+msgid "Search for people, coming soon"
+msgstr "Search for people, coming soon"
+
+#: app/(tabs)/friends.tsx
+msgid "Searching for people is coming soon."
+msgstr "Searching for people is coming soon."
 
 #: app/(auth)/email.tsx
 msgid "Send code"
@@ -278,13 +519,60 @@ msgstr "Send new code"
 msgid "Sending…"
 msgstr "Sending…"
 
+#: app/profil.tsx
+msgid "Share handle"
+msgstr "Share handle"
+
+#: app/profil.tsx
+msgid "Share handle, coming soon"
+msgstr "Share handle, coming soon"
+
+#: app/(tabs)/mehr.tsx
+msgid "Share location with your crew"
+msgstr "Share location with your crew"
+
+#: app/(tabs)/mehr.tsx
+msgid "Share location with your crew, coming soon"
+msgstr "Share location with your crew, coming soon"
+
+#: app/profil.tsx
+msgid "Sharing your handle is coming soon."
+msgstr "Sharing your handle is coming soon."
+
+#: app/(tabs)/friends.tsx
+msgid "Show it, scan it, done — that's how you add each other."
+msgstr "Show it, scan it, done — that's how you add each other."
+
+#: app/(tabs)/friends.tsx
+msgid "Show QR"
+msgstr "Show QR"
+
+#: app/(tabs)/friends.tsx
+msgid "Show QR, coming soon"
+msgstr "Show QR, coming soon"
+
 #: app/(auth)/verify.tsx
 msgid "Six digits sent to {email}."
 msgstr "Six digits sent to {email}."
 
+#: app/profil.tsx
+msgid "Socials"
+msgstr "Socials"
+
 #: app/(festival)/f/[festivalSlug].tsx
+#: app/(tabs)/friends.tsx
+#: app/(tabs)/mehr.tsx
+#: app/profil.tsx
 msgid "Soon"
 msgstr "Soon"
+
+#: app/profil.tsx
+msgid "Spotify, coming soon"
+msgstr "Spotify, coming soon"
+
+#: app/(tabs)/mehr.tsx
+msgid "Stay safe"
+msgstr "Stay safe"
 
 #: app/(tabs)/festivals.tsx
 msgid "Switch to 'All' and save one with a tap."
@@ -314,13 +602,29 @@ msgstr "Tell us what to call you in the app."
 msgid "That code is wrong or has expired."
 msgstr "That code is wrong or has expired."
 
+#: app/(tabs)/mehr.tsx
+msgid "The night shift for your eyes."
+msgstr "The night shift for your eyes."
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "This festival may have been removed or the link is out of date."
 
+#: app/profil.tsx
+msgid "TikTok, coming soon"
+msgstr "TikTok, coming soon"
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Timetable"
 msgstr "Timetable"
+
+#: app/(tabs)/mehr.tsx
+msgid "Timetable reminders"
+msgstr "Timetable reminders"
+
+#: app/(tabs)/mehr.tsx
+msgid "Timetable reminders, coming soon"
+msgstr "Timetable reminders, coming soon"
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
@@ -330,6 +634,10 @@ msgstr "Too many attempts — try again in a few minutes."
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Try something else, like @{suggestion}."
 msgstr "Try something else, like @{suggestion}."
+
+#: app/(tabs)/mehr.tsx
+msgid "Updates from the organizer while you're on-site."
+msgstr "Updates from the organizer while you're on-site."
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Username"
@@ -342,6 +650,14 @@ msgstr "Username"
 #: app/(auth)/verify.tsx
 #~ msgid "Verifying…"
 #~ msgstr "Verifying…"
+
+#: app/profil.tsx
+msgid "Vibe · synced from Spotify"
+msgstr "Vibe · synced from Spotify"
+
+#: app/(tabs)/mehr.tsx
+msgid "We have no connection to SafeNow — we just think the app is genuinely good. Use it on-site."
+msgstr "We have no connection to SafeNow — we just think the app is genuinely good. Use it on-site."
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "We need a temporary profile to continue."
@@ -363,9 +679,25 @@ msgstr "Welcome"
 #~ msgid "Welcome to quiks"
 #~ msgstr "Welcome to quiks"
 
+#: app/(tabs)/mehr.tsx
+msgid "When someone adds you to their crew."
+msgstr "When someone adds you to their crew."
+
+#: app/(tabs)/mehr.tsx
+msgid "You can always sign back in with an email code."
+msgstr "You can always sign back in with an email code."
+
 #: app/(auth)/email.tsx
 msgid "you@example.com"
 msgstr "you@example.com"
+
+#: app/profil.tsx
+msgid "Your code for adding"
+msgstr "Your code for adding"
+
+#: app/(tabs)/friends.tsx
+msgid "Your crew"
+msgstr "Your crew"
 
 #: app/(auth)/email.tsx
 msgid "Your email"
@@ -382,3 +714,7 @@ msgstr "Your festivals, your crew, your plan."
 #: app/(tabs)/home.tsx
 msgid "Your next festival"
 msgstr "Your next festival"
+
+#: app/(tabs)/friends.tsx
+msgid "Your quiks code"
+msgstr "Your quiks code"
