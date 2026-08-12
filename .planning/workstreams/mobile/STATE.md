@@ -1,19 +1,16 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: Rollout
-status: Awaiting next milestone
-stopped_at: "Milestone v1.0 Rollout (Visitor Shell) geschlossen und archiviert — 7/7 Phasen, 50/50 Plaene, 20/20 v1-Requirements, verified_closeout. Naechster Schritt: /gsd-new-milestone --ws mobile fuer das Activities-+-Friends-Milestone."
-last_updated: "2026-08-12T13:30:00.000Z"
+milestone: v1.1
+milestone_name: Activities & Friends
+status: planning
+last_updated: "2026-08-12T13:28:35.659Z"
 last_activity: 2026-08-12
-last_activity_desc: Milestone v1.0 abgeschlossen und archiviert
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 50
-  completed_plans: 50
-current_phase: null
-current_phase_name: null
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
+  percent: 0
 ---
 
 # Project State — Workstream `mobile`
@@ -34,9 +31,10 @@ aufgesetzt (User-Entscheidung 2026-08-12).
 
 ## Current Position
 
-Phase: — (kein aktives Phasenverzeichnis; `phases/` ist leer)
-Status: Awaiting next milestone
-Last activity: 2026-08-12 — Milestone v1.0 abgeschlossen und archiviert
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-08-12 — Milestone v1.1 started
 
 ## Shipped
 
@@ -58,10 +56,13 @@ Milestone bindet:
 
 - **Naechstes Milestone = Activities + Friends** (User, 2026-08-12). Die Content-Trias
   (Timetable/Lageplan/News) wurde bewusst dahinter gestellt.
+
 - **Tab-Route wird `home` → `start` umbenannt** (User, 2026-08-12). Vor neuen Routen erledigen —
   der Deep-Link-Capture-Pfad haengt mit dran.
+
 - **Hell-first bleibt invariant:** nur der exakte Geraetewert `dark` ergibt Dunkel. Der
   Theme-Override aus 06-03 liegt als Schicht *darueber*, der 05.1-Invariantentest bleibt das Gate.
+
 - **Eintritt ist gate-less (ADR-014).** Isolation ist Daten-Scoping, kein 403 — bei jeder neuen
   tenant-scoped Tabelle neu zu beweisen, nicht als Zugriffsgate zu bauen.
 
@@ -72,19 +73,24 @@ Milestone bindet:
   FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in Eigentuemer-Sicht und
   Freundes-Sicht getrennt werden — sonst leakt der erste Freundes-Endpunkt Geburtsdaten. Gehoert an
   den *Anfang* des Milestones, als eigener Backend-Slice.
+
 - **IDN-02 haengt an Birgits Konzept** (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter,
   Signup-Disclaimer). Betrifft dieselbe Flaeche wie T-06-06.
+
 - **SEC-02 ist eine vererbte Pflicht:** festival-scoped Reads sind `festivalId`-isoliert
   (Baseline: `apps/api/test/festival-isolation.spec.ts`). Der Cross-Tenant-Test ist bei **jeder**
   neuen tenant-scoped Tabelle neu zu ziehen.
+
 - **Kein RN-Component-Test-Harness in `apps/mobile`.** Der Vitest-Runner ist node-env und deckt nur
   reine `lib/`-Logik. Jede Screen-Wahrheit haengt an On-Device-UAT — das ist die strukturelle
   Verifikationsgrenze dieses Projekts, keine Nachlaessigkeit.
+
 - **iOS ist seit Phase 3 unverifiziert** (kein Mac/Xcode). Android ist durchgaengig abgenommen.
 - **`/gsd-ui-review 06` ist nie gelaufen** — der visuelle 6-Saeulen-Audit der drei Phase-6-Screens.
 - **`.planning/WINDOWS.md` hat 26 offene Eintraege**, ueberwiegend veraltete `unrun-verify`-Punkte
   aus Phase 5, die die Phase-5/6-UATs faktisch abgedeckt haben. Der Ledger ueberzeichnet die
   Schuld; Gate ist aus (`windows_enforce: false`). Braucht einen Abgleich.
+
 - **LOW (aus 06-10-REVIEW):** `lib/__tests__/intl-polyfill.test.ts` matcht Quelltext als String
   inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — faengt weder einen
   auskommentierten noch einen zusaetzlich eingeschleusten Import. Der Fix selbst ist
