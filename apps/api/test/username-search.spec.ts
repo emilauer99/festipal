@@ -12,6 +12,7 @@ import { friendRequest, friendship, user, visitorProfile, type Database } from '
 
 import { FriendshipService } from '../src/friendship/friendship.service';
 import { canonicalPair } from '../src/friendship/visitor-projection';
+import { collationConflictingAccountIds, testAccountId } from './account-ids';
 import { createTestApp, createTestDatabase } from './setup';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -45,9 +46,14 @@ type Fixture = { accountId: string; username: string; displayName: string; birth
 
 const fixtures: Fixture[] = [];
 
-function fixture(username: string, opts: { displayName?: string; birthDate?: string } = {}): Fixture {
+function fixture(
+  username: string,
+  opts: { displayName?: string; birthDate?: string; accountId?: string } = {},
+): Fixture {
   const f: Fixture = {
-    accountId: `test-username-search-${randomUUID()}`,
+    // WR-04: mixed-case ids, the shape better-auth actually mints — see
+    // `account-ids.ts`.
+    accountId: opts.accountId ?? testAccountId('test-username-search'),
     username,
     displayName: opts.displayName ?? `Search Fixture ${username}`,
     birthDate: opts.birthDate,
@@ -55,6 +61,17 @@ function fixture(username: string, opts: { displayName?: string; birthDate?: str
   fixtures.push(f);
   return f;
 }
+
+/**
+ * CR-01/WR-04: `caller` and `friendOf` are the ONE pair here whose canonical
+ * order differs between JavaScript and a locale collation. Their `friendship`
+ * row is written directly through `canonicalPair` in `beforeAll`, so the
+ * divergence is exercised by the fixture setup itself; `outgoingTo` and
+ * `incomingFrom` keep ordinary ids and pair with `caller` the ordinary way.
+ */
+const [COLLATION_CONFLICT_FRIEND, COLLATION_CONFLICT_CALLER] = collationConflictingAccountIds(
+  'test-username-search-collation',
+);
 
 const bulkUsernames = Array.from(
   { length: 22 },
@@ -68,8 +85,14 @@ fixture(MID_SUBSTRING_USERNAME);
 // D-09 fixture: the token is in the displayName, the username does not contain it.
 fixture(`p${RUN}`, { displayName: `Only in the name ${DISPLAY_ONLY_TOKEN}` });
 
-const caller = fixture(`${RELATION_STEM}s`, { birthDate: FIXTURE_BIRTH_DATE });
-const friendOf = fixture(`${RELATION_STEM}f`, { birthDate: FIXTURE_BIRTH_DATE });
+const caller = fixture(`${RELATION_STEM}s`, {
+  birthDate: FIXTURE_BIRTH_DATE,
+  accountId: COLLATION_CONFLICT_CALLER,
+});
+const friendOf = fixture(`${RELATION_STEM}f`, {
+  birthDate: FIXTURE_BIRTH_DATE,
+  accountId: COLLATION_CONFLICT_FRIEND,
+});
 const outgoingTo = fixture(`${RELATION_STEM}o`, { birthDate: FIXTURE_BIRTH_DATE });
 const incomingFrom = fixture(`${RELATION_STEM}i`, { birthDate: FIXTURE_BIRTH_DATE });
 const unrelated = fixture(`${RELATION_STEM}n`, { birthDate: FIXTURE_BIRTH_DATE });

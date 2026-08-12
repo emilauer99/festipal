@@ -6,6 +6,7 @@ import { friendRequest, friendship, user, visitorProfile, type Database } from '
 
 import { FriendshipService } from '../src/friendship/friendship.service';
 import { canonicalPair } from '../src/friendship/visitor-projection';
+import { collationConflictingAccountIds, testAccountId } from './account-ids';
 import { createTestDatabase } from './setup';
 
 /** One random, charset-valid stem per run so repeated runs never collide. */
@@ -19,24 +20,38 @@ type Actor = { accountId: string; username: string; displayName: string };
  * a sort test against fixtures that are already inserted in the right order
  * proves nothing.
  */
-function actor(label: string, letter: string): Actor {
+function actor(label: string, letter: string, accountId?: string): Actor {
   return {
-    accountId: `test-friend-lists-${label}-${randomUUID()}`,
+    // WR-04: mixed-case ids, the shape better-auth actually mints — see
+    // `account-ids.ts`. A lowercase-only id can never make `canonicalPair`
+    // disagree with the ordering CHECK.
+    accountId: accountId ?? testAccountId(`test-friend-lists-${label}`),
     username: `q${RUN}${letter}`,
     displayName: `Lists ${label.toUpperCase()}`,
   };
 }
 
 /**
+ * CR-01/WR-04: E and A are the ONE pair here whose canonical order differs
+ * between JavaScript (`canonicalPair`) and a locale collation such as
+ * `en_US.utf8` (the `lower_id < higher_id` CHECK). E→A is the incoming request
+ * of case 5, so the divergent pair is exercised by the fixture setup itself —
+ * B, C and D keep ordinary ids and pair with A the ordinary way.
+ */
+const [COLLATION_CONFLICT_E, COLLATION_CONFLICT_A] = collationConflictingAccountIds(
+  'test-friend-lists-collation',
+);
+
+/**
  * A is the visitor whose lists are under test. Insertion order is A, B, C, D, E;
  * the alphabetical order of the usernames is E(b) < C(d) < A(m) < B(t) < D(w).
  * A's two friends are therefore inserted as B, C but must come back as C, B.
  */
-const A = actor('a', 'm');
+const A = actor('a', 'm', COLLATION_CONFLICT_A);
 const B = actor('b', 't');
 const C = actor('c', 'd');
 const D = actor('d', 'w');
-const E = actor('e', 'b');
+const E = actor('e', 'b', COLLATION_CONFLICT_E);
 
 const allAccounts = [A, B, C, D, E];
 const allAccountIds = allAccounts.map((a) => a.accountId);

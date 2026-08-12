@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 
-import { and, eq, inArray, or } from 'drizzle-orm';
+import { and, eq, inArray, or, sql } from 'drizzle-orm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { friendRequest, friendship, user, visitorProfile, type Database } from '@quiks/db';
 
 import { FriendshipService } from '../src/friendship/friendship.service';
 import { canonicalPair } from '../src/friendship/visitor-projection';
+import { collationConflictingAccountIds, testAccountId } from './account-ids';
 import { createTestDatabase } from './setup';
 
 /**
@@ -19,9 +20,14 @@ const FIXTURE_BIRTH_DATE = '1991-07-23';
 
 type Actor = { accountId: string; username: string; displayName: string; birthDate?: string };
 
+/**
+ * WR-04: the id is MIXED CASE, like a real better-auth id — not the lowercase
+ * hex `randomUUID()` produced. See `account-ids.ts` for why that is the
+ * difference between exercising `canonicalPair` and only pretending to.
+ */
 function actor(label: string, birthDate?: string): Actor {
   return {
-    accountId: `test-friend-request-race-${label}-${randomUUID()}`,
+    accountId: testAccountId(`test-friend-request-race-${label}`),
     username: `q${RUN}${label}`,
     displayName: `Race ${label.toUpperCase()}`,
     birthDate,
@@ -40,7 +46,28 @@ const H = actor('h');
 /** The ninth account: a `user` row with NO `visitor_profile` — first login, not finished. */
 const NO_PROFILE = actor('np');
 
-const withProfile = [A, B, C, D, E, F, G, H];
+/**
+ * CR-01's regression pair: two ids that `canonicalPair` orders one way and a
+ * locale collation (`en_US.utf8`, the local dev database) orders the other. The
+ * lifecycle in case 13 is the ONLY place in this suite where JavaScript's
+ * ordering and the CHECK's ordering are made to disagree — every other fixture
+ * pair differs at a lowercase character, where the two agree by accident.
+ */
+const [MIXED_JS_LOWER, MIXED_JS_HIGHER] = collationConflictingAccountIds(
+  'test-friend-request-race-collation',
+);
+const I: Actor = {
+  accountId: MIXED_JS_LOWER,
+  username: `q${RUN}i`,
+  displayName: 'Race I',
+};
+const J: Actor = {
+  accountId: MIXED_JS_HIGHER,
+  username: `q${RUN}j`,
+  displayName: 'Race J',
+};
+
+const withProfile = [A, B, C, D, E, F, G, H, I, J];
 const allAccounts = [...withProfile, NO_PROFILE];
 const allAccountIds = allAccounts.map((a) => a.accountId);
 
@@ -260,5 +287,39 @@ describe('friend-request lifecycle & reverse-direction race (D-10/D-11/D-12/D-13
       .where(inArray(friendRequest.lowerId, allAccountIds));
 
     expect(contradictions).toEqual([]);
+  });
+
+  it('13. a pair whose JS order contradicts the DB collation runs the whole lifecycle (CR-01)', async () => {
+    // Non-vacuum guards. This case only tests anything as long as the fixture
+    // really is the divergent one, so both halves of the divergence are stated
+    // as assertions rather than assumed from the id literals.
+    //
+    // (a) JavaScript — `canonicalPair` uses exactly this comparison.
+    expect(I.accountId < J.accountId).toBe(true);
+    // (b) The database, under the collation the CHECK is now pinned to. Byte
+    // order and JS code-unit order agree for ASCII ids, which is WHY `COLLATE
+    // "C"` is the correct pin. The database's DEFAULT collation is deliberately
+    // NOT asserted: on the local dev Postgres (`en_US.utf8`) it disagrees —
+    // that disagreement IS the bug — while on a `C`/`C.UTF-8` database (Neon)
+    // it agrees, and this case must pass in both.
+    const [order] = (await db.execute(
+      sql`select (${I.accountId} collate "C" < ${J.accountId} collate "C") as byte_order`,
+    )) as unknown as Array<{ byte_order: boolean }>;
+    expect(order?.byte_order).toBe(true);
+
+    const sent = await service.sendRequest(I.accountId, J.accountId);
+    expect(sent.status).toBe('requested');
+    expect(await requestRows(I.accountId, J.accountId)).toHaveLength(1);
+
+    // `sealFriendship` writes the same pair into the OTHER table, so accepting
+    // exercises `friendship_pair_order_chk` as well as the request one.
+    const accepted = await service.acceptRequest(J.accountId, I.accountId);
+    expect(accepted.status).toBe('friends');
+    expect(await friendshipRows(I.accountId, J.accountId)).toHaveLength(1);
+    expect(await requestRows(I.accountId, J.accountId)).toHaveLength(0);
+
+    const removed = await service.unfriend(J.accountId, I.accountId);
+    expect(removed.status).toBe('removed');
+    expect(await friendshipRows(I.accountId, J.accountId)).toHaveLength(0);
   });
 });
