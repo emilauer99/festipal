@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Rollout
 current_phase: 06
-status: completed
+status: "Phase 06 shipped — PR #13"
 stopped_at: "Phase 06 abgeschlossen — UAT 5/5 (0 Befunde), Re-Verifikation 18/18 `passed` (Truth 18 fuer die Gap-Closure 06-10 ergaenzt), Security 44/44 geschlossen (`threats_open: 0`), ROADMAP/STATE/PROJECT transitioniert. Der Mobile-Workstream ist bei 7/7 Phasen; das Milestone v1.0 kann erst schliessen, wenn der Admin-Workstream durch ist."
-last_updated: "2026-08-12T12:49:19.994Z"
+last_updated: "2026-08-12T12:55:35.809Z"
 last_activity: 2026-08-12
-last_activity_desc: Phase 06 verifiziert, gesichert und als complete transitioniert
 progress:
   total_phases: 7
   completed_phases: 7
   total_plans: 50
   completed_plans: 50
 current_phase_name: profile-friends-placeholders
+last_activity_desc: Phase 06 verifiziert, gesichert und als complete transitioniert
 ---
 
 # Project State
@@ -29,8 +29,8 @@ See: .planning/PROJECT.md (updated 2026-08-12 — Phase 06 complete & verified)
 
 Phase: 06
 Plan: Not started
-Status: All phases complete
-Last activity: 2026-08-12 — Phase 06 complete
+Status: Phase 06 shipped — PR #13
+Last activity: 2026-08-12
 
 Progress: [██████████] 100%
 
