@@ -95,4 +95,37 @@ export class FriendshipController {
       return { status: 200, body: { result: result.status } };
     });
   }
+
+  // The two list endpoints take NO parameter at all — there is no path, query or
+  // body value a client could set to ask for somebody else's friends or pending
+  // requests, and the scope is `session.user.id` inside the join condition
+  // itself (T-07-19, ARCHITECTURE.md "Client-Supplied Scope"). Neither has a 404
+  // branch: an empty relationship set is a normal state of the resource.
+  @TsRestHandler(contract.listFriends)
+  listFriends(@Session() session: UserSession) {
+    return tsRestHandler(contract.listFriends, async () => {
+      const friends = await this.friendship.listFriends(session.user.id);
+      return { status: 200, body: friends };
+    });
+  }
+
+  @TsRestHandler(contract.listFriendRequests)
+  listFriendRequests(@Session() session: UserSession) {
+    return tsRestHandler(contract.listFriendRequests, async () => {
+      const lists = await this.friendship.listRequests(session.user.id);
+      return { status: 200, body: lists };
+    });
+  }
+
+  // `:accountId` is the COUNTERPART here too, never the actor — the caller is
+  // always one half of the pair, so a friendship they are not part of cannot be
+  // addressed (T-07-20). Single 200 branch, so the answer cannot disclose
+  // whether there was a friendship to end (T-07-21).
+  @TsRestHandler(contract.unfriend)
+  unfriend(@Session() session: UserSession) {
+    return tsRestHandler(contract.unfriend, async ({ params }) => {
+      const result = await this.friendship.unfriend(session.user.id, params.accountId);
+      return { status: 200, body: { result: result.status } };
+    });
+  }
 }

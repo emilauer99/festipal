@@ -5,8 +5,10 @@ import { localeSchema } from './locale';
 import {
   completeProfileBodySchema,
   festivalSchema,
+  friendRequestListsSchema,
   friendRequestResultSchema,
   friendRequestTargetBodySchema,
+  friendSchema,
   meSchema,
   mutationResultSchema,
   tagSchema,
@@ -115,6 +117,33 @@ export const contract = c.router(
       responses: { 200: mutationResultSchema },
       summary:
         'Withdraw the caller’s own outgoing request to that visitor. Mirror image of decline, with the same always-200, evidence-free answer',
+    },
+    // The two READ paths onto the caller's own relationship set, plus the one
+    // way out of a friendship. Like every `/me/*` route they take NO caller
+    // identity from path, query or body — the scope comes from the session and
+    // nowhere else (T-07-19). `GET /me/friend-requests` and the POST above are
+    // different methods on the same resource and therefore separate route keys.
+    listFriends: {
+      method: 'GET',
+      path: '/me/friends',
+      responses: { 200: z.array(friendSchema) },
+      summary:
+        'List the caller’s friends, each as the FOREIGN view plus `friendsSince`, ascending by username. Symmetric by construction: ONE `friendship` row shows up for both parties, there is no mirror row (D-14). No friends is `[]`, never null and never an error',
+    },
+    listFriendRequests: {
+      method: 'GET',
+      path: '/me/friend-requests',
+      responses: { 200: friendRequestListsSchema },
+      summary:
+        'Both pending directions in one response — `incoming` and `outgoing`, partitioned solely by `requesterId` (D-12: there is no status column). Phase 8 renders them together, so a second round-trip would buy nothing. No requests is two empty arrays',
+    },
+    unfriend: {
+      method: 'DELETE',
+      path: '/me/friends/:accountId',
+      pathParams: z.object({ accountId: z.string() }),
+      responses: { 200: mutationResultSchema },
+      summary:
+        'End the friendship with that visitor. One deleted row ends it for BOTH sides (D-14). Idempotent and evidence-free: always 200 with the same payload, whether or not a friendship existed (T-07-21)',
     },
     usernameAvailability: {
       method: 'GET',

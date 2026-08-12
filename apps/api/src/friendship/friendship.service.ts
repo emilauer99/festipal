@@ -2,10 +2,21 @@ import { Inject, Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
 import { friendRequest, friendship, visitorProfile, type Database } from '@quiks/db';
-import type { Relation, VisitorSummary } from '@quiks/contracts';
+import type {
+  Friend,
+  FriendRequestItem,
+  FriendRequestLists,
+  Relation,
+  VisitorSummary,
+} from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
-import { canonicalPair, foreignProfileColumns } from './visitor-projection';
+import {
+  canonicalPair,
+  foreignProfileColumns,
+  pickForeignProfile,
+  toIsoString,
+} from './visitor-projection';
 
 /** A canonically ordered pair (D-14) — the shape `canonicalPair` returns. */
 type Pair = { lowerId: string; higherId: string };
@@ -25,6 +36,12 @@ export type AcceptRequestResult = { status: 'friends' } | { status: 'not-found' 
  * and would then tell the caller whether a request existed (T-07-15).
  */
 export type RemoveRequestResult = { status: 'removed' };
+
+/**
+ * Unfriending has the same single branch and for the same reason: the answer
+ * must not tell the caller whether a friendship existed to end (T-07-21).
+ */
+export type RemoveFriendshipResult = { status: 'removed' };
 
 /**
  * The two unique constraints the lifecycle can trip. They mean OPPOSITE things —
@@ -417,6 +434,118 @@ export class FriendshipService {
     await this.db
       .delete(friendRequest)
       .where(and(friendRequestPair(pair), eq(friendRequest.requesterId, callerId)));
+
+    return { status: 'removed' };
+  }
+
+  /**
+   * The friend list (D-04d) — the fourth and last access path onto the foreign
+   * view, and the one that makes the symmetry of D-14 visible.
+   *
+   * There is ONE row per friendship and no mirror row, so the list cannot be a
+   * plain `where`: the join condition has to find the caller in whichever of the
+   * two pair columns holds them and resolve the OTHER one as the counterpart.
+   * That single condition filters and selects at the same time, which is exactly
+   * why a second row was never needed — both parties read the same row from
+   * their own side, and unfriending therefore takes effect for both with one
+   * DELETE.
+   *
+   * Selected through `foreignProfileColumns` and shaped through
+   * `pickForeignProfile`, like every other D-04 path (VIS-02). The extra column
+   * is the pair's `createdAt`, converted explicitly by `toIsoString` because the
+   * contract transports timestamps as strings and leaving that to
+   * `JSON.stringify` would let the type lie about the wire shape.
+   *
+   * Ascending by `username` — the same order the search uses, so the sequence is
+   * reproducible and Phase 8 can assert against it. An empty result is `[]`.
+   */
+  async listFriends(callerId: string): Promise<Friend[]> {
+    const rows = await this.db
+      .select({ ...foreignProfileColumns, friendsSince: friendship.createdAt })
+      .from(visitorProfile)
+      .innerJoin(
+        friendship,
+        or(
+          and(eq(friendship.lowerId, callerId), eq(visitorProfile.accountId, friendship.higherId)),
+          and(eq(friendship.higherId, callerId), eq(visitorProfile.accountId, friendship.lowerId)),
+        ),
+      )
+      .orderBy(asc(visitorProfile.username));
+
+    return rows.map((row) => ({
+      profile: pickForeignProfile(row),
+      friendsSince: toIsoString(row.friendsSince),
+    }));
+  }
+
+  /**
+   * Both pending directions (D-04c), in one query and one round-trip.
+   *
+   * Same counterpart-resolving join as {@link listFriends}, plus `requesterId`.
+   * The partition is done in JavaScript and it is a single comparison: the row
+   * is OUTGOING when the caller sent it, INCOMING otherwise. D-12 gives this
+   * table no status column, so there is nothing else that could be consulted
+   * here — and nothing that could contradict the direction later.
+   *
+   * The partition is per-caller, not a property of the row: the very same row is
+   * outgoing for one side and incoming for the other. Both lists are always
+   * arrays; "no requests" is two empty ones, not a 404.
+   */
+  async listRequests(callerId: string): Promise<FriendRequestLists> {
+    const rows = await this.db
+      .select({
+        ...foreignProfileColumns,
+        requesterId: friendRequest.requesterId,
+        requestedAt: friendRequest.createdAt,
+      })
+      .from(visitorProfile)
+      .innerJoin(
+        friendRequest,
+        or(
+          and(
+            eq(friendRequest.lowerId, callerId),
+            eq(visitorProfile.accountId, friendRequest.higherId),
+          ),
+          and(
+            eq(friendRequest.higherId, callerId),
+            eq(visitorProfile.accountId, friendRequest.lowerId),
+          ),
+        ),
+      )
+      .orderBy(asc(visitorProfile.username));
+
+    const incoming: FriendRequestItem[] = [];
+    const outgoing: FriendRequestItem[] = [];
+    for (const row of rows) {
+      const item: FriendRequestItem = {
+        profile: pickForeignProfile(row),
+        requestedAt: toIsoString(row.requestedAt),
+      };
+      (row.requesterId === callerId ? outgoing : incoming).push(item);
+    }
+    return { incoming, outgoing };
+  }
+
+  /**
+   * End the friendship. One deleted row ends it for BOTH sides — there is no
+   * mirror row that could be forgotten (D-14), which is the whole payoff of the
+   * canonical pair.
+   *
+   * Always `removed`, even when nothing was deleted: idempotent, and the answer
+   * carries no evidence that there was a friendship to end (T-07-21). A pair the
+   * caller is not part of is not addressable at all, because the caller always
+   * supplies one of the two halves (T-07-20).
+   *
+   * Unfriending leaves NO request row behind — it ends the relationship, it does
+   * not reopen a pending one.
+   */
+  async unfriend(callerId: string, targetAccountId: string): Promise<RemoveFriendshipResult> {
+    // Answered before `canonicalPair`, like every other pair path: two equal ids
+    // would form a pair the ordering CHECK rejects.
+    if (callerId === targetAccountId) return { status: 'removed' };
+    const pair = canonicalPair(callerId, targetAccountId);
+
+    await this.db.delete(friendship).where(friendshipPair(pair));
 
     return { status: 'removed' };
   }

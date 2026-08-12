@@ -171,6 +171,52 @@ export const mutationResultSchema = z.object({ result: z.literal('removed') });
 export type MutationResult = z.infer<typeof mutationResultSchema>;
 
 /**
+ * One entry of `GET /me/friends` (D-04d, the fourth and last access path onto
+ * the foreign view). It embeds `profile` in exactly the shape the other three
+ * paths use — that sameness is what VIS-02 asserts, and it is why a client can
+ * render a friend row, a search hit and a request row with one component.
+ *
+ * Deliberately carries NO `relation`: in this list it would be the constant
+ * `friends` for every entry, i.e. a second source for a fact the list membership
+ * already states. `friendsSince` is a STRING (ISO 8601), never a `Date` — the
+ * same wire convention `meSchema.createdAt` and `festivalSchema.startDate`
+ * follow, and `toIsoString` in the API makes the conversion explicit so the
+ * TypeScript type cannot disagree with what the client receives.
+ */
+export const friendSchema = z.object({
+  profile: visitorProfileForeignSchema,
+  friendsSince: z.string(),
+});
+export type Friend = z.infer<typeof friendSchema>;
+
+/**
+ * One entry of either request list. Same embedded `profile`, same string
+ * timestamp, and again no `relation`: the direction of a pending request is
+ * already stated by WHICH list the entry sits in, and D-12 leaves no status
+ * column that could disagree with it.
+ */
+export const friendRequestItemSchema = z.object({
+  profile: visitorProfileForeignSchema,
+  requestedAt: z.string(),
+});
+export type FriendRequestItem = z.infer<typeof friendRequestItemSchema>;
+
+/**
+ * `GET /me/friend-requests` — both directions in ONE response. Phase 8 shows
+ * incoming and outgoing on the same screen, so splitting them across two route
+ * keys would only buy a second round-trip.
+ *
+ * Both keys are required arrays. A visitor with no requests gets two empty
+ * lists, never `null` and never a 404: "nothing pending" is a normal state of
+ * the resource, not the absence of it.
+ */
+export const friendRequestListsSchema = z.object({
+  incoming: z.array(friendRequestItemSchema),
+  outgoing: z.array(friendRequestItemSchema),
+});
+export type FriendRequestLists = z.infer<typeof friendRequestListsSchema>;
+
+/**
  * `GET /me` response (RESEARCH.md A4 default, locked here per Open Question 1):
  * `profile: null` discriminates "first login, needs complete-profile" from a
  * returning visitor. Chosen over a separate `status` enum because it's the

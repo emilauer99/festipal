@@ -1,4 +1,5 @@
 import { visitorProfile } from '@quiks/db';
+import type { VisitorProfileForeign } from '@quiks/contracts';
 
 /**
  * THE foreign-view projection (VIS-01/VIS-02, 07-CONTEXT.md D-01/D-02). This is
@@ -27,6 +28,37 @@ export const foreignProfileColumns = {
   pronoun: visitorProfile.pronoun,
   gender: visitorProfile.gender,
 };
+
+/**
+ * The other half of the one-projection rule: `foreignProfileColumns` is the only
+ * place the foreign view is READ, and this is the only place a result row is
+ * SHAPED into the `profile` object that goes on the wire.
+ *
+ * Both matter, and for different reasons. A query that reads too much leaks
+ * through any handler that returns the row as-is; a handler that re-lists the
+ * field names drifts from the projection the moment a field is added, without
+ * any endpoint looking broken (T-07-18). The direct paths — handle lookup and
+ * search — hand the select result straight through, so their row IS the
+ * projection. The list paths cannot: they need the pair's timestamp (and, for
+ * requests, `requesterId`) alongside the profile columns, so the profile has to
+ * be lifted back out of a wider row. That lifting happens HERE, once, and never
+ * at a call site.
+ *
+ * The parameter type is the contract type, so a field added to
+ * `visitorProfileForeignSchema` breaks THIS function's typecheck first —
+ * exactly the place where somebody then has to decide whether it is really a
+ * foreign-view field.
+ */
+export function pickForeignProfile(row: VisitorProfileForeign): VisitorProfileForeign {
+  return {
+    accountId: row.accountId,
+    username: row.username,
+    displayName: row.displayName,
+    avatar: row.avatar,
+    pronoun: row.pronoun,
+    gender: row.gender,
+  };
+}
 
 /**
  * Orders a pair of accountIds canonically (D-14): the lexicographically smaller
