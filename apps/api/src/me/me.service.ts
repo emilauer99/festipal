@@ -8,6 +8,14 @@ import { DB } from '../db/db.module';
 
 type CompleteProfileResult = { status: 'ok'; profile: VisitorProfilePublic } | { status: 'conflict' };
 
+/**
+ * The ONE `23505` that means "this username belongs to someone else" (see
+ * `visitor-profile.ts`). Every other unique violation on this insert is an
+ * accountId/primary-key collision, i.e. "this account already has a profile" —
+ * see the catch in `completeProfile` for why that distinction is load-bearing.
+ */
+const USERNAME_UNIQUE_CONSTRAINT = 'visitor_profile_username_lower_unq';
+
 @Injectable()
 export class MeService {
   constructor(@Inject(DB) private readonly db: Database) {}
@@ -39,6 +47,20 @@ export class MeService {
    * duplicate (case-insensitive) username surfaces as Postgres `23505` from
    * `visitor_profile_username_lower_unq`, caught here and mapped to a clean
    * `conflict` result rather than a thrown 500 (RESEARCH.md Pattern 3).
+   *
+   * WR-03 (06-REVIEW.md) — the two unique violations this insert can raise mean
+   * OPPOSITE things and must not share an answer. Mapping both to `conflict`
+   * made the controller reply "Username already taken" for the accountId PK too,
+   * which the mobile client reads as a username conflict and answers with a
+   * fresh suggestion. The trap that produced: `handleDone` runs under
+   * `withTimeout`, so a request that times out while the server actually
+   * COMMITTED leaves the visitor on complete-profile with a network error — and
+   * from then on EVERY retry, including one with a provably free username, hits
+   * the PK and is told the username is taken. The screen becomes inescapable
+   * until an app restart, on a false message. Answering the "profile already
+   * exists" case idempotently with the existing profile puts that retry back on
+   * the 200 path; the client then calls `refreshAuthState()` and the guard
+   * resolves to `authenticated` on its own, with no client change.
    */
   async completeProfile(accountId: string, input: CompleteProfileBody): Promise<CompleteProfileResult> {
     try {
@@ -63,6 +85,18 @@ export class MeService {
       // check `error.cause instanceof PostgresError`, never `error` itself.
       const cause = (err as { cause?: unknown }).cause;
       if (cause instanceof PostgresError && cause.code === '23505') {
+        if (cause.constraint_name === USERNAME_UNIQUE_CONSTRAINT) {
+          return { status: 'conflict' };
+        }
+        // accountId PK (`visitor_profile_pkey`): this account already has a
+        // profile. Discriminated the safe way round — only the KNOWN username
+        // index means "taken", so an unnamed or renamed constraint degrades to
+        // the existence check below rather than to a false "taken". If no
+        // profile is actually readable, the original conflict answer stands.
+        const existing = await this.getProfile(accountId);
+        if (existing) {
+          return { status: 'ok', profile: existing };
+        }
         return { status: 'conflict' };
       }
       throw err;

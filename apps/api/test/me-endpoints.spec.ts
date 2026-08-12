@@ -143,19 +143,35 @@ describe('me endpoints (complete-profile, GET /me, GET /me/festivals)', () => {
     expect(res.body).toMatchObject({ accountId, username, displayName: 'Me Endpoints Tester' });
   });
 
-  it('a second complete-profile call for the same account returns 409', async () => {
-    // D-03 makes usernames lowercase-only via this endpoint, so a true
-    // case-variant duplicate can never reach it (Zod rejects uppercase at
-    // 400 before the DB is touched) — that TOCTOU/case-insensitivity path is
-    // proven directly at the DB layer in username-race.spec.ts instead. Here,
-    // resubmitting for an account that already has a profile hits the
-    // accountId PK conflict, which maps to 409, never a 500.
+  // WR-03 (06-REVIEW.md) — REPLACES the previous assertion, which expected 409
+  // here. That expectation was wrong: it locked in the very ambiguity the review
+  // found. `23505` on this insert has two causes with opposite meanings, and the
+  // accountId PK ("this account already HAS a profile") is not a username
+  // conflict — the client turns every 409 into "@handle is already taken" and
+  // offers an alternative, so a retry after a timeout-with-server-success could
+  // never leave the screen. The repeat call is now answered idempotently with
+  // the profile that already exists, which is what puts that retry back on the
+  // 200 path. A genuine username conflict still returns 409 — proven at the DB
+  // layer in username-race.spec.ts, where two DIFFERENT accounts race one name.
+  //
+  // D-03 makes usernames lowercase-only via this endpoint, so a true
+  // case-variant duplicate can never reach it (Zod rejects uppercase at 400
+  // before the DB is touched).
+  it('a second complete-profile call for the same account returns the existing profile', async () => {
     const res = await request(app.getHttpServer())
       .post('/api/v1/me/complete-profile')
       .set('cookie', cookie)
       .send({ username: `${username}x`, displayName: 'Should Not Matter' });
 
-    expect(res.status).toBe(409);
+    expect(res.status).toBe(200);
+    // Idempotent, NOT an update: the first profile is returned unchanged, so
+    // neither the resubmitted username nor the display name leaks in. Editing a
+    // profile is PROF-02 and has its own endpoint.
+    expect(res.body).toMatchObject({
+      accountId,
+      username,
+      displayName: 'Me Endpoints Tester',
+    });
   });
 
   it('GET /me/username-availability reflects the taken username as unavailable', async () => {
