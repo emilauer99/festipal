@@ -240,6 +240,28 @@ describe('me endpoints (complete-profile, GET /me, GET /me/festivals)', () => {
     expect(me.body.profile).toBeNull();
   });
 
+  // WR-02 (06-REVIEW.md) — `birthDate` is constrained at the CONTRACT, not left
+  // to Postgres. Both halves of the old gap are asserted here: a value Postgres
+  // would REJECT used to surface as a 500 (`completeProfile` only maps `23505`),
+  // and a Postgres date dialect it would ACCEPT used to be stored verbatim —
+  // `'infinity'` round-trips through GET /me as the literal string "infinity".
+  it.each(['2020-02-30', '2026-13-01', 'infinity', 'today', '08/12/2026', ''])(
+    'rejects birthDate %j with a 4xx and stores nothing',
+    async (birthDate) => {
+      const res = await request(app.getHttpServer())
+        .post('/api/v1/me/complete-profile')
+        .set('cookie', identityCookie)
+        .send({ username: identityUsername, displayName: 'Identity Tester', birthDate });
+
+      expect(res.status).toBeGreaterThanOrEqual(400);
+      expect(res.status).toBeLessThan(500);
+
+      const me = await request(app.getHttpServer()).get('/api/v1/me').set('cookie', identityCookie);
+      expect(me.status).toBe(200);
+      expect(me.body.profile).toBeNull();
+    },
+  );
+
   // D-12 / D-12a — full round-trip. This test is the reason the migration
   // cannot be skipped: typecheck and build derive their types from the schema
   // source, only a query against the real database proves the columns exist.
