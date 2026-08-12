@@ -324,12 +324,21 @@ export class FriendshipService {
           .where(friendRequestPair(pair))
           .limit(1);
 
+        // The caller's own request is already open: idempotent, no error, no
+        // second row, no cost for repeating (D-11/D-13).
+        if (existing?.requesterId === callerId) return { status: 'requested' };
+
         if (existing) {
-          // The caller's own request is already open: idempotent, no error, no
-          // second row, no cost for repeating (D-11/D-13).
-          if (existing.requesterId === callerId) return { status: 'requested' };
-          // The COUNTER-request — D-10's auto-accept.
-          return this.sealFriendship(pair);
+          // The COUNTER-request — D-10's auto-accept. `sealFriendship` deletes
+          // CONDITIONALLY on the request still being the other side's, so the
+          // window between the read above and the transaction is closed the
+          // same way `acceptRequest`'s is (WR-01): a withdraw that commits in
+          // between leaves nothing to delete, and no friendship is invented for
+          // an intent that was provably revoked.
+          const sealed = await this.sealFriendship(pair, callerId);
+          if (sealed.status === 'friends') return sealed;
+          // Fell through because the counter-request vanished in that window —
+          // which is exactly the situation the branch below handles.
         }
 
         // The row that blocked the insert is gone again: between the violation
@@ -361,19 +370,17 @@ export class FriendshipService {
    * "No request at all" and "the only request is your own outgoing one" get the
    * SAME `not-found`: you cannot accept what you sent (T-07-13), and the answer
    * deliberately does not let a caller tell the two situations apart (T-07-15).
+   *
+   * WR-01: there is deliberately NO pre-flight read here. Reading the request
+   * row outside the transaction and then sealing unconditionally left a window
+   * in which the requester could withdraw between the two — the delete removed
+   * zero rows, the insert ran anyway, and the withdrawal was silently overruled
+   * into a friendship. The condition now travels INTO the delete, so "is there
+   * an incoming request" and "consume it" are the same atomic statement.
    */
   async acceptRequest(callerId: string, targetAccountId: string): Promise<AcceptRequestResult> {
     if (callerId === targetAccountId) return { status: 'not-found' };
-    const pair = canonicalPair(callerId, targetAccountId);
-
-    const [row] = await this.db
-      .select({ requesterId: friendRequest.requesterId })
-      .from(friendRequest)
-      .where(friendRequestPair(pair))
-      .limit(1);
-    if (!row || row.requesterId === callerId) return { status: 'not-found' };
-
-    return this.sealFriendship(pair);
+    return this.sealFriendship(canonicalPair(callerId, targetAccountId), callerId);
   }
 
   /**
@@ -386,14 +393,31 @@ export class FriendshipService {
    * `openRequest`: D-10 makes the counter-request the very same transition as an
    * explicit accept, and duplicating the write would be the second code path
    * this phase exists to avoid.
+   *
+   * The delete is the CHECK (WR-01). `ne(requesterId, callerId)` is part of the
+   * DELETE condition, never a pre-flight, so:
+   * - a request the caller sent themselves is not matched, is not consumed, and
+   *   yields `not-found` (T-07-13);
+   * - a request that no longer exists — withdrawn or declined a microsecond ago
+   *   — yields `not-found` too, and NOT a friendship;
+   * - and both are the same answer as "no request at all" (T-07-15).
+   *
+   * Zero deleted rows therefore means "there was nothing of the other side's to
+   * accept", and the friendship insert is skipped.
    */
-  private async sealFriendship(pair: Pair): Promise<{ status: 'friends' }> {
+  private async sealFriendship(pair: Pair, callerId: string): Promise<AcceptRequestResult> {
     try {
-      await this.db.transaction(async (tx) => {
-        await tx.delete(friendRequest).where(friendRequestPair(pair));
+      const sealed = await this.db.transaction(async (tx) => {
+        const consumed = await tx
+          .delete(friendRequest)
+          .where(and(friendRequestPair(pair), ne(friendRequest.requesterId, callerId)))
+          .returning({ requesterId: friendRequest.requesterId });
+        if (consumed.length === 0) return false;
         // An existing friendship makes accepting idempotent instead of an error.
         await tx.insert(friendship).values(pair).onConflictDoNothing();
+        return true;
       });
+      if (!sealed) return { status: 'not-found' };
     } catch (err) {
       const cause = postgresErrorOf(err);
       // Truly parallel case: the other flow already wrote the friendship. That

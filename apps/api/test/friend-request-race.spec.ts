@@ -67,7 +67,13 @@ const J: Actor = {
   displayName: 'Race J',
 };
 
-const withProfile = [A, B, C, D, E, F, G, H, I, J];
+/** WR-01: K/L own the withdraw-then-accept sequence, M/N the same two racing. */
+const K = actor('k');
+const L = actor('l');
+const M = actor('m');
+const N = actor('n');
+
+const withProfile = [A, B, C, D, E, F, G, H, I, J, K, L, M, N];
 const allAccounts = [...withProfile, NO_PROFILE];
 const allAccountIds = allAccounts.map((a) => a.accountId);
 
@@ -321,5 +327,39 @@ describe('friend-request lifecycle & reverse-direction race (D-10/D-11/D-12/D-13
     const removed = await service.unfriend(J.accountId, I.accountId);
     expect(removed.status).toBe('removed');
     expect(await friendshipRows(I.accountId, J.accountId)).toHaveLength(0);
+  });
+
+  it('14. a withdrawn request cannot be accepted — no friendship is invented (WR-01)', async () => {
+    expect((await service.sendRequest(K.accountId, L.accountId)).status).toBe('requested');
+    expect((await service.withdrawRequest(K.accountId, L.accountId)).status).toBe('removed');
+
+    // `acceptRequest` no longer reads the row outside the write: the
+    // `requesterId <> callerId` condition sits IN the delete, so "is there an
+    // incoming request" and "consume it" are one atomic statement. A seal that
+    // deletes unconditionally would answer `friends` here and leave a
+    // friendship behind that nobody has an open request for.
+    const accepted = await service.acceptRequest(L.accountId, K.accountId);
+    expect(accepted.status).toBe('not-found');
+    expect(await friendshipRows(K.accountId, L.accountId)).toHaveLength(0);
+    expect(await requestRows(K.accountId, L.accountId)).toHaveLength(0);
+  });
+
+  it('15. withdraw and accept racing leave a consistent state, whichever wins (WR-01)', async () => {
+    expect((await service.sendRequest(M.accountId, N.accountId)).status).toBe('requested');
+
+    // Genuinely concurrent on separate pooled connections. WHICH one wins is not
+    // deterministic and is deliberately not pinned; what is pinned is that the
+    // two outcomes cannot contradict each other — a friendship exists if and
+    // only if the accept was the flow that consumed the request row.
+    const [, accepted] = await Promise.all([
+      service.withdrawRequest(M.accountId, N.accountId),
+      service.acceptRequest(N.accountId, M.accountId),
+    ]);
+
+    expect(['friends', 'not-found']).toContain(accepted.status);
+    expect(await requestRows(M.accountId, N.accountId)).toHaveLength(0);
+    expect(await friendshipRows(M.accountId, N.accountId)).toHaveLength(
+      accepted.status === 'friends' ? 1 : 0,
+    );
   });
 });
