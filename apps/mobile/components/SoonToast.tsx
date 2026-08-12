@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { AccessibilityInfo, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { tokens } from '@quiks/ui';
 
@@ -58,6 +58,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     // older timer would hide the NEWER message early.
     if (timerRef.current !== null) clearTimeout(timerRef.current);
     setMessage(next);
+    // WR-04 (06-REVIEW.md) — the pill's own `accessibilityLiveRegion` (see
+    // SoonToast below) is an ANDROID-ONLY prop, which left this toast — the
+    // single app-wide feedback for every dead row (D-13) — completely silent
+    // under iOS VoiceOver: half the device base got no response to the tap at
+    // all, the exact dead interaction T-06-18 exists to prevent. Announcing
+    // imperatively covers both platforms. On Android it is redundant with the
+    // live region rather than harmful, so the live region STAYS — it is the
+    // platform-native path there and needs no behaviour change.
+    //
+    // NOT verifiable off-device: this needs VoiceOver on a real iOS build.
+    AccessibilityInfo.announceForAccessibility(next);
     timerRef.current = setTimeout(() => {
       timerRef.current = null;
       setMessage(null);
