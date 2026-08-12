@@ -38,7 +38,13 @@ export const friendRequest = pgTable(
   },
   (t) => [
     primaryKey({ columns: [t.lowerId, t.higherId], name: 'friend_request_pair_pk' }),
-    check('friend_request_pair_order_chk', sql`${t.lowerId} < ${t.higherId}`),
+    // CR-01: `COLLATE "C"` is load-bearing — see the long note on the same
+    // constraint in `friendship.ts`. Byte order is what `canonicalPair`
+    // produces; a locale collation is not.
+    check(
+      'friend_request_pair_order_chk',
+      sql`${t.lowerId} collate "C" < ${t.higherId} collate "C"`,
+    ),
     // "The requester is one of the two" — encoded in the schema rather than in
     // the service, so no code path can create a request on behalf of a third party.
     check(

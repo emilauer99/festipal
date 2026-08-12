@@ -41,7 +41,19 @@ export const friendship = pgTable(
     // D-14: the canonical ordering lives in the SCHEMA, not in app logic — a
     // service that forgets to sort the pair gets SQLSTATE 23514, not a silent
     // mirror row.
-    check('friendship_pair_order_chk', sql`${t.lowerId} < ${t.higherId}`),
+    //
+    // CR-01 (07-REVIEW.md): the comparison is pinned to `COLLATE "C"` and must
+    // stay pinned. `canonicalPair` sorts in JavaScript, i.e. by UTF-16 code
+    // units, where `'B' < 'a'` is TRUE. Without the pin this CHECK compares
+    // under the DATABASE's default collation — `en_US.utf8` on the local dev
+    // Postgres, where `'B' < 'a'` is FALSE — so the two orders contradict each
+    // other for any pair of mixed-case better-auth ids that differ first at an
+    // uppercase-vs-later-lowercase position, and a perfectly ordered pair is
+    // rejected with 23514 (a 500 on the send-request path). `C` is byte order,
+    // which for the ASCII id charset is exactly JavaScript's order. An
+    // invariant whose validity depends on the environment's `datcollate` is
+    // not an invariant.
+    check('friendship_pair_order_chk', sql`${t.lowerId} collate "C" < ${t.higherId} collate "C"`),
   ],
 );
 
