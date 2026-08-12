@@ -2,7 +2,7 @@
   "name": "@quiks/mobile",
   "version": "0.0.0",
   "private": true,
-  "main": "expo-router/entry",
+  "main": "index.js",
   "scripts": {
     "dev": "expo start",
     "android": "expo run:android",
@@ -20,6 +20,7 @@
     "@expo-google-fonts/jetbrains-mono": "^0.4.1",
     "@expo-google-fonts/outfit": "^0.4.3",
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",
+    "@formatjs/intl-pluralrules": "^6.3.13",
     "@lingui/core": "^6.6.0",
     "@lingui/react": "^6.6.0",
     "@quiks/contracts": "workspace:*",
