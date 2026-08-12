@@ -2,11 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
+current_phase: 7
+current_phase_name: Profile Visibility & Friendship Backend
 status: planning
-last_updated: "2026-08-12T13:28:35.659Z"
+stopped_at: Phase 7 context gathered
+last_updated: "2026-08-12T14:12:49.427Z"
 last_activity: 2026-08-12
+last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
 progress:
-  total_phases: 0
+  total_phases: 6
   completed_phases: 0
   total_plans: 0
   completed_plans: 0
@@ -60,9 +64,11 @@ Milestone bindet:
   Variante gewaehlt: Lobby-Chat IST drin (WS+Redis), Freunde-Finden ueber Handle **und**
   Username-Suche **und** QR, und die **volle** 5-Tab-Festival-Navigation statt nur eines
   Aktivitaeten-Screens. Die Groessenbedenken wurden genannt und verworfen — nicht neu aufmachen.
+
 - **Blockieren/Melden (FRND-09) ist bewusst NICHT in v1.1.** v1.1 ist die erste Version, in der
   Fremde dich anfragen und per Username finden koennen — ohne jede Moeglichkeit, das zu
   unterbinden. Vor der ersten echten Nutzerkohorte einplanen.
+
 - **Research bleibt aus**, ausser fuer **Phase 12** (WS-Gateway + Redis) — dort einschalten.
 - **Kollisionszone mit `admin`:** Admin baut den globalen Activity-Tag-Katalog und die
   Tag-Aktivierung (ADR-018) gegen dieselben Tabellen wie Phase 10. Schema einmal abstimmen, aus
@@ -131,9 +137,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12
-Stopped at: Milestone v1.0 geschlossen und archiviert.
-Resume file: None
+Last session: 2026-08-12T14:12:49.418Z
+Stopped at: Phase 7 context gathered
+Resume file: .planning/workstreams/mobile/phases/07-profile-visibility-friendship-backend/07-CONTEXT.md
 
 ## Operator Next Steps
 
