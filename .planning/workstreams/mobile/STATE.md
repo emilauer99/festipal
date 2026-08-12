@@ -5,8 +5,8 @@ milestone_name: Activities & Friends
 current_phase: 8
 current_phase_name: Friends
 status: planning
-stopped_at: Phase 07 abgeschlossen (UAT 3/3, Verifikation passed) — Phase 8 bereit zur Planung
-last_updated: "2026-08-12T19:10:00.000Z"
+stopped_at: Phase 8 context gathered
+last_updated: "2026-08-12T20:32:40.246Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 07 verifiziert und abgeschlossen (VIS-01/VIS-02 validiert, T-06-06 getilgt)
 progress:
@@ -167,12 +167,15 @@ Milestone bindet:
   kein Write), und `phase.complete` meldet entsprechend `requirements_updated: false`. Beim
   Phase-7-Abschluss wurden Checkbox und Traceability-Zeile **von Hand** gesetzt. Bei jedem weiteren
   Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
+
 - **Testkommando:** `pnpm --filter @quiks/api test -- <name>` filtert NICHT (fuehrt die Gesamtsuite
   aus), steht aber unveraendert in den verify-Bloecken von 07-03 bis 07-05. Korrekt ist
   `cd apps/api && pnpm exec vitest run test/<spec>.spec.ts`.
+
 - **Akzeptanzkriterien nicht als rohe grep-Zaehlung formulieren** — vier Faelle in Folge in Phase 7
   (07-02 `inArray`, 07-03 `db.transaction`, 07-04 `from(visitorProfile)`, 07-05 Aufrufstellen), in
   denen die Zaehlung dem eigenen Aktionstext widersprach. Invariante formulieren, nicht zaehlen.
+
 - **`visitor_profile.socialsVisibility`** (Enum `everyone|friends`, Default `friends`) ist das einzige
   Sichtbarkeits-Vokabular im Code, das keine echte Kontrolle ist: Reserved Field aus D-03, kein
   Endpunkt liest oder schreibt es, in keiner der beiden Projektionen. Im Phase-7-UAT dem User
@@ -203,9 +206,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T19:10:00.000Z
-Stopped at: Phase 07 abgeschlossen (UAT 3/3, Verifikation `passed`, Security 0 offene Threats) — bereit fuer Phase 8
-Resume file: None
+Last session: 2026-08-12T20:32:40.230Z
+Stopped at: Phase 8 context gathered
+Resume file: .planning/workstreams/mobile/phases/08-friends/08-CONTEXT.md
 
 ## Operator Next Steps
 
