@@ -74,9 +74,12 @@ export function resolveThemeMode(scheme: DeviceColorScheme): ThemeMode {
  *
  * `'system'` means "follow the device", i.e. defer to {@link resolveThemeMode}
  * unchanged. `'light'` and `'dark'` are EXPLICIT user choices that outrank the
- * device. `'light'` has no writer yet — the Mehr-screen switch only ever writes
- * `'dark'` (on) or `'system'` (off) this phase — but it exists in the type so a
- * later "force light on a dark device" control needs no storage migration
+ * device. The Mehr-screen switch writes `'dark'` (on) or `'light'` (off) —
+ * WR-01 (06-REVIEW.md): writing `'system'` on off made the switch inert on a
+ * system-dark device, because `'system'` resolves right back to `'dark'` there.
+ * `'system'` therefore survives only as the DEFAULT (nothing stored yet, or an
+ * unreadable/tampered value — see `parseThemeOverride`); no control writes it
+ * back until an explicit three-state Light/Dark/System control exists
  * (06-UI-SPEC.md § Theme Override Contract).
  */
 export type ThemeOverride = 'system' | 'light' | 'dark';

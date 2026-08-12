@@ -76,15 +76,26 @@ export default function MehrScreen() {
 
   /**
    * D-08a — the switch REFLECTS the effective mode (whatever produced it: the
-   * stored preference or the device) but always WRITES an explicit preference:
-   * on pins night mode, off hands control back to the device. The third stored
-   * state — pinning day mode against a night device — has no writer this phase;
-   * it exists in the type for a later control.
+   * stored preference or the device) and always WRITES the explicit preference
+   * that MATCHES what it shows: on pins night mode, off pins day mode.
+   *
+   * WR-01 (06-REVIEW.md) — off used to write `'system'`, which is the one
+   * combination that produces a dead control: on a device whose system scheme
+   * is dark, `'system'` re-resolves to `'dark'`, so `isDarkMode` stays true and
+   * the switch snaps straight back to ON. Dark mode was simply not switchable
+   * off there. Writing `'light'` is what makes the reflected state and the
+   * written state agree in BOTH directions — and it is why `'light'`, described
+   * in D-08a as "no writer this phase", now has one. The consequence is
+   * deliberate: any interaction with this switch leaves the device-following
+   * state for good. Handing control back to the device needs the explicit
+   * third option (a segmented Light/Dark/System control), which is a later
+   * change — a switch cannot express three states, and of the two states it
+   * CAN express, this is the honest pair.
    */
   const isDarkMode = mode === 'dark';
 
   function handleDarkModeChange(next: boolean) {
-    setThemeOverride(next ? 'dark' : 'system');
+    setThemeOverride(next ? 'dark' : 'light');
   }
 
   // Non-re-entrancy guard (UI-SPEC logout-robustness backstop) — a double-tap
