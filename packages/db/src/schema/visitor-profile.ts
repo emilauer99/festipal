@@ -80,8 +80,9 @@ export const visitorProfile = pgTable(
  * enum-detection heuristic at the type level (see `drizzle-zod`'s
  * `GetZodType`/`GetEnumValuesFromColumn`). This is purely a static-type bug —
  * the RUNTIME schema (and therefore all request/response validation) was
- * always correct — but it made the exported `VisitorProfilePublic`/
- * `CompleteProfileBody` types in `@quiks/contracts` unusable for anything
+ * always correct — but it made the exported `VisitorProfileForeign`/
+ * `VisitorProfileOwner`/`CompleteProfileBody` types (which pick from the
+ * schemas below) in `@quiks/contracts` unusable for anything
  * beyond return-position assignment. `createInsertSchema`'s own `refine`
  * parameter re-triggers the same broken inference internally (it recomputes
  * the allowed-refinement type from the same `GetZodType`), so the fix has to

@@ -8,7 +8,8 @@ import {
   meSchema,
   tagSchema,
   usernameAvailabilitySchema,
-  visitorProfilePublicSchema,
+  visitorProfileOwnerSchema,
+  visitorSummarySchema,
 } from './schemas';
 
 const c = initContract();
@@ -52,8 +53,16 @@ export const contract = c.router(
       method: 'POST',
       path: '/me/complete-profile',
       body: completeProfileBodySchema,
-      responses: { 200: visitorProfilePublicSchema, 409: errorSchema },
+      responses: { 200: visitorProfileOwnerSchema, 409: errorSchema },
       summary: 'First-login profile completion (unique username + displayName, optional avatar)',
+    },
+    lookupVisitor: {
+      method: 'GET',
+      path: '/visitors/:username',
+      pathParams: z.object({ username: z.string() }),
+      responses: { 200: visitorSummarySchema, 404: errorSchema },
+      summary:
+        'Resolve a quiks handle (@username, D-16) to the FOREIGN profile view plus the caller’s relation — the caller’s scope comes from the session only, never from the path; 404 for an unclaimed handle',
     },
     usernameAvailability: {
       method: 'GET',
