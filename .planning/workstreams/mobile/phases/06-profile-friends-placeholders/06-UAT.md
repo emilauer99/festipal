@@ -1,9 +1,9 @@
 ---
-status: diagnosed
+status: complete
 phase: 06-profile-friends-placeholders
 source: [06-VERIFICATION.md]
 started: 2026-08-12T10:25:00Z
-updated: 2026-08-12T11:20:00Z
+updated: 2026-08-12T14:35:00Z
 ---
 
 ## Current Test
@@ -30,16 +30,15 @@ result: pass
 
 ### 5. Prohibition-Review (judgment-tier)
 expected: Vier Urteile menschlich bestätigen — (a) die SafeNow-Karte liest sich nicht als Partnerschaft, der Distanzierungssatz steht in DE und EN vollständig; (b) kein Friends-Block suggeriert eine funktionierende Fläche, keine erfundenen Personen, keine Scham- oder Dringlichkeits-Copy; (c) die Profil-Ausblick-Blöcke zeigen keine erfundenen Messwerte; (d) nichts suggeriert, der gerätelokale Avatar sei kontogesichert. Der Verifier hat alle vier gegen die tatsächliche Copy im Code und in beiden Katalogen geprüft und als eingehalten beurteilt — dieses Urteil ist ausdrücklich NICHT autoritativ.
-result: issue
-reported: "a) pass b) pass c) wenn ich auf Profile klicke kommt ein App Error:  ERROR  [TypeError: undefined cannot be used as a constructor.]"
-severity: blocker
-note: "(a) und (b) vom Nutzer bestätigt. (c) und (d) konnten nicht beurteilt werden — die Profilseite crasht beim Öffnen."
+result: pass
+reported: "alles pass"
+note: "(a) und (b) im ersten Durchlauf bestätigt. (c) und (d) scheiterten damals am Profil-Crash (G-06-5), der von Plan 06-10 geschlossen wurde (Intl.PluralRules-Polyfill, gerätverifiziert); im Wiederholungslauf am 2026-08-12 hat der Nutzer alle vier Urteile bestätigt."
 
 ## Summary
 
 total: 5
-passed: 4
-issues: 1
+passed: 5
+issues: 0
 pending: 0
 skipped: 0
 blocked: 0
@@ -48,7 +47,9 @@ blocked: 0
 
 - gap_id: G-06-5
   truth: "Die Profilseite öffnet sich; die Profil-Ausblick-Blöcke zeigen keine erfundenen Messwerte und nichts suggeriert, der gerätelokale Avatar sei kontogesichert."
-  status: failed
+  status: resolved
+  resolved_by: 06-10-PLAN.md
+  resolved_at: 2026-08-12
   reason: "User reported: a) pass b) pass c) wenn ich auf Profile klicke kommt ein App Error:  ERROR  [TypeError: undefined cannot be used as a constructor.]"
   severity: blocker
   test: 5
