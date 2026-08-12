@@ -55,20 +55,37 @@ friendship + friend-request schema, the request lifecycle endpoints, and usernam
 sequential because `schemas.ts`, `router.ts` and `friendship.service.ts` are shared by every slice)
 
 Plans:
+**Wave 1**
+
 - [ ] 07-01-PLAN.md — Tracer: friendship/friend_request schema + migration 0005 + owner/foreign projection split + handle lookup end-to-end (discharges T-06-06)
+
+**Wave 2** *(blocked on Wave 1 completion)*
+
 - [ ] 07-02-PLAN.md — Username prefix search with per-hit relation status (D-06/D-07/D-08/D-09)
+
+**Wave 3** *(blocked on Wave 2 completion)*
+
 - [ ] 07-03-PLAN.md — Request lifecycle (send/accept/decline/withdraw) + auto-accept resolution of the reverse-direction race
+
+**Wave 4** *(blocked on Wave 3 completion)*
+
 - [ ] 07-04-PLAN.md — Friends list, incoming/outgoing request lists, unfriend
+
+**Wave 5** *(blocked on Wave 4 completion)*
+
 - [ ] 07-05-PLAN.md — VIS-01 field-absence proof across all four foreign paths, VIS-02 single-code-path invariant, festival independence
 
 **Success Criteria** (what must be TRUE):
 
 1. A request for a *foreign* profile returns the friend-view projection only — no `birthDate`, no
    e-mail — proven by a test that asserts field *absence*, not merely presence of what is allowed.
+
 2. Username search and request previews resolve through that same projection function; a test proves
    there is no second code path that emits owner-only fields.
+
 3. Friendship is user-global: it carries no `festivalId`, and a friendship established while in one
    festival is unchanged after switching to another.
+
 4. The request lifecycle is complete and idempotent — send, accept, decline, withdraw, unfriend —
    with a mutual-friendship invariant that cannot express a one-sided friendship.
 
@@ -90,11 +107,14 @@ manage requests, and see a real friends list
 
 1. A visitor can send a friend request by entering a quiks-code/handle, by username search, and by
    scanning another visitor's QR code; their own handle renders as a scannable QR.
+
 2. Incoming and outgoing requests are visible and can be accepted, declined, or withdrawn, with the
    list reflecting the result without a manual refresh.
+
 3. The friends list shows real friends, and ending a friendship removes it from both sides.
 4. Every empty state still names its precondition rather than the absence (the D-11 rule from Phase 6
    survives contact with real data).
+
 5. All new strings are in both Lingui catalogs; `username`/`displayName` are never translated.
 
 **Notes**: The camera permission for QR scanning is the one native addition — it needs a rationale
@@ -117,10 +137,13 @@ finally named `start` everywhere
 
 1. Entering a festival lands on a five-tab bar — Dashboard · Aktivitäten · Friends · Timetable ·
    Lageplan — with every tab a real registered route, none decorative.
+
 2. Timetable and Lageplan each state their precondition in the D-11/D-13 pattern; no dead control
    fails silently, and the single shared `SoonToast` remains the only coming-soon mechanism.
+
 3. The festival Friends tab shows exactly the visitor's own friends who saved this festival — an
    intersection, never a presence or location signal (ADR-014).
+
 4. The global first tab is `start` in the route, the msgid and the UI, and existing deep links
    still resolve.
 
@@ -146,10 +169,13 @@ attendee join/leave endpoints; the optional geo point.
 
 1. Every new festival-scoped table carries `festivalId` and every query filters on it; a cross-tenant
    test proves festival B's activities never appear in festival A's context (SEC-03, inheriting SEC-02).
+
 2. Capacity is enforced at the database level, not only in the service — concurrent joins on the last
    remaining seat cannot both succeed.
+
 3. The effective tag list resolves as enabled-global ∪ festival-own, and a tag disabled by a festival
    disappears from that festival's list without affecting any other festival.
+
 4. The creator is an attendee from creation, and the invariant cannot be violated by leaving.
 
 **Notes**: **`packages/db` and `packages/contracts` collision risk is real here** — `admin` builds
@@ -171,12 +197,15 @@ open an activity's location as a route in an external maps app
 
 1. A visitor can create an activity with either a tag or a title — the auto-title rule holds (tag →
    `tag.label` + optional subtitle; no tag → title required) — plus location, start time and capacity.
+
 2. The festival's activities are discoverable, and joining or leaving updates the seat count
    immediately and survives an app restart.
+
 3. A full activity cannot be joined, and the UI says so rather than failing on submit.
 4. Cloning opens a prefilled create form where only time and place need changing.
 5. An activity with a geo point offers "open route", which hands off to an external maps app; one
    without a geo point simply shows its free-text location.
+
 6. All strings are in both catalogs; user-entered activity titles and descriptions are never
    translated (ADR-012/020).
 
@@ -197,6 +226,7 @@ when they leave
 1. Joining an activity grants access to exactly that activity's group chat; there is no 1:1 DM path
    anywhere in the API surface (ADR-020) — proven by an endpoint-inventory assertion, not by
    inspection.
+
 2. A message sent by one attendee appears live for another attendee without a manual refresh.
 3. After a connection drop and reconnect, the recent history loads and no message is silently lost.
 4. Leaving an activity revokes chat access — both the socket subscription and the history read.
@@ -215,6 +245,7 @@ Not scheduled in v1.1, tracked so it is not rediscovered:
 
 - **FRND-09 block/report** — v1.1 ships stranger-initiated contact without a way to stop it.
   Schedule before the first real user cohort.
+
 - **NOTF-01 push** — friend requests and chat messages are invisible while the app is closed.
 - **`/gsd-ui-review 06`** — never run; the 6-pillar audit of the Phase-6 screens.
 - **iOS device verification** — deferred since Phase 3 (no Mac/Xcode).
