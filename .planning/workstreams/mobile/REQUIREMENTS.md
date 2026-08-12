@@ -80,7 +80,36 @@ Explicitly excluded from v1.1.
 
 ## Traceability
 
-Filled in by the roadmapper once phases are cut.
+Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
+| VIS-01 | Phase 7 | Planned |
+| VIS-02 | Phase 7 | Planned |
+| FRND-02 | Phase 8 | Planned |
+| FRND-03 | Phase 8 | Planned |
+| FRND-04 | Phase 8 | Planned |
+| FRND-05 | Phase 8 | Planned |
+| FRND-06 | Phase 8 | Planned |
+| FRND-08 | Phase 8 | Planned |
+| FRND-07 | Phase 9 | Planned |
+| NAV-01 | Phase 9 | Planned |
+| NAV-02 | Phase 9 | Planned |
+| NAV-03 | Phase 9 | Planned |
+| SEC-03 | Phase 10 | Planned |
+| ACT-01 | Phase 11 | Planned |
+| ACT-02 | Phase 11 | Planned |
+| ACT-03 | Phase 11 | Planned |
+| ACT-04 | Phase 11 | Planned |
+| ACT-05 | Phase 11 | Planned |
+| ACT-06 | Phase 11 | Planned |
+| CHAT-01 | Phase 12 | Planned |
+| CHAT-02 | Phase 12 | Planned |
+| CHAT-03 | Phase 12 | Planned |
+
+**Note on backend phases.** Phases 7 and 10 carry few requirement IDs (VIS-01/02 and SEC-03) but
+substantial work — the friendship model, request lifecycle and username search in Phase 7, and the
+whole activity/tag/attendee model in Phase 10. Requirements here are written user-centrically
+("A visitor can…"), so they are only *observable* once the UI phase lands. The backend phases'
+"Also lands" blocks in ROADMAP.md record that substrate explicitly so a later verification pass does
+not mistake a thin requirement list for a thin phase.
