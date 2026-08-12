@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 7
-current_phase_name: Profile Visibility & Friendship Backend
-status: planning
-stopped_at: Phase 7 context gathered
-last_updated: "2026-08-12T15:03:18.348Z"
+current_phase: 07
+current_phase_name: profile-visibility-friendship-backend
+status: executing
+stopped_at: Completed 07-01-PLAN.md
+last_updated: "2026-08-12T15:27:07.412Z"
 last_activity: 2026-08-12
 last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 0
+  completed_plans: 1
   percent: 0
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-08-12 — v1.0 milestone close)
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Milestone **v1.1 Activities & Friends** ist aufgesetzt — 20 Requirements,
+**Current focus:** Phase 07 — profile-visibility-friendship-backend
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Naechster Schritt: Phase 7.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 7 — Profile Visibility & Friendship Backend (noch nicht begonnen)
-Plan: —
-Status: Roadmap steht, bereit fuer /gsd-discuss-phase 7 --ws mobile
-Last activity: 2026-08-12 — Milestone v1.1 aufgesetzt (Requirements + Roadmap)
+Phase: 07 (profile-visibility-friendship-backend) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-12 — Phase 07 execution started
 
 ## Shipped
 
@@ -83,16 +83,34 @@ Milestone bindet:
 - **Eintritt ist gate-less (ADR-014).** Isolation ist Daten-Scoping, kein 403 — bei jeder neuen
   tenant-scoped Tabelle neu zu beweisen, nicht als Zugriffsgate zu bauen.
 
+- **Die beiden Einbahntüren der Phase 7 sind zu (Phase 07-01, User: `confirm-both`).** `gender` ist
+  Teil der veröffentlichten Fremd-View — Entfernen wäre ab jetzt ein Breaking Change am Contract
+  plus Client-Release, und IDN-02 ist die Stelle, an der eine Policy dafür greift. `friend_request`
+  bekommt keine `status`-Spalte: Annehmen/Ablehnen/Zurückziehen löschen die Zeile, es gibt keine
+  Historie und höchstens eine Request-Zeile pro Personenpaar.
+
+- **Die Fremd-View ist die Basis, die Owner-View ihre einzige benannte Erweiterung** (Phase 07-01).
+  Beide sind aus `visitorProfileSelectSchema` gepickt. Folge: eine neue `visitor_profile`-Spalte
+  erscheint per Konstruktion in KEINER der beiden Sichten, bis jemand sie explizit pickt.
+
+- **T-06-06 ist getilgt** (Phase 07-01). `visitorProfilePublicSchema` existiert nicht mehr — der Name
+  suggerierte Fremd-Sicherheit und trug trotzdem das Geburtsdatum. Beide Vorbehaltskommentare
+  (`packages/contracts/src/schemas.ts`, `packages/db/src/schema/visitor-profile.ts`) sind auf den
+  erledigten Stand gebracht.
+
 ### Blockers/Concerns
 
-- **T-06-06 (BLOCKIEREND fuer das naechste Milestone):** `visitorProfilePublicSchema` traegt
-  `birthDate` und `gender` **ohne jede Sichtbarkeits-Policy**. Vor dem ERSTEN Endpunkt, der ein
-  FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in Eigentuemer-Sicht und
-  Freundes-Sicht getrennt werden — sonst leakt der erste Freundes-Endpunkt Geburtsdaten. Gehoert an
-  den *Anfang* des Milestones, als eigener Backend-Slice.
+- ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
+  Projektion ist in `visitorProfileForeignSchema` (Basis, sechs Felder) und
+  `visitorProfileOwnerSchema` (Basis + `birthDate`) getrennt, der erste Fremdprofil-Endpunkt
+  (`GET /api/v1/visitors/:username`) liefert nachweislich nur die Fremd-View, und
+  `apps/api/test/foreign-projection.spec.ts` belegt die Abwesenheit von Geburtsdatum und E-Mail am
+  serialisierten Body.
 
 - **IDN-02 haengt an Birgits Konzept** (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter,
-  Signup-Disclaimer). Betrifft dieselbe Flaeche wie T-06-06.
+  Signup-Disclaimer). Betrifft dieselbe Flaeche wie das erledigte T-06-06 — der Split loest die
+  *Projektions*frage, nicht die *Policy*frage. Mit D-02 ist `gender` bewusst vorab veroeffentlicht;
+  die Fremd-View ist die Stelle, an der IDN-02 spaeter greift.
 
 - **SEC-02 ist eine vererbte Pflicht:** festival-scoped Reads sind `festivalId`-isoliert
   (Baseline: `apps/api/test/festival-isolation.spec.ts`). Der Cross-Tenant-Test ist bei **jeder**
@@ -112,6 +130,8 @@ Milestone bindet:
   inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — faengt weder einen
   auskommentierten noch einen zusaetzlich eingeschleusten Import. Der Fix selbst ist
   geraeteverifiziert und davon unberuehrt. Haerten, wenn der Entry das naechste Mal angefasst wird.
+
+- 07-01: gsd-tools requirements.mark-complete findet VIS-01/VIS-02 in .planning/workstreams/mobile/REQUIREMENTS.md nicht (not_found, kein Write) — Workstream-Pfadaufloesung oder Abschnittsheading pruefen, bevor Phase 7 abgeschlossen wird
 
 ### Pending Todos
 
@@ -137,11 +157,17 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T14:12:49.418Z
-Stopped at: Phase 7 context gathered
-Resume file: .planning/workstreams/mobile/phases/07-profile-visibility-friendship-backend/07-CONTEXT.md
+Last session: 2026-08-12T15:25:26.094Z
+Stopped at: Completed 07-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
 - `/gsd-discuss-phase 7 --ws mobile` — Kontext fuer die Sichtbarkeits-/Freundschafts-Backendphase
 - Alternativ direkt: `/gsd-plan-phase 7 --ws mobile`
+
+## Performance Metrics
+
+| Plan | Duration | Tasks | Files |
+|------|----------|-------|-------|
+| Phase 07 P01 | 25min | 2 tasks | 14 files |

@@ -51,13 +51,13 @@ user-global model with a request lifecycle — before any screen can leak anythi
 **Requirements**: VIS-01, VIS-02
 **Also lands** (substrate consumed by Phases 8 and 9, not separately requirement-mapped): the
 friendship + friend-request schema, the request lifecycle endpoints, and username search.
-**Plans**: 5 plans (5 waves — the layer chain contract → service → controller → spec is genuinely
+**Plans**: 1/5 plans executed (5 waves — the layer chain contract → service → controller → spec is genuinely
 sequential because `schemas.ts`, `router.ts` and `friendship.service.ts` are shared by every slice)
 
 Plans:
 **Wave 1**
 
-- [ ] 07-01-PLAN.md — Tracer: friendship/friend_request schema + migration 0005 + owner/foreign projection split + handle lookup end-to-end (discharges T-06-06)
+- [x] 07-01-PLAN.md — Tracer: friendship/friend_request schema + migration 0005 + owner/foreign projection split + handle lookup end-to-end (discharges T-06-06)
 
 **Wave 2** *(blocked on Wave 1 completion)*
 
