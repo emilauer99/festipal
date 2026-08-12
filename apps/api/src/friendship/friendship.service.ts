@@ -54,6 +54,24 @@ const FRIEND_REQUEST_PAIR_PK = 'friend_request_pair_pk';
 const FRIENDSHIP_PAIR_PK = 'friendship_pair_pk';
 
 /**
+ * The three foreign keys a `friend_request` insert can trip. They also mean
+ * opposite things, and for the same reason as the two unique constraints above
+ * they must not share an answer (WR-02):
+ *
+ * - the FK of the column holding the CALLER, or `requester_id`, means the
+ *   caller has no `visitor_profile` yet — an unfinished first login, i.e.
+ *   `profile-required` (409);
+ * - the FK of the column holding the TARGET means the target's profile was
+ *   deleted between the existence check and the insert — `not-found` (404).
+ *
+ * WHICH column holds the caller is not fixed: it depends on the canonical
+ * ordering, so it is resolved per call from the pair.
+ */
+const FRIEND_REQUEST_LOWER_FK = 'friend_request_lower_id_visitor_profile_account_id_fk';
+const FRIEND_REQUEST_HIGHER_FK = 'friend_request_higher_id_visitor_profile_account_id_fk';
+const FRIEND_REQUEST_REQUESTER_FK = 'friend_request_requester_id_visitor_profile_account_id_fk';
+
+/**
  * Finds the driver error inside whatever drizzle threw. `me.service.ts` reads
  * `err.cause` directly, which is right for a bare statement — but a statement
  * that fails INSIDE a transaction travels back out through postgres.js's
@@ -312,10 +330,7 @@ export class FriendshipService {
     } catch (err) {
       const cause = postgresErrorOf(err);
 
-      // The CALLER has no `visitor_profile` row yet — both pair columns and
-      // `requesterId` FK onto it, so an unfinished first login trips 23503 here.
-      // Same answer `FestivalService.save` gives for `my_festival`.
-      if (cause?.code === '23503') return { status: 'profile-required' };
+      if (cause?.code === '23503') return this.foreignKeyOutcome(callerId, pair, cause);
 
       if (cause?.code === '23505' && cause.constraint_name === FRIEND_REQUEST_PAIR_PK) {
         const [existing] = await this.db
@@ -362,6 +377,45 @@ export class FriendshipService {
     }
 
     return { status: 'requested' };
+  }
+
+  /**
+   * Which side of the pair the failed foreign key belongs to (WR-02).
+   *
+   * Three FKs can fire on the `friend_request` insert and they carry opposite
+   * meanings, so collapsing them onto one answer told a caller who demonstrably
+   * HAS a profile to "complete your visitor profile" (409) when it was in fact
+   * the target's profile that had disappeared (404). `me.service.ts`
+   * discriminates its two 23505s by `constraint_name` for exactly this reason.
+   *
+   * If the driver hands over no usable constraint name, the question is asked
+   * directly instead of guessed — one indexed lookup, on an error path only.
+   */
+  private async foreignKeyOutcome(
+    callerId: string,
+    pair: Pair,
+    cause: PostgresError,
+  ): Promise<SendRequestResult> {
+    const callerIsLower = pair.lowerId === callerId;
+    const callerFk = callerIsLower ? FRIEND_REQUEST_LOWER_FK : FRIEND_REQUEST_HIGHER_FK;
+    const targetFk = callerIsLower ? FRIEND_REQUEST_HIGHER_FK : FRIEND_REQUEST_LOWER_FK;
+
+    if (cause.constraint_name === targetFk) return { status: 'not-found' };
+    if (
+      cause.constraint_name === callerFk ||
+      cause.constraint_name === FRIEND_REQUEST_REQUESTER_FK
+    ) {
+      // An unfinished first login — the same answer `FestivalService.save`
+      // gives for `my_festival`.
+      return { status: 'profile-required' };
+    }
+
+    const [callerProfile] = await this.db
+      .select({ accountId: visitorProfile.accountId })
+      .from(visitorProfile)
+      .where(eq(visitorProfile.accountId, callerId))
+      .limit(1);
+    return callerProfile ? { status: 'not-found' } : { status: 'profile-required' };
   }
 
   /**

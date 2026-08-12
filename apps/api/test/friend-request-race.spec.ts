@@ -72,8 +72,10 @@ const K = actor('k');
 const L = actor('l');
 const M = actor('m');
 const N = actor('n');
+/** WR-02: O's profile is deleted mid-flight so the TARGET column's FK is the one that fires. */
+const O = actor('o');
 
-const withProfile = [A, B, C, D, E, F, G, H, I, J, K, L, M, N];
+const withProfile = [A, B, C, D, E, F, G, H, I, J, K, L, M, N, O];
 const allAccounts = [...withProfile, NO_PROFILE];
 const allAccountIds = allAccounts.map((a) => a.accountId);
 
@@ -361,5 +363,36 @@ describe('friend-request lifecycle & reverse-direction race (D-10/D-11/D-12/D-13
     expect(await friendshipRows(M.accountId, N.accountId)).toHaveLength(
       accepted.status === 'friends' ? 1 : 0,
     );
+  });
+
+  it('16. a TARGET profile that vanished mid-flight answers not-found, not profile-required (WR-02)', async () => {
+    // `sendRequest` checks the target's existence BEFORE the insert, so the
+    // target column's FK can only fire in the window between the two. Reaching
+    // that branch deterministically means entering below the check — hence the
+    // documented cast onto the private `openRequest`, which is the unit that
+    // owns the 23503 mapping. Everything else is real: a real caller with a real
+    // profile, a real deleted target, a real FK violation from Postgres.
+    await db.delete(visitorProfile).where(eq(visitorProfile.accountId, O.accountId));
+
+    const pair = canonicalPair(A.accountId, O.accountId);
+    const openRequest = (
+      service as unknown as {
+        openRequest(
+          callerId: string,
+          pair: { lowerId: string; higherId: string },
+          attemptsLeft: number,
+        ): Promise<{ status: string }>;
+      }
+    ).openRequest.bind(service);
+
+    const result = await openRequest(A.accountId, pair, 2);
+
+    // A HAS a completed profile. Mapping every 23503 onto `profile-required`
+    // told this caller to "complete your visitor profile" (409) for a target
+    // that had simply been deleted — two violations with opposite meanings
+    // sharing one answer, the very defect me.service.ts already carries a
+    // comment about.
+    expect(result.status).toBe('not-found');
+    expect(await requestRows(A.accountId, O.accountId)).toHaveLength(0);
   });
 });
