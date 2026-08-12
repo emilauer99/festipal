@@ -1,8 +1,9 @@
 import { readFile, readdir } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { describe, expect, it } from 'vitest';
+import { visitorProfileSelectSchema } from '@quiks/db';
 import { contract, visitorProfileForeignSchema } from '@quiks/contracts';
 
 /**
@@ -53,11 +54,47 @@ import { contract, visitorProfileForeignSchema } from '@quiks/contracts';
  * walker DOES find `birthDate` on `getMe`; the identity columns ARE named in
  * `visitor-projection.ts`), so a walker that silently stopped finding anything
  * would fail rather than turn the whole file vacuously green.
+ *
+ * ## WR-03 (07-REVIEW.md): three holes this spec used to have
+ *
+ * 1. The source scan read the friendship directory NON-recursively and nothing
+ *    outside it. A second projection in `friendship/queries/foo.ts`, or in any
+ *    other module (a future `activity/`), was invisible to it. The scan root is
+ *    now `apps/api/src` and the walk is recursive; the ONE legitimate other
+ *    place that assembles a profile payload — the OWNER projection in
+ *    `me/me.service.ts` — is named as an explicit exception, and the exception
+ *    itself carries a non-vacuum guard.
+ * 2. The contract walk protected only `birthDate` and `email`. D-02 excludes
+ *    `createdAt`, `socials` and `socialsVisibility` from the foreign view as
+ *    well, and a new route carrying `socials` (jsonb, potentially sensitive
+ *    links) would have passed every check. The owner-only key set is now
+ *    DERIVED from `visitorProfileSelectSchema` minus the foreign view, so a
+ *    column added to `visitor_profile` is protected the moment it exists.
+ * 3. The six-key equality ran against a hardcoded list of five known routes —
+ *    a positive list, against this file's own doctrine. It now runs against
+ *    EVERY route whose response embeds a `profile` key anywhere, with `getMe`
+ *    (the owner view) as the single named exception.
  */
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const PROJECTION_MODULE_DIR = join(__dirname, '..', 'src', 'friendship');
+/**
+ * The scan root is the whole api source tree, not one module: a second foreign
+ * projection is a leak wherever it is written (WR-03, hole 1).
+ */
+const API_SOURCE_ROOT = join(__dirname, '..', 'src');
+const PROJECTION_MODULE_DIR = join(API_SOURCE_ROOT, 'friendship');
+/** Paths below are relative to the scan root and always `/`-separated. */
 const PROJECTION_FILE = 'visitor-projection.ts';
+const PROJECTION_FILE_IN_APP = 'friendship/visitor-projection.ts';
+/**
+ * The single exception to "the identity columns appear in one file only": the
+ * OWNER projection. It legitimately assembles the same payload plus `birthDate`
+ * for the profile's own owner (D-01's second visibility tier), its only caller
+ * passes `session.user.id`, and the contract walk below independently pins
+ * which routes may carry owner fields. Naming it here is what keeps the scan
+ * root at `apps/api/src` instead of retreating to one directory.
+ */
+const OWNER_PROJECTION_FILE = 'me/me.service.ts';
 
 /** D-02: the published foreign view, sorted. The one list this spec pins. */
 const FOREIGN_VIEW_KEYS = [
@@ -83,6 +120,43 @@ const EMAIL_KEY = 'email';
 const BIRTH_DATE_ROUTES = ['getMe', 'completeProfile'];
 /** The only response that may carry the account's e-mail. */
 const EMAIL_ROUTES = ['getMe'];
+
+/**
+ * Every key of `visitor_profile` that D-02 keeps OUT of the foreign view, plus
+ * the account's e-mail — DERIVED from the table's own select schema rather than
+ * listed (WR-03, hole 2). Checking only `birthDate` and `email` left
+ * `createdAt`, `socials` and `socialsVisibility` unprotected: a new route
+ * embedding `socials` would have passed every absence check in this file.
+ * Deriving means a column added to `visitor_profile` tomorrow is covered
+ * without anybody remembering to extend a list.
+ */
+const OWNER_ONLY_KEYS = [
+  ...Object.keys(visitorProfileSelectSchema.shape).filter(
+    (key) => !FOREIGN_VIEW_KEYS.includes(key),
+  ),
+  EMAIL_KEY,
+].sort();
+
+/**
+ * Per-key exception lists — never a positive list of "the foreign routes",
+ * which would ignore a NEW route (the same doctrine the birth-date walk
+ * follows). A key with no entry here may appear on NO route at all.
+ *
+ * `createdAt` needs one because `meSchema.createdAt` is the ACCOUNT's creation
+ * timestamp (top level, from `user`), not `visitor_profile.createdAt` — same
+ * key name, different column, and `getMe` is the only place it may surface.
+ */
+const OWNER_ONLY_KEY_EXCEPTIONS: Record<string, string[]> = {
+  [BIRTH_DATE_KEY]: BIRTH_DATE_ROUTES,
+  [EMAIL_KEY]: EMAIL_ROUTES,
+  createdAt: ['getMe'],
+};
+
+/**
+ * The only route whose response may embed the OWNER view under `profile`.
+ * Everything else that carries a `profile` key must carry exactly the six.
+ */
+const OWNER_PROFILE_ROUTES = ['getMe'];
 
 /**
  * The direct-message vocabulary, matched against whole path SEGMENTS (a
@@ -227,6 +301,62 @@ function embeddedProfileKeys(schema: unknown): string[] {
   return Object.keys(profileShape).sort();
 }
 
+/**
+ * The key set of EVERY object embedded under a `profile` key, at any nesting
+ * depth (WR-03, hole 3). The five-route `it.each` below is a positive list and
+ * therefore blind to a new route; this walk is not.
+ */
+function profileKeySets(schema: unknown, seen: Set<unknown>): string[][] {
+  const found: string[][] = [];
+  if (!schema || typeof schema !== 'object' || seen.has(schema)) return found;
+  seen.add(schema);
+
+  const def = defOf(schema);
+  if (!def) return found;
+
+  const descend = (child: unknown): void => {
+    found.push(...profileKeySets(child, seen));
+  };
+
+  switch (def.typeName) {
+    case 'ZodObject': {
+      const shape = shapeOf(schema);
+      if (shape) {
+        if ('profile' in shape) {
+          const profileShape = shapeOf(unwrap(shape.profile));
+          if (profileShape) found.push(Object.keys(profileShape).sort());
+        }
+        for (const child of Object.values(shape)) descend(child);
+      }
+      break;
+    }
+    case 'ZodArray':
+      descend(def.type);
+      break;
+    case 'ZodNullable':
+    case 'ZodOptional':
+      descend(def.innerType);
+      break;
+    case 'ZodUnion':
+      if (Array.isArray(def.options)) for (const option of def.options) descend(option);
+      break;
+    default:
+      break;
+  }
+
+  return found;
+}
+
+/** Route key -> the key set of every `profile` object any of its responses embeds. */
+const profileKeySetsByRoute = new Map<string, string[][]>(
+  routes.map(([key, route]) => [
+    key,
+    Object.values(route.responses ?? {}).flatMap((response) =>
+      profileKeySets(response, new Set()),
+    ),
+  ]),
+);
+
 function requestListField(field: 'incoming' | 'outgoing'): unknown {
   const shape = shapeOf(unwrap(responseOf('listFriendRequests')));
   if (!shape) throw new Error('listFriendRequests 200 is not an object schema');
@@ -253,13 +383,27 @@ function stripComments(source: string): string {
     .join('\n');
 }
 
-async function readModuleSources(): Promise<Map<string, string>> {
-  const entries = await readdir(PROJECTION_MODULE_DIR, { withFileTypes: true });
+/**
+ * Every `.ts` file under `root`, RECURSIVELY, keyed by its `/`-separated path
+ * relative to `root`. The non-recursive `readdir` this replaced could not see a
+ * second projection one directory down (WR-03, hole 1).
+ */
+async function readSources(root: string): Promise<Map<string, string>> {
   const sources = new Map<string, string>();
-  for (const entry of entries) {
-    if (!entry.isFile() || !entry.name.endsWith('.ts')) continue;
-    sources.set(entry.name, stripComments(await readFile(join(PROJECTION_MODULE_DIR, entry.name), 'utf8')));
-  }
+
+  const walk = async (dir: string): Promise<void> => {
+    for (const entry of await readdir(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        await walk(full);
+        continue;
+      }
+      if (!entry.isFile() || !entry.name.endsWith('.ts')) continue;
+      sources.set(relative(root, full).split(sep).join('/'), stripComments(await readFile(full, 'utf8')));
+    }
+  };
+
+  await walk(root);
   return sources;
 }
 
@@ -296,6 +440,37 @@ describe('VIS-02: the foreign projection exists exactly once (contract + source)
       expect(offenders).toEqual([]);
     });
 
+    it('derives the owner-only key set from the table instead of listing two keys', () => {
+      // Non-vacuum guard for the generalization itself: the derived set has to
+      // be strictly WIDER than the birth date and the e-mail, or nothing was
+      // bought. These four are the keys D-02 names as excluded plus the two
+      // bookkeeping timestamps.
+      expect(OWNER_ONLY_KEYS).toEqual(
+        expect.arrayContaining([
+          BIRTH_DATE_KEY,
+          EMAIL_KEY,
+          'socials',
+          'socialsVisibility',
+          'createdAt',
+          'updatedAt',
+        ]),
+      );
+      // ...and it must never swallow a foreign-view key, which would make the
+      // absence check below contradict the six-key equality further down.
+      for (const key of FOREIGN_VIEW_KEYS) expect(OWNER_ONLY_KEYS).not.toContain(key);
+    });
+
+    it.each(OWNER_ONLY_KEYS.map((key) => [key]))(
+      'exposes the owner-only key `%s` on no route but the ones explicitly allowed',
+      (key) => {
+        const allowed = OWNER_ONLY_KEY_EXCEPTIONS[key] ?? [];
+        const offenders = [...keysByRoute.entries()]
+          .filter(([routeKey, names]) => !allowed.includes(routeKey) && names.has(key))
+          .map(([routeKey]) => routeKey);
+        expect(offenders).toEqual([]);
+      },
+    );
+
     it('declares no route path that describes a 1:1 message channel (ADR-020)', () => {
       const offenders = routes
         .filter(([, route]) =>
@@ -327,32 +502,73 @@ describe('VIS-02: the foreign projection exists exactly once (contract + source)
     ])('%s embeds a profile with exactly the same six keys', (_label, resolve) => {
       expect(embeddedProfileKeys(resolve())).toEqual([...FOREIGN_VIEW_KEYS]);
     });
+
+    it('holds that equality for EVERY route that embeds a profile, not just the five above', () => {
+      // The list above is a positive list and therefore blind to a new route
+      // (WR-03, hole 3). This walks all of them.
+      const carrying = [...profileKeySetsByRoute.entries()]
+        .filter(([, sets]) => sets.length > 0)
+        .map(([key]) => key);
+
+      // Non-vacuum guard: the descent must really find the embedded profiles,
+      // including the owner one it is about to exempt.
+      expect(carrying).toEqual(
+        expect.arrayContaining([
+          'getMe',
+          'lookupVisitor',
+          'searchVisitors',
+          'listFriends',
+          'listFriendRequests',
+        ]),
+      );
+
+      const offenders = [...profileKeySetsByRoute.entries()]
+        .filter(([key]) => !OWNER_PROFILE_ROUTES.includes(key))
+        .flatMap(([key, sets]) =>
+          sets
+            .filter((keys) => keys.join(',') !== FOREIGN_VIEW_KEYS.join(','))
+            .map((keys) => `${key}: ${keys.join(',')}`),
+        );
+      expect(offenders).toEqual([]);
+    });
   });
 
-  describe('source singularity under apps/api/src/friendship/', () => {
-    it('declares the select map and the shaping function exactly once each', async () => {
-      const sources = await readModuleSources();
-      expect(sources.size).toBeGreaterThanOrEqual(4);
+  describe('source singularity across apps/api/src/ (recursive)', () => {
+    it('declares the select map and the shaping function exactly once in the whole api source', async () => {
+      const sources = await readSources(API_SOURCE_ROOT);
+      // Non-vacuum guards for the scan itself: the recursive walk has to reach
+      // substantially more than the four files of the friendship directory, and
+      // it has to reach the projection through its nested path.
+      expect(sources.size).toBeGreaterThanOrEqual(15);
+      expect(sources.has(PROJECTION_FILE_IN_APP)).toBe(true);
+      expect(sources.has(OWNER_PROJECTION_FILE)).toBe(true);
 
       const joined = [...sources.values()].join('\n');
       expect(occurrences(joined, 'export const foreignProfileColumns')).toBe(1);
       expect(occurrences(joined, 'export function pickForeignProfile')).toBe(1);
     });
 
-    it('names the four identity columns in visitor-projection.ts and nowhere else', async () => {
-      const sources = await readModuleSources();
+    it('names the four identity columns in visitor-projection.ts and, besides the owner projection, nowhere else', async () => {
+      const sources = await readSources(API_SOURCE_ROOT);
 
       // Non-vacuum guard: the projection file must name all four, otherwise the
       // "nowhere else" assertion below is measuring nothing.
-      const projection = sources.get(PROJECTION_FILE) ?? '';
+      const projection = sources.get(PROJECTION_FILE_IN_APP) ?? '';
       for (const column of IDENTITY_COLUMNS) expect(projection).toContain(column);
+
+      // Non-vacuum guard for the EXCEPTION: the owner projection must still be
+      // in the scan and must still assemble a payload. If it ever stops doing
+      // so, the exception is quietly covering nothing and should be deleted —
+      // rather than sitting there hiding a future second projection.
+      const owner = sources.get(OWNER_PROJECTION_FILE) ?? '';
+      expect(IDENTITY_COLUMNS.filter((column) => owner.includes(column)).length).toBeGreaterThanOrEqual(2);
 
       // Anywhere else, two or more of them together IS a second projection —
       // whether it is a hand-written select map or a result row re-listed into a
       // `profile` object. One incidental reference (a sort key, a filter) stays
       // legal; the payload cannot be assembled twice.
       const offenders = [...sources.entries()]
-        .filter(([name]) => name !== PROJECTION_FILE)
+        .filter(([name]) => name !== PROJECTION_FILE_IN_APP && name !== OWNER_PROJECTION_FILE)
         .map(([name, source]) => ({
           name,
           columns: IDENTITY_COLUMNS.filter((column) => source.includes(column)),
@@ -362,8 +578,11 @@ describe('VIS-02: the foreign projection exists exactly once (contract + source)
       expect(offenders).toEqual([]);
     });
 
-    it('never reads the birth date — in any file of the module', async () => {
-      const sources = await readModuleSources();
+    it('never reads the birth date — in any file of the friendship module, at any depth', async () => {
+      const sources = await readSources(PROJECTION_MODULE_DIR);
+      // Non-vacuum guard: the module scan must still find the projection file.
+      expect(sources.has(PROJECTION_FILE)).toBe(true);
+
       const offenders = [...sources.entries()]
         .filter(([, source]) => source.includes('birthDate') || source.includes('birth_date'))
         .map(([name]) => name);
