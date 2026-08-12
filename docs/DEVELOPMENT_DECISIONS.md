@@ -553,7 +553,8 @@ Nutzer-Entscheidung (2026-08-10), abgeleitet aus dem Claude-Design-Bundle `docs/
 2. Farbe: Beere `#E8559F` ist Primärfarbe (Marke, Punkt, Primäraktion; Text darauf weiß),
    Amber `#FFC53D` ist Sekundärfarbe (Verlaufsstart, Hinweise; Text darauf Ink).
 3. Sunset `150°` von `#FFC53D` nach `#E8559F` ist der EINZIGE erlaubte Verlauf und nur für das
-   Zeichen und Hero-Flächen zulässig. Ersetzt die bisherige Gradient-Regel („zwei weiche radiale
+   Zeichen, Hero-Flächen sowie **Avatar- und Identitätsflächen** zulässig (Flächenliste erweitert
+   2026-08-12, siehe „Änderung" unten). Ersetzt die bisherige Gradient-Regel („zwei weiche radiale
    Felder, grün/violett") aus ADR-015 bzw. `03-design-system.md` §4.
 4. Hell-first: Papier `#F7F5F2` ist die Standardfläche, Dunkel ist die „Nachtschicht" — mit der
    verbindlichen Modus-Tabelle (Fläche / Karte / Text / Glas). Reines Invertieren ist unzulässig.
@@ -564,6 +565,15 @@ Nutzer-Entscheidung (2026-08-10), abgeleitet aus dem Claude-Design-Bundle `docs/
    Versalien, keine andere Schrift, keine Effekte.
 7. Typo-Rollen laut CI (Display 44/800, Titel 26/700, Body 15/400, Label 13,5/700, Mono 15/500,
    Micro 10,5 caps); die Schriftfamilien bleiben unverändert.
+
+**Änderung (2026-08-12, Phase 6 / D-07) — Sunset-Flächenliste erweitert:** Punkt 3 erlaubte den
+Verlauf ursprünglich nur für Zeichen und Hero-Flächen. Das Design `11 Profil` gibt dem Profil-Avatar
+einen Sunset-Ring; statt einer stillen Einzelfallausnahme wurde die Regel selbst **generell um
+Avatar- und Identitätsflächen erweitert** — sie gilt damit app-weit, ausdrücklich auch für spätere
+Freundes-Avatare. Unverändert bleibt, dass Sunset der EINZIGE erlaubte Verlauf ist; ein zweiter
+Verlauf, Mesh oder Textur bleiben ausgeschlossen. Nachgezogen in `docs/brand/quiks-ci-v1.md`
+(Farbtabelle §3, Regel-Aufzählung §3, „So ja"-Liste §7) und in der Kurzfassung der Wurzel-`CLAUDE.md`
+§„Brand & Design".
 
 **Löst ADR-015 in diesen Punkten ab:** Markenfarben (Limette/Violett → Beere/Amber), Standardmodus
 (dark-first → hell-first inkl. Flächen-/Karten-/Glas-Werte), Wortmarke (`festipal.` → `quiks.`),

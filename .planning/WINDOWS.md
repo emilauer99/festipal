@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 23
-waived_count: 0
-fixed_count: 8
-total_count: 31
-last_updated: 2026-08-11T12:41:00.855Z
+open_count: 26
+waived_count: 3
+fixed_count: 9
+total_count: 38
+last_updated: 2026-08-12T09:28:04.240Z
 ---
 
 # Broken Windows Ledger
@@ -46,6 +46,13 @@ last_updated: 2026-08-11T12:41:00.855Z
 | 29 | 05.1 | unrun-verify | apps/mobile/app/_layout.tsx |  | 05.1-06: der WordmarkGlyph-Mount auf dem Splash wurde nie auf einem Gerät gerendert — ob der Font-Gate-Frame beim Outfit-Nachladen sichtbar springt, ob die Marke über der Wortmarke proportional wirkt und ob der Mount überhaupt gewollt ist (geflaggte Planannahme: UI-SPEC E2 vs CONTEXT.md D-02), entscheidet der Entwickler-Checkpoint in Plan 05.1-07 | fixed | Geschlossen auf Basis der Geraeteabnahme in 05.1-07 Task 2 (Punkte 10/11). Der User hat die Abnahme als Ganzes freigegeben und entschieden, die Markenglyphe ueber der Splash-Wortmarke ZU BEHALTEN; ein Entfernen bleibt ein Einzeiler. Schliessender Nachweis ist diese Nutzerabnahme am Geraet. | 2026-08-10T22:10:54.014Z | 2026-08-11T11:54:08.803Z |
 | 30 | 05.1 | unrun-verify | apps/mobile/assets/android-icon-monochrome.png |  | Der Monochrome-Layer unter Androids Themed-Icons-Tint wurde von der Geraeteabnahme in 05.1-07 NICHT abgedeckt: die Checkpoint-Punkte 18/19 nennen Launcher-Icon, Adaptive-Masking und Recents/Settings, aber nicht die aktivierten Themed Icons. Restanspruch aus dem geschlossenen Eintrag 28 - braucht einen eigenen Blick mit eingeschalteten Themed Icons. | open |  | 2026-08-11T11:54:19.017Z |  |
 | 31 | 05.1 | unrun-verify | apps/mobile/app/(auth)/welcome.tsx |  | Das CI-Outfit-Tracking (typeRoles wordmark/display2/title2 letterSpacing) wurde in Quick-Task 260811-jz6 an allen 13 Style-Sites angewandt und headless abgesichert (Node/Vitest-Guard scannt app+components), aber NIE auf einem Geraet gesehen. Offen ist die reine Geraeteaussage: ob das engere Tracking auf Wortmarke, Display- und Titel-Zeilen Umbrueche kippt, Kartenhoehen (FestivalCard-Hero) oder die Splash-Wortmarke sichtbar verschiebt, und ob die zentrierten AvatarTile-Initialen durch das Tracking hinter dem letzten Zeichen sichtbar aus der Mitte laufen. Braucht einen Blick auf echten Screens in hell UND dunkel. | open |  | 2026-08-11T12:41:00.855Z |  |
+| 32 | 06 | deviation | packages/contracts/src/schemas.ts |  | T-06-06 accepted: visitorProfilePublicSchema carries birthDate/gender with no visibility policy; split into owner view and friend view before any endpoint serves a foreign profile (IDN-02 pending) | open |  | 2026-08-11T21:07:42.033Z |  |
+| 33 | 6 | unrun-verify | apps/mobile/lib/theme-override-storage.ts |  | 06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat | waived | Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz. | 2026-08-11T21:20:19.955Z | 2026-08-12T09:28:02.510Z |
+| 34 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile | waived | Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz. | 2026-08-11T23:20:45.525Z | 2026-08-12T09:28:03.369Z |
+| 35 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann | waived | Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz. | 2026-08-11T23:20:45.929Z | 2026-08-12T09:28:04.240Z |
+| 36 | 06 | stub | apps/mobile/app/(tabs)/friends.tsx |  | Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway | open |  | 2026-08-11T23:45:01.968Z |  |
+| 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
+| 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | fixed |  | 2026-08-12T00:13:36.212Z | 2026-08-12T09:28:01.642Z |
 
 ````json
 [
@@ -420,6 +427,90 @@ last_updated: 2026-08-11T12:41:00.855Z
     "reason": "",
     "recorded_at": "2026-08-11T12:41:00.855Z",
     "resolved_at": null
+  },
+  {
+    "id": 32,
+    "kind": "deviation",
+    "phase": "06",
+    "file": "packages/contracts/src/schemas.ts",
+    "line": null,
+    "description": "T-06-06 accepted: visitorProfilePublicSchema carries birthDate/gender with no visibility policy; split into owner view and friend view before any endpoint serves a foreign profile (IDN-02 pending)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T21:07:42.033Z",
+    "resolved_at": null
+  },
+  {
+    "id": 33,
+    "kind": "unrun-verify",
+    "phase": "6",
+    "file": "apps/mobile/lib/theme-override-storage.ts",
+    "line": null,
+    "description": "06-03: Der Pfad 'gespeicherter Override wird beim Neustart zurueckgelesen' ist unter dem node-env-Runner nicht ausfuehrbar (MMKV laedt dort nicht) — erst am Geraet pruefbar, sobald 06-05 den Dark-Mode-Schalter gebaut hat",
+    "status": "waived",
+    "reason": "Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz.",
+    "recorded_at": "2026-08-11T21:20:19.955Z",
+    "resolved_at": "2026-08-12T09:28:02.510Z"
+  },
+  {
+    "id": 34,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile",
+    "status": "waived",
+    "reason": "Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz.",
+    "recorded_at": "2026-08-11T23:20:45.525Z",
+    "resolved_at": "2026-08-12T09:28:03.369Z"
+  },
+  {
+    "id": 35,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(profile-setup)/complete-profile.tsx",
+    "line": null,
+    "description": "06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann",
+    "status": "waived",
+    "reason": "Geschlossen ueber die Geraeteabnahme von 06-09 Task 3 (33 durch Punkt 7, 34/35 durch die Punkte 15-17). Die Freigabe erfolgte als pauschales 'approved' des Users ueber alle 18 Punkte — es liegen KEINE Einzelbefunde je Punkt vor und der Executor hat den Geraetetest nicht selbst gefahren. Schliessung ruht auf menschlicher Pauschalabnahme, nicht auf itemisierter Evidenz.",
+    "recorded_at": "2026-08-11T23:20:45.929Z",
+    "resolved_at": "2026-08-12T09:28:04.240Z"
+  },
+  {
+    "id": 36,
+    "kind": "stub",
+    "phase": "06",
+    "file": "apps/mobile/app/(tabs)/friends.tsx",
+    "line": null,
+    "description": "Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-11T23:45:01.968Z",
+    "resolved_at": null
+  },
+  {
+    "id": 37,
+    "kind": "stub",
+    "phase": "06",
+    "file": "apps/mobile/app/profil.tsx",
+    "line": null,
+    "description": "Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-12T00:02:55.728Z",
+    "resolved_at": null
+  },
+  {
+    "id": 38,
+    "kind": "unrun-verify",
+    "phase": "06",
+    "file": "apps/mobile/app/(tabs)/mehr.tsx",
+    "line": null,
+    "description": "06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist.",
+    "status": "fixed",
+    "reason": "",
+    "recorded_at": "2026-08-12T00:13:36.212Z",
+    "resolved_at": "2026-08-12T09:28:01.642Z"
   }
 ]
 ````

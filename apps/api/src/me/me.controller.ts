@@ -17,7 +17,18 @@ export class MeController {
       const profile = await this.me.getProfile(session.user.id);
       return {
         status: 200,
-        body: { accountId: session.user.id, email: session.user.email, profile },
+        // D-04: `createdAt` comes straight off better-auth's session user (a
+        // runtime `Date`) — no extra DB query. The `.toISOString()` is
+        // DELIBERATE and must stay explicit: `meSchema` declares this field as
+        // a string, and leaving the conversion to JSON.stringify would let the
+        // TypeScript type disagree with the wire shape. T-06-10: server-derived
+        // only, never read from a request body.
+        body: {
+          accountId: session.user.id,
+          email: session.user.email,
+          createdAt: session.user.createdAt.toISOString(),
+          profile,
+        },
       };
     });
   }

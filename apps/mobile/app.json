@@ -43,7 +43,8 @@
           "cameraPermission": "quiks needs access to your camera so you can take an avatar photo for your profile."
         }
       ],
-      "./plugins/with-windows-long-path-fix.js"
+      "./plugins/with-windows-long-path-fix.js",
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true

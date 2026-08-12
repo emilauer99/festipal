@@ -2,35 +2,35 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: Rollout
-current_phase: 6
-current_phase_name: Profile & Friends Placeholders
-status: "Phase 05.1 shipped — PR #11"
-stopped_at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
-last_updated: "2026-08-11T14:11:28.137Z"
-last_activity: 2026-08-11
+current_phase: 06
+status: "Phase 06 shipped — PR #13"
+stopped_at: "Phase 06 abgeschlossen — UAT 5/5 (0 Befunde), Re-Verifikation 18/18 `passed` (Truth 18 fuer die Gap-Closure 06-10 ergaenzt), Security 44/44 geschlossen (`threats_open: 0`), ROADMAP/STATE/PROJECT transitioniert. Der Mobile-Workstream ist bei 7/7 Phasen; das Milestone v1.0 kann erst schliessen, wenn der Admin-Workstream durch ist."
+last_updated: "2026-08-12T12:55:35.809Z"
+last_activity: 2026-08-12
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 40
-  completed_plans: 40
-last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
+  total_phases: 7
+  completed_phases: 7
+  total_plans: 50
+  completed_plans: 50
+current_phase_name: profile-friends-placeholders
+last_activity_desc: Phase 06 verifiziert, gesichert und als complete transitioniert
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgenommen)
+See: .planning/PROJECT.md (updated 2026-08-12 — Phase 06 complete & verified)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
-**Current focus:** Phase 6 — Profile & Friends Placeholders
+**Current focus:** Mobile-Workstream abgeschlossen (7/7 Phasen) — Milestone v1.0 wartet auf den Admin-Workstream
 
 ## Current Position
 
-Phase: 6 — Profile & Friends Placeholders
+Phase: 06
 Plan: Not started
-Status: Phase 05.1 shipped — PR #11
-Last activity: 2026-08-11
+Status: Phase 06 shipped — PR #13
+Last activity: 2026-08-12
 
 Progress: [██████████] 100%
 
@@ -38,7 +38,7 @@ Progress: [██████████] 100%
 
 **Velocity:**
 
-- Total plans completed: 40
+- Total plans completed: 50
 - Average duration: - min
 - Total execution time: 0 hours
 
@@ -52,6 +52,7 @@ Progress: [██████████] 100%
 | 04 | 7 | - | - |
 | 05 | 11 | - | - |
 | 05.1 | 7 | - | - |
+| 06 | 10 | - | - |
 
 **Recent Trend:**
 
@@ -103,6 +104,16 @@ Progress: [██████████] 100%
 | Phase 05.1 P05 | ~12min | 2 tasks | 8 files |
 | Phase 05.1 P06 | ~18min | 2 tasks | 15 files |
 | Phase 05.1 P07 | ~25min | 3 tasks | 1 files |
+| Phase 06 P01 | ~2h50m | 2 tasks | 6 files |
+| Phase 06 P02 | ~35min | 3 tasks | 9 files |
+| Phase 06 P03 | ~20min | 2 tasks | 9 files |
+| Phase 06 P04 | ~25min | 2 tasks | 4 files |
+| Phase 06 P08 | ~25min | 2 tasks | 4 files |
+| Phase 06 P05 | ~30min | 2 tasks | 2 files |
+| Phase 06 P06 | 8min | 2 tasks | 1 files |
+| Phase 06 P07 | ~35min | 2 tasks | 7 files |
+| Phase 06 P09 | ~35min | 3 tasks | 5 files |
+| Phase 06 P10 | ~25min | 4 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -215,6 +226,39 @@ Recent decisions affecting current work:
 - [Phase ?]: 05.1-07: Splash-Markenglyphe (Checkpoint-Punkt 11) BLEIBT montiert — User-Entscheidung; Entfernen bleibt ein Einzeiler in app/_layout.tsx, Komponente und Icon-Generator blieben ohnehin bestehen
 - [Phase ?]: 05.1-07: WINDOWS-Eintraege 24/26/27/28/29 geschlossen (24 per automatisiertem Sweep, 26-29 per Nutzerabnahme am Geraet); 25 bleibt offen (von der Abnahme nicht abgedeckt), neuer Eintrag 30 fuer den nicht abgedeckten Themed-Icons-Monochrome-Layer
 - [Phase ?]: 05.1-07: Phase-Gate bewusst uncached mit --force wiederholt — der erste Durchlauf kam vollstaendig aus dem Turbo-Cache und haette nichts bewiesen
+- [Phase ?]: 06-01: Vierter Tab ist Mehr, Profil wird Root-Level-Push-Screen (D-01) — app/profil.tsx liegt ausserhalb (tabs) und ist explizit im authentifizierten Stack.Protected-Block registriert; ohne diese Zeile landet router.push('/profil') auf Expo Routers Unmatched Route (Pitfall 1)
+- [Phase ?]: 06-01: Menu ist das Mehr-Glyph, UserRound bleibt fuer Avatar-/Profilkontext reserviert (RESEARCH Open Question 2 aufgeloest)
+- [Phase ?]: 06-01: Anzeigename nutzt die bestehende Rolle title2 statt eines neuen title1-Tokens — vermeidet die packages/ui-Kollisionszone mit dem Admin-Stream und den Umbau des type-tracking-Kopplungsgates fuer eine einzige Verwendungsstelle
+- [Phase ?]: 06-01 (Abweichung, vom User im Checkpoint abgenommen): Quellsprachen-Strings bleiben Englisch (lingui sourceLocale: 'en') statt der im Plan woertlich stehenden deutschen msgids — die deutschen Designtexte sind DE-Katalogwerte und landen erst in 06-09; bis dahin zeigt die App die neuen Strings auf Englisch
+- [Phase ?]: 06-01 (Abweichung, vom User im Checkpoint abgenommen): Header/Titel des Profil-Screens setzt app/profil.tsx per eigenem Stack.Screen options — useLingui() ist in app/_layout.tsx nicht aufrufbar, weil genau diese Komponente den I18nProvider rendert; die load-bearing Registrierung name="profil" bleibt im Root-Layout
+- [Phase ?]: 06-01: requirements mark-complete bewusst NICHT ausgefuehrt — HOME-03/PROF-01/FRND-01 stehen in der Plan-Frontmatter, werden aber von 06-05 bis 06-09 weitergebaut; ein Abhaken jetzt waere ein falsches Fertig-Signal an den Audit-Scanner
+- [Phase ?]: 06-01: Geraeteabnahme des Tracer-Pfads (8 Schritte) vom User als Ganzes mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine automatisierte Verifikation; der Executor hat den Geraetetest nicht selbst gefahren, keine Einzelbefunde je Schritt protokolliert (gleiche Lage wie 05.1-07)
+- [Phase ?]: 06-02: birth_date wird gespeichert, das Alter abgeleitet (D-12a) — die Laengencaps pronoun 20 / gender 30 stehen serverseitig auf beiden drizzle-zod-Basen
+- [Phase ?]: 06-02: meSchema.createdAt ist ein ISO-String auf Top-Level, explizit im Controller konvertiert — der Contract transportiert Daten nie als Date
+- [Phase ?]: 06-03: Theme-Override ist eine Schicht ueber resolveThemeMode, kein Ersatz — der 05.1-Invariantentest bleibt unveraendert das Gate
+- [Phase ?]: 06-03: vi.mock kann einen lazy CJS-require nicht abfangen — MMKV-Module werden in reine Validierung plus echten Fehlerpfad gesplittet
+- [Phase ?]: 06-03: Alter wird via deriveAge aus birth_date abgeleitet (D-12a); Testreferenzdaten werden lokal konstruiert, nie aus einem Datums-String geparst
+- [Phase ?]: 06-04: Der weisse Schalterdaumen nutzt colors.primaryForeground statt einer benannten Konstante — keine der drei neuen Komponentendateien enthaelt einen rohen Farbwert
+- [Phase ?]: 06-04: disabled ist bei ListRow visuell+assistiv (onPress feuert weiter, damit tote Zeilen mit dem Toast antworten), bei SettingsSwitch dagegen ein echt disabled Control
+- [Phase ?]: 06-04: Die SoonToast-Pille begrenzt ihre Breite ueber left/right: layout.screenPad des Wrappers statt ueber useWindowDimensions — rotations- und splitscreen-fest ohne Dimensions-Read
+- [Phase ?]: 06-08: maximumDate=heute am Geburtsdatums-Picker ist KEINE Altersgrenze, sondern ein Riegel gegen ein Datum in der Zukunft, das deriveAge() auf null abbildet
+- [Phase ?]: 06-08: Geburtsdatum wird aus lokalen Kalenderkomponenten zu YYYY-MM-DD serialisiert; der Weg ueber die ISO-/UTC-Darstellung ist ausgeschlossen (T-06-34)
+- [Phase ?]: 06-08: @react-native-community/datetimepicker 9.1.0 via expo install (SDK-57-aufgeloest); enthaelt nativen Code, braucht 'npx expo run:android' aus apps/mobile vor der Geraetepruefung
+- [Phase ?]: 06-05: Der Dunkle-Modus-Schalter spiegelt den effektiven Modus, schreibt aber immer explizit ('dark' beim Einschalten, 'system' beim Ausschalten) — der Hell-Zustand bleibt schreiberlos (D-08a)
+- [Phase ?]: 06-05: Abmelden ist aus dem Festivals-Header in die App-Sektion des Mehr-Screens gezogen; der gehärtete Handler-Körper wanderte byte-identisch mit, die native Rückfrage wickelt nur die Aufrufstelle ein (D-09)
+- [Phase ?]: 06-06: Friends-Screen traegt die Ehrlichkeit in der Copy, nicht in reduzierter Deckkraft — jeder Leerzustand benennt die Voraussetzung statt nur das Fehlen (D-11/T-06-27)
+- [Phase ?]: 06-06: Friends und Profil teilen Query-Key ['me'] und Client-Funktion — ein Cache-Eintrag, kein zweiter Netzabruf
+- [Phase ?]: 06-06: Die quiks-Code-Karte bekam minHeight statt harter height — feste Hoehe als Untergrenze, damit groessere Systemschrift die Copy nicht abschneidet
+- [Phase ?]: D-07 umgesetzt: Sunset-Flaechenliste in ADR-023, Markendokument und Wurzel-CLAUDE.md app-weit um Avatar-/Identitaetsflaechen erweitert
+- [Phase ?]: Profil-Kopfbereich folgt der Design-Reihenfolge (Name, Handle, Identitaetszeile, Meta-Zeile) statt der Aufzaehlung im Plan
+- [Phase ?]: 06-09: 'Friends' ist im DE-Katalog jetzt das unuebersetzte Markenwort (vorher 'Freunde'); im Fliesstext bleibt es beim deutschen 'Freunde' — genau die Aufteilung des Designs, vom User im Checkpoint mitfreigegeben
+- [Phase ?]: 06-09: Die SafeNow-Ueberschrift 'Stay safe' bleibt auch in DE englisch, weil das Design sie in seiner deutschen Fassung englisch fuehrt — vom User mitfreigegeben
+- [Phase ?]: 06-09: Die ueberholten Erfolgskriterien SC-1/SC-3 wurden INLINE durchgestrichen und mit D-01 bzw. D-10 annotiert statt geloescht — ein spaeterer Verifikationslauf sieht beides
+- [Phase ?]: 06-09: WINDOWS 33/34/35 wurden GEWAIVED statt fixed — nur 'waive' traegt eine Begruendung, und die Schliessung ruht auf einer Pauschalabnahme ohne Einzelbefunde; als 'fixed' haette es wie itemisierte Evidenz ausgesehen
+- [Phase ?]: 06-09: Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte) vom User pauschal mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine Einzelbefunde je Punkt, der Executor hat den Test nicht selbst gefahren (gleiche Lage wie 05.1-07 und 06-01)
+- [Phase ?]: 06-10: G-06-5 Fix — alle vier FormatJS-Spezifizierer (inkl. locale-data) tragen die .js-Endung, entgegen der planungszeitlichen Annahme; verifiziert gegen FormatJS-Doku und echte Node-ESM-Aufloesung
+- [Phase ?]: 06-10: Falsifizierung des Rueckfall-Guards deckte einen False Negative im eigenen Test auf (Substring-Match traf Kommentarprosa) — auf volle einfach-gequotete Import-Spezifizierer gehaertet
+- [Phase ?]: 06-10: Task 4 Geraeteverifikation bestaetigt die Diagnose device-seitig — native Intl.PluralRules undefined vor, function nach dem Polyfill; Profil-Screen oeffnet sich. UAT Test 5 (c)/(d) und die exakte Meta-Zeile bleiben ausdruecklich offen fuer /gsd-verify-work 06 --ws mobile
 
 ### Pending Todos
 
@@ -229,8 +273,11 @@ None yet.
 - Phase 2 (MEDIUM, downgraded 2026-07-30): `@thallesp/nestjs-better-auth` × ts-rest body parsing — current wrapper (`better-auth >= 1.5.0`) auto-re-applies `express.json()` for non-auth routes, so no manual exclusion needed; ts-rest controllers just consume `req.body`. Spike = *confirm* (2-request body proof + resolve `/api/v1` vs `/api/auth` global-prefix collision + version-pin), not *design*. Hand-rolled `@All('auth/*path')` catch-all is Plan-C fallback. See PITFALLS.md Pitfall 3 update.
 - Cross-cutting (SEC-02): festival-scoped reads must be `festivalId`-isolated — **baseline proven in Phase 5** (`apps/api/test/festival-isolation.spec.ts`: festival B's dates/place never leak to a visitor who saved only festival A). This isolation obligation is INHERITED by all later content reads (timetable, map, news) — re-assert the cross-tenant test as new tenant-scoped tables land. NOTE: entry is gate-less (ADR-014) — do NOT gate festival access on save/membership; isolation is data-scoping, not a 403.
 - Concept open item: `birthDate`/`gender`/Flinta + signup safety disclaimer pending Birgit's concept — kept migration-safe open, out of this milestone.
-- Phase 3 (LOW, deferred): apps/api/src/auth/auth.instance.ts is missing the @better-auth/expo server plugin (plugins: [expo()]) needed to translate the mobile client's expo-origin header into origin for better-auth's CSRF check. Not exercised by any Phase 3 plan (no logout feature planned), but required before any future sign-out/session-revocation feature. Tracked in .planning/WINDOWS.md.
 - Phase 4 (04-03): four manual UATs (Task1 full OTP flow, Task2 network-body check, AUTH-02 returning-user skip, AUTH-03 force-quit persistence) require a real Android device/emulator and were NOT run in this headless execution — tracked in .planning/WINDOWS.md as unrun-verify entries, must be cleared before Phase 4 ships
+- T-06-06 (aus 06-02, wissentlich akzeptiert): visitorProfilePublicSchema traegt jetzt birthDate und gender ohne jede Sichtbarkeits-Policy. Vor dem ERSTEN Endpunkt, der ein FREMDES Profil ausliefert (FRND-02/PROF-02), muss die Projektion in eine Eigentuemer-Sicht und eine Freundes-Sicht getrennt werden. IDN-02 (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter, Signup-Disclaimer) bleibt offen und haengt an Birgits Konzept.
+- Phase 6 (offene PRODUKTFRAGE, jetzt faellig — der Phasenuebergang ist erfolgt): Der erste Tab heisst in der App weiterhin 'Home' (DE-Katalogwert 'Start'), das neue Design nennt ihn 'Start'. Die Umbenennung der Route/des msgid war in Phase 6 AUSDRUECKLICH NICHT beauftragt (06-CONTEXT Specifics, UI-SPEC Screens-Contract) und wurde bewusst nicht mitgemacht. Entscheidung des Users noetig, bevor Phase 7 Routen anfasst.
+- Phase 6 (LOW, aus 06-10-REVIEW): Der Rueckfall-Guard fuer den Intl-Polyfill (`lib/__tests__/intl-polyfill.test.ts`) matcht Quelltext als String inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — er wuerde einen auskommentierten Import und einen zusaetzlich eingeschleusten Import nicht fangen. Der Fix selbst ist davon nicht betroffen (geraetverifiziert), aber T-06-10-01 beansprucht diese Abdeckung. Haerten, wenn der Entry naechstes Mal angefasst wird.
+- Phase 6 (offen): `/gsd-ui-review 06` ist noch nicht gelaufen — der visuelle 6-Saeulen-Audit fehlt fuer die drei neuen Screens.
 
 ### Quick Tasks Completed
 
@@ -240,6 +287,7 @@ None yet.
 | 260805-lkr | Fix keyboard-scroll on Phase-4 auth/profile input screens (flex:1 → flexGrow:1 so keyboard-covered content becomes scrollable) | 2026-08-05 | 8935d34 | [260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof](./quick/260805-lkr-fix-keyboard-scroll-on-phase-4-auth-prof/) |
 | 260810-q31 | Rebrand festipal zu quiks + CI v1.0 in docs/ festschreiben (docs-only) — docs/brand/, ADR-023 (CI v1.0, löst ADR-015 teilweise ab) + ADR-024 (Rename-Umfang), Superseded-Marker, beide CLAUDE.md | 2026-08-10 | b898985 | [260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc](./quick/260810-q31-rebrand-festipal-zu-quiks-ci-v1-0-in-doc/) |
 | 260811-jz6 | Phase 05.1 Verifikations-Gaps schliessen: Outfit-Tracking anwenden + CLAUDE.md Light-Mode-Aussage korrigieren | 2026-08-11 | e28d150 | [260811-jz6-phase-05-1-verifikations-gaps-schliessen](./quick/260811-jz6-phase-05-1-verifikations-gaps-schliessen/) |
+| 260812-ctx | GSD-Overhead senken: .claude/CLAUDE.md 25.3→8.7 KB (Duplikate zu .planning/codebase/ auf Pointer reduziert), auto_prune_state an, research/plan_bounce/nyquist als Opt-in, code_review standard, review-Agents auf fable gepinnt, Phase-Zuschnitt-Regeln in CLAUDE.md | 2026-08-12 | c6366ac | — (via /gsd-fast, kein quick/-Verzeichnis) |
 
 ### Roadmap Evolution
 
@@ -255,6 +303,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11
-Stopped at: Phase 05.1 complete (UAT 42/42, 0 Befunde), ready to plan Phase 6
+Last session: 2026-08-12T14:50:00.000Z
+Stopped at: Phase 06 abgeschlossen — UAT 5/5 (0 Befunde), Re-Verifikation 18/18 `passed` (Truth 18 fuer die Gap-Closure 06-10 ergaenzt), Security 44/44 geschlossen (`threats_open: 0`), ROADMAP/STATE/PROJECT transitioniert. Der Mobile-Workstream ist bei 7/7 Phasen; das Milestone v1.0 kann erst schliessen, wenn der Admin-Workstream durch ist.
 Resume file: None

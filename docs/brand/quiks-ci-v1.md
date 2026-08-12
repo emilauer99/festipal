@@ -50,7 +50,7 @@ bleiben als Festival-CI-Hooks erhalten.
 |---|---|---|
 | Beere | `#E8559F` · `--brand-primary` | Marke, Punkt, Primäraktion. Text darauf weiß. |
 | Amber | `#FFC53D` · `--brand-secondary` | Verlaufsstart, Hinweise, Live-Wärme. Text darauf Ink. |
-| Sunset | 150° · `#FFC53D` → `#E8559F` | Der einzige erlaubte Verlauf. Nur Zeichen und Hero. |
+| Sunset | 150° · `#FFC53D` → `#E8559F` | Der einzige erlaubte Verlauf. Nur Zeichen, Hero und Avatar-/Identitätsflächen. |
 | Ink | `#0C0E13` · `--ink-900` | Text im Hellmodus, Fläche im Dunkelmodus. |
 | Papier · Standard | `#F7F5F2` | |
 | Text hell | `#E9ECF2` | |
@@ -60,8 +60,14 @@ bleiben als Festival-CI-Hooks erhalten.
 | Info | `#5FB4FF` | |
 
 **Regeln:**
-- Sunset ist der einzige erlaubte Verlauf (nur Zeichen + Hero).
+- Sunset ist der einzige erlaubte Verlauf (nur Zeichen, Hero und Avatar-/Identitätsflächen).
 - Maximal zwei Flächentöne pro Screen.
+
+> **Nachtrag zu v1.0 (Phase 6, D-07 · ADR-023):** Die Flächenliste des Sunset-Verlaufs wurde um
+> **Avatar- und Identitätsflächen** erweitert — etwa der Ring um den Profil-Avatar. Die Erweiterung
+> gilt generell und app-weit, ausdrücklich auch für spätere Freundes-Avatare, und ist keine
+> Einzelfallausnahme. Unverändert bleibt: Sunset ist der EINZIGE erlaubte Verlauf, es gibt keinen
+> zweiten Verlauf, kein Mesh und keine Textur.
 
 ---
 
@@ -124,7 +130,7 @@ Gezeigte Anwendungen: Splash · App-Header · Bändchen & Becher · Kampagne (�
 **So ja**
 
 - Wortmarke immer klein, mit Punkt in Beere.
-- Sunset-Verlauf nur im Zeichen und in Hero-Flächen.
+- Sunset-Verlauf nur im Zeichen, in Hero-Flächen und um Avatar-/Identitätsflächen (D-07).
 - Maximal zwei Flächentöne pro Screen — Ink plus eine Karte.
 - Zahlen, Zeiten und Distanzen in Mono.
 - Freiraum um das Logo: mindestens die Höhe des Punktes ×3.

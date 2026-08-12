@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Stack } from 'expo-router';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useQuery } from '@tanstack/react-query';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera, ImagePlus } from 'lucide-react-native';
+import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
+import { CalendarDays, Camera, ImagePlus } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
 import { apiClient } from '../../lib/api-client';
 import { getLocalAvatarUri, saveLocalAvatarUri } from '../../lib/avatar-storage';
+import { i18n } from '../../lib/i18n';
 import { suggestAvailableUsername } from '../../lib/username-suggestion';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';
 import { fontFamilyForRole } from '../../lib/fonts';
@@ -31,8 +33,38 @@ const USERNAME_MIN = 3;
 const USERNAME_MAX = 20;
 const DISPLAY_NAME_MAX = 40;
 const USERNAME_DEBOUNCE_MS = 350;
+// D-12 — the two free-text identity fields. Same soft-cap relationship as
+// above: 20/30 mirror the authoritative `.max()` on the drizzle-zod insert
+// base (06-02, T-06-07). The server stays the real gate; these only stop the
+// visitor from typing into a value the API would reject.
+const PRONOUN_MAX = 20;
+const GENDER_MAX = 30;
 
 type UsernameStatus = 'idle' | 'checking' | 'available' | 'taken';
+
+/**
+ * Serializes a picked `Date` to the `YYYY-MM-DD` date-only form
+ * `visitor_profile.birth_date` stores (06-02, `date({ mode: 'string' })`).
+ *
+ * Built from the LOCAL calendar components on purpose. The convenient route
+ * — taking the first ten characters of the ISO representation — converts to
+ * UTC first, so a date picked at local midnight in any negative-UTC-offset
+ * timezone serializes as the PREVIOUS day: a silent one-day corruption of a
+ * personal field (T-06-34). That route is therefore ruled out here, and this
+ * file must stay free of it. The picker hands back a `Date` at local
+ * midnight, which is exactly what the visitor selected, so the components are
+ * read as-is.
+ *
+ * `padStart` on the year as well: a year before 1000 is nonsense as a birth
+ * date, but a 3-digit year would still produce a string Postgres's `date`
+ * parser reads differently than intended.
+ */
+function toLocalDateOnly(date: Date): string {
+  const year = String(date.getFullYear()).padStart(4, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 
 /**
  * D-01/IDN-01 — the real first-login VisitorProfile write. Username has a
@@ -82,6 +114,16 @@ export default function CompleteProfileScreen() {
   // exact username between the live-check and submit); cleared the instant
   // the visitor edits the username field again.
   const [conflict, setConflict] = useState(false);
+  // D-12/D-12a — the three optional identity fields. `birthDate` holds the
+  // picked `Date` (or null while untouched) and is serialized only at submit
+  // time; a *derived* age is never stored here or anywhere else.
+  const [pronoun, setPronoun] = useState('');
+  const [gender, setGender] = useState('');
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+  // iOS-only: the picker is a declaratively embedded component there, so its
+  // open/closed state lives in React. Android drives the same picker through
+  // an imperative `DateTimePickerAndroid.open()` dialog and never reads this.
+  const [iosPickerOpen, setIosPickerOpen] = useState(false);
 
   useEffect(() => {
     const handle = setTimeout(() => setDebouncedUsername(username), USERNAME_DEBOUNCE_MS);
@@ -140,6 +182,11 @@ export default function CompleteProfileScreen() {
   }, [accountId]);
 
   const displayNameTrimmed = displayName.trim();
+  const pronounTrimmed = pronoun.trim();
+  const genderTrimmed = gender.trim();
+  // D-12/UI-SPEC #43 — the three identity fields are deliberately ABSENT from
+  // this expression: they are optional, so leaving all three (or any subset)
+  // empty must never disable the CTA.
   const canSubmit =
     usernameStatus === 'available' && !conflict && displayNameTrimmed.length > 0 && !submitting;
 
@@ -177,6 +224,43 @@ export default function CompleteProfileScreen() {
     setAvatarUri(asset.uri);
   }
 
+  /**
+   * Opens the native date picker (D-12a — a birth DATE, never a typed age).
+   *
+   * The two platforms expose genuinely different shapes, per the installed
+   * 9.1.0 README: Android's recommended surface is the imperative
+   * `DateTimePickerAndroid.open()` dialog, iOS renders the picker as an
+   * embedded component. So Android fires and forgets here, while iOS toggles
+   * the inline picker rendered further down.
+   *
+   * `onValueChange`/`onDismiss` are used, NOT `onChange` — the latter is
+   * deprecated in 9.x and only kept for back-compat.
+   *
+   * `maximumDate` is today. That is NOT an age gate (D-12 rules those out and
+   * IDN-02 keeps them for Birgit's concept): it only blocks a birth date in
+   * the FUTURE, which `deriveAge` (06-03) maps to `null`, i.e. the profile's
+   * identity line would silently drop the age with no explanation.
+   */
+  function handleBirthDatePress() {
+    // The picker needs a starting position even when nothing is chosen yet;
+    // today is the neutral anchor — it encodes no assumption about the
+    // visitor's age, which picking e.g. "25 years ago" would.
+    const anchor = birthDate ?? new Date();
+    if (Platform.OS === 'android') {
+      DateTimePickerAndroid.open({
+        value: anchor,
+        mode: 'date',
+        maximumDate: new Date(),
+        // Android-only: opens on the year list, so reaching a birth year is
+        // one tap instead of decades of month-by-month paging.
+        startOnYearSelection: true,
+        onValueChange: (_event, selectedDate) => setBirthDate(selectedDate),
+      });
+      return;
+    }
+    setIosPickerOpen((open) => !open);
+  }
+
   function handleUsernameChange(value: string) {
     setConflict(false);
     setUsername(
@@ -193,9 +277,21 @@ export default function CompleteProfileScreen() {
     try {
       const result = await withTimeout(
         apiClient.completeProfile({
-          // D-01 prohibition — body SHAPE stays {username, displayName}; no
-          // avatar field is ever added, visitor_profile.avatar stays null.
-          body: { username, displayName: displayNameTrimmed },
+          // D-01 prohibition still holds for the AVATAR: no avatar field is
+          // ever added here, visitor_profile.avatar stays null (the picked
+          // photo lives in device-local MMKV only).
+          //
+          // D-12 additively widens the body by the three optional identity
+          // fields. They are `.nullable().optional()` on the contract (06-02),
+          // so an untouched field goes over as an explicit null rather than a
+          // "" that would persist an empty string as a real value.
+          body: {
+            username,
+            displayName: displayNameTrimmed,
+            pronoun: pronounTrimmed.length > 0 ? pronounTrimmed : null,
+            birthDate: birthDate ? toLocalDateOnly(birthDate) : null,
+            gender: genderTrimmed.length > 0 ? genderTrimmed : null,
+          },
         }),
         NETWORK_TIMEOUT_MS,
       );
@@ -342,6 +438,92 @@ export default function CompleteProfileScreen() {
           />
         </View>
 
+        {/* D-12 — three OPTIONAL identity fields (UI-SPEC #43–#47). They sit
+            inside the same KeyboardScreen scroll container, after the display
+            name and before the CTA, and reuse the existing field/label/input
+            styles: no new visual language, no new submit path, no new loading
+            state. There is deliberately NO age gate, NO who-can-see-this
+            switch and NO youth-protection notice — that is D-12's scope, and
+            the rest of IDN-02 stays with Birgit's concept. */}
+        <View style={styles.field}>
+          <Text style={[styles.label, { fontFamily: labelFont }]}>
+            <Trans>Pronouns</Trans>
+          </Text>
+          <TextInput
+            style={[styles.input, { fontFamily: bodyFont }]}
+            value={pronoun}
+            onChangeText={(value) => setPronoun(value.slice(0, PRONOUN_MAX))}
+            maxLength={PRONOUN_MAX}
+            editable={!submitting}
+          />
+          <Text style={[styles.helperMuted, { fontFamily: bodySmFont }]}>
+            <Trans>Optional</Trans>
+          </Text>
+        </View>
+
+        <View style={styles.field}>
+          <Text style={[styles.label, { fontFamily: labelFont }]}>
+            <Trans>Date of birth</Trans>
+          </Text>
+          <Pressable
+            style={styles.pickerField}
+            onPress={handleBirthDatePress}
+            disabled={submitting}
+            accessibilityRole="button"
+            accessibilityLabel={t`Date of birth`}
+          >
+            <CalendarDays size={18} color={colors.textMuted} strokeWidth={2} />
+            {birthDate ? (
+              <Text style={[styles.pickerValue, { fontFamily: bodyFont }]}>
+                {new Intl.DateTimeFormat(i18n.locale, {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                }).format(birthDate)}
+              </Text>
+            ) : (
+              <Text style={[styles.pickerPlaceholder, { fontFamily: bodyFont }]}>
+                <Trans>Choose a date</Trans>
+              </Text>
+            )}
+          </Pressable>
+          {/* iOS renders the picker declaratively, inline under the field;
+              Android already opened its own dialog imperatively above. */}
+          {iosPickerOpen ? (
+            <DateTimePicker
+              value={birthDate ?? new Date()}
+              mode="date"
+              display="spinner"
+              maximumDate={new Date()}
+              onValueChange={(_event, selectedDate) => setBirthDate(selectedDate)}
+              onDismiss={() => setIosPickerOpen(false)}
+            />
+          ) : null}
+          <Text style={[styles.helperMuted, { fontFamily: bodySmFont }]}>
+            <Trans>Optional</Trans>
+          </Text>
+        </View>
+
+        <View style={styles.field}>
+          <Text style={[styles.label, { fontFamily: labelFont }]}>
+            <Trans>Gender</Trans>
+          </Text>
+          {/* Free text on purpose, NOT a select: fixing a taxonomy is exactly
+              the part IDN-02 defers to Birgit's concept, and free text lets
+              visitors describe themselves without the app committing to an
+              enumeration it would have to change later. */}
+          <TextInput
+            style={[styles.input, { fontFamily: bodyFont }]}
+            value={gender}
+            onChangeText={(value) => setGender(value.slice(0, GENDER_MAX))}
+            maxLength={GENDER_MAX}
+            editable={!submitting}
+          />
+          <Text style={[styles.helperMuted, { fontFamily: bodySmFont }]}>
+            <Trans>Optional</Trans>
+          </Text>
+        </View>
+
         {submitError ? (
           <Text style={[styles.error, { fontFamily: bodySmFont }]}>{submitError}</Text>
         ) : null}
@@ -454,6 +636,31 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.body.size,
       color: colors.textPrimary,
     },
+    // The birth-date affordance is a Pressable, not a TextInput, so it needs
+    // its own ViewStyle: `styles.input` carries text properties (fontSize,
+    // color) that do not belong on a View. Same box metrics as `input` so the
+    // three fields read as one column.
+    pickerField: {
+      minHeight: layout.hitMin,
+      backgroundColor: colors.surfaceInset,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: radii.control,
+      paddingHorizontal: spacingScale['sp-6'],
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-4'],
+    },
+    pickerValue: {
+      fontSize: typeRoles.body.size,
+      color: colors.textPrimary,
+    },
+    pickerPlaceholder: {
+      fontSize: typeRoles.body.size,
+      // Muted while empty — the field reads as "nothing chosen yet", matching
+      // the avatar block's optional voice rather than looking like real input.
+      color: colors.textMuted,
+    },
     inputDanger: {
       // 1px border + tint on the taken-username field: both resolve from tokens
       // (ADR-015). `fillDangerSubtle` IS danger at 8% — the exact value the
@@ -495,6 +702,5 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.title3.size,
       color: colors.textOnPrimary,
     },
-
   });
 }

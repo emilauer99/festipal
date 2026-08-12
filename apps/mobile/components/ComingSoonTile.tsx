@@ -14,6 +14,13 @@ const { typeRoles, radiiScale, spacingScale } = tokens;
 
 const ICON_SIZE = 22;
 
+/**
+ * Column widths for the wrapping grids this tile is dropped into. Slightly under
+ * the exact fraction so a rounding difference can never push the last tile of a
+ * row onto its own line (UI-SPEC #62: the 3-column stat row must not break).
+ */
+const COLUMN_BASIS = { 2: '48%', 3: '31%' } as const;
+
 export type ComingSoonTileProps = {
   /** The Lucide icon component to render (e.g. `CalendarClock`) — never a name string. */
   icon: LucideIcon;
@@ -21,6 +28,12 @@ export type ComingSoonTileProps = {
   label: string;
   /** Already-localized "Soon"/"Bald" badge text. */
   badge: string;
+  /**
+   * How many tiles share a row in the caller's wrapping grid. Defaults to the
+   * original 2-column festival grid; the Profil stat row (06-07) asks for 3.
+   * Everything else about the tile is identical between the two.
+   */
+  columns?: keyof typeof COLUMN_BASIS;
 };
 
 /**
@@ -30,7 +43,7 @@ export type ComingSoonTileProps = {
  * props (icon/label/badge are all caller-supplied), matching the phase scope
  * that keeps every tile — including Cashless — inert this phase (T-05-03).
  */
-export function ComingSoonTile({ icon: Icon, label, badge }: ComingSoonTileProps) {
+export function ComingSoonTile({ icon: Icon, label, badge, columns = 2 }: ComingSoonTileProps) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
@@ -40,7 +53,10 @@ export function ComingSoonTile({ icon: Icon, label, badge }: ComingSoonTileProps
   const labelFont = fontFamilyForRole('title3', fontsReady);
 
   return (
-    <View style={styles.tile} accessibilityState={{ disabled: true }}>
+    <View
+      style={[styles.tile, { flexBasis: COLUMN_BASIS[columns] }]}
+      accessibilityState={{ disabled: true }}
+    >
       <View style={styles.badge}>
         <Text style={[styles.badgeText, { fontFamily: microFont }]}>{badge}</Text>
       </View>
@@ -55,7 +71,7 @@ export function ComingSoonTile({ icon: Icon, label, badge }: ComingSoonTileProps
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     tile: {
-      flexBasis: '48%',
+      // `flexBasis` is supplied per instance from COLUMN_BASIS — see the render.
       backgroundColor: colors.surfaceCard,
       borderWidth: 1,
       borderColor: colors.borderSubtle,

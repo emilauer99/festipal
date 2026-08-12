@@ -12,7 +12,12 @@ import { useTheme } from '../lib/theme-context';
 // mode-invariant scales stay at module scope.
 const { typeRoles, radii } = tokens;
 
-const AVATAR_SIZE = 88;
+/**
+ * Exported so `AvatarSunsetRing` can DERIVE its ring geometry from the one
+ * avatar size instead of restating `88` in a second file — a copy there would
+ * keep its old value the day this one changes and leave the ring off-centre.
+ */
+export const AVATAR_SIZE = 88;
 
 export type AvatarTileProps = {
   displayName: string;

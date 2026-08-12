@@ -1,8 +1,8 @@
-# festipal
+# quiks
 
 ## What This Is
 
-festipal is a **multi-tenant festival app** (one festival = one tenant, reused across every
+quiks is a **multi-tenant festival app** (one festival = one tenant, reused across every
 partnering festival). For visitors it brings the whole festival into one place: overview, site
 map, timetable, news/updates, and cashless — plus two differentiators, a **camping-spot / ticket
 swap marketplace** and **activities + connecting with friends**. It ships as an Expo mobile app
@@ -35,6 +35,7 @@ path must work.
 - ✓ The `apps/mobile` Expo (Expo Router, RN New Arch) app exists, talks to the real API through `packages/contracts` (ts-rest client with SecureStore cookie-forwarding, better-auth Expo client, TanStack Query), and enforces i18n from the first line of UI (Lingui catalogs DE/EN loaded, `no-literal-string` lint, `resolveUiLocale` German fallback); full core-value path (OTP login → festivals → save → gate-less enter → home) signed off on real Android hardware — **Validated in Phase 3: Mobile App Shell & i18n Foundation** (PLAT-02, I18N-01)
 - ✓ Passwordless **email-OTP login** (email → 6-digit code → in; new email creates a better-auth `Account`), mandatory first-login **VisitorProfile completion** (unique `username` with live availability + `displayName`, optional avatar), returning-visitor **skip-profile** fast path, and a **long-lived auto-renewing session** (persists across restarts, re-auth via OTP on expiry) — **Validated in Phase 4: Visitor Auth & Profile Completion**
 - ✓ A visitor can **browse all festivals** and **save** them to "Meine Festivals" (Meine/Alle segment, default Meine), **enter a festival gate-lessly** (no ticket/approval) landing on that festival's home, and the home shows a basic festival **overview**; festival-scoped reads are `festivalId`-isolated (SEC-02 cross-tenant test) and cold-start restores only the last-entered *saved* festival — **Validated in Phase 5: Festival Selection & Home** (SEC-02)
+- ✓ The app carries a global four-tab bar (Start · Festivals · Friends · Mehr) with four real routes, a **view-only Profile** push-screen (displayName, @username, e-mail, avatar/initials, derived age and identity line from the session-bound `GET /me`; no input, no mutation), a **Friends** screen whose six blocks each state their precondition instead of faking a working surface, and a full **Mehr** screen (account → profile, language display, real dark-mode override persisted above the device scheme, and logout with a native cancellable confirm). Placeholder rows answer with one shared "coming soon" toast; nothing invents data, and the SafeNow card carries its distancing sentence in DE and EN — **Validated in Phase 6: Profile & Friends Placeholders** (HOME-03, PROF-01, FRND-01)
 
 ### Active
 
@@ -42,15 +43,15 @@ path must work.
      Reconciled 2026-07-30 with the binding concept phase (docs/concept/04–10, ADR-009/014/016/020).
      Hypotheses until shipped and validated. -->
 
-- [ ] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email)
-- [ ] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet)
+- [x] The home exposes a **Profile** screen (view-only: username, displayName, avatar/initials, email) — **done in Phase 6**
+- [x] The home exposes a **Friends** screen (placeholder — friends who saved the same festival; none yet) — **done in Phase 6**
 - [x] The `apps/mobile` Expo app exists and is wired to the real API through `packages/contracts` — **done in Phase 3** (PLAT-02, I18N-01)
 - [x] Passwordless email-OTP login + first-login VisitorProfile completion + returning-user skip + long-lived session — **done in Phase 4**
 - [x] Browse/save festivals (Meine/Alle) + gate-less enter + basic festival home overview — **done in Phase 5**
 
 ### Out of Scope
 
-<!-- Explicit boundaries for THIS cycle. Part of the long-term festipal vision, just not now. -->
+<!-- Explicit boundaries for THIS cycle. Part of the long-term quiks vision, just not now. -->
 
 - Deep content features — timetable, site map (MapLibre), news/updates — deferred to later phases; the shell only shows basic overview info
 - Cashless integration (embedded per-festival WebView) — later phase; not needed for entry/home
@@ -102,7 +103,10 @@ path must work.
 | Identity = `Account` → `VisitorProfile` (ADR-016); visitors are global, **not** org-members | One login base for all person types; visitor fields (`username`/`avatar`) live on VisitorProfile, not Account | ✓ Concept-binding |
 | First-login **profile completion** (unique `username` + `displayName`) is in the shell | Concept makes it mandatory at first login; more than a placeholder | ✓ Concept-binding |
 | Festival join is **gate-less "save"** (`MyFestival`), not a membership/access gate (ADR-014) | No ticket/approval to enter; tenant isolation is data-scoping by `festivalId`, not auth membership | ✓ Concept-binding |
-| Profile & Friends: Profile view-only, Friends placeholder this cycle | Real social/editing is meaningful scope; keep the first slice lean | — Pending |
+| Profile & Friends: Profile view-only, Friends placeholder this cycle | Real social/editing is meaningful scope; keep the first slice lean | ✓ Shipped Phase 6 |
+| Placeholders answer honestly instead of looking functional (D-11/D-13) | A dead switch or an inert search field that looks live teaches distrust; every empty state names its precondition, dead controls are genuinely `disabled` with a Soon badge, and one shared toast answers every placeholder tap | ✓ Shipped Phase 6 |
+| Dark-mode override sits **above** the device scheme and writes explicit values (D-08a, amended by WR-01) | Leaving the light state writer-less made the switch dead on a system-dark device — off wrote `'system'`, which resolved back to dark. Off now writes `'light'`; the price (touching the switch leaves "follow the device" until a three-way picker exists) is recorded in the code | ✓ Shipped Phase 6 |
+| `visitor_profile` gains `birthDate`/`gender`/`pronoun` with **no visibility policy** (D-12) | The fields are needed for the identity line now; IDN-02 (per-field visibility, age gate, Flinta filter, signup disclaimer) waits on Birgit's concept. Hard constraint: the public projection must be split into an owner view and a friend view before the first endpoint serves a *foreign* profile | ⚠ Shipped Phase 6 with an open obligation (T-06-06) |
 | Festival browse/save is list-based this cycle (no QR) | Avoids native camera/QR work; shared-link/QR save added later | ✓ Shipped Phase 5 |
 | Online-assumed for this slice (offline architected, not implemented) | Login needs network anyway; no cacheable content yet | — Pending |
 | Rename to **quiks** and CI v1.0 land together, not incrementally (ADR-023/ADR-024) | `scheme` ↔ `trustedOrigins` and bundle-ID ↔ native build are coupled; a partial rename breaks auth at runtime, not at build time | ✓ Shipped Phase 05.1 |
@@ -127,4 +131,11 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-11 — Phase 05.1 (quiks Rename & CI v1.0 Rollout) complete & verified, 16/16 must-haves (Verifikation Runde 2, nach Gap-Closure durch Quick-Task 260811-jz6). Der Code trägt durchgängig den Namen quiks (`@quiks/*`, Bundle-ID `at.quiks.app`, Scheme `quiks://` konsistent mit `trustedOrigins`), CI v1.0 ist verbindlich verdrahtet (Beere/Amber, Sunset als einziges Gradient-Token, Limette/Violett per Test ausgeschlossen), hell-first ist der Default, alle Screens und Komponenten lösen Farben pro Render auf, die Schriftrollen tragen echte Gewichte und ihr CI-Tracking (per Guard-Test gegen stilles Zurückfallen abgesichert), und sechs echte App-Icons ersetzen die Expo-Platzhalter. Geräteabnahme durch den Entwickler freigegeben. Security-Review abgeschlossen (`05.1-SECURITY.md`, threats_open: 0) und UAT abgenommen (`05.1-UAT.md`, 42/42 — 32 automatisch abgedeckt, 10 Geräte-Checkpoints vom Entwickler bestätigt, 0 Befunde). Offen: Repo-/Remote-Rename per D-15-Checkliste, `/gsd-ui-review 05.1` (noch nicht gelaufen), sowie die Ledger-Einträge WINDOWS 25/30/31 (Mono-Rollen, Android Themed Icons, visuelle Wirkung des Trackings). Next: Phase 6 — Profile & Friends placeholders.*
+*Last updated: 2026-08-12 — **Phase 6 (Profile & Friends Placeholders) complete & verified.** Damit ist der Mobile-Workstream des Milestones v1.0 „Rollout" bei 7/7 Phasen und 50/50 Plänen. Verifikation `passed` (18/18 Muss-Kriterien, Re-Verifikation nach der Gap-Closure 06-10), UAT `complete` (5/5, 0 Befunde — darunter die vier Geräteprüfungen WR-01/CR-01/WR-04 und der Backstop-Layoutfall, alle als menschliche Abnahme geführt), Security-Review abgeschlossen (`06-SECURITY.md`, 44/44 Threats geschlossen, `threats_open: 0`). Die Phase brachte den vierten Tab (Mehr), den Profil-Push-Screen, den Friends-Screen und einen additiven Schema-Schnitt (`birthDate`/`gender`/`pronoun`, Migration 0004). Ein Blocker aus der UAT wurde unterwegs geschlossen: G-06-5 — der Profil-Screen crashte unter Hermes (`TypeError: undefined cannot be used as a constructor`), weil Lingui `plural()` `Intl.PluralRules` eager auswertet und Hermes das nicht kennt; Fix ist ein `@formatjs/intl-pluralrules`-Polyfill an einem neuen App-Entry, gerätverifiziert und durch einen Rückfall-Guard-Test abgesichert. **Offen und bewusst getragen:** T-06-06 — `visitorProfilePublicSchema` trägt jetzt `birthDate`/`gender` ohne jede Sichtbarkeits-Policy und MUSS vor dem ersten Endpunkt, der ein FREMDES Profil ausliefert, in Eigentümer- und Freundes-Sicht getrennt werden (IDN-02 hängt an Birgits Konzept). Ebenfalls offen: die Produktfrage, ob der erste Tab von „Home" auf „Start" umbenannt wird (in Phase 6 ausdrücklich nicht beauftragt), `/gsd-ui-review 06`, sowie aus Phase 05.1 der Repo-/Remote-Rename per D-15-Checkliste und die Ledger-Einträge WINDOWS 25/30/31. Next: Der Mobile-Workstream ist fertig — der Admin-Workstream hat noch nicht begonnen; das Milestone kann erst schließen, wenn beide durch sind.*
+
+<details>
+<summary>Vorheriger Stand (Phase 05.1)</summary>
+
+*2026-08-11 — Phase 05.1 (quiks Rename & CI v1.0 Rollout) complete & verified, 16/16 must-haves (Verifikation Runde 2, nach Gap-Closure durch Quick-Task 260811-jz6). Der Code trägt durchgängig den Namen quiks (`@quiks/*`, Bundle-ID `at.quiks.app`, Scheme `quiks://` konsistent mit `trustedOrigins`), CI v1.0 ist verbindlich verdrahtet (Beere/Amber, Sunset als einziges Gradient-Token, Limette/Violett per Test ausgeschlossen), hell-first ist der Default, alle Screens und Komponenten lösen Farben pro Render auf, die Schriftrollen tragen echte Gewichte und ihr CI-Tracking (per Guard-Test gegen stilles Zurückfallen abgesichert), und sechs echte App-Icons ersetzen die Expo-Platzhalter. Geräteabnahme durch den Entwickler freigegeben. Security-Review abgeschlossen (`05.1-SECURITY.md`, threats_open: 0) und UAT abgenommen (`05.1-UAT.md`, 42/42 — 32 automatisch abgedeckt, 10 Geräte-Checkpoints vom Entwickler bestätigt, 0 Befunde). Offen: Repo-/Remote-Rename per D-15-Checkliste, `/gsd-ui-review 05.1` (noch nicht gelaufen), sowie die Ledger-Einträge WINDOWS 25/30/31 (Mono-Rollen, Android Themed Icons, visuelle Wirkung des Trackings). Next: Phase 6 — Profile & Friends placeholders.*
+
+</details>

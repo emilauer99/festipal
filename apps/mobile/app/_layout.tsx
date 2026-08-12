@@ -25,6 +25,7 @@ import { fontFamilyForRole, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider, useFontsReady } from '../lib/fonts-context';
 import { ThemeProvider, useTheme } from '../lib/theme-context';
 import type { ThemeColors } from '../lib/theme';
+import { ToastProvider } from '../components/SoonToast';
 import { WordmarkGlyph } from '../components/WordmarkGlyph';
 
 const { typeRoles } = tokens;
@@ -134,13 +135,22 @@ const APP_SCHEME_FALLBACK = 'quiks';
  * platform default keeps light icons that are unreadable on it. `"auto"` flips
  * the icons off the resolved colour scheme, so it needs no separate wiring to
  * `useTheme()`.
+ *
+ * 06-04 / D-13 — `ToastProvider` is the app's ONE "kommt bald" mechanism, shared
+ * by Profil, Mehr and Friends. It sits INSIDE `ThemeProvider` because the pill
+ * resolves its colours through `useTheme()`, and inside `SafeAreaProvider`
+ * because it offsets itself by the bottom inset to clear the FloatingNav. It
+ * wraps `RootNavigation` rather than replacing any existing provider, so the
+ * order of everything above and the status-bar configuration are unchanged.
  */
 export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <ThemeProvider>
         <StatusBar style="auto" />
-        <RootNavigation />
+        <ToastProvider>
+          <RootNavigation />
+        </ToastProvider>
       </ThemeProvider>
     </SafeAreaProvider>
   );
@@ -385,10 +395,30 @@ function RootNavigation() {
   // `!session` branch above and `forceUnauthenticated()`'s explicit
   // `setAuthState({ status: 'unauthenticated' })`), since both funnel through
   // the same `authState.status` transition this effect watches.
+  //
+  // CR-01 (06-REVIEW.md) — the SAME transition is also where the React Query
+  // cache has to die. `['me']` holds the previous account's e-mail, birth date,
+  // pronoun and gender, and `['me','festivals']` its saved festivals; without
+  // this, a second account signing in on the same device within the default
+  // 5-minute gcTime gets that data served synchronously as `status: 'success'`
+  // by Profil/Friends/Home — and if the refetch then fails (festival WLAN), it
+  // STAYS on screen. This is the third and last channel of the same class of
+  // bug as the cold-start redirect above and the active-festival slug
+  // (05-05 LOW); both of those are already reset on this transition.
+  //
+  // Ordering is load-bearing: `cancelQueries()` first, so a `GET /me` that is
+  // still in flight for the OLD session is rejected with a CancelledError
+  // BEFORE `clear()` runs and can therefore never resolve into the emptied
+  // cache afterwards. (`clear()` destroys every query and thereby cancels its
+  // retryer too, so the explicit cancel is belt-and-braces — but it is the
+  // half that states the intent, so keep it.) On the initial cold start the
+  // pair is a harmless no-op on an empty cache.
   useEffect(() => {
     if (authState.status === 'unauthenticated') {
       coldStartRedirectRef.current = false;
       setColdStartTarget(null);
+      void queryClient.cancelQueries();
+      queryClient.clear();
     }
   }, [authState.status]);
 
@@ -445,6 +475,22 @@ function RootNavigation() {
                 <Stack.Protected guard={authState.status === 'authenticated'}>
                   <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="(festival)" />
+                  {/* 06-01 / D-01 + Pitfall 1 — `profil` is a root-level SIBLING
+                      of `(tabs)`, not a tab: pushing it therefore hides the
+                      FloatingNav on its own, exactly like `(festival)`, with no
+                      per-screen visibility logic. This registration is NOT
+                      optional and NOT implicit — this Stack lists its children
+                      exhaustively, so an unregistered sibling file dead-ends on
+                      Expo Router's Unmatched Route screen (the same failure
+                      class as the resolved first-login-unmatched-route bug).
+                      T-06-01: it lives INSIDE this authenticated guard, never
+                      beside it — `/profil` renders account data.
+
+                      Header/title are set by the SCREEN itself (`app/profil.tsx`'s
+                      own `<Stack.Screen options>`), matching every other screen in
+                      this app — `useLingui()` cannot be called here, since this
+                      component is the one that RENDERS `<I18nProvider>`. */}
+                  <Stack.Screen name="profil" />
                 </Stack.Protected>
               </Stack>
             </ColdStartTargetContext.Provider>

@@ -47,12 +47,28 @@ export type Tag = z.infer<typeof tagSchema>;
  * `visitor_profile` column breaks this typecheck instead of silently drifting.
  * Deliberately picks only the non-reserved columns: `socials`/`socialsVisibility`
  * have no visibility policy yet and are omitted (default closed).
+ *
+ * D-12 adds the three optional identity fields (`pronoun`, `birthDate`,
+ * `gender`). `birthDate` travels as a `YYYY-MM-DD` STRING, never a `Date` —
+ * same convention `festivalSchema` already sets for `startDate`/`endDate`. The
+ * age shown in the profile header is DERIVED client-side from this value and is
+ * never persisted (D-12a).
+ *
+ * T-06-06 — KNOWINGLY ACCEPTED for this phase: this projection is owner-bound.
+ * Its only producer is `MeService.getProfile(accountId)` and its only caller
+ * passes `session.user.id`; no endpoint in phase 6 serves a FOREIGN profile.
+ * Before the first one does (FRND-02/PROF-02), this schema must be split into an
+ * owner view and a friend view — `birthDate`/`gender` must not leak by default.
+ * IDN-02 (per-field visibility policy, age limit, disclaimer) remains pending.
  */
 export const visitorProfilePublicSchema = visitorProfileSelectSchema.pick({
   accountId: true,
   username: true,
   displayName: true,
   avatar: true,
+  pronoun: true,
+  birthDate: true,
+  gender: true,
 });
 export type VisitorProfilePublic = z.infer<typeof visitorProfilePublicSchema>;
 
@@ -63,10 +79,23 @@ export type VisitorProfilePublic = z.infer<typeof visitorProfilePublicSchema>;
  * simpler shape and the client only ever needs the binary branch (has a
  * profile vs. doesn't) — a `status` field would just restate this null-check
  * as a string literal with no extra information.
+ *
+ * `createdAt` (D-04) is the Account's creation timestamp, surfaced for the
+ * profile meta line's "member since {year}". It sits at the TOP level, NOT
+ * inside `profile`, because it comes from the `user` (Account) table and not
+ * from `visitor_profile` — and it is a `z.string()` (ISO 8601), never a Zod
+ * date schema: JSON carries no Date, so declaring it as a date here would make
+ * the TypeScript type lie about the shape the client actually receives over the
+ * wire. Same string-transport convention `festivalSchema` uses for
+ * `startDate`/`endDate` (and the reason no Zod date schema appears anywhere in
+ * this file — the contract transports dates as strings, always). It is
+ * server-derived from the session and never accepted from a request body
+ * (T-06-10).
  */
 export const meSchema = z.object({
   accountId: z.string(),
   email: z.string().email(),
+  createdAt: z.string(),
   profile: visitorProfilePublicSchema.nullable(),
 });
 export type Me = z.infer<typeof meSchema>;
@@ -75,11 +104,17 @@ export type Me = z.infer<typeof meSchema>;
  * `POST /me/complete-profile` request body — composed on the drizzle-zod
  * insert base (Pitfall 6), never hand-redeclared. `username`/`displayName`
  * are required by the table; `avatar` stays optional/nullable as on the base.
+ * The three D-12 identity fields are picked from the same base and inherit its
+ * `.nullable().optional()` shape plus the server-side length caps (pronoun 20,
+ * gender 30 — T-06-07), so a request that omits all three stays valid.
  */
 export const completeProfileBodySchema = visitorProfileInsertSchema.pick({
   username: true,
   displayName: true,
   avatar: true,
+  pronoun: true,
+  birthDate: true,
+  gender: true,
 });
 export type CompleteProfileBody = z.infer<typeof completeProfileBodySchema>;
 

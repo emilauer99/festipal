@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
 - [x] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview (completed 2026-08-09)
 - [x] **Phase 5.1: quiks Rename & CI v1.0 Rollout** (INSERTED) - ADR-024 Code-Rename (`@festipal/*` → `@quiks/*`, `at.festipal.app`) + ADR-023 CI-v1.0-Token-Swap (Beere/Amber/Sunset) und hell-first Light-Mode-Wiring (completed 2026-08-11)
-- [ ] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home
+- [x] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home (completed 2026-08-12)
 
 ## Phase Details
 
@@ -265,13 +265,44 @@ Plans:
 **Requirements**: HOME-03, PROF-01, FRND-01
 **Success Criteria** (what must be TRUE):
 
-  1. The festival home provides clear navigation to both Profile and Friends (HOME-03).
+  1. ~~The festival home provides clear navigation to both Profile and Friends (HOME-03).~~ **Superseded by D-01** (user-locked): navigation to Profile and Friends is delivered by the **global tab bar** (`Start · Festivals · Friends · Mehr`), with Profil as a pushed screen behind Mehr → Konto → Profil — not from the festival home. HOME-03 is satisfied there. Verify against D-01, not against this wording.
   2. The Profile screen shows the visitor's username, displayName, avatar/initials, and email in a view-only layout, sourced from `GET /api/v1/me` (PROF-01).
-  3. The Friends screen renders a clear, non-broken empty state that reads as intentional — framed as "friends who saved this festival," with no real connections yet (FRND-01).
+  3. The Friends screen renders a clear, non-broken empty state that reads as intentional, with no real connections yet (FRND-01). ~~framed as "friends who saved this festival"~~ **Superseded by D-10** (user-locked): Friends is **global** and reads no festival state, so the festival-scoped framing no longer applies. Verify against D-10, not against this wording.
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: TBD
+**Plans**: 10/10 plans executed in 6 waves (06-10 is a gap-closure plan added after UAT)
+
+**Wave 1**
+
+- [x] 06-01-PLAN.md — Tracer: four real tabs + Mehr → Profil push screen on live `GET /me` (D-01)
+- [x] 06-02-PLAN.md — [one-way] shared-package cut: `visitor_profile` identity columns, `meSchema.createdAt`, info tokens, `/me` widening, blocking Drizzle migration (D-04, D-12, D-12a)
+- [x] 06-03-PLAN.md — `lib/` logic: persisted theme override over the 05.1 resolver, age derivation, meta-line builders (D-08a, D-12a, D-04)
+
+**Wave 2** *(blocked on Wave 1)*
+
+- [x] 06-04-PLAN.md — Shared components: `ListRow`, `SettingsSwitch`, the single `SoonToast` mechanism (D-13)
+
+**Wave 3** *(blocked on Wave 2)*
+
+- [x] 06-05-PLAN.md — Mehr screen: five sections, live dark-mode switch, SafeNow callout, logout move with native confirm (D-08, D-08a, D-09)
+- [x] 06-06-PLAN.md — Friends screen: six blocks, per-section empty states, quiks-code card with the real handle (D-10, D-11)
+- [x] 06-07-PLAN.md — Profil screen + `AvatarSunsetRing` + ADR-023/brand-doc amendment (D-02…D-07)
+
+**Wave 4** *(blocked on Wave 3)*
+
+- [x] 06-08-PLAN.md — `complete-profile` optional identity fields + native date picker behind a package-legitimacy checkpoint (D-12, D-12a)
+
+**Wave 5** *(blocked on Wave 4)*
+
+- [x] 06-09-PLAN.md — Lingui catalogs, uncached monorepo gate, SC reconciliation, device UAT (D-14)
+
+**Wave 6** *(gap closure — UAT G-06-5, blocker)*
+
+- [x] 06-10-PLAN.md — Register `Intl.PluralRules` (`@formatjs/intl-pluralrules`) at a custom Expo Router entry so the Profile screen stops crashing on Hermes; wiring guard test + device confirmation
+
 **Notes**: Placeholder text still counts as shipped shell UI — do not skip i18n wrapping. `username`/`displayName` are user-generated and are NOT translated (ADR-012/020).
+
+**Success-criteria reconciliation (planning, 2026-08-11 — user-locked, do not re-litigate):** SC-1 is superseded by **D-01** — navigation to Profile and Friends is delivered by the global tab bar (`Start · Festivals · Friends · Mehr`, Profil as a pushed screen behind Mehr → Konto → Profil), NOT from the festival home; HOME-03 is satisfied there. SC-3 is superseded by **D-10** — Friends is global and reads no festival state, so the "friends who saved this festival" framing no longer applies. Verify this phase against D-01/D-10, not against the original SC wording. Phase 6 therefore ships **three** screens (Friends, Mehr, Profil) plus a `packages/db` → `packages/contracts` → `apps/api` identity-field cut (D-12/D-12a) pulled forward from IDN-02.
 **UI hint**: yes
 
 ## Progress
@@ -287,4 +318,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 0/TBD | Not started | - |
+| 6. Profile & Friends Placeholders | 10/10 | Complete    | 2026-08-12 |

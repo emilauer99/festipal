@@ -69,6 +69,44 @@ export function resolveThemeMode(scheme: DeviceColorScheme): ThemeMode {
   return scheme === 'dark' ? 'dark' : 'light';
 }
 
+/**
+ * The three states the persisted appearance preference can hold (D-08a).
+ *
+ * `'system'` means "follow the device", i.e. defer to {@link resolveThemeMode}
+ * unchanged. `'light'` and `'dark'` are EXPLICIT user choices that outrank the
+ * device. The Mehr-screen switch writes `'dark'` (on) or `'light'` (off) —
+ * WR-01 (06-REVIEW.md): writing `'system'` on off made the switch inert on a
+ * system-dark device, because `'system'` resolves right back to `'dark'` there.
+ * `'system'` therefore survives only as the DEFAULT (nothing stored yet, or an
+ * unreadable/tampered value — see `parseThemeOverride`); no control writes it
+ * back until an explicit three-state Light/Dark/System control exists
+ * (06-UI-SPEC.md § Theme Override Contract).
+ */
+export type ThemeOverride = 'system' | 'light' | 'dark';
+
+/**
+ * Applies the persisted override ON TOP OF the device resolution (D-08a).
+ *
+ * This is a LAYER, not a replacement: the `'system'` branch delegates to
+ * {@link resolveThemeMode} verbatim, so the hell-first invariant (only the
+ * exact device value `'dark'` yields the night shift; `null`/`undefined`/
+ * `'unspecified'` all yield light) is preserved byte-for-byte and stays gated
+ * by that function's own untouched test block. Do NOT inline the scheme check
+ * here — a second copy of the rule is a second thing to drift.
+ *
+ * @param override the persisted preference — see {@link ThemeOverride}.
+ * @param scheme the value from React Native's `useColorScheme()`.
+ * @returns the explicit override when there is one, else the device answer.
+ */
+export function resolveEffectiveThemeMode(
+  override: ThemeOverride,
+  scheme: DeviceColorScheme,
+): ThemeMode {
+  if (override === 'dark') return 'dark';
+  if (override === 'light') return 'light';
+  return resolveThemeMode(scheme);
+}
+
 /** Picks the token set for a mode. Dark yields `colors`, light yields `lightColors`. */
 export function resolveThemeColors(mode: ThemeMode): ThemeColors {
   return mode === 'dark' ? colors : lightColors;
