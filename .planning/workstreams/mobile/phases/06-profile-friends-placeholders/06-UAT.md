@@ -1,5 +1,5 @@
 ---
-status: complete
+status: diagnosed
 phase: 06-profile-friends-placeholders
 source: [06-VERIFICATION.md]
 started: 2026-08-12T10:25:00Z
@@ -52,10 +52,26 @@ blocked: 0
   reason: "User reported: a) pass b) pass c) wenn ich auf Profile klicke kommt ein App Error:  ERROR  [TypeError: undefined cannot be used as a constructor.]"
   severity: blocker
   test: 5
-  root_cause: ""
-  artifacts: []
-  missing: []
-  debug_session: ""
+  root_cause: "AND-Gate aus Code + Engine: `app/profil.tsx:199-200` ist die einzige Stelle der App, die eine ICU-Plural-Nachricht rendert (`plural()` aus `@lingui/core/macro`, eingeführt von 06-07) — unbedingt im Komponentenkörper, vor jedem Daten-Branch. `@lingui/core@6.6.0` wertet jeden Plural-Token eager über `new Intl.PluralRules(...)` aus (dist/index.mjs:75-84; `plurals` wird VOR dem `rules[value]`-Lookup gebunden, `festivalCount === 0` short-circuited also nicht). Hermes (Expo-Default, kein `jsEngine`-Override in app.json) implementiert `Intl.PluralRules` nicht, und die App registriert keinen Polyfill → Operand ist `undefined` → Hermes wirft wörtlich `TypeError: undefined cannot be used as a constructor.`"
+  artifacts:
+    - path: "apps/mobile/app/profil.tsx"
+      issue: "Zeilen 7, 199-200 — einzige `plural()`-Aufrufstelle der App; läuft unbedingt vor dem viewState-Branch, crasht daher vor jedem Markup"
+    - path: "apps/mobile/package.json"
+      issue: "kein `@formatjs/intl-pluralrules` — Polyfill für die fehlende Engine-Fähigkeit fehlt"
+    - path: "apps/mobile/app.json"
+      issue: "kein `jsEngine`-Override — Hermes ist aktiv und kennt Intl.PluralRules nicht"
+    - path: "apps/mobile/locales/de/messages.po, apps/mobile/locales/en/messages.po"
+      issue: "Zeilen 17-22 tragen die Plural-ICU-Nachrichten; `formats.plural` wird in BEIDEN Sprachen erreicht"
+    - path: "apps/mobile/vitest.config.ts"
+      issue: "environment: 'node' (volles ICU, PluralRules vorhanden) und auf lib/**/__tests__/** beschränkt — rendert keine Screens, kann diese Fehlerklasse strukturell nicht fangen"
+  missing:
+    - "`@formatjs/intl-pluralrules` als Dependency in apps/mobile aufnehmen"
+    - "`polyfill-force` + de/en-Locale-Daten als Side-Effect-Import am App-Entry laden, VOR dem ersten Render und vor der Aktivierung in lib/i18n.ts (bewusst `/polyfill-force`, nicht `/polyfill` — die Detection-Variante ist auf Android dokumentiert sekundenlangsam)"
+    - "Die `plural()`-Aufrufe NICHT entfernen — das würde den Fehler nur maskieren und die in 06-07 bewusst erkaufte Korrektheit (Null ist eine echte Plural-Kategorie) aufgeben; jeder künftige Plural brächte den Crash zurück"
+    - "Rückfall-Guard gegen diese Fehlerklasse (Lint-Regel oder Startup-Assertion) — grüner Typecheck und grüne Tests sind hier strukturell blind"
+    - "Geräteverifikation: `cd apps/mobile && npx expo run:android` (nie aus dem Repo-Root), `typeof Intl.PluralRules` beim Start loggen — erwartet `undefined`. Druckt es `function`, auf AvatarSunsetRing/AvatarTile schwenken (die einzigen anderen profil-exklusiven Flächen)"
+  debug_session: ".planning/debug/profile-screen-undefined-constructor.md"
+  diagnosis_caveat: "Statisch mit der projekteigenen Toolchain bewiesen (Babel-Transform über profil.tsx, app-weiter grep, Lingui-dist-Quelltext); die Hermes-Fähigkeitsaussage selbst stützt sich auf Upstream-Doku (facebook/hermes#1462, FormatJS-Polyfill-Doku) und ist NICHT am Gerät verifiziert."
 
 ---
 
