@@ -1,10 +1,11 @@
 ---
 phase: 8
 slug: friends
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-12
+reviewed_at: 2026-08-12
 ---
 
 # Phase 8 — UI Design Contract
@@ -154,6 +155,7 @@ Design copy (D-14, inherited) is direction, not wording. **DE is primary** (matc
 | Camera permission denied — heading | DE "Kamera nicht verfügbar" / EN "Camera unavailable" |
 | Camera permission denied — body | Reuses the rationale line above, then: DE "Erlaub den Zugriff in den Einstellungen, um zu scannen." / EN "Allow access in Settings to scan." |
 | Camera permission denied — actions | Primary pill DE "Einstellungen öffnen" / EN "Open Settings" (`Linking.openSettings()`) + plain-text link DE "Stattdessen Handle eingeben" / EN "Enter handle instead" (returns to the search field, D-16's "camera-free path") |
+| Scan — idle hint (granted, nothing decoded yet) | DE "Richte die Kamera auf den quiks-Code deines Gegenübers." / EN "Point the camera at the other person's quiks code." — one line under the scan-target overlay. **Claude default** (raised by the UI-consideration probe, § UI Considerations row 53; the planner may reword, but the string must exist in both catalogs rather than being invented at execution time) |
 | Scan — invalid/foreign code | DE "Das ist kein quiks-Code." / EN "That's not a quiks code." + plain-text link DE "Nochmal scannen" / EN "Scan again" |
 | Scan — handle no longer valid (404 lookup) | DE "Dieser Code ist nicht mehr gültig." / EN "This code is no longer valid." + "Nochmal scannen" / "Scan again" |
 | Scan confirmation card — heading | DE "Diese Person hinzufügen?" / EN "Add this person?" |
@@ -249,22 +251,37 @@ Reused unchanged: `SegmentedControl` (QR screen switcher), `AvatarSunsetRing` (n
 
 ## UI Considerations
 
-> Produced by the ui-consideration-probe over the surfaces this phase describes.
+> Produced by the ui-consideration-probe (`ui-consideration-probe.cjs`) over the surfaces this phase
+> describes, run post-verification by the `/gsd-ui-phase` orchestrator.
 
-Applicable state considerations resolved: 47 covered, 3 backstop, 0 unresolved.
+**Engine-computed applicable considerations: 53** (author-confirmed element kinds, table below).
+Resolved: **43 explicit · 8 dismissed (with reason) · 2 backstop · 0 unresolved.** Row 49 is one
+extra row beyond the 53 — surplus coverage the taxonomy does not raise, kept because it is true.
 
 ### Surfaces
 
-| id | Surface | Element kinds (author-confirmed) |
-|---|---|---|
-| E1 | Search field + results list | form, list-collection |
-| E2 | quiks-code card (now real CTA) | media, static-content, interactive-control |
-| E3 | Requests section — "An dich" / "Von dir" | list-collection, interactive-control |
-| E4 | Crew (friends list) | list-collection, interactive-control |
-| E5 | Friend detail modal | static-content, interactive-control, media |
-| E6 | QR screen — "Mein Code" panel | media, static-content |
-| E7 | QR screen — "Scannen" panel + confirmation card | media, interactive-control, form |
-| E8 | Camera permission (requesting/granted/denied) | interactive-control, static-content |
+Element kinds went through propose-then-confirm: the prose classifier's proposal was compared
+against the surfaces as specified, and corrected where the heuristic misfired. Corrections applied:
+
+- **E2, E5, E7** — heuristic proposed `list-collection`; **rejected**. E2 is a single identity card,
+  E5 a fixed vertical stack, E7 a camera panel plus one confirmation card. None is a collection, and
+  accepting the cue would have raised phantom `partial`/`zero-one-many` considerations on all three.
+- **E4** — heuristic proposed `nav`; **accepted**. Crew rows really do navigate (tap → friend-detail
+  modal), so `nav` is a true kind, not the "floating nav" mention that tripped the cue.
+- **E1** — heuristic added `media`, `interactive-control`, `static-content` beyond the authored
+  `form, list-collection`; **accepted** (row avatars, trailing action buttons, hint/empty copy).
+- **E3, E7** — `static-content` added (section headings, hint and error copy); **accepted**.
+
+| id | Surface | Element kinds (author-confirmed) | Applicable |
+|---|---|---|---|
+| E1 | Search field + results list | form, list-collection, media, interactive-control, static-content | 8 |
+| E2 | quiks-code card (now real CTA) | media, static-content, interactive-control | 6 |
+| E3 | Requests section — "An dich" / "Von dir" | list-collection, interactive-control, static-content | 8 |
+| E4 | Crew (friends list) | list-collection, interactive-control, nav | 8 |
+| E5 | Friend detail modal | static-content, interactive-control, media | 6 |
+| E6 | QR screen — "Mein Code" panel | media, static-content | 6 |
+| E7 | QR screen — "Scannen" panel + confirmation card | form, media, interactive-control, static-content | 7 |
+| E8 | Camera permission (requesting/granted/denied) | interactive-control, static-content | 4 |
 
 ### Resolutions
 
@@ -302,7 +319,7 @@ Applicable state considerations resolved: 47 covered, 3 backstop, 0 unresolved.
 | 30 | E5 | empty | ⊘ dismissed | The modal only opens from a real crew-row tap with data already in hand — an empty detail modal is unreachable. |
 | 31 | E5 | loading | ⊘ dismissed | No fetch on open — data arrives via navigation params/cache read, not a new request (Phase 7 D-04). |
 | 32 | E5 | error | ⊘ dismissed | Same reason — nothing to fail to load. Unfriend-mutation failure is covered at row 40 below. |
-| 33 | E5 | populated | ✅ covered | Avatar (Sunset-ringed) · name · handle · identity line · "Freunde seit …" · danger row, per § Crew & Friend Detail Contract. |
+| 33 | E5 | populated | ✅ covered | Avatar (Sunset-ringed) · name · handle · identity line · "Freunde seit …" · danger row, per § Crew & Friend Detail Contract. **Incomplete-field rule:** `pronoun`/`gender` are `.nullable()` in `visitorProfileForeignSchema`, so `buildIdentityLine` returns `null` when both are empty and the caller DROPS the element rather than reserving an empty line (`lib/profile-meta-line.ts`, already tested) — no dash, no placeholder. `displayName`/`username` are non-null by contract and `friendsSince` is a required string, so no other field of this card can be absent. |
 | 34 | E5 | overflow | ✅ covered | Fixed vertical stack, no scroll container needed at this content volume. |
 | 35 | E5 | long-text | ✅ covered | `displayName`/`@username` truncation rule applies here too; the identity line and "Freunde seit" line wrap freely (short, bounded strings — pronoun/gender are capped fields upstream). |
 | 36 | E6 | empty | ✅ covered | Missing-handle edge case (§ Copywriting Contract). |
@@ -318,8 +335,12 @@ Applicable state considerations resolved: 47 covered, 3 backstop, 0 unresolved.
 | 46 | E7 | long-text | ✅ covered | Confirmation card's name/handle follow the same truncation rule as every `PersonRow`. |
 | 47 | E8 | loading | ✅ covered | Same as E7 row 41 — the requesting sub-state. |
 | 48 | E8 | error | ⊘ dismissed | "Denied" is a real, named STATE (row 49), not a transient error — it does not resolve via retry. |
-| 49 | E8 | populated | ✅ covered | Granted sub-state (live preview) and denied sub-state (info callout, § QR & Camera Contract) are both fully specified. |
+| 49 | E8 | *(populated)* | ✅ covered | **Surplus row** — `populated` applies to `list-collection`/`media` and E8 is neither, so the taxonomy does not raise it. Kept because it is true and useful: granted sub-state (live preview) and denied sub-state (info callout, § QR & Camera Contract) are both fully specified. Not counted toward the 53. |
 | 50 | E8 | long-text | 🧪 backstop | The denied-state rationale + heading + two actions must all fit inside the `r-card` callout at the longest supported catalog string (German tends to run longer than English) — **backstop: a held-out visual check of the denied-state callout at the longest catalog value, mirroring Phase 6's row 64 precedent for the exact same kind of check.** |
+| 51 | E4 | partial | ✅ covered | **Added by the probe** (the authored kind list omitted it). A crew/request/search row projects exactly three things: `displayName` and `username` — both NOT NULL in `visitorProfileForeignSchema`, so neither can be missing — and `avatar`, whose null case resolves through `AvatarTile`'s existing `deriveInitials()` initials fallback (unchanged at `size={40}`, § Avatar Size Contract). The nullable identity fields (`pronoun`, `gender`) are not rendered in a row at all. There is therefore no partial-row shape: a row renders complete or the entry does not exist. |
+| 52 | E6 | long-text | ✅ covered | **Added by the probe.** The "Mein Code" body copy and the missing-handle edge-case copy wrap freely (`numberOfLines` deliberately unset) and sit BELOW the QR backdrop card, so a longer German string grows the panel downward inside the screen's scroll container — it can never encroach on the mark's quiet zone, which comes from the backdrop card's own `sp-8` (24px) internal padding and is independent of the copy. The `@username` line keeps the app-wide `numberOfLines={1}` + tail-ellipsize rule. |
+| 53 | E7 | empty | ✅ covered | **Added by the probe** — the state before anything is decoded. There is no separate empty design: the granted sub-state IS the idle state (live preview + centered scan-target overlay), plus one hint line under the overlay so the panel is never a wordless camera feed — copy in § Copywriting Contract ("Scan — idle hint"), a Claude default the planner may reword. |
+| 54 | E8 | overflow | ✅ covered | **Added by the probe.** The denied-state callout is a content-sized card inside the panel's scroll container, not a fixed-height box: the rationale text wraps, the card grows, and the two actions stack below it without clipping. This is the container-side twin of row 50 — the same held-out visual check at the longest catalog value covers both, so it needs no second backstop. |
 
 ### Out of scope (recorded, not raised as a Phase 8 consideration)
 
@@ -343,11 +364,18 @@ backstop (`STATE.md` § Blockers/Concerns).
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** APPROVED by `gsd-ui-checker` on 2026-08-12 — 6/6 dimensions PASS, 0 blocking findings,
+0 flags. Two non-binding observations the checker deliberately left to the planner rather than the
+spec: the Hermes `Intl.Collator` sort risk (D-12, § Crew & Friend Detail Contract) and the camera /
+QR library choice (§ QR & Camera Contract).
+
+**Post-verification:** the UI-consideration probe ran after approval and added 4 considerations the
+authored table had missed (rows 51–54) plus one new copy string ("Scan — idle hint"). Those
+additions are post-sign-off and were not re-reviewed by the checker.
