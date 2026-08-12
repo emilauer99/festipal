@@ -270,7 +270,7 @@ Plans:
   3. The Friends screen renders a clear, non-broken empty state that reads as intentional — framed as "friends who saved this festival," with no real connections yet (FRND-01).
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: 7/9 plans executed in 5 waves
+**Plans**: 8/9 plans executed in 5 waves
 
 **Wave 1**
 
@@ -286,7 +286,7 @@ Plans:
 
 - [x] 06-05-PLAN.md — Mehr screen: five sections, live dark-mode switch, SafeNow callout, logout move with native confirm (D-08, D-08a, D-09)
 - [x] 06-06-PLAN.md — Friends screen: six blocks, per-section empty states, quiks-code card with the real handle (D-10, D-11)
-- [ ] 06-07-PLAN.md — Profil screen + `AvatarSunsetRing` + ADR-023/brand-doc amendment (D-02…D-07)
+- [x] 06-07-PLAN.md — Profil screen + `AvatarSunsetRing` + ADR-023/brand-doc amendment (D-02…D-07)
 
 **Wave 4** *(blocked on Wave 3)*
 
@@ -314,4 +314,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 7/9 | In Progress|  |
+| 6. Profile & Friends Placeholders | 8/9 | In Progress|  |

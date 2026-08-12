@@ -19,7 +19,7 @@ Requirements for the visitor-shell slice (navigable, online, mobile-first, login
 ### Identity & Profile
 
 - [x] **IDN-01**: On first login, a visitor completes their VisitorProfile with a required unique `username` (live availability check) and `displayName`; `avatar` is optional (upload/camera, else initials tile)
-- [ ] **PROF-01**: A visitor can open a Profile screen showing their username, displayName, avatar/initials, and email (view-only)
+- [x] **PROF-01**: A visitor can open a Profile screen showing their username, displayName, avatar/initials, and email (view-only)
 
 ### Festival Selection
 
@@ -111,7 +111,7 @@ Which phases cover which requirements.
 | HOME-01 | Phase 5 | Complete |
 | HOME-02 | Phase 5 | Complete |
 | HOME-03 | Phase 6 | Complete |
-| PROF-01 | Phase 6 | Pending |
+| PROF-01 | Phase 6 | Complete |
 | FRND-01 | Phase 6 | Complete |
 
 **Coverage:**

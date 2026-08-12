@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 28
+open_count: 29
 waived_count: 0
 fixed_count: 8
-total_count: 36
-last_updated: 2026-08-11T23:45:01.968Z
+total_count: 37
+last_updated: 2026-08-12T00:02:55.728Z
 ---
 
 # Broken Windows Ledger
@@ -51,6 +51,7 @@ last_updated: 2026-08-11T23:45:01.968Z
 | 34 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: native Picker-Darstellung (Android-Dialog / iOS-Spinner) ist ungeprueft — node-env vitest rendert keine RN-Komponenten; braucht 'npx expo run:android' aus apps/mobile | open |  | 2026-08-11T23:20:45.525Z |  |
 | 35 | 06 | unrun-verify | apps/mobile/app/(profile-setup)/complete-profile.tsx |  | 06-08: toLocalDateOnly() hat keinen Unit-Test — liegt per Akzeptanzkriterium in Screen-Code, den der node-env-Runner nicht importieren kann | open |  | 2026-08-11T23:20:45.929Z |  |
 | 36 | 06 | stub | apps/mobile/app/(tabs)/friends.tsx |  | Friends-Screen: Suchfeld, Anfragen, Chats, Crew, Vorschlaege und QR sind bewusste Platzhalter ohne Datenquelle (D-11) — aufgeloest durch FRND-02 bzw. das Realtime-Gateway | open |  | 2026-08-11T23:45:01.968Z |  |
+| 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
 
 ````json
 [
@@ -484,6 +485,18 @@ last_updated: 2026-08-11T23:45:01.968Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-11T23:45:01.968Z",
+    "resolved_at": null
+  },
+  {
+    "id": 37,
+    "kind": "stub",
+    "phase": "06",
+    "file": "apps/mobile/app/profil.tsx",
+    "line": null,
+    "description": "Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-12T00:02:55.728Z",
     "resolved_at": null
   }
 ]

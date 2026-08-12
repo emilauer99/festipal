@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: executing
-stopped_at: Completed 06-06-PLAN.md
-last_updated: "2026-08-11T23:44:49.916Z"
+stopped_at: Completed 06-07-PLAN.md
+last_updated: "2026-08-12T00:02:26.017Z"
 last_activity: 2026-08-11
 last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
 progress:
   total_phases: 7
   completed_phases: 6
   total_plans: 49
-  completed_plans: 47
+  completed_plans: 48
 ---
 
 # Project State
@@ -28,11 +28,11 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 ## Current Position
 
 Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 8 of 9
+Plan: 9 of 9
 Status: Ready to execute
 Last activity: 2026-08-11 — Phase 06 execution started
 
-Progress: [██████████] 96%
+Progress: [██████████] 98%
 
 ## Performance Metrics
 
@@ -110,6 +110,7 @@ Progress: [██████████] 96%
 | Phase 06 P08 | ~25min | 2 tasks | 4 files |
 | Phase 06 P05 | ~30min | 2 tasks | 2 files |
 | Phase 06 P06 | 8min | 2 tasks | 1 files |
+| Phase 06 P07 | ~35min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -245,6 +246,8 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-06: Friends-Screen traegt die Ehrlichkeit in der Copy, nicht in reduzierter Deckkraft — jeder Leerzustand benennt die Voraussetzung statt nur das Fehlen (D-11/T-06-27)
 - [Phase ?]: 06-06: Friends und Profil teilen Query-Key ['me'] und Client-Funktion — ein Cache-Eintrag, kein zweiter Netzabruf
 - [Phase ?]: 06-06: Die quiks-Code-Karte bekam minHeight statt harter height — feste Hoehe als Untergrenze, damit groessere Systemschrift die Copy nicht abschneidet
+- [Phase ?]: D-07 umgesetzt: Sunset-Flaechenliste in ADR-023, Markendokument und Wurzel-CLAUDE.md app-weit um Avatar-/Identitaetsflaechen erweitert
+- [Phase ?]: Profil-Kopfbereich folgt der Design-Reihenfolge (Name, Handle, Identitaetszeile, Meta-Zeile) statt der Aufzaehlung im Plan
 
 ### Pending Todos
 
@@ -286,6 +289,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-11T23:44:39.875Z
-Stopped at: Completed 06-06-PLAN.md
+Last session: 2026-08-12T00:02:17.841Z
+Stopped at: Completed 06-07-PLAN.md
 Resume file: None
