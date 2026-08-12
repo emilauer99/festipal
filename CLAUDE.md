@@ -92,6 +92,29 @@ All commands run from the repo root via pnpm + Turborepo (exact scripts finalize
 - **Parallel workstreams:** GSD planning is split into `.planning/workstreams/{mobile,admin}/` — the visitor app and the admin/staff UI are planned by two concurrent sessions. Scope every GSD command with `--ws`. `packages/contracts`, `packages/db` and `packages/ui` are the shared collision zones: only one stream changes them at a time, and admin's schema work must be additive. Details in `.claude/CLAUDE.md`.
 - **Before finishing a change:** run lint, typecheck and the relevant tests; report failures honestly.
 
+## Phase & Gate Economy
+
+Phases 5 and 6 each produced ~10 plans and ~650 KB of planning artifacts. Most of that cost was
+context re-read by ~25 agent invocations, not work. Keep phases cheap by construction:
+
+- **Cut phases homogeneously.** A phase that mixes a DB migration, contract changes, API work and
+  four screens forces the *union* of all quality gates onto every part of it. Split the backend
+  slice from the UI slice — then only the backend slice pays for the security and API-coverage
+  gates, and only the UI slice pays for the UI gates.
+- **Aim for 4–6 plans per phase, not 10.** Every plan is a separate executor that boots with the
+  full context stack. Merge plans that touch the same files or the same layer.
+- **Gates are opt-in per phase, not standing.** `research`, `plan_bounce` and `nyquist_validation`
+  are off by default in `.planning/config.json`. Turn one on for a phase that is genuinely new
+  territory (an unfamiliar library, a protocol, a native module) — not for screens built from
+  patterns that already exist in `apps/mobile`.
+- **`code_review_depth: deep` is for phases touching auth, tenant scoping, payments or migrations.**
+  Placeholder UI does not need it.
+- **Keep the context stack small.** `.claude/CLAUDE.md` and `STATE.md` are re-read by every agent.
+  Detail belongs in `.planning/codebase/*.md`, which is loaded on demand. If `/gsd-map-codebase`
+  re-inflates `.claude/CLAUDE.md` past ~10 KB, trim it back to pointers.
+- **What has actually earned its keep:** `code_review`, `verifier`, `plan_check`, and on-device UAT.
+  Those found real defects in phases 5 and 6 — don't trade them away for speed.
+
 ## Claude Code Working Notes
 
 - **Model:** Opus 4.8 default; Sonnet 5 for high-volume mechanical work.
