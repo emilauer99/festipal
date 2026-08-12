@@ -395,10 +395,30 @@ function RootNavigation() {
   // `!session` branch above and `forceUnauthenticated()`'s explicit
   // `setAuthState({ status: 'unauthenticated' })`), since both funnel through
   // the same `authState.status` transition this effect watches.
+  //
+  // CR-01 (06-REVIEW.md) — the SAME transition is also where the React Query
+  // cache has to die. `['me']` holds the previous account's e-mail, birth date,
+  // pronoun and gender, and `['me','festivals']` its saved festivals; without
+  // this, a second account signing in on the same device within the default
+  // 5-minute gcTime gets that data served synchronously as `status: 'success'`
+  // by Profil/Friends/Home — and if the refetch then fails (festival WLAN), it
+  // STAYS on screen. This is the third and last channel of the same class of
+  // bug as the cold-start redirect above and the active-festival slug
+  // (05-05 LOW); both of those are already reset on this transition.
+  //
+  // Ordering is load-bearing: `cancelQueries()` first, so a `GET /me` that is
+  // still in flight for the OLD session is rejected with a CancelledError
+  // BEFORE `clear()` runs and can therefore never resolve into the emptied
+  // cache afterwards. (`clear()` destroys every query and thereby cancels its
+  // retryer too, so the explicit cancel is belt-and-braces — but it is the
+  // half that states the intent, so keep it.) On the initial cold start the
+  // pair is a harmless no-op on an empty cache.
   useEffect(() => {
     if (authState.status === 'unauthenticated') {
       coldStartRedirectRef.current = false;
       setColdStartTarget(null);
+      void queryClient.cancelQueries();
+      queryClient.clear();
     }
   }, [authState.status]);
 
