@@ -5,15 +5,15 @@ milestone_name: Rollout
 current_phase: 06
 current_phase_name: profile-friends-placeholders
 status: verifying
-stopped_at: Completed 06-09-PLAN.md — Phase 06 alle 9 Plaene ausgefuehrt, Geraeteabnahme abgenommen, bereit fuer /gsd-verify-work 6 --ws mobile
-last_updated: "2026-08-12T09:31:15.995Z"
-last_activity: 2026-08-11
-last_activity_desc: Phase 05.1 UAT abgenommen (42/42), transitioned to Phase 6
+stopped_at: Completed 06-10-PLAN.md (G-06-5 gap closure) — Geraeteverifikation abgenommen, UAT 5(c)/(d) und Meta-Zeile bleiben offen fuer /gsd-verify-work 06 --ws mobile
+last_updated: "2026-08-12T12:12:21.984Z"
+last_activity: 2026-08-12
+last_activity_desc: 06-10 (G-06-5 gap closure) ausgefuehrt und geraeteverifiziert
 progress:
   total_phases: 7
   completed_phases: 7
-  total_plans: 49
-  completed_plans: 49
+  total_plans: 50
+  completed_plans: 50
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-08-11 — Phase 05.1 complete, UAT abgen
 
 ## Current Position
 
-Phase: 06 (profile-friends-placeholders) — EXECUTING
-Plan: 9 of 9
-Status: Phase complete — ready for verification
-Last activity: 2026-08-11 — Phase 06 execution started
+Phase: 06 (profile-friends-placeholders) — VERIFYING
+Plan: 10 of 10
+Status: G-06-5 gap closure (06-10) complete, device-verified — ready for /gsd-verify-work 06 --ws mobile
+Last activity: 2026-08-12 — 06-10 (G-06-5 gap closure) executed and device-verified
 
 Progress: [██████████] 100%
 
@@ -112,6 +112,7 @@ Progress: [██████████] 100%
 | Phase 06 P06 | 8min | 2 tasks | 1 files |
 | Phase 06 P07 | ~35min | 2 tasks | 7 files |
 | Phase 06 P09 | ~35min | 3 tasks | 5 files |
+| Phase 06 P10 | ~25min | 4 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -254,6 +255,9 @@ Recent decisions affecting current work:
 - [Phase ?]: 06-09: Die ueberholten Erfolgskriterien SC-1/SC-3 wurden INLINE durchgestrichen und mit D-01 bzw. D-10 annotiert statt geloescht — ein spaeterer Verifikationslauf sieht beides
 - [Phase ?]: 06-09: WINDOWS 33/34/35 wurden GEWAIVED statt fixed — nur 'waive' traegt eine Begruendung, und die Schliessung ruht auf einer Pauschalabnahme ohne Einzelbefunde; als 'fixed' haette es wie itemisierte Evidenz ausgesehen
 - [Phase ?]: 06-09: Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte) vom User pauschal mit 'approved' freigegeben — MENSCHLICHE Abnahme am Geraet, keine Einzelbefunde je Punkt, der Executor hat den Test nicht selbst gefahren (gleiche Lage wie 05.1-07 und 06-01)
+- [Phase ?]: 06-10: G-06-5 Fix — alle vier FormatJS-Spezifizierer (inkl. locale-data) tragen die .js-Endung, entgegen der planungszeitlichen Annahme; verifiziert gegen FormatJS-Doku und echte Node-ESM-Aufloesung
+- [Phase ?]: 06-10: Falsifizierung des Rueckfall-Guards deckte einen False Negative im eigenen Test auf (Substring-Match traf Kommentarprosa) — auf volle einfach-gequotete Import-Spezifizierer gehaertet
+- [Phase ?]: 06-10: Task 4 Geraeteverifikation bestaetigt die Diagnose device-seitig — native Intl.PluralRules undefined vor, function nach dem Polyfill; Profil-Screen oeffnet sich. UAT Test 5 (c)/(d) und die exakte Meta-Zeile bleiben ausdruecklich offen fuer /gsd-verify-work 06 --ws mobile
 
 ### Pending Todos
 
@@ -297,6 +301,6 @@ Items acknowledged and carried forward from previous milestone close:
 
 ## Session Continuity
 
-Last session: 2026-08-12T09:31:15.958Z
-Stopped at: Completed 06-09-PLAN.md — Phase 06 alle 9 Plaene ausgefuehrt, Geraeteabnahme abgenommen, bereit fuer /gsd-verify-work 6 --ws mobile
+Last session: 2026-08-12T12:12:21.924Z
+Stopped at: Completed 06-10-PLAN.md (G-06-5 gap closure) — Geraeteverifikation abgenommen, UAT 5(c)/(d) und Meta-Zeile bleiben offen fuer /gsd-verify-work 06 --ws mobile
 Resume file: None

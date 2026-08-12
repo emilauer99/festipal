@@ -270,7 +270,7 @@ Plans:
   3. The Friends screen renders a clear, non-broken empty state that reads as intentional, with no real connections yet (FRND-01). ~~framed as "friends who saved this festival"~~ **Superseded by D-10** (user-locked): Friends is **global** and reads no festival state, so the festival-scoped framing no longer applies. Verify against D-10, not against this wording.
   4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
 
-**Plans**: 9/10 plans executed in 6 waves (06-10 is a gap-closure plan added after UAT)
+**Plans**: 10/10 plans executed in 6 waves (06-10 is a gap-closure plan added after UAT)
 
 **Wave 1**
 
@@ -298,7 +298,7 @@ Plans:
 
 **Wave 6** *(gap closure — UAT G-06-5, blocker)*
 
-- [ ] 06-10-PLAN.md — Register `Intl.PluralRules` (`@formatjs/intl-pluralrules`) at a custom Expo Router entry so the Profile screen stops crashing on Hermes; wiring guard test + device confirmation
+- [x] 06-10-PLAN.md — Register `Intl.PluralRules` (`@formatjs/intl-pluralrules`) at a custom Expo Router entry so the Profile screen stops crashing on Hermes; wiring guard test + device confirmation
 
 **Notes**: Placeholder text still counts as shipped shell UI — do not skip i18n wrapping. `username`/`displayName` are user-generated and are NOT translated (ADR-012/020).
 
@@ -318,4 +318,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 | 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
 | 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
 | 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 9/9 | In Progress|  |
+| 6. Profile & Friends Placeholders | 10/10 | In Progress|  |
