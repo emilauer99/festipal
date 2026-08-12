@@ -1,10 +1,67 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, eq, inArray, or, sql } from 'drizzle-orm';
+import { and, asc, eq, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
+import { PostgresError } from 'postgres';
 import { friendRequest, friendship, visitorProfile, type Database } from '@quiks/db';
 import type { Relation, VisitorSummary } from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
-import { foreignProfileColumns } from './visitor-projection';
+import { canonicalPair, foreignProfileColumns } from './visitor-projection';
+
+/** A canonically ordered pair (D-14) — the shape `canonicalPair` returns. */
+type Pair = { lowerId: string; higherId: string };
+
+export type SendRequestResult =
+  | { status: 'requested' }
+  | { status: 'friends' }
+  | { status: 'self' }
+  | { status: 'not-found' }
+  | { status: 'profile-required' };
+
+export type AcceptRequestResult = { status: 'friends' } | { status: 'not-found' };
+
+/**
+ * Decline and withdraw have exactly ONE outcome. That is the point: a union with
+ * a "nothing there" branch would eventually be mapped to a different status code
+ * and would then tell the caller whether a request existed (T-07-15).
+ */
+export type RemoveRequestResult = { status: 'removed' };
+
+/**
+ * The two unique constraints the lifecycle can trip. They mean OPPOSITE things —
+ * the first says "there is already a request for this pair" and leads into
+ * D-10's auto-accept, the second says "somebody else just made you friends" and
+ * is a success. Discriminating by name follows `me.service.ts`, where collapsing
+ * two unique violations into one answer produced WR-03.
+ */
+const FRIEND_REQUEST_PAIR_PK = 'friend_request_pair_pk';
+const FRIENDSHIP_PAIR_PK = 'friendship_pair_pk';
+
+/**
+ * Finds the driver error inside whatever drizzle threw. `me.service.ts` reads
+ * `err.cause` directly, which is right for a bare statement — but a statement
+ * that fails INSIDE a transaction travels back out through postgres.js's
+ * `begin()` wrapper, so the depth is not guaranteed to stay 1. Walking a short
+ * cause chain is a superset of the existing idiom: it still finds the driver
+ * error at depth 1, and it does not silently degrade a known conflict into a 500
+ * if a driver or ORM upgrade adds a layer.
+ */
+function postgresErrorOf(err: unknown): PostgresError | null {
+  let current: unknown = err;
+  for (let depth = 0; depth < 5 && current; depth += 1) {
+    if (current instanceof PostgresError) return current;
+    current = (current as { cause?: unknown }).cause;
+  }
+  return null;
+}
+
+/** The whole-key match for one pair — both tables are keyed by exactly these two columns. */
+function friendRequestPair(pair: Pair): SQL | undefined {
+  return and(eq(friendRequest.lowerId, pair.lowerId), eq(friendRequest.higherId, pair.higherId));
+}
+
+function friendshipPair(pair: Pair): SQL | undefined {
+  return and(eq(friendship.lowerId, pair.lowerId), eq(friendship.higherId, pair.higherId));
+}
 
 @Injectable()
 export class FriendshipService {
@@ -174,5 +231,202 @@ export class FriendshipService {
       profile,
       relation: relations.get(profile.accountId) ?? 'none',
     }));
+  }
+
+  /**
+   * Send a friend request. Every expected conflict comes back as a branch of the
+   * discriminated union and never as a thrown exception — the controller maps
+   * the branches onto status codes, the same house idiom `me.service.ts` and
+   * `festival.service.ts` already use.
+   *
+   * The interesting case is not the happy path but the collision: if A→B is open
+   * and B asks A, D-10 says the friendship exists immediately. That is also the
+   * resolution of the reverse-direction race, and the resolution lives in the
+   * SCHEMA rather than in a lock: `friend_request_pair_pk` sits on the
+   * canonically ordered pair, so a second row for the same pair is physically
+   * impossible. The `23505` that fact produces is therefore not a failure — it
+   * is the trigger of the auto-accept path. Both racers end up in the same
+   * correct effect, which is why neither of them can lose.
+   */
+  async sendRequest(callerId: string, targetAccountId: string): Promise<SendRequestResult> {
+    // Answered before any database access and before `canonicalPair`: two equal
+    // ids would form a pair the `lower < higher` CHECK rejects.
+    if (callerId === targetAccountId) return { status: 'self' };
+
+    // Existence check only — `accountId` and nothing else. This endpoint returns
+    // no profile data, so it must not READ any either (T-07-15).
+    const [target] = await this.db
+      .select({ accountId: visitorProfile.accountId })
+      .from(visitorProfile)
+      .where(eq(visitorProfile.accountId, targetAccountId))
+      .limit(1);
+    if (!target) return { status: 'not-found' };
+
+    const pair = canonicalPair(callerId, targetAccountId);
+    // At most two attempts. The second exists solely for the vanishing-row
+    // window described in `openRequest`; bounding it means concurrent churn can
+    // never spin this into a loop.
+    return this.openRequest(callerId, pair, 2);
+  }
+
+  /**
+   * One attempt at opening a request for an already-ordered pair, plus the
+   * conflict resolution that attempt can run into.
+   */
+  private async openRequest(
+    callerId: string,
+    pair: Pair,
+    attemptsLeft: number,
+  ): Promise<SendRequestResult> {
+    try {
+      const opened = await this.db.transaction(async (tx) => {
+        const [alreadyFriends] = await tx
+          .select({ lowerId: friendship.lowerId })
+          .from(friendship)
+          .where(friendshipPair(pair))
+          .limit(1);
+        // Already friends: repeating is a no-op, not a penalty (D-13).
+        if (alreadyFriends) return false;
+
+        await tx.insert(friendRequest).values({ ...pair, requesterId: callerId });
+        return true;
+      });
+      if (!opened) return { status: 'friends' };
+    } catch (err) {
+      const cause = postgresErrorOf(err);
+
+      // The CALLER has no `visitor_profile` row yet — both pair columns and
+      // `requesterId` FK onto it, so an unfinished first login trips 23503 here.
+      // Same answer `FestivalService.save` gives for `my_festival`.
+      if (cause?.code === '23503') return { status: 'profile-required' };
+
+      if (cause?.code === '23505' && cause.constraint_name === FRIEND_REQUEST_PAIR_PK) {
+        const [existing] = await this.db
+          .select({ requesterId: friendRequest.requesterId })
+          .from(friendRequest)
+          .where(friendRequestPair(pair))
+          .limit(1);
+
+        if (existing) {
+          // The caller's own request is already open: idempotent, no error, no
+          // second row, no cost for repeating (D-11/D-13).
+          if (existing.requesterId === callerId) return { status: 'requested' };
+          // The COUNTER-request — D-10's auto-accept.
+          return this.sealFriendship(pair);
+        }
+
+        // The row that blocked the insert is gone again: between the violation
+        // and this read the other side withdrew, declined, or an accept resolved
+        // the pair. Retry rather than report a state that no longer holds.
+        if (attemptsLeft > 1) return this.openRequest(callerId, pair, attemptsLeft - 1);
+        return (await this.areFriends(pair)) ? { status: 'friends' } : { status: 'requested' };
+      }
+
+      throw err;
+    }
+
+    // Race-window re-check. Postgres runs READ COMMITTED here, so a concurrent
+    // `accept` (or a counter-request's auto-accept) can commit between the
+    // friendship check above and this insert. Without this, a redundant request
+    // row would be left lying next to an existing friendship — the one state
+    // both tables must never be in at the same time.
+    if (await this.areFriends(pair)) {
+      await this.db.delete(friendRequest).where(friendRequestPair(pair));
+      return { status: 'friends' };
+    }
+
+    return { status: 'requested' };
+  }
+
+  /**
+   * Accept the INCOMING request from that visitor.
+   *
+   * "No request at all" and "the only request is your own outgoing one" get the
+   * SAME `not-found`: you cannot accept what you sent (T-07-13), and the answer
+   * deliberately does not let a caller tell the two situations apart (T-07-15).
+   */
+  async acceptRequest(callerId: string, targetAccountId: string): Promise<AcceptRequestResult> {
+    if (callerId === targetAccountId) return { status: 'not-found' };
+    const pair = canonicalPair(callerId, targetAccountId);
+
+    const [row] = await this.db
+      .select({ requesterId: friendRequest.requesterId })
+      .from(friendRequest)
+      .where(friendRequestPair(pair))
+      .limit(1);
+    if (!row || row.requesterId === callerId) return { status: 'not-found' };
+
+    return this.sealFriendship(pair);
+  }
+
+  /**
+   * Turn an open request into a friendship: delete the request row and insert
+   * the friendship in ONE transaction, so no reader can observe the pair with
+   * neither of the two — the invariant "no request row for a pair that is
+   * already friends" holds at every instant, not just at rest.
+   *
+   * Shared deliberately by `acceptRequest` and by the auto-accept branch of
+   * `openRequest`: D-10 makes the counter-request the very same transition as an
+   * explicit accept, and duplicating the write would be the second code path
+   * this phase exists to avoid.
+   */
+  private async sealFriendship(pair: Pair): Promise<{ status: 'friends' }> {
+    try {
+      await this.db.transaction(async (tx) => {
+        await tx.delete(friendRequest).where(friendRequestPair(pair));
+        // An existing friendship makes accepting idempotent instead of an error.
+        await tx.insert(friendship).values(pair).onConflictDoNothing();
+      });
+    } catch (err) {
+      const cause = postgresErrorOf(err);
+      // Truly parallel case: the other flow already wrote the friendship. That
+      // is the outcome this method wanted, so it is a success, not a 500. The
+      // `onConflictDoNothing` above makes the branch hard to reach; naming the
+      // constraint means dropping that clause later would degrade to `friends`
+      // rather than surface as an unhandled error.
+      if (!(cause?.code === '23505' && cause.constraint_name === FRIENDSHIP_PAIR_PK)) throw err;
+    }
+    return { status: 'friends' };
+  }
+
+  /**
+   * Decline the incoming request. `requesterId <> callerId` is part of the
+   * DELETE condition and not a pre-flight check, so no window exists in which a
+   * caller could decline their own outgoing request (T-07-13).
+   *
+   * Always `removed`, even when nothing was deleted (T-07-15). D-12 leaves no
+   * status row and no history, and D-11 means the other side may ask again
+   * immediately — declining is a statement about the request, not the person.
+   */
+  async declineRequest(callerId: string, targetAccountId: string): Promise<RemoveRequestResult> {
+    if (callerId === targetAccountId) return { status: 'removed' };
+    const pair = canonicalPair(callerId, targetAccountId);
+
+    await this.db
+      .delete(friendRequest)
+      .where(and(friendRequestPair(pair), ne(friendRequest.requesterId, callerId)));
+
+    return { status: 'removed' };
+  }
+
+  /** Mirror image of {@link declineRequest}: only the caller's OWN outgoing request. */
+  async withdrawRequest(callerId: string, targetAccountId: string): Promise<RemoveRequestResult> {
+    if (callerId === targetAccountId) return { status: 'removed' };
+    const pair = canonicalPair(callerId, targetAccountId);
+
+    await this.db
+      .delete(friendRequest)
+      .where(and(friendRequestPair(pair), eq(friendRequest.requesterId, callerId)));
+
+    return { status: 'removed' };
+  }
+
+  private async areFriends(pair: Pair): Promise<boolean> {
+    const [row] = await this.db
+      .select({ lowerId: friendship.lowerId })
+      .from(friendship)
+      .where(friendshipPair(pair))
+      .limit(1);
+    return Boolean(row);
   }
 }

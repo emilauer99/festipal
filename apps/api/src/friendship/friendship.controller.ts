@@ -38,4 +38,61 @@ export class FriendshipController {
       return { status: 200, body: hits };
     });
   }
+
+  // The four lifecycle transitions. All of them read the actor from the session
+  // ONLY — `targetAccountId`/`params.accountId` always names the counterpart
+  // (T-07-12). None of them throws for an expected conflict: the service returns
+  // a discriminated union and every branch becomes a status code here, so a
+  // duplicate request or a missing profile can never surface as a 500.
+  @TsRestHandler(contract.sendFriendRequest)
+  sendFriendRequest(@Session() session: UserSession) {
+    return tsRestHandler(contract.sendFriendRequest, async ({ body }) => {
+      const result = await this.friendship.sendRequest(session.user.id, body.targetAccountId);
+      if (result.status === 'self') {
+        return { status: 409, body: { message: 'You cannot send a friend request to yourself' } };
+      }
+      if (result.status === 'not-found') {
+        return { status: 404, body: { message: 'No visitor with that account' } };
+      }
+      if (result.status === 'profile-required') {
+        return {
+          status: 409,
+          body: { message: 'Complete your visitor profile before sending friend requests' },
+        };
+      }
+      // `requested` or `friends` — D-10 decides which, and both are successes.
+      return { status: 200, body: { result: result.status } };
+    });
+  }
+
+  @TsRestHandler(contract.acceptFriendRequest)
+  acceptFriendRequest(@Session() session: UserSession) {
+    return tsRestHandler(contract.acceptFriendRequest, async ({ params }) => {
+      const result = await this.friendship.acceptRequest(session.user.id, params.accountId);
+      // Also the answer for "that is your OWN outgoing request" — one message for
+      // both, so the response does not disclose which case applies (T-07-15).
+      if (result.status === 'not-found') {
+        return { status: 404, body: { message: 'No incoming friend request from that visitor' } };
+      }
+      return { status: 200, body: { result: result.status } };
+    });
+  }
+
+  // Decline and withdraw answer identically whether or not a request existed —
+  // no 404 branch exists to reveal it (T-07-15), and no cooldown follows (D-11).
+  @TsRestHandler(contract.declineFriendRequest)
+  declineFriendRequest(@Session() session: UserSession) {
+    return tsRestHandler(contract.declineFriendRequest, async ({ params }) => {
+      const result = await this.friendship.declineRequest(session.user.id, params.accountId);
+      return { status: 200, body: { result: result.status } };
+    });
+  }
+
+  @TsRestHandler(contract.withdrawFriendRequest)
+  withdrawFriendRequest(@Session() session: UserSession) {
+    return tsRestHandler(contract.withdrawFriendRequest, async ({ params }) => {
+      const result = await this.friendship.withdrawRequest(session.user.id, params.accountId);
+      return { status: 200, body: { result: result.status } };
+    });
+  }
 }

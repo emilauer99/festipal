@@ -5,7 +5,10 @@ import { localeSchema } from './locale';
 import {
   completeProfileBodySchema,
   festivalSchema,
+  friendRequestResultSchema,
+  friendRequestTargetBodySchema,
   meSchema,
+  mutationResultSchema,
   tagSchema,
   usernameAvailabilitySchema,
   visitorProfileOwnerSchema,
@@ -72,6 +75,46 @@ export const contract = c.router(
       responses: { 200: visitorSummarySchema, 404: errorSchema },
       summary:
         'Resolve a quiks handle (@username, D-16) to the FOREIGN profile view plus the caller’s relation — the caller’s scope comes from the session only, never from the path; 404 for an unclaimed handle',
+    },
+    // The four friend-request lifecycle transitions, ONE route key each (D-12:
+    // accept, decline and withdraw all DELETE the row, so there is no status to
+    // PATCH and nothing a generic "update the request" endpoint could express).
+    // In every path below `:accountId` names the COUNTERPART, never the actor —
+    // the actor comes from the session in all four handlers (T-07-12).
+    sendFriendRequest: {
+      method: 'POST',
+      path: '/me/friend-requests',
+      body: friendRequestTargetBodySchema,
+      responses: { 200: friendRequestResultSchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        'Send a friend request. Idempotent (D-11/D-13: repeating costs nothing, there is no limit and no cooldown) and self-resolving — meeting an open counter-request returns `friends` instead of opening a second one (D-10). 404 for an unknown account, 409 for yourself or for a caller without a completed profile',
+    },
+    acceptFriendRequest: {
+      method: 'POST',
+      path: '/me/friend-requests/:accountId/accept',
+      pathParams: z.object({ accountId: z.string() }),
+      body: z.object({}),
+      responses: { 200: z.object({ result: z.literal('friends') }), 404: errorSchema },
+      summary:
+        'Accept the INCOMING request from that visitor. 404 both when no request exists and when the only request is the caller’s own outgoing one — the answer deliberately does not distinguish the two (T-07-13/T-07-15)',
+    },
+    declineFriendRequest: {
+      method: 'POST',
+      path: '/me/friend-requests/:accountId/decline',
+      pathParams: z.object({ accountId: z.string() }),
+      body: z.object({}),
+      responses: { 200: mutationResultSchema },
+      summary:
+        'Decline the incoming request from that visitor. Always 200 with the same payload, whether or not a request existed — the response carries no evidence that there was something to delete (T-07-15). No cooldown follows (D-11)',
+    },
+    withdrawFriendRequest: {
+      method: 'POST',
+      path: '/me/friend-requests/:accountId/withdraw',
+      pathParams: z.object({ accountId: z.string() }),
+      body: z.object({}),
+      responses: { 200: mutationResultSchema },
+      summary:
+        'Withdraw the caller’s own outgoing request to that visitor. Mirror image of decline, with the same always-200, evidence-free answer',
     },
     usernameAvailability: {
       method: 'GET',

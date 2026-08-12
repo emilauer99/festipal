@@ -136,6 +136,41 @@ export const visitorSearchQuerySchema = z.object({ q: z.string() });
 export type VisitorSearchQuery = z.infer<typeof visitorSearchQuerySchema>;
 
 /**
+ * `POST /me/friend-requests` body. The target is named by its `accountId` — the
+ * value every foreign view already carries — so a client that just resolved a
+ * handle or tapped a search hit sends back exactly what it was handed, with no
+ * second identifier and no detour through `username` (which PROF-02 may one day
+ * make mutable, D-16).
+ *
+ * There is deliberately NO sender field: who is asking comes from the session
+ * and nowhere else (T-07-12). The schema-level CHECK `friend_request_requester_chk`
+ * backs that up in the database, so no code path can file a request on a third
+ * party's behalf even if this contract were bypassed.
+ */
+export const friendRequestTargetBodySchema = z.object({ targetAccountId: z.string() });
+export type FriendRequestTargetBody = z.infer<typeof friendRequestTargetBodySchema>;
+
+/**
+ * The answer to "send a friend request" — two values, because D-10 makes a
+ * request that MEETS an open counter-request resolve into a friendship on the
+ * spot. `requested` means a request is now open, `friends` means it never needed
+ * to be (or already was). Both are terminal successes; neither is an error, and
+ * the client renders the right state without a follow-up read.
+ */
+export const friendRequestResultSchema = z.object({ result: z.enum(['requested', 'friends']) });
+export type FriendRequestResult = z.infer<typeof friendRequestResultSchema>;
+
+/**
+ * The single, information-free answer for decline and withdraw. It is the SAME
+ * payload whether a request existed or not, so the response cannot be used to
+ * learn that there was something to delete (T-07-15). D-12 leaves neither a
+ * status column nor a history behind, so there is nothing to read afterwards
+ * either — and D-11 means a fresh request may follow immediately.
+ */
+export const mutationResultSchema = z.object({ result: z.literal('removed') });
+export type MutationResult = z.infer<typeof mutationResultSchema>;
+
+/**
  * `GET /me` response (RESEARCH.md A4 default, locked here per Open Question 1):
  * `profile: null` discriminates "first login, needs complete-profile" from a
  * returning visitor. Chosen over a separate `status` enum because it's the
