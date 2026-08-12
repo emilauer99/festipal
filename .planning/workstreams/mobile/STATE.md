@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 07
 current_phase_name: profile-visibility-friendship-backend
 status: executing
-stopped_at: Completed 07-01-PLAN.md
-last_updated: "2026-08-12T15:27:07.412Z"
+stopped_at: Completed 07-02-PLAN.md
+last_updated: "2026-08-12T15:40:37.606Z"
 last_activity: 2026-08-12
 last_activity_desc: Milestone v1.1 aufgesetzt (Requirements + Roadmap)
 progress:
   total_phases: 6
   completed_phases: 0
   total_plans: 5
-  completed_plans: 1
+  completed_plans: 2
   percent: 0
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 07 (profile-visibility-friendship-backend) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-12 — Phase 07 execution started
 
@@ -98,6 +98,16 @@ Milestone bindet:
   (`packages/contracts/src/schemas.ts`, `packages/db/src/schema/visitor-profile.ts`) sind auf den
   erledigten Stand gebracht.
 
+- **Die Relationsauflösung existiert im `friendship`-Modul genau einmal** (Phase 07-02).
+  `resolveRelations(callerId, ids)` löst einen ganzen Trefferblock in zwei Abfragen auf;
+  `resolveRelation` (Einzahl) ist nur noch Delegator. Neue Zugriffspfade rufen sie auf, statt
+  `friend_request`-Zeilen selbst zu interpretieren.
+
+- **Die 2-Zeichen-Untergrenze der Username-Suche ist Service-Invariante, nicht Vertrag**
+  (Phase 07-02). `visitorSearchQuerySchema` hält `q` als unbeschränktes `z.string()` — ein
+  `.min(2)` hätte zu kurze Suchen zu 400ern gemacht und jeden contract-umgehenden Aufrufer mit
+  einem Zeichen an die DB gelassen.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -132,6 +142,7 @@ Milestone bindet:
   geraeteverifiziert und davon unberuehrt. Haerten, wenn der Entry das naechste Mal angefasst wird.
 
 - 07-01: gsd-tools requirements.mark-complete findet VIS-01/VIS-02 in .planning/workstreams/mobile/REQUIREMENTS.md nicht (not_found, kein Write) — Workstream-Pfadaufloesung oder Abschnittsheading pruefen, bevor Phase 7 abgeschlossen wird
+- 07-02: Die Kommandoform 'pnpm --filter @quiks/api test -- <name>' filtert NICHT (führt die Gesamtsuite aus), steht aber unverändert in den verify-Blöcken von 07-03 bis 07-05. Korrekt ist 'cd apps/api && pnpm exec vitest run test/<spec>.spec.ts'.
 
 ### Pending Todos
 
@@ -157,8 +168,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T15:25:26.094Z
-Stopped at: Completed 07-01-PLAN.md
+Last session: 2026-08-12T15:40:37.592Z
+Stopped at: Completed 07-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
@@ -171,3 +182,4 @@ Resume file: None
 | Plan | Duration | Tasks | Files |
 |------|----------|-------|-------|
 | Phase 07 P01 | 25min | 2 tasks | 14 files |
+| Phase 07 P02 | 12min | 2 tasks | 5 files |
