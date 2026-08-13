@@ -177,14 +177,20 @@ export default function FriendsScreen() {
     }
   }, [focusSearch]);
 
-  const searchEnabled = debouncedQuery.trim().length >= SEARCH_MIN_CHARS;
+  // WR-03: trim ONCE and reuse the same value for the gate, the cache key
+  // and the request itself — a trailing space (the exact shape Android
+  // keyboards produce on a suggestion tap/paste) must not fire a prefix
+  // search that matches nothing, and `"feli"`/`"feli "` must not occupy two
+  // separate cache entries for the same logical search.
+  const trimmedQuery = debouncedQuery.trim();
+  const searchEnabled = trimmedQuery.length >= SEARCH_MIN_CHARS;
 
   // T-08-02: `targetAccountId` for any mutation this screen triggers comes
   // from `hit.profile.accountId` on a hit THIS query returned — never from
   // the typed text itself.
   const searchQuery = useQuery({
-    queryKey: friendKeys.search(debouncedQuery),
-    queryFn: () => apiClient.searchVisitors({ query: { q: debouncedQuery } }),
+    queryKey: friendKeys.search(trimmedQuery),
+    queryFn: () => apiClient.searchVisitors({ query: { q: trimmedQuery } }),
     enabled: searchEnabled,
   });
 
