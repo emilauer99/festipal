@@ -3,9 +3,9 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Search } from 'lucide-react-native';
+import { Check, Search } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
-import type { VisitorSummary } from '@quiks/contracts';
+import type { FriendRequestItem, VisitorSummary } from '@quiks/contracts';
 
 import { PersonRow } from '../../components/PersonRow';
 import { RelationAction } from '../../components/RelationAction';
@@ -14,6 +14,7 @@ import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { friendKeys, SEARCH_DEBOUNCE_MS, SEARCH_MIN_CHARS } from '../../lib/friend-queries';
+import { useFriendMutations } from '../../lib/use-friend-mutations';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
 
@@ -22,6 +23,14 @@ import { useTheme } from '../../lib/theme-context';
 const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 const SEARCH_ICON_SIZE = 18;
+const ICON_SIZE = 18;
+
+/**
+ * The same dampening factor `RelationAction`'s own `PENDING_OPACITY` already
+ * uses for "mutation in flight" — reused here for the Requests-section rows,
+ * not reinvented (08-02-PLAN Task 2).
+ */
+const PENDING_OPACITY = 0.45;
 
 /** UI-SPEC Placeholder Pattern A — the dampening factor for a "not real yet"
  * control, the same value `ListRow` already uses. On this screen it applies to
@@ -76,28 +85,40 @@ type SearchViewState =
   | { kind: 'data'; hits: VisitorSummary[] };
 
 /**
- * D-10 / D-11 — the third tab, "Friends" (design `03 Friends`), in its full
- * six-block layout: search · quiks-code card · Requests · Chats · Your crew ·
- * People you may know.
+ * The Requests section's own view state, same three-state schema as
+ * `QuiksCodeViewState`/`SearchViewState` — one `listFriendRequests` query
+ * backs BOTH sub-groups (08-CONTEXT D-07: one response, two directions), so
+ * there is exactly one loading/error surface for the whole section, never one
+ * per sub-group.
+ */
+type RequestsViewState =
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'data'; incoming: FriendRequestItem[]; outgoing: FriendRequestItem[] };
+
+/**
+ * D-08/D-09 — the third tab, "Friends" (design `03 Friends`), now four
+ * blocks: search · quiks-code card · Requests (both directions) · Your crew.
+ * The Chats block (D-05/ADR-020) and the friend-suggestions block (D-06) are
+ * removed outright this phase, not dampened — an outlook onto a feature that
+ * will never exist is the worst kind of dishonest empty state.
  *
- * GLOBAL by decision (D-10): this screen reads NO festival state — it imports
- * nothing from the festival context, holds no active slug and filters nothing by
- * one. The roadmap's "friends who saved this festival" framing for FRND-01 is
- * superseded by that decision and must not be verified against (T-06-25).
+ * GLOBAL by decision (D-10 from Phase 6): this screen reads NO festival state
+ * — it imports nothing from the festival context, holds no active slug and
+ * filters nothing by one. The roadmap's "friends who saved this festival"
+ * framing for FRND-01 is superseded by that decision and must not be
+ * verified against (T-06-25).
  *
- * WHY EVERY BLOCK CARRIES ITS OWN COPY (D-11): six structurally empty sections
- * stacked on top of each other are this phase's main risk — they can read as
- * broken rather than deliberate. The UI-SPEC's answer is explicit and is the one
- * Friends-specific exception to the phase's placeholder pattern: these blocks are
- * NOT visually dampened. They render at full weight, and the honesty is carried
- * entirely by section-specific empty copy that names the PRECONDITION ("once
- * someone adds you", "once you've added each other") instead of a shared, generic
- * "nothing here". Dampening them as well would produce exactly the broken
- * impression the copy exists to prevent.
+ * WHY EVERY BLOCK CARRIES ITS OWN COPY (D-11 from Phase 6, still binding):
+ * empty sections stacked on top of each other are this phase's main risk —
+ * they can read as broken rather than deliberate. These blocks are NOT
+ * visually dampened; they render at full weight, and the honesty is carried
+ * entirely by section-specific empty copy that names the PRECONDITION
+ * ("once someone adds you", "once you've added each other") instead of a
+ * shared, generic "nothing here".
  *
- * No person is ever rendered here: there is no example name, no example handle
- * and no seeded row array — a fabricated crew would be a lie the empty copy is
- * specifically written to avoid (T-06-26/T-06-27).
+ * No person is ever rendered here except real API data: there is no example
+ * name, no example handle and no seeded row array (T-06-26/T-06-27).
  */
 export default function FriendsScreen() {
   const { t } = useLingui();
@@ -198,6 +219,37 @@ export default function FriendsScreen() {
   }
 
   const quiksCodeState = computeQuiksCodeState();
+
+  /**
+   * D-07 — ONE query for BOTH directions (`incoming`/`outgoing` in the same
+   * response), so the two sub-groups never desync and a single invalidation
+   * (`friendKeys.all` in `use-friend-mutations.ts`'s `onSettled`) refreshes
+   * both after any of the three lifecycle mutations.
+   */
+  const requestsQuery = useQuery({
+    queryKey: friendKeys.requests,
+    queryFn: () => apiClient.listFriendRequests(),
+  });
+
+  function computeRequestsState(): RequestsViewState {
+    if (requestsQuery.status === 'pending') return { kind: 'loading' };
+    if (requestsQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void requestsQuery.refetch() };
+    }
+    // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
+    // `status === 'error'` — same branch every other query on this screen
+    // already relies on.
+    if (requestsQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void requestsQuery.refetch() };
+    }
+    return {
+      kind: 'data',
+      incoming: requestsQuery.data.body.incoming,
+      outgoing: requestsQuery.data.body.outgoing,
+    };
+  }
+
+  const requestsState = computeRequestsState();
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
@@ -385,65 +437,241 @@ export default function FriendsScreen() {
               </View>
             ) : null}
 
+            {/* D-07/D-08 — ONE section, TWO labeled sub-groups, always both
+                visible: never a SegmentedControl between them, so a
+                withdrawn/received request is never hidden behind a toggle
+                the visitor forgot to flip. Fixed third position — this
+                block never reorders itself to the top on a new request. */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeadRow}>
+                <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
+                  <Trans>Requests</Trans>
+                </Text>
+                {/* D-08 — the count badge shows the INCOMING count only, and
+                    the element itself is absent at 0 (never a `0` badge). A
+                    solid `colors.primary` fill, deliberately distinct from
+                    the neutral "Bald" badge elsewhere on this screen — a
+                    real, actionable count reads differently from a
+                    decorative placeholder. */}
+                {requestsState.kind === 'data' && requestsState.incoming.length > 0 ? (
+                  <View style={styles.countBadge}>
+                    <Text style={[styles.countBadgeText, { fontFamily: microFont }]}>
+                      {requestsState.incoming.length}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+
+              {requestsState.kind === 'loading' ? (
+                <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+                  <Trans>Loading requests…</Trans>
+                </Text>
+              ) : null}
+
+              {requestsState.kind === 'error' ? (
+                <View style={styles.stateBlock}>
+                  <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+                    {requestsState.variant === 'transport' ? (
+                      <Trans>
+                        Can't reach the server — make sure your device is on the same Wi-Fi as
+                        the dev API.
+                      </Trans>
+                    ) : (
+                      <Trans>Can't load requests — check your connection and try again.</Trans>
+                    )}
+                  </Text>
+                  <Pressable style={styles.retryButton} onPress={requestsState.retry}>
+                    <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                      <Trans>Retry</Trans>
+                    </Text>
+                  </Pressable>
+                </View>
+              ) : null}
+
+              {requestsState.kind === 'data' ? (
+                <View style={styles.requestsGroups}>
+                  <View style={styles.subGroup}>
+                    <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                      <Trans>To you</Trans>
+                    </Text>
+                    {requestsState.incoming.length === 0 ? (
+                      <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                        <Trans>Once someone adds you, the request shows up here.</Trans>
+                      </Text>
+                    ) : (
+                      <View style={styles.resultsList}>
+                        {requestsState.incoming.map((item) => (
+                          <IncomingRequestRow key={item.profile.accountId} item={item} />
+                        ))}
+                      </View>
+                    )}
+                  </View>
+
+                  <View style={styles.subGroup}>
+                    <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                      <Trans>From you</Trans>
+                    </Text>
+                    {requestsState.outgoing.length === 0 ? (
+                      <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                        <Trans>Once you request someone, you'll see it here.</Trans>
+                      </Text>
+                    ) : (
+                      <View style={styles.resultsList}>
+                        {requestsState.outgoing.map((item) => (
+                          <OutgoingRequestRow key={item.profile.accountId} item={item} />
+                        ))}
+                      </View>
+                    )}
+                  </View>
+                </View>
+              ) : null}
+            </View>
+
             <View style={styles.section}>
               <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-                <Trans>Requests</Trans>
+                <Trans>Your crew</Trans>
               </Text>
-              {/* UI-SPEC #8 — empty-state body copy carries no line cap and wraps
-                  freely; truncating it would cost exactly the honesty D-11 asks it
-                  to carry. The same holds for all four headings and empty texts. */}
               <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-                <Trans>No requests yet. Once someone adds you, it'll show up here.</Trans>
+                <Trans>
+                  No one in your crew yet. Once you've added each other, you'll show up here.
+                </Trans>
               </Text>
             </View>
           </>
         )}
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-            <Trans>Chats</Trans>
-          </Text>
-          {/* T-06-27 — this text names the PRECONDITION on purpose. A bare "no
-              messages" would read as a working inbox that happens to be empty,
-              and would leave someone waiting for messages that no gateway exists
-              to deliver: messaging needs the realtime backend, which is far
-              outside this phase. Do not shorten this to a negation. */}
-          <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-            <Trans>
-              Chats unlock once you've added someone and can message them — coming soon.
-            </Trans>
-          </Text>
-        </View>
-
-        {/* D-03 — Crew is the third of the three unmounted-while-searching
-            blocks; it sits after Chats in this phase's still-Phase-6 layout
-            order (D-08's search·code·requests·crew order lands with the
-            real Requests/Crew content in 08-02/08-03). */}
-        {isSearching ? null : (
-          <View style={styles.section}>
-            <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-              <Trans>Your crew</Trans>
-            </Text>
-            <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-              <Trans>
-                No one in your crew yet. Once you've added each other, you'll show up here.
-              </Trans>
-            </Text>
-          </View>
-        )}
-
-        <View style={styles.section}>
-          <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-            <Trans>People you may know</Trans>
-          </Text>
-          {/* No suggestion row is rendered — not even a sample one. The block
-              states what has to exist first and then stops. */}
-          <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-            <Trans>Once you have your first friends, we'll suggest more here.</Trans>
-          </Text>
-        </View>
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+/**
+ * The incoming sub-group's row: `PersonRow` plus a trailing two-action group
+ * (`Annehmen`/`Ablehnen`), plus an inline failure line BELOW the row when
+ * this row's own last mutation rejected. One `useFriendMutations()` call per
+ * row (same pattern `RelationAction` already establishes) — `pendingTargetId`
+ * / `failedTargetId` are therefore scoped to exactly this row's own attempts,
+ * never another row's.
+ */
+function IncomingRequestRow({ item }: { item: FriendRequestItem }) {
+  const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const fontsReady = useFontsReady();
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
+  const linkFont = fontFamilyForRole('bodySm', fontsReady);
+  const { acceptRequest, declineRequest, pendingTargetId, failedTargetId } = useFriendMutations();
+  const { accountId, displayName, username } = item.profile;
+  const isPending = pendingTargetId === accountId;
+  const hasFailed = failedTargetId === accountId;
+
+  return (
+    <View style={styles.requestRow}>
+      <PersonRow
+        profile={item.profile}
+        accessibilityLabel={t`${displayName}, @${username}`}
+        trailing={
+          <View style={styles.requestTrailing}>
+            <Pressable
+              style={[styles.primaryPill, isPending ? styles.pending : null]}
+              disabled={isPending}
+              onPress={() => acceptRequest(accountId)}
+              accessibilityRole="button"
+              accessibilityLabel={t`Accept`}
+              accessibilityState={{ disabled: isPending }}
+            >
+              <Check size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
+              <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
+                <Trans>Accept</Trans>
+              </Text>
+            </Pressable>
+            {/* No `Alert.alert` (Phase-7 D-11/D-12: idempotent, no history,
+                no cooldown — a confirm dialog would overstate the stakes). */}
+            <Pressable
+              style={styles.textLinkPressable}
+              disabled={isPending}
+              onPress={() => declineRequest(accountId)}
+              accessibilityRole="button"
+              accessibilityLabel={t`Decline`}
+              accessibilityState={{ disabled: isPending }}
+            >
+              <Text
+                style={[
+                  styles.textLinkDanger,
+                  isPending ? styles.pending : null,
+                  { fontFamily: linkFont },
+                ]}
+              >
+                <Trans>Decline</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        }
+      />
+      {hasFailed ? (
+        <Text style={[styles.error, { fontFamily: linkFont }]}>
+          <Trans>Couldn't save — try again.</Trans>
+        </Text>
+      ) : null}
+    </View>
+  );
+}
+
+/**
+ * The outgoing sub-group's row: static `Angefragt` chip (never pressable —
+ * D-04's "no tap that is guaranteed to fail") plus `Zurückziehen`. Mirrors
+ * `IncomingRequestRow` exactly, one own `useFriendMutations()` call.
+ */
+function OutgoingRequestRow({ item }: { item: FriendRequestItem }) {
+  const { t } = useLingui();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+  const fontsReady = useFontsReady();
+  const chipFont = fontFamilyForRole('label', fontsReady);
+  const linkFont = fontFamilyForRole('bodySm', fontsReady);
+  const { withdrawRequest, pendingTargetId, failedTargetId } = useFriendMutations();
+  const { accountId, displayName, username } = item.profile;
+  const isPending = pendingTargetId === accountId;
+  const hasFailed = failedTargetId === accountId;
+
+  return (
+    <View style={styles.requestRow}>
+      <PersonRow
+        profile={item.profile}
+        accessibilityLabel={t`${displayName}, @${username}`}
+        trailing={
+          <View style={styles.requestTrailing}>
+            <View style={styles.staticChip} accessibilityLabel={t`Requested`}>
+              <Text style={[styles.staticChipText, { fontFamily: chipFont }]}>
+                <Trans>Requested</Trans>
+              </Text>
+            </View>
+            <Pressable
+              style={styles.textLinkPressable}
+              disabled={isPending}
+              onPress={() => withdrawRequest(accountId)}
+              accessibilityRole="button"
+              accessibilityLabel={t`Withdraw`}
+              accessibilityState={{ disabled: isPending }}
+            >
+              <Text
+                style={[
+                  styles.textLinkMuted,
+                  isPending ? styles.pending : null,
+                  { fontFamily: linkFont },
+                ]}
+              >
+                <Trans>Withdraw</Trans>
+              </Text>
+            </Pressable>
+          </View>
+        }
+      />
+      {hasFailed ? (
+        <Text style={[styles.error, { fontFamily: linkFont }]}>
+          <Trans>Couldn't save — try again.</Trans>
+        </Text>
+      ) : null}
+    </View>
   );
 }
 
@@ -590,10 +818,96 @@ function createStyles(colors: ThemeColors) {
       lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
       color: colors.textPrimary,
     },
+    // The "Anfragen" heading + its count badge sit on one line, badge trailing.
+    sectionHeadRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-4'],
+    },
+    // UI-SPEC § Color item 5 — a SOLID `primary` fill, deliberately distinct
+    // from the neutral `badge`/`badgeText` pair above (the "Bald" placeholder
+    // badge): a real, actionable count reads differently from a decorative one.
+    countBadge: {
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+      paddingHorizontal: spacingScale['sp-4'],
+      paddingVertical: spacingScale['sp-1'],
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    countBadgeText: {
+      fontSize: typeRoles.micro.size,
+      color: colors.textOnPrimary,
+    },
     emptyBody: {
       fontSize: typeRoles.bodySm.size,
       lineHeight: typeRoles.bodySm.size * typeRoles.bodySm.lineHeight,
       color: colors.textMuted,
+    },
+    // The vertical gap between the "An dich" and "Von dir" sub-groups —
+    // smaller than `layout.sectionGap` (that's reserved for the four
+    // top-level blocks), larger than the sp-5 row gap within one sub-group.
+    requestsGroups: { gap: spacingScale['sp-6'] },
+    subGroup: { gap: spacingScale['sp-5'] },
+    // UI-SPEC § Typography — same `title2` role as `sectionHead`, reduced
+    // visual weight via `textSecondary` colour only, never a smaller size.
+    subGroupHead: {
+      fontSize: typeRoles.title2.size,
+      letterSpacing: typeRoles.title2.letterSpacing,
+      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      color: colors.textSecondary,
+    },
+    // Wraps one request `PersonRow` plus its own optional inline failure line,
+    // so the failure text renders BELOW the whole row, not inside its trailing
+    // slot.
+    requestRow: { gap: spacingScale['sp-2'] },
+    // The trailing composition for a request row: a primary pill above a
+    // plain-text action link, right-aligned — distinct from the search hit's
+    // single-element trailing slot (`RelationAction`).
+    requestTrailing: { alignItems: 'flex-end', gap: spacingScale['sp-2'] },
+    primaryPill: {
+      minHeight: layout.hitMin,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacingScale['sp-2'],
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+    },
+    primaryPillText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
+    // Same value as `RelationAction`'s own `PENDING_OPACITY` — reused, not
+    // reinvented (08-02-PLAN Task 2).
+    pending: { opacity: PENDING_OPACITY },
+    staticChip: {
+      minHeight: layout.hitMin,
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: spacingScale['sp-8'],
+      backgroundColor: colors.fillQuiet,
+      borderRadius: radiiScale['r-pill'],
+    },
+    staticChipText: {
+      fontSize: typeRoles.label.size,
+      color: colors.textMuted,
+    },
+    // `layout.hitMin` applies even to a plain-text action link (UI-SPEC).
+    textLinkPressable: {
+      minHeight: layout.hitMin,
+      minWidth: layout.hitMin,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: spacingScale['sp-4'],
+    },
+    textLinkDanger: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
+    },
+    textLinkMuted: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.textSecondary,
     },
   });
 }

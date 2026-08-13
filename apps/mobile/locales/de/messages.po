@@ -41,6 +41,7 @@ msgstr "3–20 Zeichen: a–z 0–9 _ ."
 msgid "A nudge just before your acts start."
 msgstr "Ein kurzer Stups, bevor deine Acts starten."
 
+#: app/(tabs)/friends.tsx
 #: components/RelationAction.tsx
 msgid "Accept"
 msgstr "Annehmen"
@@ -98,6 +99,10 @@ msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
 #: app/(tabs)/friends.tsx
+msgid "Can't load requests — check your connection and try again."
+msgstr "Konnte die Anfragen nicht laden — prüf deine Verbindung und versuch's nochmal."
+
+#: app/(tabs)/friends.tsx
 msgid "Can't load results — check your connection and try again."
 msgstr "Konnte die Ergebnisse nicht laden — prüf deine Verbindung und versuch's nochmal."
 
@@ -130,12 +135,12 @@ msgid "Change email"
 msgstr "E-Mail ändern"
 
 #: app/(tabs)/friends.tsx
-msgid "Chats"
-msgstr "Chats"
+#~ msgid "Chats"
+#~ msgstr "Chats"
 
 #: app/(tabs)/friends.tsx
-msgid "Chats unlock once you've added someone and can message them — coming soon."
-msgstr "Chats gibt's, sobald ihr euch addet und schreiben könnt — kommt bald."
+#~ msgid "Chats unlock once you've added someone and can message them — coming soon."
+#~ msgstr "Chats gibt's, sobald ihr euch addet und schreiben könnt — kommt bald."
 
 #: app/festivals/index.tsx
 #~ msgid "Check back soon — new festivals will appear here."
@@ -165,6 +170,10 @@ msgstr "Foto wählen"
 #~ msgid "Couldn't complete your profile — tap Done to try again."
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Fertig“, um es noch einmal zu versuchen."
 
+#: app/(tabs)/friends.tsx
+msgid "Couldn't save — try again."
+msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
+
 #: app/(tabs)/festivals.tsx
 msgid "Couldn't save festival — try again."
 msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
@@ -180,6 +189,10 @@ msgstr "Dunkler Modus"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
 msgstr "Geburtsdatum"
+
+#: app/(tabs)/friends.tsx
+msgid "Decline"
+msgstr "Ablehnen"
 
 #: app/(auth)/verify.tsx
 #~ msgid "Didn't get a code? Resend"
@@ -264,6 +277,10 @@ msgstr "Freundschaftsanfragen, kommt bald"
 msgid "Friends"
 msgstr "Friends"
 
+#: app/(tabs)/friends.tsx
+msgid "From you"
+msgstr "Von dir"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Gender"
 msgstr "Geschlecht"
@@ -312,6 +329,10 @@ msgstr "Festivals werden geladen…"
 #: app/profil.tsx
 msgid "Loading profile…"
 msgstr "Profil wird geladen…"
+
+#: app/(tabs)/friends.tsx
+msgid "Loading requests…"
+msgstr "Anfragen werden geladen…"
 
 #: app/(tabs)/friends.tsx
 msgid "Loading your quiks code…"
@@ -387,8 +408,8 @@ msgid "No one in your crew yet. Once you've added each other, you'll show up her
 msgstr "Noch niemand in deiner Crew. Sobald ihr euch addet, seht ihr euch hier."
 
 #: app/(tabs)/friends.tsx
-msgid "No requests yet. Once someone adds you, it'll show up here."
-msgstr "Noch keine Anfragen. Sobald dich jemand addet, taucht es hier auf."
+#~ msgid "No requests yet. Once someone adds you, it'll show up here."
+#~ msgstr "Noch keine Anfragen. Sobald dich jemand addet, taucht es hier auf."
 
 #: app/(tabs)/festivals.tsx
 msgid "No saved festivals yet"
@@ -403,8 +424,16 @@ msgid "Notifications"
 msgstr "Benachrichtigungen"
 
 #: app/(tabs)/friends.tsx
-msgid "Once you have your first friends, we'll suggest more here."
-msgstr "Sobald du erste Freunde hast, schlagen wir dir hier weitere vor."
+msgid "Once someone adds you, the request shows up here."
+msgstr "Sobald dich jemand hinzufügt, taucht die Anfrage hier auf."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Once you have your first friends, we'll suggest more here."
+#~ msgstr "Sobald du erste Freunde hast, schlagen wir dir hier weitere vor."
+
+#: app/(tabs)/friends.tsx
+msgid "Once you request someone, you'll see it here."
+msgstr "Sobald du jemanden anfragst, siehst du es hier."
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "One more step"
@@ -443,8 +472,8 @@ msgid "Payment methods, coming soon"
 msgstr "Zahlungsmittel, kommt bald"
 
 #: app/(tabs)/friends.tsx
-msgid "People you may know"
-msgstr "Vielleicht kennst du"
+#~ msgid "People you may know"
+#~ msgstr "Vielleicht kennst du"
 
 #: app/(tabs)/friends.tsx
 #: app/profil.tsx
@@ -476,6 +505,7 @@ msgstr "quiks empfehlen, kommt bald"
 msgid "Recommending is coming soon."
 msgstr "Empfehlen kommt bald."
 
+#: app/(tabs)/friends.tsx
 #: components/RelationAction.tsx
 msgid "Requested"
 msgstr "Angefragt"
@@ -659,6 +689,10 @@ msgstr "Timetable-Erinnerungen"
 msgid "Timetable reminders, coming soon"
 msgstr "Timetable-Erinnerungen, kommt bald"
 
+#: app/(tabs)/friends.tsx
+msgid "To you"
+msgstr "An dich"
+
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 msgid "Too many attempts — try again in a few minutes."
@@ -719,6 +753,10 @@ msgstr "Willkommen"
 #: app/(tabs)/mehr.tsx
 msgid "When someone adds you to their crew."
 msgstr "Wenn dich jemand in seine Crew addet."
+
+#: app/(tabs)/friends.tsx
+msgid "Withdraw"
+msgstr "Zurückziehen"
 
 #: app/(tabs)/mehr.tsx
 msgid "You can always sign back in with an email code."
