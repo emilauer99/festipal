@@ -127,6 +127,7 @@ msgid "Can't reach the server — make sure your device is on the same Wi-Fi as 
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
 #: app/(tabs)/mehr.tsx
+#: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Cancel"
 
@@ -179,6 +180,7 @@ msgstr "Close"
 #~ msgstr "Couldn't complete your profile — tap Done to try again."
 
 #: app/(tabs)/friends.tsx
+#: app/friend-detail.tsx
 msgid "Couldn't save — try again."
 msgstr "Couldn't save — try again."
 
@@ -222,6 +224,18 @@ msgstr "Editing is coming soon."
 #: app/profil.tsx
 msgid "Email"
 msgstr "Email"
+
+#: app/friend-detail.tsx
+msgid "End"
+msgstr "End"
+
+#: app/friend-detail.tsx
+msgid "End friendship"
+msgstr "End friendship"
+
+#: app/friend-detail.tsx
+msgid "End this friendship?"
+msgstr "End this friendship?"
 
 #: app/(tabs)/mehr.tsx
 msgid "English"
@@ -781,6 +795,10 @@ msgstr "Withdraw"
 #: app/(tabs)/mehr.tsx
 msgid "You can always sign back in with an email code."
 msgstr "You can always sign back in with an email code."
+
+#: app/friend-detail.tsx
+msgid "You'll need to send a new request to become friends again."
+msgstr "You'll need to send a new request to become friends again."
 
 #: app/(auth)/email.tsx
 msgid "you@example.com"

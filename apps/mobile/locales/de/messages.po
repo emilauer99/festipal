@@ -127,6 +127,7 @@ msgid "Can't reach the server — make sure your device is on the same Wi-Fi as 
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
 
 #: app/(tabs)/mehr.tsx
+#: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -179,6 +180,7 @@ msgstr "Schließen"
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Fertig“, um es noch einmal zu versuchen."
 
 #: app/(tabs)/friends.tsx
+#: app/friend-detail.tsx
 msgid "Couldn't save — try again."
 msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
 
@@ -222,6 +224,18 @@ msgstr "Bearbeiten kommt bald."
 #: app/profil.tsx
 msgid "Email"
 msgstr "E-Mail"
+
+#: app/friend-detail.tsx
+msgid "End"
+msgstr "Beenden"
+
+#: app/friend-detail.tsx
+msgid "End friendship"
+msgstr "Freundschaft beenden"
+
+#: app/friend-detail.tsx
+msgid "End this friendship?"
+msgstr "Freundschaft beenden?"
 
 #: app/(tabs)/mehr.tsx
 msgid "English"
@@ -781,6 +795,10 @@ msgstr "Zurückziehen"
 #: app/(tabs)/mehr.tsx
 msgid "You can always sign back in with an email code."
 msgstr "Du kannst dich jederzeit wieder per E-Mail-Code anmelden."
+
+#: app/friend-detail.tsx
+msgid "You'll need to send a new request to become friends again."
+msgstr "Ihr müsst euch danach erneut anfragen, um wieder Freunde zu werden."
 
 #: app/(auth)/email.tsx
 msgid "you@example.com"

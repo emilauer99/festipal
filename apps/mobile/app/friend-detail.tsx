@@ -1,10 +1,10 @@
-import { useEffect, useMemo } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useMemo, useRef } from 'react';
+import { Alert, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { X } from 'lucide-react-native';
+import { UserMinus, X } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { Friend } from '@quiks/contracts';
 
@@ -17,12 +17,14 @@ import { i18n } from '../lib/i18n';
 import { buildIdentityLine } from '../lib/profile-meta-line';
 import type { ThemeColors } from '../lib/theme';
 import { useTheme } from '../lib/theme-context';
+import { useFriendMutations } from '../lib/use-friend-mutations';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
 const { typeRoles, layout, spacingScale } = tokens;
 
 const CLOSE_ICON_SIZE = 24;
+const DANGER_ICON_SIZE = 22;
 
 function normalizeAccountId(raw: string | string[] | undefined): string {
   const value = Array.isArray(raw) ? raw[0] : raw;
@@ -72,6 +74,7 @@ export default function FriendDetailScreen() {
   const nameFont = fontFamilyForRole('title2', fontsReady);
   const handleFont = fontFamilyForRole('countdown', fontsReady);
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const dangerFont = fontFamilyForRole('title3', fontsReady);
 
   const router = useRouter();
   const params = useLocalSearchParams<{ accountId?: string | string[] }>();
@@ -93,7 +96,45 @@ export default function FriendDetailScreen() {
     }
   }, [friend, router]);
 
+  // FRND-08 / D-10 — `unfriend` from the ONE place every friend-mutation is
+  // defined (`use-friend-mutations.ts`); this screen never calls
+  // `apiClient.unfriend` itself.
+  const { unfriend, pendingTargetId, failedTargetId } = useFriendMutations();
+  const isUnfriendPending = accountId !== '' && pendingTargetId === accountId;
+  const unfriendFailed = accountId !== '' && failedTargetId === accountId;
+
+  // The invalidation this mutation triggers (`friendKeys.all`, in
+  // `use-friend-mutations.ts`'s shared `onSettled`) must run BEFORE the
+  // screen closes, so the Crew list has already started refetching when the
+  // visitor lands back on it. A ref-tracked pending->settled transition is
+  // what lets this screen navigate only on the SUCCESS path — `onSettled`
+  // fires on both, and `failedTargetId` is the only way to tell them apart
+  // after the fact. On failure the card stays open with the inline error
+  // below instead of navigating on a false premise.
+  const wasUnfriendPendingRef = useRef(false);
+  useEffect(() => {
+    if (wasUnfriendPendingRef.current && !isUnfriendPending && !unfriendFailed) {
+      if (router.canGoBack()) {
+        router.back();
+      } else {
+        router.replace('/friends');
+      }
+    }
+    wasUnfriendPendingRef.current = isUnfriendPending;
+  }, [isUnfriendPending, unfriendFailed, router]);
+
   if (!friend) return null;
+
+  function confirmUnfriend() {
+    Alert.alert(
+      t`End this friendship?`,
+      t`You'll need to send a new request to become friends again.`,
+      [
+        { text: t`Cancel`, style: 'cancel' },
+        { text: t`End`, style: 'destructive', onPress: () => unfriend(accountId) },
+      ],
+    );
+  }
 
   // age is always undefined — the foreign profile view carries no
   // `birthDate` (Phase 7 D-02), so this card can never show one.
@@ -158,6 +199,33 @@ export default function FriendDetailScreen() {
             <Trans>Friends since {friendsSinceLabel}</Trans>
           </Text>
         </View>
+
+        {/* D-10 — ListRow-danger-style row, but NOT the `ListRow` component
+            itself: `ListRow` always renders a chevron once `onPress` is set,
+            and this row must not (it is a terminal action, not navigation).
+            No `Alert.alert` confirm exists for decline/withdraw elsewhere in
+            this phase (Phase-7 D-11/D-12) — unfriend is the one action in
+            this phase that IS destructive enough to ask first. */}
+        <View style={styles.dangerBlock}>
+          <Pressable
+            style={styles.dangerRow}
+            onPress={confirmUnfriend}
+            disabled={isUnfriendPending}
+            accessibilityRole="button"
+            accessibilityLabel={t`End friendship`}
+            accessibilityState={{ disabled: isUnfriendPending }}
+          >
+            <UserMinus size={DANGER_ICON_SIZE} color={colors.dangerText} strokeWidth={2} />
+            <Text style={[styles.dangerLabel, { fontFamily: dangerFont }]}>
+              <Trans>End friendship</Trans>
+            </Text>
+          </Pressable>
+          {unfriendFailed ? (
+            <Text style={[styles.dangerError, { fontFamily: bodySmFont }]}>
+              <Trans>Couldn't save — try again.</Trans>
+            </Text>
+          ) : null}
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -199,6 +267,25 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.bodySm.size,
       lineHeight: typeRoles.bodySm.size * typeRoles.bodySm.lineHeight,
       color: colors.textMuted,
+      textAlign: 'center',
+    },
+    dangerBlock: { gap: spacingScale['sp-2'] },
+    dangerRow: {
+      minHeight: layout.hitMin,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-4'],
+    },
+    dangerLabel: {
+      fontSize: typeRoles.title3.size,
+      color: colors.dangerText,
+    },
+    // The status-hue rule: an error rendered as TEXT always resolves through
+    // `dangerText`, never the bare `danger` fill.
+    dangerError: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
       textAlign: 'center',
     },
   });
