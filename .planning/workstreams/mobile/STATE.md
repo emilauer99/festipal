@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: Festival Navigation Shell
-status: planning
+status: "Phase 8 shipped — PR #15"
 stopped_at: Phase 9 UI-SPEC approved
-last_updated: "2026-08-13T16:49:11.446Z"
+last_updated: "2026-08-13T16:59:46.752Z"
 last_activity: 2026-08-13
-last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 10
   completed_plans: 10
   percent: 33
+last_activity_desc: Phase 08 execution started
 ---
 
 # Project State — Workstream `mobile`
@@ -37,8 +37,8 @@ everything about their festival experience from one home screen.
 
 Phase: 09 — Festival Navigation Shell
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-13 — Completed quick task 260813-o08: Friends tab UX refinements (phase 8 follow-up)
+Status: Phase 8 shipped — PR #15
+Last activity: 2026-08-13
 
 ## Shipped
 
