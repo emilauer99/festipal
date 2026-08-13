@@ -3,9 +3,10 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRouter } from 'expo-router';
 import { Check, Search } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
-import type { FriendRequestItem, VisitorSummary } from '@quiks/contracts';
+import type { Friend, FriendRequestItem, VisitorSummary } from '@quiks/contracts';
 
 import { PersonRow } from '../../components/PersonRow';
 import { RelationAction } from '../../components/RelationAction';
@@ -14,6 +15,7 @@ import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { friendKeys, SEARCH_DEBOUNCE_MS, SEARCH_MIN_CHARS } from '../../lib/friend-queries';
+import { sortFriendsByDisplayName } from '../../lib/friend-sort';
 import { useFriendMutations } from '../../lib/use-friend-mutations';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
@@ -97,6 +99,18 @@ type RequestsViewState =
   | { kind: 'data'; incoming: FriendRequestItem[]; outgoing: FriendRequestItem[] };
 
 /**
+ * The Crew section's own view state, same three-state schema as every other
+ * query on this screen. The 200 body is run through
+ * `sortFriendsByDisplayName` (D-12) before it reaches `data.friends`, so
+ * every consumer of this union already sees the sorted list — sorting is not
+ * repeated at render time.
+ */
+type CrewViewState =
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'data'; friends: Friend[] };
+
+/**
  * D-08/D-09 — the third tab, "Friends" (design `03 Friends`), now four
  * blocks: search · quiks-code card · Requests (both directions) · Your crew.
  * The Chats block (D-05/ADR-020) and the friend-suggestions block (D-06) are
@@ -123,6 +137,7 @@ type RequestsViewState =
 export default function FriendsScreen() {
   const { t } = useLingui();
   const { colors } = useTheme();
+  const router = useRouter();
   const showSoonToast = useSoonToast();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
@@ -250,6 +265,32 @@ export default function FriendsScreen() {
   }
 
   const requestsState = computeRequestsState();
+
+  /**
+   * D-09 — the Crew list itself. `friendKeys.list` is the SAME key
+   * `friend-detail.tsx` reads out of the query cache, so opening a crew row
+   * never triggers a second fetch for data this screen already has.
+   */
+  const crewQuery = useQuery({
+    queryKey: friendKeys.list,
+    queryFn: () => apiClient.listFriends(),
+  });
+
+  function computeCrewState(): CrewViewState {
+    if (crewQuery.status === 'pending') return { kind: 'loading' };
+    if (crewQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void crewQuery.refetch() };
+    }
+    // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
+    // `status === 'error'` — same branch every other query on this screen
+    // already relies on.
+    if (crewQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void crewQuery.refetch() };
+    }
+    return { kind: 'data', friends: sortFriendsByDisplayName(crewQuery.data.body) };
+  }
+
+  const crewState = computeCrewState();
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
@@ -527,15 +568,69 @@ export default function FriendsScreen() {
               ) : null}
             </View>
 
+            {/* D-09/D-11/D-12 — the fourth and final block. Every row is the
+                SAME `PersonRow` search hits and requests already use; only
+                crew rows carry `onPress` (search hits and request rows do
+                not — D-09). The 200 body is pre-sorted by
+                `sortFriendsByDisplayName` inside `computeCrewState`. */}
             <View style={styles.section}>
               <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
                 <Trans>Your crew</Trans>
               </Text>
-              <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-                <Trans>
-                  No one in your crew yet. Once you've added each other, you'll show up here.
-                </Trans>
-              </Text>
+
+              {crewState.kind === 'loading' ? (
+                <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+                  <Trans>Loading your crew…</Trans>
+                </Text>
+              ) : null}
+
+              {crewState.kind === 'error' ? (
+                <View style={styles.stateBlock}>
+                  <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+                    {crewState.variant === 'transport' ? (
+                      <Trans>
+                        Can't reach the server — make sure your device is on the same Wi-Fi as
+                        the dev API.
+                      </Trans>
+                    ) : (
+                      <Trans>Can't load your crew — check your connection and try again.</Trans>
+                    )}
+                  </Text>
+                  <Pressable style={styles.retryButton} onPress={crewState.retry}>
+                    <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                      <Trans>Retry</Trans>
+                    </Text>
+                  </Pressable>
+                </View>
+              ) : null}
+
+              {/* D-11 (Phase 6) still binding, even with real data: the empty
+                  copy names the PRECONDITION — the three concrete ways to add
+                  someone — rather than the bare absence (UI-SPEC Copywriting
+                  Contract, success criterion 4). */}
+              {crewState.kind === 'data' && crewState.friends.length === 0 ? (
+                <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                  <Trans>No one in your crew yet. Add someone via search, code or QR.</Trans>
+                </Text>
+              ) : null}
+
+              {crewState.kind === 'data' && crewState.friends.length > 0 ? (
+                <View style={styles.resultsList}>
+                  {crewState.friends.map((friend) => {
+                    const { accountId, displayName, username } = friend.profile;
+                    return (
+                      <PersonRow
+                        key={accountId}
+                        profile={friend.profile}
+                        onPress={() =>
+                          router.push({ pathname: '/friend-detail', params: { accountId } })
+                        }
+                        accessibilityLabel={t`${displayName}, @${username}`}
+                      />
+                    );
+                  })}
+                </View>
+              ) : null}
             </View>
           </>
         )}

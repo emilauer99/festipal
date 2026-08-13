@@ -491,6 +491,14 @@ function RootNavigation() {
                       this app — `useLingui()` cannot be called here, since this
                       component is the one that RENDERS `<I18nProvider>`. */}
                   <Stack.Screen name="profil" />
+                  {/* 08-03 / D-09 — the friend detail modal, same root-level
+                      sibling-of-`(tabs)` shape as `profil` above, registered
+                      exhaustively for the same reason: an unregistered
+                      sibling here dead-ends on Expo Router's Unmatched Route
+                      screen. `friend-detail` is NOT a deep-link target — the
+                      deep-link capture path elsewhere in this file is
+                      untouched. */}
+                  <Stack.Screen name="friend-detail" />
                 </Stack.Protected>
               </Stack>
             </ColdStartTargetContext.Provider>

@@ -107,6 +107,10 @@ msgid "Can't load results — check your connection and try again."
 msgstr "Konnte die Ergebnisse nicht laden — prüf deine Verbindung und versuch's nochmal."
 
 #: app/(tabs)/friends.tsx
+msgid "Can't load your crew — check your connection and try again."
+msgstr "Konnte deine Crew nicht laden — prüf deine Verbindung und versuch's nochmal."
+
+#: app/(tabs)/friends.tsx
 #: app/profil.tsx
 msgid "Can't load your profile — check your connection and try again."
 msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
@@ -157,6 +161,10 @@ msgstr "Datum wählen"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Choose photo"
 msgstr "Foto wählen"
+
+#: app/friend-detail.tsx
+msgid "Close"
+msgstr "Schließen"
 
 #: components/FloatingNav.tsx
 #~ msgid "coming soon"
@@ -277,6 +285,10 @@ msgstr "Freundschaftsanfragen, kommt bald"
 msgid "Friends"
 msgstr "Friends"
 
+#: app/friend-detail.tsx
+msgid "Friends since {friendsSinceLabel}"
+msgstr "Freunde seit {friendsSinceLabel}"
+
 #: app/(tabs)/friends.tsx
 msgid "From you"
 msgstr "Von dir"
@@ -333,6 +345,10 @@ msgstr "Profil wird geladen…"
 #: app/(tabs)/friends.tsx
 msgid "Loading requests…"
 msgstr "Anfragen werden geladen…"
+
+#: app/(tabs)/friends.tsx
+msgid "Loading your crew…"
+msgstr "Deine Crew wird geladen…"
 
 #: app/(tabs)/friends.tsx
 msgid "Loading your quiks code…"
@@ -404,8 +420,12 @@ msgid "No one found. Check the @handle spelling."
 msgstr "Niemand gefunden. Prüf die Schreibweise des @handles."
 
 #: app/(tabs)/friends.tsx
-msgid "No one in your crew yet. Once you've added each other, you'll show up here."
-msgstr "Noch niemand in deiner Crew. Sobald ihr euch addet, seht ihr euch hier."
+msgid "No one in your crew yet. Add someone via search, code or QR."
+msgstr "Noch niemand in deiner Crew. Füg jemanden über Suche, Code oder QR hinzu."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "No one in your crew yet. Once you've added each other, you'll show up here."
+#~ msgstr "Noch niemand in deiner Crew. Sobald ihr euch addet, seht ihr euch hier."
 
 #: app/(tabs)/friends.tsx
 #~ msgid "No requests yet. Once someone adds you, it'll show up here."

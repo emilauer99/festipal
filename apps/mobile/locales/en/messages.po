@@ -107,6 +107,10 @@ msgid "Can't load results — check your connection and try again."
 msgstr "Can't load results — check your connection and try again."
 
 #: app/(tabs)/friends.tsx
+msgid "Can't load your crew — check your connection and try again."
+msgstr "Can't load your crew — check your connection and try again."
+
+#: app/(tabs)/friends.tsx
 #: app/profil.tsx
 msgid "Can't load your profile — check your connection and try again."
 msgstr "Can't load your profile — check your connection and try again."
@@ -157,6 +161,10 @@ msgstr "Choose a date"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Choose photo"
 msgstr "Choose photo"
+
+#: app/friend-detail.tsx
+msgid "Close"
+msgstr "Close"
 
 #: components/FloatingNav.tsx
 #~ msgid "coming soon"
@@ -277,6 +285,10 @@ msgstr "Friend requests, coming soon"
 msgid "Friends"
 msgstr "Friends"
 
+#: app/friend-detail.tsx
+msgid "Friends since {friendsSinceLabel}"
+msgstr "Friends since {friendsSinceLabel}"
+
 #: app/(tabs)/friends.tsx
 msgid "From you"
 msgstr "From you"
@@ -333,6 +345,10 @@ msgstr "Loading profile…"
 #: app/(tabs)/friends.tsx
 msgid "Loading requests…"
 msgstr "Loading requests…"
+
+#: app/(tabs)/friends.tsx
+msgid "Loading your crew…"
+msgstr "Loading your crew…"
 
 #: app/(tabs)/friends.tsx
 msgid "Loading your quiks code…"
@@ -404,8 +420,12 @@ msgid "No one found. Check the @handle spelling."
 msgstr "No one found. Check the @handle spelling."
 
 #: app/(tabs)/friends.tsx
-msgid "No one in your crew yet. Once you've added each other, you'll show up here."
-msgstr "No one in your crew yet. Once you've added each other, you'll show up here."
+msgid "No one in your crew yet. Add someone via search, code or QR."
+msgstr "No one in your crew yet. Add someone via search, code or QR."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "No one in your crew yet. Once you've added each other, you'll show up here."
+#~ msgstr "No one in your crew yet. Once you've added each other, you'll show up here."
 
 #: app/(tabs)/friends.tsx
 #~ msgid "No requests yet. Once someone adds you, it'll show up here."
