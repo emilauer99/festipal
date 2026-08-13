@@ -4,15 +4,15 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 8
 current_phase_name: Friends
-status: planning
-stopped_at: Phase 8 context gathered
-last_updated: "2026-08-12T20:32:40.246Z"
+status: executing
+stopped_at: Phase 8 UI-SPEC approved
+last_updated: "2026-08-13T11:32:43.021Z"
 last_activity: 2026-08-12
 last_activity_desc: Phase 07 verifiziert und abgeschlossen (VIS-01/VIS-02 validiert, T-06-06 getilgt)
 progress:
   total_phases: 6
   completed_phases: 1
-  total_plans: 5
+  total_plans: 10
   completed_plans: 5
   percent: 17
 ---
@@ -37,7 +37,7 @@ everything about their festival experience from one home screen.
 
 Phase: 8 — Friends
 Plan: Not started
-Status: Ready to plan
+Status: Ready to execute
 Last activity: 2026-08-12 — Phase 07 complete, transitioned to Phase 8
 
 ## Shipped
@@ -206,9 +206,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T20:32:40.230Z
-Stopped at: Phase 8 context gathered
-Resume file: .planning/workstreams/mobile/phases/08-friends/08-CONTEXT.md
+Last session: 2026-08-12T20:55:20.152Z
+Stopped at: Phase 8 UI-SPEC approved
+Resume file: .planning/workstreams/mobile/phases/08-friends/08-UI-SPEC.md
 
 ## Operator Next Steps
 

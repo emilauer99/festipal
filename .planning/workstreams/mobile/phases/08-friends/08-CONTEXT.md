@@ -207,7 +207,7 @@ es technische Umsetzung ist und beim Planer liegt:
   Marken-/Hero-/Identitätsflächen (Erweiterung aus Phase-6-D-07).
 
 ### Der Vertrag, gegen den diese Phase baut (Phase 7, FERTIG)
-- `packages/contracts/src/router.ts` (Z. 65–147) — `searchVisitors`, `getVisitorByHandle`,
+- `packages/contracts/src/router.ts` (Z. 65–147) — `searchVisitors`, `lookupVisitor`,
   `sendFriendRequest`, `acceptFriendRequest`, `declineFriendRequest`, `withdrawFriendRequest`,
   `listFriends`, `listFriendRequests`, `unfriend`. **Diese Datei ändert sich in Phase 8 nicht.**
 - `packages/contracts/src/schemas.ts` (Z. 85–220) — `visitorProfileForeignSchema`,
