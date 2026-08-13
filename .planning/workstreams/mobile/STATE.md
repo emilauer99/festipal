@@ -5,8 +5,8 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: Festival Navigation Shell
 status: planning
-stopped_at: Phase 9 context gathered
-last_updated: "2026-08-13T15:06:30.274Z"
+stopped_at: Phase 9 UI-SPEC approved
+last_updated: "2026-08-13T16:49:11.446Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
@@ -139,20 +139,26 @@ was die naechsten Phasen konkret betrifft:
   (`onBarcodeScanned={idle ? handler : undefined}`), nicht per Guard im Handler. Ein
   `useIsFocused`-Guard existiert bewusst nicht — es gibt derzeit keinen Pfad, der einen Screen ueber
   `/friends-qr` pusht. **Wer das aendert, muss den Teardown neu beweisen.**
+
 - **`friend-detail` liest den Query-Cache, nicht das Netz** (Phase-7 D-04): es gibt keinen
   Fremdprofil-Detail-Endpunkt, und der Routen-Parameter ist ausschliesslich lokaler Lookup-Key.
   Gleiches Idiom wie `findCachedFestivalBySlug`.
+
 - **`friend-sort.ts` nutzt das Capability-Probe-with-Cache-Muster** von `intl-capability.ts`; die
   Fallback-Diakritika-Tabelle ist direkt bewiesen, nicht nur ueber `sortFriendsByDisplayName`.
+
 - **`qr-matrix.ts` bringt seinen eigenen UTF-8-Byte-Encoder mit** — der `stringToBytesFuncs['UTF-8']`-
   Hook von `qrcode-generator` fehlt im aufgeloesten ESM-Build. Bei einem Paket-Update pruefen.
+
 - **D-03-Block-Swap** schaltet exakt drei Bloecke (quiks-Code-Karte, Requests, Crew); `isSearching`
   haengt am unmittelbaren Eingabetext, nicht am debounced Wert, damit der Moduswechsel dem Tippen
   folgt statt ihm nachzulaufen.
+
 - **Paket-Legitimitaet ist ein manuelles Gate, solange `research: false` ist.** `qrcode-generator`
   und `expo-camera` wurden vor der Installation von Hand geprueft (Publisher, Repo, exakter Name,
   Abhaengigkeitsbaum); die Belege liegen als zwei `T-08-SC`-Eintraege in `08-SECURITY.md`. Jedes
   weitere neue Paket laeuft genauso.
+
 - **Der native Rebuild ist ein Human-Checkpoint, kein Executor-Schritt** (Windows-Session):
   `npx expo run:android` aus `apps/mobile`, nie aus dem Repo-Root. FRND-04 wurde erst nach der
   Geraeteabnahme abgehakt.
@@ -251,9 +257,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13
-Stopped at: Phase 8 complete (UAT 8/8, security verified) — ready to plan Phase 9
-Resume file: None (Phase 9 hat bereits ein 09-CONTEXT.md — direkt planbar)
+Last session: 2026-08-13T16:49:11.428Z
+Stopped at: Phase 9 UI-SPEC approved
+Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09-UI-SPEC.md
 
 ## Operator Next Steps
 
