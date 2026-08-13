@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Check, Search } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { Friend, FriendRequestItem, VisitorSummary } from '@quiks/contracts';
@@ -163,6 +163,20 @@ export default function FriendsScreen() {
     return () => clearTimeout(handle);
   }, [query]);
 
+  /**
+   * D-16 — the camera-free path's OTHER end: `CameraScanPanel`'s denied
+   * callout routes back here with `focusSearch=1`. Landing on this screen is
+   * not enough on its own — without this effect the visitor arrives beside
+   * the field, not IN it.
+   */
+  const searchInputRef = useRef<TextInput>(null);
+  const { focusSearch } = useLocalSearchParams<{ focusSearch?: string }>();
+  useEffect(() => {
+    if (focusSearch) {
+      searchInputRef.current?.focus();
+    }
+  }, [focusSearch]);
+
   const searchEnabled = debouncedQuery.trim().length >= SEARCH_MIN_CHARS;
 
   // T-08-02: `targetAccountId` for any mutation this screen triggers comes
@@ -290,6 +304,7 @@ export default function FriendsScreen() {
         <View style={styles.searchField}>
           <Search size={SEARCH_ICON_SIZE} color={colors.textMuted} strokeWidth={2} />
           <TextInput
+            ref={searchInputRef}
             style={[styles.searchInput, { fontFamily: bodySmFont }]}
             value={query}
             onChangeText={setQuery}

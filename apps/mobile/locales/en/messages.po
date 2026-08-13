@@ -55,6 +55,10 @@ msgstr "Account"
 msgid "Add"
 msgstr "Add"
 
+#: components/CameraScanPanel.tsx
+msgid "Add this person?"
+msgstr "Add this person?"
+
 #: app/(tabs)/friends.tsx
 #~ msgid "Adding by QR is coming soon."
 #~ msgstr "Adding by QR is coming soon."
@@ -93,6 +97,10 @@ msgstr "Browse all festivals and save your first one."
 msgid "Browse festivals"
 msgstr "Browse festivals"
 
+#: components/CameraScanPanel.tsx
+msgid "Camera unavailable"
+msgstr "Camera unavailable"
+
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
@@ -125,6 +133,7 @@ msgstr "Can't load your profile — check your connection and try again."
 #: app/(tabs)/home.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
+#: components/CameraScanPanel.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
@@ -251,6 +260,10 @@ msgstr "Enter code"
 #~ msgid "Enter festival"
 #~ msgstr "Enter festival"
 
+#: components/CameraScanPanel.tsx
+msgid "Enter handle instead"
+msgstr "Enter handle instead"
+
 #: app/(auth)/verify.tsx
 #~ msgid "Enter the 6-digit code we sent to {email}"
 #~ msgstr "Enter the 6-digit code we sent to {email}"
@@ -375,6 +388,10 @@ msgstr "Loading your crew…"
 msgid "Loading your quiks code…"
 msgstr "Loading your quiks code…"
 
+#: components/CameraScanPanel.tsx
+msgid "Loading…"
+msgstr "Loading…"
+
 #: app/(tabs)/mehr.tsx
 msgid "Location & Safety"
 msgstr "Location & Safety"
@@ -496,6 +513,10 @@ msgstr "Open festival"
 msgid "Open safenow.app"
 msgstr "Open safenow.app"
 
+#: components/CameraScanPanel.tsx
+msgid "Open Settings"
+msgstr "Open Settings"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Optional"
 msgstr "Optional"
@@ -524,6 +545,10 @@ msgstr "Payment methods, coming soon"
 msgid "Placeholder mark, coming soon"
 msgstr "Placeholder mark, coming soon"
 
+#: components/CameraScanPanel.tsx
+msgid "Point the camera at the other person's quiks code."
+msgstr "Point the camera at the other person's quiks code."
+
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Profile"
@@ -540,6 +565,10 @@ msgstr "Pronouns, age, gender and vibe are optional — your favourite artists s
 #: app/friends-qr.tsx
 msgid "QR code"
 msgstr "QR code"
+
+#: components/CameraScanPanel.tsx
+msgid "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
+msgstr "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
 
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"
@@ -602,6 +631,10 @@ msgstr "Saving…"
 #: app/friends-qr.tsx
 msgid "Scan"
 msgstr "Scan"
+
+#: components/CameraScanPanel.tsx
+msgid "Scan again"
+msgstr "Scan again"
 
 #: app/profil.tsx
 msgid "Scanning is enough — no searching, no typing."
@@ -721,9 +754,17 @@ msgstr "Tell us what to call you in the app."
 msgid "That code is wrong or has expired."
 msgstr "That code is wrong or has expired."
 
+#: components/CameraScanPanel.tsx
+msgid "That's not a quiks code."
+msgstr "That's not a quiks code."
+
 #: app/(tabs)/mehr.tsx
 msgid "The night shift for your eyes."
 msgstr "The night shift for your eyes."
+
+#: components/CameraScanPanel.tsx
+msgid "This code is no longer valid."
+msgstr "This code is no longer valid."
 
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "This festival may have been removed or the link is out of date."

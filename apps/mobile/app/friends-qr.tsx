@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
 
+import { CameraScanPanel } from '../components/CameraScanPanel';
 import { QRMark } from '../components/QRMark';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { apiClient } from '../lib/api-client';
@@ -158,10 +159,12 @@ export default function FriendsQrScreen() {
             ) : null}
           </View>
         ) : (
-          // 08-05 fills this panel with the camera preview + permission
-          // states (UI-SPEC § QR & Camera Contract). No camera access and no
-          // user-visible text runs here yet — a promise this plan can't keep.
-          <View style={styles.panel} />
+          // 08-05 / D-13 — the camera preview mounts ONLY while this branch
+          // is on screen; switching back to "Mein Code" or leaving the
+          // screen unmounts `CameraScanPanel` (conditional render, not a
+          // visibility toggle), which is what tears the camera down
+          // (T-08-18).
+          <CameraScanPanel />
         )}
       </View>
     </SafeAreaView>
