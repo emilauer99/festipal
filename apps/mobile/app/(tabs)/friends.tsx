@@ -41,6 +41,18 @@ const ICON_SIZE = 18;
 const PENDING_OPACITY = 0.45;
 
 /**
+ * quick-260813-o08 D-D — the compact request-row action set. The vertical
+ * stacking of two 44-pt targets (44 + 4 + 44 = 92 pt) was the height driver,
+ * not the identity row; a lying-down pair of a 36-pt pill and a 36-pt icon
+ * button, both restored to 44 pt via `hitSlop`, is what actually shrinks the
+ * row.
+ */
+const REQUEST_COMPACT_HEIGHT = 36;
+const REQUEST_ICON_BUTTON_SIZE = 36;
+const REQUEST_PRIMARY_ICON_SIZE = 16;
+const REQUEST_HIT_SLOP = { top: 4, bottom: 4, left: 4, right: 4 };
+
+/**
  * 08-04 / D-13 — the card's small preview mark is now real, encoding the
  * same `quiks:u/<username>` payload the QR screen's big "Mein Code" mark
  * does. Sized for a row-height icon, not for scanning — the QR screen is
@@ -139,6 +151,9 @@ export default function FriendsScreen() {
   const bodyFont = fontFamilyForRole('body', fontsReady);
   const cardTitleFont = fontFamilyForRole('bodyStrong', fontsReady);
   const handleFont = fontFamilyForRole('countdown', fontsReady);
+  // quick-260813-o08 D-C — the sub-group headings ("To you"/"From you") now
+  // resolve THIS same `title3` role's own family too, instead of continuing
+  // to reuse the big heading's `title2` family (`headingFont`).
   const buttonFont = fontFamilyForRole('title3', fontsReady);
 
   /**
@@ -627,7 +642,7 @@ export default function FriendsScreen() {
             {requestsState.kind === 'data' ? (
               <View style={styles.requestsGroups}>
                 <View style={styles.subGroup}>
-                  <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                  <Text style={[styles.subGroupHead, { fontFamily: buttonFont }]}>
                     <Trans>To you</Trans>
                   </Text>
                   {requestsState.incoming.length === 0 ? (
@@ -644,7 +659,7 @@ export default function FriendsScreen() {
                 </View>
 
                 <View style={styles.subGroup}>
-                  <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                  <Text style={[styles.subGroupHead, { fontFamily: buttonFont }]}>
                     <Trans>From you</Trans>
                   </Text>
                   {requestsState.outgoing.length === 0 ? (
@@ -681,7 +696,7 @@ function IncomingRequestRow({ item }: { item: FriendRequestItem }) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
-  const buttonFont = fontFamilyForRole('title3', fontsReady);
+  const pillFont = fontFamilyForRole('label', fontsReady);
   const linkFont = fontFamilyForRole('bodySm', fontsReady);
   const { acceptRequest, declineRequest, pendingTargetId, failedTargetId } = useFriendMutations();
   const { accountId, displayName, username } = item.profile;
@@ -692,6 +707,7 @@ function IncomingRequestRow({ item }: { item: FriendRequestItem }) {
     <View style={styles.requestRow}>
       <PersonRow
         profile={item.profile}
+        compact
         accessibilityLabel={t`${displayName}, @${username}`}
         trailing={
           <View style={styles.requestTrailing}>
@@ -702,31 +718,32 @@ function IncomingRequestRow({ item }: { item: FriendRequestItem }) {
               accessibilityRole="button"
               accessibilityLabel={t`Accept`}
               accessibilityState={{ disabled: isPending }}
+              hitSlop={REQUEST_HIT_SLOP}
             >
-              <Check size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
-              <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
+              <Check
+                size={REQUEST_PRIMARY_ICON_SIZE}
+                color={colors.textOnPrimary}
+                strokeWidth={2}
+              />
+              <Text style={[styles.primaryPillText, { fontFamily: pillFont }]}>
                 <Trans>Accept</Trans>
               </Text>
             </Pressable>
             {/* No `Alert.alert` (Phase-7 D-11/D-12: idempotent, no history,
-                no cooldown — a confirm dialog would overstate the stakes). */}
+                no cooldown — a confirm dialog would overstate the stakes).
+                quick-260813-o08 D-D: icon-only now — the localized
+                `accessibilityLabel` below still reads "Ablehnen" for a
+                screen reader even though the visible text label is gone. */}
             <Pressable
-              style={styles.textLinkPressable}
+              style={[styles.secondaryIconButton, isPending ? styles.pending : null]}
               disabled={isPending}
               onPress={() => declineRequest(accountId)}
               accessibilityRole="button"
               accessibilityLabel={t`Decline`}
               accessibilityState={{ disabled: isPending }}
+              hitSlop={REQUEST_HIT_SLOP}
             >
-              <Text
-                style={[
-                  styles.textLinkDanger,
-                  isPending ? styles.pending : null,
-                  { fontFamily: linkFont },
-                ]}
-              >
-                <Trans>Decline</Trans>
-              </Text>
+              <X size={ICON_SIZE} color={colors.dangerText} strokeWidth={2} />
             </Pressable>
           </View>
         }
@@ -761,31 +778,30 @@ function OutgoingRequestRow({ item }: { item: FriendRequestItem }) {
     <View style={styles.requestRow}>
       <PersonRow
         profile={item.profile}
+        compact
         accessibilityLabel={t`${displayName}, @${username}`}
         trailing={
           <View style={styles.requestTrailing}>
+            {/* D-04-Verbot unveraendert: der Chip bleibt eine View, nie ein
+                Pressable — quick-260813-o08 aendert nur seine Groesse. */}
             <View style={styles.staticChip} accessibilityLabel={t`Requested`}>
               <Text style={[styles.staticChipText, { fontFamily: chipFont }]}>
                 <Trans>Requested</Trans>
               </Text>
             </View>
+            {/* quick-260813-o08 D-D: icon-only now — the localized
+                `accessibilityLabel` below still reads "Zurückziehen" for a
+                screen reader even though the visible text label is gone. */}
             <Pressable
-              style={styles.textLinkPressable}
+              style={[styles.secondaryIconButton, isPending ? styles.pending : null]}
               disabled={isPending}
               onPress={() => withdrawRequest(accountId)}
               accessibilityRole="button"
               accessibilityLabel={t`Withdraw`}
               accessibilityState={{ disabled: isPending }}
+              hitSlop={REQUEST_HIT_SLOP}
             >
-              <Text
-                style={[
-                  styles.textLinkMuted,
-                  isPending ? styles.pending : null,
-                  { fontFamily: linkFont },
-                ]}
-              >
-                <Trans>Withdraw</Trans>
-              </Text>
+              <X size={ICON_SIZE} color={colors.textSecondary} strokeWidth={2} />
             </Pressable>
           </View>
         }
@@ -954,43 +970,46 @@ function createStyles(colors: ThemeColors) {
     // top-level blocks), larger than the sp-5 row gap within one sub-group.
     requestsGroups: { gap: spacingScale['sp-6'] },
     subGroup: { gap: spacingScale['sp-5'] },
-    // UI-SPEC § Typography — same `title2` role as `sectionHead`, reduced
-    // visual weight via `textSecondary` colour only, never a smaller size.
+    // quick-260813-o08 D-C — one role smaller than `sectionHead` (`title3`
+    // instead of `title2`), reduced visual weight further via the existing
+    // `textSecondary` colour. `title3` carries no tracking token, so unlike
+    // `sectionHead` this style sets no `letterSpacing` at all.
     subGroupHead: {
-      fontSize: typeRoles.title2.size,
-      letterSpacing: typeRoles.title2.letterSpacing,
-      lineHeight: typeRoles.title2.size * typeRoles.title2.lineHeight,
+      fontSize: typeRoles.title3.size,
+      lineHeight: typeRoles.title3.size * typeRoles.title3.lineHeight,
       color: colors.textSecondary,
     },
     // Wraps one request `PersonRow` plus its own optional inline failure line,
     // so the failure text renders BELOW the whole row, not inside its trailing
     // slot.
     requestRow: { gap: spacingScale['sp-2'] },
-    // The trailing composition for a request row: a primary pill above a
-    // plain-text action link, right-aligned — distinct from the search hit's
-    // single-element trailing slot (`RelationAction`).
-    requestTrailing: { alignItems: 'flex-end', gap: spacingScale['sp-2'] },
+    // quick-260813-o08 D-D — the trailing composition for a request row is
+    // now a LYING-DOWN pair (primary pill, then the icon-only secondary
+    // action), not a stacked one. `sp-4` (8) between the two elements is
+    // deliberate: each side's `hitSlop` of 4 then touches but never overlaps
+    // the other's.
+    requestTrailing: { flexDirection: 'row', alignItems: 'center', gap: spacingScale['sp-4'] },
     primaryPill: {
-      minHeight: layout.hitMin,
+      height: REQUEST_COMPACT_HEIGHT,
       flexDirection: 'row',
       alignItems: 'center',
       gap: spacingScale['sp-2'],
-      paddingHorizontal: spacingScale['sp-8'],
+      paddingHorizontal: spacingScale['sp-7'],
       backgroundColor: colors.primary,
       borderRadius: radiiScale['r-pill'],
     },
     primaryPillText: {
-      fontSize: typeRoles.title3.size,
+      fontSize: typeRoles.label.size,
       color: colors.textOnPrimary,
     },
     // Same value as `RelationAction`'s own `PENDING_OPACITY` — reused, not
     // reinvented (08-02-PLAN Task 2).
     pending: { opacity: PENDING_OPACITY },
     staticChip: {
-      minHeight: layout.hitMin,
+      height: REQUEST_COMPACT_HEIGHT,
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: spacingScale['sp-8'],
+      paddingHorizontal: spacingScale['sp-7'],
       backgroundColor: colors.fillQuiet,
       borderRadius: radiiScale['r-pill'],
     },
@@ -998,21 +1017,13 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.label.size,
       color: colors.textMuted,
     },
-    // `layout.hitMin` applies even to a plain-text action link (UI-SPEC).
-    textLinkPressable: {
-      minHeight: layout.hitMin,
-      minWidth: layout.hitMin,
+    // quick-260813-o08 D-D — the secondary request action: an unfilled,
+    // icon-only square. `hitSlop` (not this box) is what restores 44 pt.
+    secondaryIconButton: {
+      width: REQUEST_ICON_BUTTON_SIZE,
+      height: REQUEST_ICON_BUTTON_SIZE,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: spacingScale['sp-4'],
-    },
-    textLinkDanger: {
-      fontSize: typeRoles.bodySm.size,
-      color: colors.dangerText,
-    },
-    textLinkMuted: {
-      fontSize: typeRoles.bodySm.size,
-      color: colors.textSecondary,
     },
   });
 }

@@ -14,6 +14,8 @@ import { useTheme } from '../lib/theme-context';
 const { typeRoles, layout, radiiScale, spacingScale } = tokens;
 
 const AVATAR_ROW_SIZE = 40;
+/** quick-260813-o08 D-D/D-E — the `compact` variant's avatar tile. */
+const AVATAR_ROW_SIZE_COMPACT = 32;
 
 export type PersonRowProps = {
   profile: VisitorProfileForeign;
@@ -21,6 +23,14 @@ export type PersonRowProps = {
   trailing?: ReactNode;
   /** Only crew rows are tappable this phase (D-09) — search hits and request rows leave this undefined. */
   onPress?: () => void;
+  /**
+   * quick-260813-o08 D-D/D-E — a smaller padding and avatar for request rows,
+   * where many transient rows stack above one another. Off by default:
+   * search hits and crew rows are the durable surfaces and keep the
+   * standard size (D-E). Everything else about the row (text roles,
+   * truncation, trailing slot, card look) stays identical.
+   */
+  compact?: boolean;
   /** Already-localized screen-reader label, built by the CALLER through Lingui — this component owns no copy. */
   accessibilityLabel: string;
 };
@@ -36,19 +46,26 @@ export type PersonRowProps = {
  * (08-01-PLAN "Flagged Assumptions" #1) — every row therefore shows
  * initials, never a photo. No `presence` dot either (D-11/ADR-014).
  */
-export function PersonRow({ profile, trailing, onPress, accessibilityLabel }: PersonRowProps) {
+export function PersonRow({
+  profile,
+  trailing,
+  onPress,
+  compact,
+  accessibilityLabel,
+}: PersonRowProps) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
   const nameFont = fontFamilyForRole('bodyStrong', fontsReady);
   const handleFont = fontFamilyForRole('bodySm', fontsReady);
+  const rowStyle = compact ? [styles.row, styles.rowCompact] : styles.row;
 
   const content = (
     <>
       <AvatarTile
         displayName={profile.displayName}
         username={profile.username}
-        size={AVATAR_ROW_SIZE}
+        size={compact ? AVATAR_ROW_SIZE_COMPACT : AVATAR_ROW_SIZE}
       />
       <View style={styles.textColumn}>
         <Text
@@ -75,7 +92,7 @@ export function PersonRow({ profile, trailing, onPress, accessibilityLabel }: Pe
 
   if (onPress === undefined) {
     return (
-      <View style={styles.row} accessibilityLabel={accessibilityLabel}>
+      <View style={rowStyle} accessibilityLabel={accessibilityLabel}>
         {content}
       </View>
     );
@@ -83,7 +100,7 @@ export function PersonRow({ profile, trailing, onPress, accessibilityLabel }: Pe
 
   return (
     <Pressable
-      style={styles.row}
+      style={rowStyle}
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
@@ -106,6 +123,10 @@ function createStyles(colors: ThemeColors) {
       borderWidth: 1,
       borderColor: colors.borderSubtle,
     },
+    // quick-260813-o08 D-D — one step down the sp-ramp from `row`'s own
+    // `sp-6` padding; every other visual property (radius, border, card
+    // background) is inherited unchanged from `row`.
+    rowCompact: { padding: spacingScale['sp-5'] },
     // `minWidth: 0` lets the text column actually shrink/truncate instead of
     // pushing the row wider than its container.
     textColumn: { flexGrow: 1, flexShrink: 1, minWidth: 0, gap: spacingScale['sp-1'] },

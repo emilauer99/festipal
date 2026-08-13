@@ -28,9 +28,11 @@ export type AvatarTileProps = {
    * Tile diameter. Default `88` — unchanged Profil-header / friend-detail
    * size. `40` is the `PersonRow` row size (08-01-UI-SPEC § Avatar Size
    * Contract); at that size the initials resolve through the `label` role
-   * instead of `title2`, which does not fit inside a 40px circle.
+   * instead of `title2`, which does not fit inside a 40px circle. `32` is
+   * `PersonRow`'s `compact` variant (quick-260813-o08 D-D) — same `label`
+   * role as `40`, just a smaller tile.
    */
-  size?: 40 | 88;
+  size?: 32 | 40 | 88;
 };
 
 /**
@@ -58,14 +60,20 @@ export function deriveInitials(displayName: string, username: string): string {
  * and a green ring around every avatar after the brand swap, which is exactly
  * the leftover the no-raw-values rule exists to prevent.
  */
-export function AvatarTile({ displayName, username, localUri, size = AVATAR_SIZE }: AvatarTileProps) {
+export function AvatarTile({
+  displayName,
+  username,
+  localUri,
+  size = AVATAR_SIZE,
+}: AvatarTileProps) {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors, size), [colors, size]);
   const fontsReady = useFontsReady();
   // 08-01-UI-SPEC § Avatar Size Contract: `label` is not an Outfit-tracked
   // role, so it carries no letterSpacing; `title2` is, and keeps its tracking
-  // at the default 88px size.
-  const initialsRole = size === 40 ? 'label' : 'title2';
+  // at the default 88px size. `32` (quick-260813-o08 D-D) shares `40`'s
+  // `label` role — both are too small for `title2`.
+  const initialsRole = size === 40 || size === 32 ? 'label' : 'title2';
 
   if (localUri) {
     return (
@@ -93,9 +101,11 @@ export function AvatarTile({ displayName, username, localUri, size = AVATAR_SIZE
   );
 }
 
-function createStyles(colors: ThemeColors, size: 40 | 88) {
-  const initialsFontSize = size === 40 ? typeRoles.label.size : typeRoles.title2.size;
-  const initialsLetterSpacing = size === 40 ? undefined : typeRoles.title2.letterSpacing;
+function createStyles(colors: ThemeColors, size: 32 | 40 | 88) {
+  const initialsFontSize =
+    size === 40 || size === 32 ? typeRoles.label.size : typeRoles.title2.size;
+  const initialsLetterSpacing =
+    size === 40 || size === 32 ? undefined : typeRoles.title2.letterSpacing;
 
   return StyleSheet.create({
     photo: {
