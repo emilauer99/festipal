@@ -102,6 +102,29 @@ friendships; solve it in the schema (canonical ordered pair + unique constraint)
 manage requests, and see a real friends list
 **Depends on**: Phase 7
 **Requirements**: FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08
+**Plans**: 5 plans (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
+geteilter Zustand über alle Slices hinweg, die Kette ist daher echt sequenziell, wie in Phase 7)
+
+Plans:
+**Wave 1**
+
+- [ ] 08-01-PLAN.md — Tracer: Suche → Treffer → Anfrage end-to-end, `PersonRow` + `RelationAction` + `useFriendMutations` (FRND-02/FRND-03, D-01…D-04)
+
+**Wave 2** *(blockiert auf Wave 1)*
+
+- [ ] 08-02-PLAN.md — Anfragen-Sektion beide Richtungen, Zähler-Badge, Chats-/Vorschlagsblock entfernt (FRND-05, D-05…D-08)
+
+**Wave 3** *(blockiert auf Wave 2)*
+
+- [ ] 08-03-PLAN.md — `lib/friend-sort.ts` mit Hermes-Fallback, echte Crew-Liste, `friend-detail`-Modal, Entfreunden (FRND-06/FRND-08, D-09…D-12)
+
+**Wave 4** *(blockiert auf Wave 3)*
+
+- [ ] 08-04-PLAN.md — QR-Logik + `QRMark` + QR-Screen mit „Mein Code", echter CTA auf der Karte (FRND-04, D-13) · **nicht autonom** (Paket-Legitimitäts-Gate)
+
+**Wave 5** *(blockiert auf Wave 4)*
+
+- [ ] 08-05-PLAN.md — `expo-camera` + nativer Rebuild, `CameraScanPanel` mit drei Berechtigungszuständen, Bestätigungskarte (FRND-04, D-14…D-16) · **nicht autonom** (Paket-Legitimitäts-Gate)
 
 **Success Criteria** (what must be TRUE):
 
