@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 08
 current_phase_name: friends
-status: executing
-stopped_at: Completed 08-04-PLAN.md (device UAT for Task 2 human-check outstanding)
-last_updated: "2026-08-13T13:19:08.958Z"
+status: verifying
+stopped_at: Completed 08-05-PLAN.md (code committed; native rebuild + full device UAT for Task 1/Task 2 human-checks outstanding, surfaced as human-action checkpoint)
+last_updated: "2026-08-13T13:42:16.722Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 10
-  completed_plans: 9
-  percent: 17
+  completed_plans: 10
+  percent: 33
 ---
 
 # Project State — Workstream `mobile`
@@ -37,7 +37,7 @@ everything about their festival experience from one home screen.
 
 Phase: 08 (friends) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-13 — Phase 08 execution started
 
 ## Shipped
@@ -138,6 +138,9 @@ Milestone bindet:
 - [Phase ?]: unfriend navigation uses a ref-tracked pending->settled transition to close only on success, without adding a second callback shape to the shared useFriendMutations() hook
 - [Phase ?]: 08-04: qrButton switched to solid primary/textOnPrimary pill (Pattern A dampening removed) per UI-SPEC's own reserved-accent rule for the now-real QR CTA
 - [Phase ?]: 08-04: qr-matrix.ts carries its own UTF-8 byte encoder instead of qrcode-generator's stringToBytesFuncs['UTF-8'] hook, which is absent from the package's resolved ESM build — pre-authorized by the plan's own fallback clause
+- [Phase ?]: 08-05: requestPermission() fired exactly once per mount via useRef guard, gated on the hook's own permission!==null check - the panel only mounts on segment=scan, so 'mount' IS the D-15-required ask moment
+- [Phase ?]: 08-05: onBarcodeScanned prop set to undefined outside scanState.kind==='idle' (not an in-handler guard) - the actual mechanism that stops the native per-frame callback from re-firing while a code sits in frame (T-08-21)
+- [Phase ?]: 08-05: native rebuild (npx expo run:android) deliberately NOT run by the executor per coordinator instruction on this Windows session - surfaced as a human-action checkpoint instead; FRND-04 requirements-completed left empty until on-device verification happens
 
 ### Blockers/Concerns
 
@@ -216,8 +219,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T13:19:08.928Z
-Stopped at: Completed 08-04-PLAN.md (device UAT for Task 2 human-check outstanding)
+Last session: 2026-08-13T13:42:16.699Z
+Stopped at: Completed 08-05-PLAN.md (code committed; native rebuild + full device UAT for Task 1/Task 2 human-checks outstanding, surfaced as human-action checkpoint)
 Resume file: None
 
 ## Operator Next Steps
@@ -239,3 +242,4 @@ Resume file: None
 | Phase 08 P02 | 13min | 2 tasks | 3 files |
 | Phase 08 P03 | 27min | 3 tasks | 7 files |
 | Phase 08 P04 | 15min | 2 tasks | 12 files |
+| Phase 08 P05 | ~14min | 2 tasks | 8 files |
