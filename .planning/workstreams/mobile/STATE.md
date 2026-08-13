@@ -3,17 +3,17 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 09
-current_phase_name: Festival Navigation Shell
-status: "Phase 8 shipped — PR #15"
-stopped_at: Phase 9 UI-SPEC approved
-last_updated: "2026-08-13T17:54:56.950Z"
+current_phase_name: festival-navigation-shell
+status: executing
+stopped_at: Completed 09-01-PLAN.md (home -> start rename, NAV-03, device-verified)
+last_updated: "2026-08-13T21:45:32.946Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 10
+  completed_plans: 11
   percent: 33
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-08-13 — nach Phase 8)
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 09 — Festival Navigation Shell
+**Current focus:** Phase 09 — festival-navigation-shell
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7 und 8 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 09 — Festival Navigation Shell
-Plan: Not started
-Status: Phase 8 shipped — PR #15
-Last activity: 2026-08-13 — Phase 09 planning complete
+Phase: 09 (festival-navigation-shell) — EXECUTING
+Plan: 2 of 6
+Status: Ready to execute
+Last activity: 2026-08-13 — Phase 09 execution started
 
 ## Shipped
 
@@ -163,6 +163,13 @@ was die naechsten Phasen konkret betrifft:
   `npx expo run:android` aus `apps/mobile`, nie aus dem Repo-Root. FRND-04 wurde erst nach der
   Geraeteabnahme abgehakt.
 
+- **Phase 09-01 (`home` -> `start` rename, NAV-03):** `ColdStartRedirect`'s discriminant was
+  renamed `'home'` -> `'start'` alongside its href (D-19 hard rename, no second name for the same
+  route). EN Lingui msgstr for the renamed msgid is "Start", not "Home" (D-20). No alias route was
+  left behind (`grep -rn "'/home'" apps/mobile/app apps/mobile/lib` — zero matches). Device-verified
+  by the user (2026-08-13): tab label, cold start with/without saved festival, deep link, repeated
+  dev-client launches, non-dead-end back — all six checks passed, no Unmatched-Route regression.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -257,9 +264,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T16:49:11.428Z
-Stopped at: Phase 9 UI-SPEC approved
-Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09-UI-SPEC.md
+Last session: 2026-08-13T21:45:32.931Z
+Stopped at: Completed 09-01-PLAN.md (home -> start rename, NAV-03, device-verified)
+Resume file: None
 
 ## Operator Next Steps
 
@@ -283,3 +290,4 @@ Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09
 | Phase 08 P03 | 27min | 3 tasks | 7 files |
 | Phase 08 P04 | 15min | 2 tasks | 12 files |
 | Phase 08 P05 | ~14min | 2 tasks | 8 files |
+| Phase 09 P01 | 29min | 2 tasks | 10 files |

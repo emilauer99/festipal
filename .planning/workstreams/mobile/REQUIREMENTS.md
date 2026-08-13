@@ -47,7 +47,7 @@ an endpoint serves a *foreign* profile, so the projection split is a prerequisit
 
 - [ ] **NAV-01**: Inside a festival, a five-tab bar: Dashboard · Aktivitäten · Friends · Timetable · Lageplan
 - [ ] **NAV-02**: The Timetable and Lageplan tabs are honest placeholders in the D-11/D-13 pattern — each names its precondition instead of simulating a working surface
-- [ ] **NAV-03**: The first global tab is `start` in the route as well as in the UI
+- [x] **NAV-03**: The first global tab is `start` in the route as well as in the UI
 
 ### Security (SEC)
 
@@ -95,7 +95,7 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 | FRND-07 | Phase 9 | Planned |
 | NAV-01 | Phase 9 | Planned |
 | NAV-02 | Phase 9 | Planned |
-| NAV-03 | Phase 9 | Planned |
+| NAV-03 | Phase 9 | Complete (09-01) |
 | SEC-03 | Phase 10 | Planned |
 | ACT-01 | Phase 11 | Planned |
 | ACT-02 | Phase 11 | Planned |
