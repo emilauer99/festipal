@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(tabs)/friends.tsx
+msgid "{displayName}, @{username}"
+msgstr "{displayName}, @{username}"
+
 #: app/profil.tsx
 msgid "{festivalCount, plural, one {# Festival} other {# Festivals}}"
 msgstr "{festivalCount, plural, one {# Festival} other {# Festivals}}"
@@ -41,6 +45,10 @@ msgstr "A nudge just before your acts start."
 #: app/profil.tsx
 msgid "Account"
 msgstr "Account"
+
+#: components/RelationAction.tsx
+msgid "Add"
+msgstr "Add"
 
 #: app/(tabs)/friends.tsx
 msgid "Adding by QR is coming soon."
@@ -84,6 +92,10 @@ msgstr "Browse festivals"
 #: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Can't load festivals — check your connection and try again."
+
+#: app/(tabs)/friends.tsx
+msgid "Can't load results — check your connection and try again."
+msgstr "Can't load results — check your connection and try again."
 
 #: app/(tabs)/friends.tsx
 #: app/profil.tsx
@@ -342,8 +354,8 @@ msgid "Name"
 msgstr "Name"
 
 #: app/(tabs)/friends.tsx
-msgid "Name or @handle"
-msgstr "Name or @handle"
+#~ msgid "Name or @handle"
+#~ msgstr "Name or @handle"
 
 #: app/(tabs)/festivals.tsx
 msgid "New festivals will show up here."
@@ -500,12 +512,20 @@ msgid "Scanning is enough — no searching, no typing."
 msgstr "Scanning is enough — no searching, no typing."
 
 #: app/(tabs)/friends.tsx
-msgid "Search for people, coming soon"
-msgstr "Search for people, coming soon"
+msgid "Search @username"
+msgstr "Search @username"
 
 #: app/(tabs)/friends.tsx
-msgid "Searching for people is coming soon."
-msgstr "Searching for people is coming soon."
+#~ msgid "Search for people, coming soon"
+#~ msgstr "Search for people, coming soon"
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Searching for people is coming soon."
+#~ msgstr "Searching for people is coming soon."
+
+#: app/(tabs)/friends.tsx
+msgid "Searching…"
+msgstr "Searching…"
 
 #: app/(auth)/email.tsx
 msgid "Send code"

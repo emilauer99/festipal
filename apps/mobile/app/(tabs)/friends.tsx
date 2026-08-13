@@ -1,15 +1,19 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { Search } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
+import type { VisitorSummary } from '@quiks/contracts';
 
+import { PersonRow } from '../../components/PersonRow';
+import { RelationAction } from '../../components/RelationAction';
 import { useSoonToast } from '../../components/SoonToast';
 import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
+import { friendKeys, SEARCH_DEBOUNCE_MS, SEARCH_MIN_CHARS } from '../../lib/friend-queries';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
 
@@ -57,6 +61,21 @@ type QuiksCodeViewState =
   | { kind: 'loading' }
   | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
   | { kind: 'data'; username: string | undefined };
+
+/**
+ * The search results' own view state, same three-state schema as
+ * `QuiksCodeViewState` (08-01-PATTERNS "the vorgeschriebene Schablone"),
+ * plus `idle` for "below the 2-char floor, no request fired at all" — the
+ * FRND-03 prohibition boundary, not a fetch state.
+ *
+ * Task 1 wires `idle`/`loading`/`error`/`data`; Task 2 adds the exact E1
+ * copy for each (hint text, empty-results copy) per 08-01-UI-SPEC.
+ */
+type SearchViewState =
+  | { kind: 'idle' }
+  | { kind: 'loading' }
+  | { kind: 'error'; variant: 'transport' | 'response'; retry: () => void }
+  | { kind: 'data'; hits: VisitorSummary[] };
 
 /**
  * D-10 / D-11 — the third tab, "Friends" (design `03 Friends`), in its full
@@ -112,6 +131,48 @@ export default function FriendsScreen() {
    */
   const meQuery = useQuery({ queryKey: ['me'], queryFn: () => apiClient.getMe() });
 
+  /**
+   * D-01/D-02 — the search field is now real: one input satisfies both
+   * FRND-02 (handle) and FRND-03 (username search) via
+   * `GET /visitors?q=`, debounced by `SEARCH_DEBOUNCE_MS` and gated below
+   * `SEARCH_MIN_CHARS` (T-08-04 — this floor plus the debounce is the DoS
+   * mitigation, and React Query dedupes identical keys on top of it).
+   */
+  const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
+
+  useEffect(() => {
+    const handle = setTimeout(() => setDebouncedQuery(query), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(handle);
+  }, [query]);
+
+  const searchEnabled = debouncedQuery.trim().length >= SEARCH_MIN_CHARS;
+
+  // T-08-02: `targetAccountId` for any mutation this screen triggers comes
+  // from `hit.profile.accountId` on a hit THIS query returned — never from
+  // the typed text itself.
+  const searchQuery = useQuery({
+    queryKey: friendKeys.search(debouncedQuery),
+    queryFn: () => apiClient.searchVisitors({ query: { q: debouncedQuery } }),
+    enabled: searchEnabled,
+  });
+
+  function computeSearchState(): SearchViewState {
+    if (!searchEnabled) return { kind: 'idle' };
+    if (searchQuery.status === 'pending') return { kind: 'loading' };
+    if (searchQuery.status === 'error') {
+      return { kind: 'error', variant: 'transport', retry: () => void searchQuery.refetch() };
+    }
+    // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
+    // `status === 'error'` — same branch the quiks-code card already relies on.
+    if (searchQuery.data.status !== 200) {
+      return { kind: 'error', variant: 'response', retry: () => void searchQuery.refetch() };
+    }
+    return { kind: 'data', hits: searchQuery.data.body };
+  }
+
+  const searchState = computeSearchState();
+
   function computeQuiksCodeState(): QuiksCodeViewState {
     if (meQuery.status === 'pending') return { kind: 'loading' };
     if (meQuery.status === 'error') {
@@ -136,32 +197,69 @@ export default function FriendsScreen() {
           from the FloatingNav that floats above it; the blocks stack vertically
           and nothing runs off to the side. */}
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        {/* T-06-26 — the search field is deliberately INERT: `editable={false}`
-            plus a non-hit-testable input means it can never take a keystroke,
-            so nobody can type a third person's name into a field that would
-            send it nowhere. The wrapper answers the tap with the shared hint
-            instead, and the static badge says so before the tap. */}
-        <Pressable
-          style={styles.searchField}
-          onPress={() => showSoonToast(t`Searching for people is coming soon.`)}
-          accessibilityRole="button"
-          accessibilityLabel={t`Search for people, coming soon`}
-        >
+        {/* D-01/D-02 — the field is real now: ONE input satisfies both the
+            handle lookup (FRND-02, the exact handle is by construction the
+            first prefix-search hit) and the username search (FRND-03). The
+            old placeholder falsely implied `displayName` was searched too
+            (Phase-7-D-09) — the rewritten copy is honest about `@username`
+            only. */}
+        <View style={styles.searchField}>
           <Search size={SEARCH_ICON_SIZE} color={colors.textMuted} strokeWidth={2} />
-          {/* UI-SPEC #8 — the placeholder is the one string on this screen that
-              may be cut off: a real TextInput truncates it natively, which is
-              the intended treatment. */}
           <TextInput
             style={[styles.searchInput, { fontFamily: bodySmFont }]}
-            value=""
-            editable={false}
-            placeholder={t`Name or @handle`}
+            value={query}
+            onChangeText={setQuery}
+            autoCapitalize="none"
+            autoCorrect={false}
+            placeholder={t`Search @username`}
             placeholderTextColor={colors.textMuted}
+            accessibilityLabel={t`Search @username`}
           />
-          <View style={styles.badge}>
-            <Text style={[styles.badgeText, { fontFamily: microFont }]}>{soonBadge}</Text>
+        </View>
+
+        {/* 08-01 Task 1 tracer slice: loading/error/populated. Task 2 adds
+            the <2-char hint and the no-results copy (E1 rows 1/5/7). */}
+        {searchState.kind === 'loading' ? (
+          <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+            <Trans>Searching…</Trans>
+          </Text>
+        ) : null}
+
+        {searchState.kind === 'error' ? (
+          <View style={styles.stateBlock}>
+            <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+              {searchState.variant === 'transport' ? (
+                <Trans>
+                  Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                  API.
+                </Trans>
+              ) : (
+                <Trans>Can't load results — check your connection and try again.</Trans>
+              )}
+            </Text>
+            <Pressable style={styles.retryButton} onPress={searchState.retry}>
+              <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                <Trans>Retry</Trans>
+              </Text>
+            </Pressable>
           </View>
-        </Pressable>
+        ) : null}
+
+        {searchState.kind === 'data' ? (
+          <View style={styles.resultsList}>
+            {searchState.hits.map((hit) => {
+              const { accountId, displayName, username } = hit.profile;
+              return (
+                <PersonRow
+                  key={accountId}
+                  profile={hit.profile}
+                  trailing={<RelationAction relation={hit.relation} accountId={accountId} />}
+                  accessibilityLabel={t`${displayName}, @${username}`}
+                />
+              );
+            })}
+          </View>
+        ) : null}
 
         {/* UI-SPEC #50 — the project-wide plain "Loading…" text pattern; ONE
             query means ONE loading surface, never one per block. */}
@@ -320,8 +418,6 @@ function createStyles(colors: ThemeColors) {
       paddingBottom: layout.scrollBottomPad,
       gap: layout.sectionGap,
     },
-    // Full opacity, like every block on this screen — the badge, not a dimmed
-    // surface, is what marks the field as not-yet-real.
     searchField: {
       minHeight: layout.hitMin,
       flexDirection: 'row',
@@ -343,10 +439,12 @@ function createStyles(colors: ThemeColors) {
       padding: 0,
       fontSize: typeRoles.bodySm.size,
       color: colors.textPrimary,
-      // The tap belongs to the Pressable above, never to the field itself.
-      pointerEvents: 'none',
     },
-    // Mirrors `ComingSoonTile`/`ListRow`'s badge verbatim.
+    // 08-01-UI-SPEC § Search & Add-Flow Contract — search hits stack with the
+    // same list-row gap the requests/crew lists will use.
+    resultsList: { gap: spacingScale['sp-5'] },
+    // Mirrors `ComingSoonTile`/`ListRow`'s badge verbatim — still used by the
+    // quiks-code card's QR placeholder (D-13 real QR mark lands in 08-04).
     badge: {
       backgroundColor: colors.fillQuiet,
       borderRadius: radiiScale['r-pill'],

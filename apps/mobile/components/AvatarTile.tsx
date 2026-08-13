@@ -24,6 +24,13 @@ export type AvatarTileProps = {
   username: string;
   /** Local `file://` URI from `avatar-storage.ts` (D-01), or `undefined`/empty for the initials fallback. */
   localUri?: string;
+  /**
+   * Tile diameter. Default `88` — unchanged Profil-header / friend-detail
+   * size. `40` is the `PersonRow` row size (08-01-UI-SPEC § Avatar Size
+   * Contract); at that size the initials resolve through the `label` role
+   * instead of `title2`, which does not fit inside a 40px circle.
+   */
+  size?: 40 | 88;
 };
 
 /**
@@ -51,10 +58,14 @@ export function deriveInitials(displayName: string, username: string): string {
  * and a green ring around every avatar after the brand swap, which is exactly
  * the leftover the no-raw-values rule exists to prevent.
  */
-export function AvatarTile({ displayName, username, localUri }: AvatarTileProps) {
+export function AvatarTile({ displayName, username, localUri, size = AVATAR_SIZE }: AvatarTileProps) {
   const { colors } = useTheme();
-  const styles = useMemo(() => createStyles(colors), [colors]);
+  const styles = useMemo(() => createStyles(colors, size), [colors, size]);
   const fontsReady = useFontsReady();
+  // 08-01-UI-SPEC § Avatar Size Contract: `label` is not an Outfit-tracked
+  // role, so it carries no letterSpacing; `title2` is, and keeps its tracking
+  // at the default 88px size.
+  const initialsRole = size === 40 ? 'label' : 'title2';
 
   if (localUri) {
     return (
@@ -71,29 +82,35 @@ export function AvatarTile({ displayName, username, localUri }: AvatarTileProps)
 
   return (
     <View style={styles.initialsTile}>
-      {/* Role-resolved (05.1 D-10): `title2` maps to a real 700 file, so the
-          style sets no numeric fontWeight. */}
-      <Text style={[styles.initialsText, { fontFamily: fontFamilyForRole('title2', fontsReady) }]}>
+      {/* Role-resolved (05.1 D-10): both `title2` and `label` map to real
+          weight-specific files, so the style sets no numeric fontWeight. */}
+      <Text
+        style={[styles.initialsText, { fontFamily: fontFamilyForRole(initialsRole, fontsReady) }]}
+      >
         {initials}
       </Text>
     </View>
   );
 }
 
-function createStyles(colors: ThemeColors) {
+function createStyles(colors: ThemeColors, size: 40 | 88) {
+  const initialsFontSize = size === 40 ? typeRoles.label.size : typeRoles.title2.size;
+  const initialsLetterSpacing = size === 40 ? undefined : typeRoles.title2.letterSpacing;
+
   return StyleSheet.create({
     photo: {
-      width: AVATAR_SIZE,
-      height: AVATAR_SIZE,
+      width: size,
+      height: size,
       borderRadius: radii.pill,
     },
     initialsTile: {
-      width: AVATAR_SIZE,
-      height: AVATAR_SIZE,
+      width: size,
+      height: size,
       borderRadius: radii.pill,
       // UI-SPEC ## Color — accent is reserved for exactly these elements,
       // including "Avatar-tile background tint + ring"; accent tints are
       // always a quiet tint behind coloured content, never a solid fill.
+      // Unchanged at both sizes (08-01-UI-SPEC § Avatar Size Contract).
       backgroundColor: colors.fillBrandQuiet,
       borderWidth: 2,
       borderColor: colors.primary,
@@ -101,8 +118,8 @@ function createStyles(colors: ThemeColors) {
       justifyContent: 'center',
     },
     initialsText: {
-      fontSize: typeRoles.title2.size,
-      letterSpacing: typeRoles.title2.letterSpacing,
+      fontSize: initialsFontSize,
+      letterSpacing: initialsLetterSpacing,
       color: colors.primary,
     },
   });

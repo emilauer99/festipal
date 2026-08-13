@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(tabs)/friends.tsx
+msgid "{displayName}, @{username}"
+msgstr "{displayName}, @{username}"
+
 #: app/profil.tsx
 msgid "{festivalCount, plural, one {# Festival} other {# Festivals}}"
 msgstr "{festivalCount, plural, one {# Festival} other {# Festivals}}"
@@ -41,6 +45,10 @@ msgstr "Ein kurzer Stups, bevor deine Acts starten."
 #: app/profil.tsx
 msgid "Account"
 msgstr "Konto"
+
+#: components/RelationAction.tsx
+msgid "Add"
+msgstr "Hinzufügen"
 
 #: app/(tabs)/friends.tsx
 msgid "Adding by QR is coming soon."
@@ -84,6 +92,10 @@ msgstr "Alle Festivals ansehen"
 #: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
+
+#: app/(tabs)/friends.tsx
+msgid "Can't load results — check your connection and try again."
+msgstr "Konnte die Ergebnisse nicht laden — prüf deine Verbindung und versuch's nochmal."
 
 #: app/(tabs)/friends.tsx
 #: app/profil.tsx
@@ -342,8 +354,8 @@ msgid "Name"
 msgstr "Name"
 
 #: app/(tabs)/friends.tsx
-msgid "Name or @handle"
-msgstr "Name oder @handle"
+#~ msgid "Name or @handle"
+#~ msgstr "Name oder @handle"
 
 #: app/(tabs)/festivals.tsx
 msgid "New festivals will show up here."
@@ -500,12 +512,20 @@ msgid "Scanning is enough — no searching, no typing."
 msgstr "Scannen reicht — kein Suchen, kein Tippen."
 
 #: app/(tabs)/friends.tsx
-msgid "Search for people, coming soon"
-msgstr "Nach Leuten suchen, kommt bald"
+msgid "Search @username"
+msgstr "@username suchen"
 
 #: app/(tabs)/friends.tsx
-msgid "Searching for people is coming soon."
-msgstr "Suchen kommt bald."
+#~ msgid "Search for people, coming soon"
+#~ msgstr "Nach Leuten suchen, kommt bald"
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Searching for people is coming soon."
+#~ msgstr "Suchen kommt bald."
+
+#: app/(tabs)/friends.tsx
+msgid "Searching…"
+msgstr "Suche läuft…"
 
 #: app/(auth)/email.tsx
 msgid "Send code"
