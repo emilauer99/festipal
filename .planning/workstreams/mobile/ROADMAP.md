@@ -155,6 +155,32 @@ placeholders, the Friends tab shows friends who saved this festival, and the glo
 finally named `start` everywhere
 **Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
 **Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
+**Plans**: 6 plans in 5 Wellen — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
+`packages/contracts` + `apps/api`, null Dateiüberschneidung); ab Welle 2 ist die Kette sequenziell,
+weil `app/(festival)/f/[festivalSlug]/index.tsx`, `app/_layout.tsx` und die beiden Lingui-Kataloge
+geteilter Zustand sind
+
+Plans:
+**Wave 1** *(parallel)*
+
+- [ ] 09-01-PLAN.md — `home` → `start`: harte Umbenennung in Route, msgid und UI, Geräteabnahme des Deep-Link-Pfads (NAV-03, D-19…D-21) · **nicht autonom** (Gerätecheck)
+- [ ] 09-02-PLAN.md — `GET /festivals/:festivalId/friends`: Contract, Join über `my_festival` × `friendship`, SEC-02-Cross-Tenant-Spec (FRND-07, D-18) · **nicht autonom** (Einbahntür-Checkpoint)
+
+**Wave 2** *(blockiert auf 09-01)*
+
+- [ ] 09-03-PLAN.md — **Tracer**: Fünf-Tab-Festival-Navigator mit Layout-Gate, parametrisierte `FloatingNav`, `PlaceholderScreen` für die drei ehrlichen Platzhalter (NAV-01/NAV-02, D-01/D-05/D-10/D-12…D-14) · **nicht autonom** (Gerätecheck)
+
+**Wave 3** *(blockiert auf 09-03)*
+
+- [ ] 09-04-PLAN.md — app-weiter `AppHeader` mit drei Zuständen, zwei neue Outfit-Rollen, Ablösung des nativen Headers auf elf Screens (NAV-01, D-02…D-04/D-06/D-08) · **nicht autonom** (Gerätecheck)
+
+**Wave 4** *(blockiert auf 09-02 und 09-04)*
+
+- [ ] 09-05-PLAN.md — Festival-Friends-Tab (Schnittmenge, drei Leerzustände), `StatTile` + Crew-Kachel, „Freunde finden" als Push über dem Festival (FRND-07, D-11/D-15…D-18) · **nicht autonom** (Gerätecheck)
+
+**Wave 5** *(blockiert auf 09-05)*
+
+- [ ] 09-06-PLAN.md — Cashless: `react-native-webview`, ursprungsbeschränkter WebView-Push-Screen, Kachel nur bei hinterlegter Adresse (NAV-01, D-09) · **nicht autonom** (Paket-Legitimitäts-Gate + nativer Rebuild)
 
 **Success Criteria** (what must be TRUE):
 
