@@ -30,6 +30,17 @@ async function unfriendFn(accountId: string): Promise<MutationResult> {
   return unwrapOk<MutationResult>(response);
 }
 
+export type UseFriendMutationsOptions = {
+  /**
+   * quick-260813-o08 D-F — fires once a mutation SUCCEEDS (the response
+   * resolved, never on the tap that started it and never on a rejection —
+   * a 404 is not a success), with the `accountId` the succeeded mutation
+   * targeted. Optional: every existing call site that omits it keeps
+   * compiling unchanged.
+   */
+  onSuccess?: (accountId: string) => void;
+};
+
 export type UseFriendMutationsResult = {
   sendRequest: (accountId: string) => void;
   acceptRequest: (accountId: string) => void;
@@ -63,7 +74,10 @@ export type UseFriendMutationsResult = {
  * exactly the case that must re-read the lists, since it means the caller's
  * view of that person is already stale.
  */
-export function useFriendMutations(): UseFriendMutationsResult {
+export function useFriendMutations(
+  options: UseFriendMutationsOptions = {},
+): UseFriendMutationsResult {
+  const { onSuccess } = options;
   const queryClient = useQueryClient();
   const [pendingTargetId, setPendingTargetId] = useState<string | undefined>(undefined);
   const [failedTargetId, setFailedTargetId] = useState<string | undefined>(undefined);
@@ -78,6 +92,13 @@ export function useFriendMutations(): UseFriendMutationsResult {
     onError: (error: unknown, accountId: string) => {
       setFailedTargetId(accountId);
       setFailedTargetStatus(error instanceof ApiResponseError ? error.status : undefined);
+    },
+    // quick-260813-o08 D-F — the success hook, wired identically across all
+    // five mutations below. `data` stays `unknown`: this handler only ever
+    // needs the `accountId` React Query already threads through as the
+    // second (`variables`) argument.
+    onSuccess: (_data: unknown, accountId: string) => {
+      onSuccess?.(accountId);
     },
     onSettled: () => {
       setPendingTargetId(undefined);

@@ -31,6 +31,12 @@ export type RelationActionProps = {
   relation: Relation;
   /** The COUNTERPART's accountId — never the caller's own. */
   accountId: string;
+  /**
+   * quick-260813-o08 D-F — fires once the tap's mutation actually SUCCEEDS,
+   * never synchronously on the tap itself: a 404 or transport failure must
+   * not count as "done". Wired straight through to `useFriendMutations`'s
+   * own `onSuccess` below, not called from either `onPress` body.
+   */
   onDone?: () => void;
 };
 
@@ -56,7 +62,7 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
   const chipFont = fontFamilyForRole('label', fontsReady);
   const errorFont = fontFamilyForRole('bodySm', fontsReady);
   const { sendRequest, acceptRequest, pendingTargetId, failedTargetId, failedTargetStatus } =
-    useFriendMutations();
+    useFriendMutations({ onSuccess: onDone });
   const isPending = pendingTargetId === accountId;
   const hasFailed = failedTargetId === accountId;
   // UI-SPEC § Copywriting Contract "Send-request failure — target gone
@@ -72,10 +78,7 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
           <Pressable
             style={[styles.primaryPill, isPending ? styles.pending : null]}
             disabled={isPending}
-            onPress={() => {
-              sendRequest(accountId);
-              onDone?.();
-            }}
+            onPress={() => sendRequest(accountId)}
             accessibilityRole="button"
             accessibilityLabel={t`Add`}
             accessibilityState={{ disabled: isPending }}
@@ -103,10 +106,7 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
           <Pressable
             style={[styles.primaryPill, isPending ? styles.pending : null]}
             disabled={isPending}
-            onPress={() => {
-              acceptRequest(accountId);
-              onDone?.();
-            }}
+            onPress={() => acceptRequest(accountId)}
             accessibilityRole="button"
             accessibilityLabel={t`Accept`}
             accessibilityState={{ disabled: isPending }}

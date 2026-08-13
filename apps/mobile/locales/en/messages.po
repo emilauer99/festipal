@@ -174,6 +174,10 @@ msgstr "Choose a date"
 msgid "Choose photo"
 msgstr "Choose photo"
 
+#: app/(tabs)/friends.tsx
+msgid "Clear search"
+msgstr "Clear search"
+
 #: app/friend-detail.tsx
 msgid "Close"
 msgstr "Close"
@@ -702,8 +706,12 @@ msgid "Show it, scan it, done — that's how you add each other."
 msgstr "Show it, scan it, done — that's how you add each other."
 
 #: app/(tabs)/friends.tsx
-msgid "Show QR"
-msgstr "Show QR"
+msgid "Show or scan QR"
+msgstr "Show or scan QR"
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Show QR"
+#~ msgstr "Show QR"
 
 #: app/(tabs)/friends.tsx
 #~ msgid "Show QR, coming soon"

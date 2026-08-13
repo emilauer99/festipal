@@ -510,10 +510,10 @@ export default function FriendsScreen() {
                 style={styles.qrButton}
                 onPress={() => router.push('/friends-qr')}
                 accessibilityRole="button"
-                accessibilityLabel={t`Show QR`}
+                accessibilityLabel={t`Show or scan QR`}
               >
                 <Text style={[styles.qrButtonText, { fontFamily: buttonFont }]}>
-                  <Trans>Show QR</Trans>
+                  <Trans>Show or scan QR</Trans>
                 </Text>
               </Pressable>
             </View>

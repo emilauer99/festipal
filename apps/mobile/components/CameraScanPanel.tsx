@@ -329,9 +329,19 @@ export function CameraScanPanel() {
                   </Text>
                 </View>
               </View>
+              {/* quick-260813-o08 D-F/D-G — same `router.replace` target and
+                  call shape the permission-denied callout above already
+                  uses (minus its `focusSearch` param), fired only once
+                  `RelationAction`'s own mutation actually succeeds. Covers
+                  BOTH success shapes this card can show (a fresh request
+                  sent, or an existing counter-request accepted); the screen
+                  change unmounts this panel and, by construction, tears the
+                  camera down with it (T-08-18 stays intact — no
+                  `useIsFocused`, no manual camera handling added). */}
               <RelationAction
                 relation={lookupState.summary.relation}
                 accountId={lookupState.summary.profile.accountId}
+                onDone={() => router.replace('/friends')}
               />
               <Pressable
                 style={styles.textLinkPressable}
