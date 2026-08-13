@@ -38,7 +38,7 @@ everything about their festival experience from one home screen.
 Phase: 09 — Festival Navigation Shell
 Plan: Not started
 Status: Ready to plan
-Last activity: 2026-08-13 — Phase 08 complete, transitioned to Phase 09
+Last activity: 2026-08-13 — Completed quick task 260813-o08: Friends tab UX refinements (phase 8 follow-up)
 
 ## Shipped
 
@@ -239,6 +239,7 @@ None.
 | 260810-q31 | Rebrand festipal → quiks + CI v1.0 in docs/ (ADR-023/024) | 2026-08-10 | b898985 |
 | 260811-jz6 | Phase-05.1-Verifikationsluecken geschlossen (Outfit-Tracking) | 2026-08-11 | e28d150 |
 | 260812-ctx | GSD-Overhead gesenkt (.claude/CLAUDE.md 25.3→8.7 KB, Gates auf Opt-in) | 2026-08-12 | c6366ac |
+| 260813-o08 | Friends-Tab UX-Feinschliff (Inline-Suche, kompakte Anfragen-Zeilen, QR-Label, Auto-Return) | 2026-08-13 | c0ca870 |
 
 Verzeichnisse unter `.planning/quick/`.
 
