@@ -102,7 +102,7 @@ friendships; solve it in the schema (canonical ordered pair + unique constraint)
 manage requests, and see a real friends list
 **Depends on**: Phase 7
 **Requirements**: FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08
-**Plans**: 3/5 plans executed (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
+**Plans**: 4/5 plans executed (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
 geteilter Zustand über alle Slices hinweg, die Kette ist daher echt sequenziell, wie in Phase 7)
 
 Plans:
@@ -120,7 +120,7 @@ Plans:
 
 **Wave 4** *(blockiert auf Wave 3)*
 
-- [ ] 08-04-PLAN.md — QR-Logik + `QRMark` + QR-Screen mit „Mein Code", echter CTA auf der Karte (FRND-04, D-13) · **nicht autonom** (Paket-Legitimitäts-Gate)
+- [x] 08-04-PLAN.md — QR-Logik + `QRMark` + QR-Screen mit „Mein Code", echter CTA auf der Karte (FRND-04, D-13) · **nicht autonom** (Paket-Legitimitäts-Gate)
 
 **Wave 5** *(blockiert auf Wave 4)*
 

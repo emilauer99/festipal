@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 08
 current_phase_name: friends
 status: executing
-stopped_at: Completed 08-03-PLAN.md
-last_updated: "2026-08-13T12:56:26.663Z"
+stopped_at: Completed 08-04-PLAN.md (device UAT for Task 2 human-check outstanding)
+last_updated: "2026-08-13T13:19:08.958Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 8
+  completed_plans: 9
   percent: 17
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 08 (friends) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-13 — Phase 08 execution started
 
@@ -136,6 +136,8 @@ Milestone bindet:
 - [Phase ?]: friend-sort.ts: Intl.Collator capability-probe-with-cache pattern (mirrors intl-capability.ts), fallback diacritic table proven directly, not through sortFriendsByDisplayName alone
 - [Phase ?]: friend-detail.tsx reads friendKeys.list from the query cache (validated shape, same idiom as findCachedFestivalBySlug) instead of a new fetch — no foreign-profile detail endpoint exists (Phase-7 D-04)
 - [Phase ?]: unfriend navigation uses a ref-tracked pending->settled transition to close only on success, without adding a second callback shape to the shared useFriendMutations() hook
+- [Phase ?]: 08-04: qrButton switched to solid primary/textOnPrimary pill (Pattern A dampening removed) per UI-SPEC's own reserved-accent rule for the now-real QR CTA
+- [Phase ?]: 08-04: qr-matrix.ts carries its own UTF-8 byte encoder instead of qrcode-generator's stringToBytesFuncs['UTF-8'] hook, which is absent from the package's resolved ESM build — pre-authorized by the plan's own fallback clause
 
 ### Blockers/Concerns
 
@@ -214,8 +216,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T12:56:26.645Z
-Stopped at: Completed 08-03-PLAN.md
+Last session: 2026-08-13T13:19:08.928Z
+Stopped at: Completed 08-04-PLAN.md (device UAT for Task 2 human-check outstanding)
 Resume file: None
 
 ## Operator Next Steps
@@ -236,3 +238,4 @@ Resume file: None
 | Phase 08 P01 | 51min | 2 tasks | 8 files |
 | Phase 08 P02 | 13min | 2 tasks | 3 files |
 | Phase 08 P03 | 27min | 3 tasks | 7 files |
+| Phase 08 P04 | 15min | 2 tasks | 12 files |
