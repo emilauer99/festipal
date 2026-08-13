@@ -1,10 +1,11 @@
 ---
 phase: 9
 slug: festival-navigation-shell
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-13
+reviewed_at: 2026-08-13
 ---
 
 # Phase 9 — UI Design Contract
@@ -154,7 +155,7 @@ translated (ADR-012/020); neither is the `quiks` wordmark.
 | Festival Friends — load error (empty state 3) | Reuses the existing verbatim project pattern: DE "Kann den Server nicht erreichen — stell sicher, dass dein Gerät im selben WLAN wie die Dev-API ist." / EN "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API." + Retry |
 | Dashboard — Cashless tile label | DE "Cashless" / EN "Cashless" (unchanged proper-noun-ish feature name, still routed through `t` for catalog ownership) |
 | Dashboard — Crew tile eyebrow | DE "Freunde hier" / EN "Friends here" — **never "Crew" as a UI string** (ADR-014: "als UI-Label entfällt 'Crew'") |
-| Dashboard — Crew tile zero-state sentence | DE "Noch niemand aus deiner Crew hat dieses Festival gespeichert." / EN "None of your friends have saved this festival yet." — literal transcription of D-11's own wording; "Crew" survives here only as the established internal/casual noun in running prose, never as a label or heading |
+| Dashboard — Crew tile zero-state sentence | DE "Noch niemand gespeichert" / EN "Nobody yet" — **deliberate shortening of D-11's literal wording, decided at the UI-consideration probe (E3/long-text)**: D-11's full sentence ("Noch niemand aus deiner Crew hat dieses Festival gespeichert.") runs 5–6 lines inside a half-width tile when the Cashless tile sits beside it and drags both tiles tall. The short form holds 2 lines at half width; **D-11's full wording is preserved verbatim** one tap away, as the Festival Friends empty-state-2 body — so the statement D-11 asked for still reaches the user, just where there is room for it. "Crew" as a UI label remains forbidden either way (ADR-014). |
 | Dashboard — Crew tile populated trailing word | DE "Freunde hier" / EN "Friends here" (same string as the eyebrow, reused as the value's unit) |
 | Cashless WebView — loading | DE "Lädt Cashless…" / EN "Loading Cashless…" |
 | Cashless WebView — load error | DE "Cashless kann gerade nicht geladen werden." / EN "Can't load Cashless right now." + Retry (reloads the WebView, does not leave the screen) |
@@ -332,9 +333,11 @@ cache entry, one invalidation):
 
 - Count > 0: `title2`-role numeral + `bodySm` "Freunde hier"/"Friends here" trailing word (the
   StatTile happy path).
-- Count === 0: the value row is REPLACED by the precondition sentence (§ Copywriting Contract) at
-  `bodySm`, `colors.textMuted` — never a bare "0". This is D-11's rule made concrete: a zero is a
-  statement ("nobody yet"), not an empty state, so it gets a sentence, not a blank numeral.
+- Count === 0: the value row is REPLACED by the SHORT precondition sentence (§ Copywriting Contract)
+  at `bodySm`, `colors.textMuted`, `numberOfLines={2}` — never a bare "0". This is D-11's rule made
+  concrete: a zero is a statement ("nobody yet"), not an empty state, so it gets a sentence, not a
+  blank numeral. The short form (not D-11's full sentence) is the probe's E3/long-text resolution —
+  see § Copywriting Contract for the reasoning and for where D-11's full wording survives verbatim.
 
 Tap switches the active tab to Friends within the festival navigator (matches the design's `goCrew`
 binding).
@@ -379,9 +382,16 @@ for a precondition sentence, D-12 explicitly rejects it).
 Placeholder-screen props: { icon: LucideIcon, heading: string, body: string }
 ```
 
-- Full-screen centered layout: `flex: 1`, `padding: layout.screenPad`, `alignItems: 'center'`,
+- Full-screen centered layout: `padding: layout.screenPad`, `alignItems: 'center'`,
   `justifyContent: 'center'`, `gap: spacingScale['sp-6']` (16px) — same centering idiom the existing
-  `f/[festivalSlug].tsx` `centered` style already uses for its own loading/error/not-found states.
+  `f/[festivalSlug].tsx` `centered` style already uses for its own loading/error/not-found states,
+  with one deliberate difference: this component renders inside a **`ScrollView` whose
+  `contentContainerStyle` carries `flexGrow: 1` + the centering** (not a bare `flex: 1` `View`).
+  Decided at the UI-consideration probe (E6/overflow): the app sets no `maxFontSizeMultiplier`
+  anywhere, so at a large system font scale a non-scrolling centered block clips its body paragraph
+  off the bottom edge. At normal font size the rendering is pixel-identical to a centered `View`;
+  at large scale it scrolls instead of clipping. Scoped to this new component only — converting the
+  app's other `centered` states is an app-wide concern, not this phase's (E4/long-text backstop).
 - Icon: 40px, `colors.textMuted`, stroke 2 — larger than any inline icon in the app (22px nav,
   18px header, 15px `StatTile`) because this is the one full-screen "nothing here yet" moment, not
   an inline hint.
@@ -429,7 +439,8 @@ Each gets its own heading/body (§ Copywriting Contract) — never a shared "not
 
 Below the list (present in every state — populated or any of the three empty states): a full-width
 primary pill, `colors.primary` fill, `title3`-role label "Freunde finden"/"Find friends", icon
-`UserPlus` (already imported in Phase 8's `friends.tsx`). Pushes the existing global
+`UserPlus` (glyph already used in the app at `apps/mobile/components/RelationAction.tsx:4` — the
+CTA call site needs its OWN import, there is no existing import in `friends.tsx` to reuse). Pushes the existing global
 `(tabs)/friends.tsx` screen as a root-level `Stack.Screen` OVER the festival context — `AppHeader`
 renders its push state (`arrow-left`, title "Friends"), and Back returns to this tab, not out of
 the festival (§ Screens & Navigation Contract).
@@ -494,63 +505,111 @@ circle without the two-letter initials touching the tile edge. No `AvatarSunsetR
 
 ## UI Considerations
 
-> Manually applied `ui-consideration-probe` taxonomy (8 shape-rooted categories × 6 element kinds)
-> ahead of the orchestrator's post-approval automated pass, which may add rows this authoring
-> misses (Phase 8 precedent: 4 rows added post-verification).
+> Produced by the compiled `ui-consideration-probe` engine (8 shape-rooted categories × 6 element
+> kinds) in the `/gsd-ui-phase` orchestrator's post-approval pass, replacing this document's
+> hand-authored first draft. **60 applicable considerations** across 9 surfaces — the draft had
+> resolved 34, so 29 rows below are new. None are unresolved.
 
-**Surfaces identified: 9.** Element kinds are author-classified directly (no heuristic-vs-author
-correction table needed — every surface here is newly authored, not inherited prose).
+### Element classification (propose-then-confirm)
 
-| id | Surface | Element kinds | Applicable categories |
+The heuristic classifier disagreed with the author classification on 8 of 9 surfaces. Resolved by
+taking the **union** of detected ∪ author kinds for every surface — the maximal-recall choice, so a
+category is raised and then dismissed with a reason rather than silently never asked. Rows dismissed
+purely because a union-added kind does not really apply are marked as such.
+
+| id | Surface | Element kinds (union, authoritative) | Applicable |
 |---|---|---|---|
-| E1 | `AppHeader` (3 states) | nav, static-content, interactive-control, media | loading, error, populated, overflow, long-text |
-| E2 | Festival tab bar (5-item `FloatingNav`) | nav, interactive-control, static-content | populated, overflow, long-text |
-| E3 | Dashboard `StatTile` row | list-collection, interactive-control, media, static-content | empty, loading, error, populated, zero-one-many, overflow |
-| E4 | Festival entry gate (404/error, layout level) | static-content, interactive-control | loading, error, populated |
-| E5 | Cashless WebView screen | media, interactive-control, static-content | loading, error, populated, long-text |
-| E6 | Placeholder screens (Aktivitäten/Timetable/Lageplan, shared) | static-content, media | populated, long-text |
-| E7 | Festival Friends tab list | list-collection, interactive-control, nav, media | empty, loading, error, populated, zero-one-many, overflow, long-text |
-| E8 | "Find friends" push-over entry (D-16) | nav, interactive-control | populated |
-| E9 | Start-tab rename (copy-only) | static-content | long-text |
+| E1 | `AppHeader` (3 states) | nav, media, interactive-control, static-content | 6 |
+| E2 | Festival tab bar (5-item `FloatingNav`) | list-collection, nav, media, interactive-control, static-content | 8 |
+| E3 | Dashboard `StatTile` row | list-collection, media, interactive-control, static-content | 8 |
+| E4 | Festival entry gate (404/error, layout level) | nav, interactive-control, static-content | 4 |
+| E5 | Cashless WebView screen | list-collection, media, interactive-control, static-content | 8 |
+| E6 | Placeholder screens (Aktivitäten/Timetable/Lageplan, shared) | nav, media, interactive-control, static-content | 6 |
+| E7 | Festival Friends tab list | list-collection, nav, media, interactive-control | 8 |
+| E8 | "Find friends" push-over entry (D-16) | list-collection, nav, media, interactive-control, static-content | 8 |
+| E9 | Start-tab rename (copy-only) | nav, interactive-control, static-content | 4 |
 
 ### Resolutions
 
+Status legend: ✅ `resolved` (verification: explicit — a concrete truth the verifier can check) ·
+🧪 `resolved` (verification: backstop — needs a held-out/visual check, routes to `human_needed` at
+verify time without wired evidence) · ⊘ `dismissed` (reason is the audit trail).
+
 | # | Surface | Category | Status | Resolution / Reason |
 |---|---|---|---|---|
-| 1 | E1 | loading | ⊘ dismissed | The header renders from data already resolved before it can mount (session/`['me']` cache, active route) — there is no independent loading state for the header itself; the avatar's `['me']` loading state is Profil/Mehr's existing concern, not a new header state. |
-| 2 | E1 | error | ⊘ dismissed | Same reasoning — the header has no fetch of its own to fail. |
-| 3 | E1 | populated | ✅ covered | Three states fully specified (§ App Header Contract): global (wordmark+home+avatar), festival (title+home+avatar), pushed (title+back+avatar). |
-| 4 | E1 | overflow | ✅ covered | Festival/pushed title text is `numberOfLines={1}` + tail-ellipsize, the app-wide long-text rule. |
-| 5 | E1 | long-text | ✅ covered | Same as row 4 — a long festival name or push-screen title truncates, never wraps or pushes the avatar off-screen (the center title slot uses `flexShrink`/`minWidth: 0`, matching the app-wide truncation idiom). |
-| 6 | E1 | *(edge case, not a taxonomy category)* | ✅ covered | Tapping the avatar while already on Profil pushes a harmless duplicate screen (§ App Header Contract) — a deliberate, documented resolution rather than an unhandled state. |
-| 7 | E2 | populated | ✅ covered | 5 tabs, identical treatment to the existing 4-tab bar (D-14), no dampening. |
-| 8 | E2 | overflow | ✅ covered | `flex: 1` equal distribution across 5 items instead of 4 — tighter but the existing `numberOfLines={1}` + tail-ellipsize label guard already covers narrower columns. |
-| 9 | E2 | long-text | ✅ covered | "Aktivitäten"/"Dashboard"/"Lageplan" are the longest labels in either bar — same truncation guard as row 8; **backstop:** a held-out visual check at the longest DE label on the narrowest supported device width (5 tabs is the bar's tightest configuration yet). |
-| 10 | E3 | empty | ⊘ dismissed | The Crew tile is never truly empty — it always renders (D-11); "zero friends here" is its own defined state (row 15), not an absence of the tile. |
-| 11 | E3 | loading | ✅ covered | Gated behind the shared `GET /festivals/:festivalId/friends` query (D-18) — while pending, the Crew tile shows no numeral (Claude default: omit the value row rather than a skeleton, matching the app's project-wide "no spinner-per-block" convention); the Cashless tile has no loading state of its own (it renders from `festival.cashlessUrl`, already resolved by the layout-level gate, D-10). |
-| 12 | E3 | error | ✅ covered | On a failed friends-count fetch, the Crew tile falls back to its zero-state sentence rendering rather than a broken numeral or a second inline error block — the Festival Friends tab below carries the actual retry affordance (E7 row 22), so the tile does not duplicate it. |
-| 13 | E3 | populated | ✅ covered | Both tiles fully specified (§ Dashboard Contract). |
-| 14 | E3 | zero-one-many | ✅ covered | Zero → precondition sentence (row 15). One or many → numeral + "Friends here" trailing word, no singular/plural copy variance needed (the trailing word is a label, not a counted noun phrase). |
-| 15 | E3 | zero-one-many (detail) | ✅ covered | Zero-state Crew tile: sentence replaces the value row entirely (§ Dashboard Contract, § Copywriting Contract) — the row this taxonomy category exists for. |
-| 16 | E3 | overflow | ✅ covered | Row is `flex: 1` per tile with a fixed 2-tile maximum — content never exceeds the row (no 3rd tile exists this phase). |
-| 17 | E4 | loading | ✅ covered | Reuses the existing `f/[festivalSlug].tsx` "Loading festival…" text pattern, unchanged, at the layout level (D-10). |
-| 18 | E4 | error | ✅ covered | Reuses the existing transport-error + Retry pattern verbatim. |
-| 19 | E4 | populated | ✅ covered | On success, the gate is transparent — the 5-tab navigator and its active tab render normally; "populated" here means the gate gets out of the way, which is inherently true once the query resolves 200. |
-| 20 | E5 | loading | ✅ covered | "Lädt Cashless…"/"Loading Cashless…" between `onLoadStart`/`onLoadEnd` (§ Dashboard Contract). |
-| 21 | E5 | error | ✅ covered | `onError`/`onHttpError` → error copy + in-place Retry (reloads the WebView, does not navigate away). |
-| 22 | E5 | populated | ✅ covered | The embedded page renders full-bleed; its own internal states (balance, chips, etc.) are the festival's cashless PROVIDER's concern, explicitly out of this app's scope (ADR-011). |
-| 23 | E5 | long-text | 🧪 backstop | The `AppHeader` push title "Cashless" is short and stable in both catalogs, but a future festival-branded page title inside the WebView itself is NOT controlled by this app — **backstop: confirm the WebView never surfaces the loaded page's own `<title>` anywhere in the native chrome** (no browser-style tab bar is built, so there is no surface for it to overflow into; a held-out check that this stays true). |
-| 24 | E6 | populated | ✅ covered | Icon + heading + body per tab, fully specified (§ Placeholder Screen Contract, § Copywriting Contract). |
-| 25 | E6 | long-text | ✅ covered | Body text wraps freely inside the ~two-thirds-width constraint; heading strings are short and bounded (all three fit on one line in both catalogs at the `title2` size — verified by eye against the drafted copy, no truncation is applied to the heading). |
-| 26 | E7 | empty | ✅ covered | Three independent empty states (D-17, § Festival Friends Tab Contract). |
-| 27 | E7 | loading | ✅ covered | Project-wide plain "Loading…" text pattern, gated on the shared festival-friends query. |
-| 28 | E7 | error | ✅ covered | Verbatim transport-error + Retry — the third of the three independent empty states. |
-| 29 | E7 | populated | ✅ covered | Sorted `PersonRow` list, tap → `friend-detail` modal (unchanged component, new call site). |
-| 30 | E7 | zero-one-many | ✅ covered | Zero → one of the two empty-state-1/2 copies (which one depends on the visitor's GLOBAL friend count, not this list — see § Festival Friends Tab Contract). One or many → identical row rendering, no count-dependent copy on the list itself (the count lives on the Dashboard tile instead, row 15). |
-| 31 | E7 | overflow | ✅ covered | Existing screen `ScrollView`, `layout.scrollBottomPad` clears the 5-tab `FloatingNav`. |
-| 32 | E7 | long-text | ✅ covered | `PersonRow`'s existing `numberOfLines={1}` truncation rule, unchanged from Phase 8. |
-| 33 | E8 | populated | ✅ covered | Single primary pill CTA, always visible regardless of list state (§ Festival Friends Tab Contract) — pushes the existing global Friends screen. |
-| 34 | E9 | long-text | ⊘ dismissed | "Start" (both DE and EN) is shorter than the string it replaces ("Home"/"Start" — DE unchanged) — strictly reduces truncation risk, no new consideration created. |
+| 1 | E1 | empty | ✅ explicit | **NEW.** Avatar slot with no photo set renders `AvatarTile`'s existing 2-letter initials fallback (`deriveInitials`, code-point-safe, and empty-name-safe — it renders an empty but never crashing tile). The header never shows a blank or broken image slot. |
+| 2 | E1 | loading | ⊘ dismissed | The header renders from data already resolved before it can mount (session/`['me']` cache, active route) — no independent loading state; the avatar's `['me']` loading is Profil/Mehr's existing concern. |
+| 3 | E1 | error | ⊘ dismissed | Same reasoning — the header has no fetch of its own to fail. |
+| 4 | E1 | populated | ✅ explicit | Three states fully specified (§ App Header Contract): global (wordmark+home+avatar), festival (title+home+avatar), pushed (title+back+avatar). |
+| 5 | E1 | overflow | ✅ explicit | Festival/pushed title text is `numberOfLines={1}` + tail-ellipsize, the app-wide long-text rule. |
+| 6 | E1 | long-text | ✅ explicit | A long festival name or push-screen title truncates, never wraps or pushes the avatar off-screen (center title slot uses `flexShrink`/`minWidth: 0`). |
+| 7 | E2 | empty | ⊘ dismissed | Union-added `list-collection` kind. The 5 tabs are a compiled, fixed set — not data-driven, so the bar cannot be empty. |
+| 8 | E2 | loading | ⊘ dismissed | **NEW.** While the festival gate query is pending, E4 replaces the ENTIRE festival area including the tab bar — the bar has no loading state of its own and must never render half-alive above a loading body. |
+| 9 | E2 | error | ⊘ dismissed | **NEW.** Same: on a gate failure there is no tab bar at all (D-10), so the bar has no error state. |
+| 10 | E2 | populated | ✅ explicit | 5 tabs, identical treatment to the existing 4-tab bar (D-14), no dampening. |
+| 11 | E2 | partial | ⊘ dismissed | **NEW.** All five tabs are always registered routes (NAV-01: none decorative) — a partially-populated bar is impossible by construction, not by a guard. |
+| 12 | E2 | overflow | ✅ explicit | `flex: 1` equal distribution across 5 items instead of 4 — tighter, but the existing `numberOfLines={1}` + tail-ellipsize label guard already covers narrower columns. |
+| 13 | E2 | zero-one-many | ⊘ dismissed | **NEW.** Always exactly five items; no count-dependent layout or copy exists. |
+| 14 | E2 | long-text | 🧪 backstop | "Aktivitäten"/"Dashboard"/"Lageplan" are the longest labels in either bar. **Backstop: held-out visual check at the longest DE label on the narrowest supported device width** — 5 columns is the tightest configuration this bar has ever rendered. |
+| 15 | E3 | empty | ⊘ dismissed | The Crew tile always renders (D-11); "zero friends here" is its own defined state (row 20), not an absence. The Cashless tile's omission is a defined conditional (D-09), not an empty state. |
+| 16 | E3 | loading | ✅ explicit | Gated behind the shared `GET /festivals/:festivalId/friends` query (D-18) — while pending the Crew tile omits the value row entirely (no skeleton, matching the app's "no spinner-per-block" convention); the Cashless tile has no loading state (it renders from `festival.cashlessUrl`, already resolved by the E4 gate). |
+| 17 | E3 | error | ✅ explicit | On a failed friends fetch the Crew tile falls back to its zero-state sentence rendering — never a broken numeral, never a second inline error block. The retry affordance lives once, on the Friends tab (row 45). |
+| 18 | E3 | populated | ✅ explicit | Both tiles fully specified (§ Dashboard Contract). |
+| 19 | E3 | partial | ✅ explicit | **NEW.** The two tiles resolve from INDEPENDENT sources (`festival.cashlessUrl` from the gate query; the count from the friends query). Either may be absent or failed without blanking the other: a single-tile row is the normal `flex: 1` rendering with no special-case styling, and a failed count degrades only the Crew tile (row 17). |
+| 20 | E3 | zero-one-many | ✅ explicit | Zero → the short precondition sentence replaces the value row entirely (§ Dashboard Contract). One or many → numeral + "Freunde hier"/"Friends here" trailing word; no singular/plural variance needed (the trailing word is a label, not a counted noun phrase). |
+| 21 | E3 | overflow | ✅ explicit | Fixed 2-tile maximum, `flex: 1` per tile — the row can never exceed its container (no third tile exists this phase). |
+| 22 | E3 | long-text | ✅ explicit | **NEW — user decision at this probe.** D-11's full zero-state sentence runs 5–6 lines in a half-width tile and drags both tiles tall. The tile therefore carries a SHORT sentence ("Noch niemand gespeichert" / "Nobody yet") at `numberOfLines={2}`; D-11's full wording survives verbatim as the Festival Friends empty-state-2 body, where there is room. Documented deviation from a user-locked decision's literal wording, taken deliberately with the user's approval — see § Copywriting Contract. |
+| 23 | E4 | loading | ✅ explicit | Reuses the existing `f/[festivalSlug].tsx` "Loading festival…" text pattern, unchanged, relocated to the layout level (D-10). |
+| 24 | E4 | error | ✅ explicit | Reuses the existing transport-error + Retry pattern verbatim; `AppHeader`'s home button is the guaranteed way out. |
+| 25 | E4 | overflow | ✅ explicit | **NEW.** The gate's copy is generic and bounded — it deliberately does NOT interpolate the festival name (which is unknown precisely when the gate fires), so no unbounded string enters this surface. |
+| 26 | E4 | long-text | 🧪 backstop | **NEW.** The gate keeps the app's existing non-scrolling centered idiom (unlike the placeholder screens, row 39 — converting the app's other `centered` states is an app-wide concern, out of this phase's scope). **Backstop: visual check of the gate at the largest system font scale** — the app sets no `maxFontSizeMultiplier` anywhere. |
+| 27 | E5 | empty | 🧪 backstop | **NEW.** A provider page that returns 200 but renders blank is indistinguishable from a working one at the WebView boundary, and the app deliberately does not guess (ADR-011: page content is the provider's concern). `onLoadEnd` hides the loading text either way. **Backstop: confirm a blank-but-successful load leaves the user on a plain empty frame with the header's Back always available — never a spinner that never ends.** |
+| 28 | E5 | loading | ✅ explicit | "Lädt Cashless…"/"Loading Cashless…" between `onLoadStart`/`onLoadEnd` (§ Dashboard Contract). |
+| 29 | E5 | error | ✅ explicit | `onError`/`onHttpError` → error copy + in-place Retry (reloads the WebView via ref; does not navigate away). |
+| 30 | E5 | populated | ✅ explicit | The embedded page renders full-bleed; its internal states are the cashless PROVIDER's concern, explicitly out of scope (ADR-011). |
+| 31 | E5 | partial | ⊘ dismissed | Union-added `list-collection` kind. A partially-rendered remote page is the provider's composition concern — the app supplies the frame, never composes the page. |
+| 32 | E5 | overflow | ✅ explicit | **NEW.** The `WebView` is full-bleed below the header and owns its own scrolling on both axes: content wider or taller than the viewport scrolls INSIDE the frame and can never push the app's own chrome (header, nav) out of place. |
+| 33 | E5 | zero-one-many | ⊘ dismissed | Union-added `list-collection` kind. Exactly one WebView is rendered; there is no collection. |
+| 34 | E5 | long-text | 🧪 backstop | The `AppHeader` push title "Cashless" is short and stable in both catalogs, but a festival-branded page title inside the WebView is not controlled by this app. **Backstop: confirm the WebView never surfaces the loaded page's own `<title>` in native chrome** — no browser-style title bar is built, so there is no surface for it to overflow into, and that must stay true. |
+| 35 | E6 | empty | ⊘ dismissed | The screen IS the empty state (NAV-02). There is no data source behind it that could additionally be empty. |
+| 36 | E6 | loading | ⊘ dismissed | **NEW.** Fully static content — no fetch, therefore no in-flight state. A spinner here would imply data is coming, which is exactly the dishonesty NAV-02 exists to prevent. |
+| 37 | E6 | error | ⊘ dismissed | **NEW.** No fetch to fail. |
+| 38 | E6 | populated | ✅ explicit | Icon + heading + body per tab, fully specified (§ Placeholder Screen Contract, § Copywriting Contract). |
+| 39 | E6 | overflow | ✅ explicit | **NEW — user decision at this probe.** The shared placeholder renders inside a `ScrollView` whose `contentContainerStyle` carries `flexGrow: 1` plus the centering, NOT a bare `flex: 1` `View`. Pixel-identical at normal font size; at a large system font scale it scrolls instead of clipping the body paragraph off the bottom edge (the app sets no `maxFontSizeMultiplier`). Scoped to this new component only. |
+| 40 | E6 | long-text | ✅ explicit | Body wraps freely inside the ~two-thirds-width constraint; the three headings are short, bounded strings that fit one line in both catalogs at `title2`, and no truncation is applied to the heading. |
+| 41 | E7 | empty | ✅ explicit | Three independent empty states (D-17, § Festival Friends Tab Contract) — never a shared "nothing here" block. |
+| 42 | E7 | loading | ✅ explicit | Project-wide plain "Loading…" text pattern, gated on the shared festival-friends query. |
+| 43 | E7 | error | ✅ explicit | Verbatim project transport-error + Retry — the third of the three independent empty states. |
+| 44 | E7 | populated | ✅ explicit | Sorted `PersonRow` list, tap → the existing `friend-detail` modal (unchanged component, new call site). |
+| 45 | E7 | partial | ✅ explicit | **NEW.** A friend record with an empty `displayName` still renders a usable row: `AvatarTile.deriveInitials` already falls back to `username`, and `PersonRow`'s second line always renders `@username` — so a row is never both nameless and unidentifiable. No new response shape is introduced (Phase 8's `friendSchema` is reused verbatim, § Festival Friends Tab Contract), so this phase adds no new partial-data surface. |
+| 46 | E7 | overflow | ✅ explicit | Existing screen `ScrollView`; `layout.scrollBottomPad` (104) clears the 5-tab `FloatingNav`. |
+| 47 | E7 | zero-one-many | ✅ explicit | Zero → empty state 1 or 2 (which one depends on the visitor's GLOBAL friend count, not this list). One or many → identical row rendering; no count-dependent copy on the list itself, the count lives on the Dashboard tile (row 20). |
+| 48 | E7 | long-text | ✅ explicit | `PersonRow`'s existing `numberOfLines={1}` truncation on both name lines, unchanged from Phase 8. |
+| 49 | E8 | empty | ⊘ dismissed | Union-added kinds. A single static CTA with no data behind it — always rendered, in every list state (D-16). |
+| 50 | E8 | loading | ⊘ dismissed | **NEW.** No fetch of its own; the push target's loading state is Phase 8's already-specified surface. |
+| 51 | E8 | error | ⊘ dismissed | **NEW.** The push target is a statically registered route — the navigation cannot fail at runtime, so there is no failure state to render. |
+| 52 | E8 | populated | ✅ explicit | Single full-width primary pill, visible in every list state (§ Festival Friends Tab Contract). |
+| 53 | E8 | partial | ⊘ dismissed | Union-added `list-collection` kind. One control, no composite data. |
+| 54 | E8 | overflow | ✅ explicit | **NEW.** The pill sits INSIDE the tab's `ScrollView`, below the list content and above `layout.scrollBottomPad` — so it scrolls with the content and can never be trapped underneath the `FloatingNav` bar in any list state. |
+| 55 | E8 | zero-one-many | ⊘ dismissed | Union-added `list-collection` kind. Exactly one CTA in every state. |
+| 56 | E8 | long-text | ✅ explicit | **NEW.** "Freunde finden"/"Find friends" is short and bounded in both catalogs. The pill grows in HEIGHT with its label at large font scale rather than truncating it (min height `layout.hitMin` 44) — an action label must never be the thing that gets an ellipsis. |
+| 57 | E9 | loading | ⊘ dismissed | **NEW.** Copy-and-route rename only; no data, no in-flight state. |
+| 58 | E9 | error | ✅ explicit | **NEW — the rename's real risk, and it is not visual.** A deep link aimed at the pre-rename first-tab segment must still resolve to the renamed `start` route and must never render the Unmatched screen (ROADMAP-SC-4). Verified ON DEVICE with `expo start -c`, not in the node-env runner — the Phase-5 unmatched-route defect is the precedent, and the deep-link capture path is the same code this rename touches. |
+| 59 | E9 | overflow | ✅ explicit | **NEW.** The renamed label lands in the same `FloatingNav` label slot as every other tab and inherits row 12's truncation guard unchanged. |
+| 60 | E9 | long-text | ⊘ dismissed | "Start" is no longer than the string it replaces (DE "Start" is unchanged; EN "Home" → "Start" is one character longer but still the shortest label in the bar) — strictly no new truncation risk. |
+
+**Not a taxonomy category, recorded here so it is not lost:** tapping the header avatar while already
+on Profil pushes a harmless duplicate screen (§ App Header Contract) — a deliberate, documented
+resolution rather than an unhandled state.
+
+### Out of scope (recorded, not raised as a Phase 9 consideration)
+
+The global Friends screen's OWN empty/loading/error states, search, requests and QR flows are
+Phase 8's fully-specified surface (`08-UI-SPEC.md`) — this phase only adds a second navigation
+ENTRY to that unchanged screen (E8) and does not re-specify its internals. Timetable/Lageplan/
+Aktivitäten *content* states (populated act lists, map layers, activity cards) are explicitly out
+of scope for this phase (NAV-02: shell only) and are not raised here — they belong to the phases
+that build that content.
 
 ### Out of scope (recorded, not raised as a Phase 9 consideration)
 
@@ -573,11 +632,14 @@ that build that content.
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS (1 non-blocking FLAG — `UserPlus` source location corrected)
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: PASS
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved 2026-08-13 by `gsd-ui-checker` (6/6 dimensions). The one FLAG was applied,
+not waived. The `## UI Considerations` section was then regenerated by the compiled
+`ui-consideration-probe` engine (60 applicable, 0 unresolved, 4 backstops) with two user decisions
+taken during the resolution loop (rows 22 and 39).
