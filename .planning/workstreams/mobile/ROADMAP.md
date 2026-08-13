@@ -102,7 +102,7 @@ friendships; solve it in the schema (canonical ordered pair + unique constraint)
 manage requests, and see a real friends list
 **Depends on**: Phase 7
 **Requirements**: FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08
-**Plans**: 1/5 plans executed (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
+**Plans**: 2/5 plans executed (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
 geteilter Zustand über alle Slices hinweg, die Kette ist daher echt sequenziell, wie in Phase 7)
 
 Plans:
@@ -112,7 +112,7 @@ Plans:
 
 **Wave 2** *(blockiert auf Wave 1)*
 
-- [ ] 08-02-PLAN.md — Anfragen-Sektion beide Richtungen, Zähler-Badge, Chats-/Vorschlagsblock entfernt (FRND-05, D-05…D-08)
+- [x] 08-02-PLAN.md — Anfragen-Sektion beide Richtungen, Zähler-Badge, Chats-/Vorschlagsblock entfernt (FRND-05, D-05…D-08)
 
 **Wave 3** *(blockiert auf Wave 2)*
 

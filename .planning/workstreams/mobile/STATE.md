@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 08
 current_phase_name: friends
 status: executing
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-08-13T12:25:37.699Z"
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-08-13T12:41:37.798Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 6
+  completed_plans: 7
   percent: 17
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 08 (friends) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-13 — Phase 08 execution started
 
@@ -132,6 +132,7 @@ Milestone bindet:
 - [Phase ?]: D-03 block-swap gates exactly the three named blocks (quiks-code card, Requests, Crew); Chats/People-you-may-know stay always-visible until 08-02 (D-05/D-06)
 - [Phase ?]: isSearching derived from immediate query text, not debounced value, so mode switch follows typing itself
 - [Phase ?]: Pending-mutation opacity dampening (0.45, existing constant) added to RelationAction's active pills after Task-1 device checkpoint showed dead-looking button
+- [Phase ?]: Requests section: real GET /me/friend-requests both directions, Accept/Decline/Withdraw via useFriendMutations(), Chats + suggestion blocks removed outright (D-05/D-06)
 
 ### Blockers/Concerns
 
@@ -210,8 +211,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T12:25:37.681Z
-Stopped at: Completed 08-01-PLAN.md
+Last session: 2026-08-13T12:41:37.777Z
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None
 
 ## Operator Next Steps
@@ -230,3 +231,4 @@ Resume file: None
 | Phase 07 P04 | 16min | 2 tasks | 6 files |
 | Phase 07 P05 | 16min | 2 tasks | 2 files |
 | Phase 08 P01 | 51min | 2 tasks | 8 files |
+| Phase 08 P02 | 13min | 2 tasks | 3 files |
