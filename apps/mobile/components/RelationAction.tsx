@@ -54,48 +54,78 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
   const fontsReady = useFontsReady();
   const buttonFont = fontFamilyForRole('title3', fontsReady);
   const chipFont = fontFamilyForRole('label', fontsReady);
-  const { sendRequest, acceptRequest, pendingTargetId } = useFriendMutations();
+  const errorFont = fontFamilyForRole('bodySm', fontsReady);
+  const { sendRequest, acceptRequest, pendingTargetId, failedTargetId, failedTargetStatus } =
+    useFriendMutations();
   const isPending = pendingTargetId === accountId;
+  const hasFailed = failedTargetId === accountId;
+  // UI-SPEC § Copywriting Contract "Send-request failure — target gone
+  // (404)": a 404 gets its own copy, any other rejection (transport error,
+  // 5xx, …) falls back to the project-wide generic retry copy every other
+  // mutation failure already uses.
+  const isTargetGone = hasFailed && failedTargetStatus === 404;
 
   switch (relation) {
     case 'none':
       return (
-        <Pressable
-          style={[styles.primaryPill, isPending ? styles.pending : null]}
-          disabled={isPending}
-          onPress={() => {
-            sendRequest(accountId);
-            onDone?.();
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={t`Add`}
-          accessibilityState={{ disabled: isPending }}
-        >
-          <UserPlus size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
-          <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
-            <Trans>Add</Trans>
-          </Text>
-        </Pressable>
+        <View style={styles.actionWrap}>
+          <Pressable
+            style={[styles.primaryPill, isPending ? styles.pending : null]}
+            disabled={isPending}
+            onPress={() => {
+              sendRequest(accountId);
+              onDone?.();
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t`Add`}
+            accessibilityState={{ disabled: isPending }}
+          >
+            <UserPlus size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
+            <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
+              <Trans>Add</Trans>
+            </Text>
+          </Pressable>
+          {hasFailed ? (
+            <Text style={[styles.error, { fontFamily: errorFont }]}>
+              {isTargetGone ? (
+                <Trans>This person no longer exists.</Trans>
+              ) : (
+                <Trans>Couldn't save — try again.</Trans>
+              )}
+            </Text>
+          ) : null}
+        </View>
       );
 
     case 'requestIncoming':
       return (
-        <Pressable
-          style={[styles.primaryPill, isPending ? styles.pending : null]}
-          disabled={isPending}
-          onPress={() => {
-            acceptRequest(accountId);
-            onDone?.();
-          }}
-          accessibilityRole="button"
-          accessibilityLabel={t`Accept`}
-          accessibilityState={{ disabled: isPending }}
-        >
-          <Check size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
-          <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
-            <Trans>Accept</Trans>
-          </Text>
-        </Pressable>
+        <View style={styles.actionWrap}>
+          <Pressable
+            style={[styles.primaryPill, isPending ? styles.pending : null]}
+            disabled={isPending}
+            onPress={() => {
+              acceptRequest(accountId);
+              onDone?.();
+            }}
+            accessibilityRole="button"
+            accessibilityLabel={t`Accept`}
+            accessibilityState={{ disabled: isPending }}
+          >
+            <Check size={ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
+            <Text style={[styles.primaryPillText, { fontFamily: buttonFont }]}>
+              <Trans>Accept</Trans>
+            </Text>
+          </Pressable>
+          {hasFailed ? (
+            <Text style={[styles.error, { fontFamily: errorFont }]}>
+              {isTargetGone ? (
+                <Trans>This person no longer exists.</Trans>
+              ) : (
+                <Trans>Couldn't save — try again.</Trans>
+              )}
+            </Text>
+          ) : null}
+        </View>
       );
 
     // Static, NOT Pressable — no tap exists here that would be guaranteed to
@@ -125,6 +155,15 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
+    // Matches `IncomingRequestRow`/`OutgoingRequestRow`'s `requestRow` gap —
+    // the pill/chip stacked above its own inline failure line.
+    actionWrap: { gap: spacingScale['sp-2'] },
+    // The status-hue rule: an error rendered as TEXT always resolves through
+    // `dangerText`, never the bare `danger` fill.
+    error: {
+      fontSize: typeRoles.bodySm.size,
+      color: colors.dangerText,
+    },
     primaryPill: {
       minHeight: layout.hitMin,
       flexDirection: 'row',

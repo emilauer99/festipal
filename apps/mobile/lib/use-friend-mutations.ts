@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { FriendRequestResult, MutationResult } from '@quiks/contracts';
 
 import { apiClient } from './api-client';
-import { friendKeys, unwrapOk } from './friend-queries';
+import { ApiResponseError, friendKeys, unwrapOk } from './friend-queries';
 
 async function sendFriendRequestFn(accountId: string): Promise<FriendRequestResult> {
   const response = await apiClient.sendFriendRequest({ body: { targetAccountId: accountId } });
@@ -40,6 +40,14 @@ export type UseFriendMutationsResult = {
   pendingTargetId: string | undefined;
   /** The `accountId` whose most recent mutation rejected, or `undefined` — cleared on the next attempt for that target. */
   failedTargetId: string | undefined;
+  /**
+   * The HTTP status of `failedTargetId`'s rejection, when the rejection was
+   * an {@link ApiResponseError} (e.g. `404` — the target no longer exists).
+   * `undefined` for a transport-level failure or when there is no current
+   * failure — callers branch on this to show the spec-mandated "gone" copy
+   * instead of the generic retry copy.
+   */
+  failedTargetStatus: number | undefined;
 };
 
 /**
@@ -59,14 +67,17 @@ export function useFriendMutations(): UseFriendMutationsResult {
   const queryClient = useQueryClient();
   const [pendingTargetId, setPendingTargetId] = useState<string | undefined>(undefined);
   const [failedTargetId, setFailedTargetId] = useState<string | undefined>(undefined);
+  const [failedTargetStatus, setFailedTargetStatus] = useState<number | undefined>(undefined);
 
   const shared = {
     onMutate: (accountId: string) => {
       setFailedTargetId(undefined);
+      setFailedTargetStatus(undefined);
       setPendingTargetId(accountId);
     },
-    onError: (_error: unknown, accountId: string) => {
+    onError: (error: unknown, accountId: string) => {
       setFailedTargetId(accountId);
+      setFailedTargetStatus(error instanceof ApiResponseError ? error.status : undefined);
     },
     onSettled: () => {
       setPendingTargetId(undefined);
@@ -88,5 +99,6 @@ export function useFriendMutations(): UseFriendMutationsResult {
     unfriend: (accountId) => unfriendMutation.mutate(accountId),
     pendingTargetId,
     failedTargetId,
+    failedTargetStatus,
   };
 }

@@ -192,6 +192,7 @@ msgstr "Close"
 
 #: app/(tabs)/friends.tsx
 #: app/friend-detail.tsx
+#: components/RelationAction.tsx
 msgid "Couldn't save — try again."
 msgstr "Couldn't save — try again."
 
@@ -769,6 +770,10 @@ msgstr "This code is no longer valid."
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "This festival may have been removed or the link is out of date."
+
+#: components/RelationAction.tsx
+msgid "This person no longer exists."
+msgstr "This person no longer exists."
 
 #: app/profil.tsx
 msgid "TikTok, coming soon"
