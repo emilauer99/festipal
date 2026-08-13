@@ -13,6 +13,10 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(tabs)/friends.tsx
+msgid "{displayName}, @{username}"
+msgstr "{displayName}, @{username}"
+
 #: app/profil.tsx
 msgid "{festivalCount, plural, one {# Festival} other {# Festivals}}"
 msgstr "{festivalCount, plural, one {# Festival} other {# Festivals}}"
@@ -37,14 +41,27 @@ msgstr "3–20 Zeichen: a–z 0–9 _ ."
 msgid "A nudge just before your acts start."
 msgstr "Ein kurzer Stups, bevor deine Acts starten."
 
+#: app/(tabs)/friends.tsx
+#: components/RelationAction.tsx
+msgid "Accept"
+msgstr "Annehmen"
+
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Account"
 msgstr "Konto"
 
+#: components/RelationAction.tsx
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: components/CameraScanPanel.tsx
+msgid "Add this person?"
+msgstr "Diese Person hinzufügen?"
+
 #: app/(tabs)/friends.tsx
-msgid "Adding by QR is coming soon."
-msgstr "QR-Adden kommt bald."
+#~ msgid "Adding by QR is coming soon."
+#~ msgstr "QR-Adden kommt bald."
 
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/home.tsx
@@ -80,12 +97,29 @@ msgstr "Durchstöber alle Festivals und speichere dein erstes."
 msgid "Browse festivals"
 msgstr "Alle Festivals ansehen"
 
+#: components/CameraScanPanel.tsx
+msgid "Camera unavailable"
+msgstr "Kamera nicht verfügbar"
+
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/home.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
 #: app/(tabs)/friends.tsx
+msgid "Can't load requests — check your connection and try again."
+msgstr "Konnte die Anfragen nicht laden — prüf deine Verbindung und versuch's nochmal."
+
+#: app/(tabs)/friends.tsx
+msgid "Can't load results — check your connection and try again."
+msgstr "Konnte die Ergebnisse nicht laden — prüf deine Verbindung und versuch's nochmal."
+
+#: app/(tabs)/friends.tsx
+msgid "Can't load your crew — check your connection and try again."
+msgstr "Konnte deine Crew nicht laden — prüf deine Verbindung und versuch's nochmal."
+
+#: app/(tabs)/friends.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Can't load your profile — check your connection and try again."
 msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
@@ -97,11 +131,14 @@ msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
+#: components/CameraScanPanel.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
 
 #: app/(tabs)/mehr.tsx
+#: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -114,12 +151,12 @@ msgid "Change email"
 msgstr "E-Mail ändern"
 
 #: app/(tabs)/friends.tsx
-msgid "Chats"
-msgstr "Chats"
+#~ msgid "Chats"
+#~ msgstr "Chats"
 
 #: app/(tabs)/friends.tsx
-msgid "Chats unlock once you've added someone and can message them — coming soon."
-msgstr "Chats gibt's, sobald ihr euch addet und schreiben könnt — kommt bald."
+#~ msgid "Chats unlock once you've added someone and can message them — coming soon."
+#~ msgstr "Chats gibt's, sobald ihr euch addet und schreiben könnt — kommt bald."
 
 #: app/festivals/index.tsx
 #~ msgid "Check back soon — new festivals will appear here."
@@ -137,6 +174,14 @@ msgstr "Datum wählen"
 msgid "Choose photo"
 msgstr "Foto wählen"
 
+#: app/(tabs)/friends.tsx
+msgid "Clear search"
+msgstr "Suche leeren"
+
+#: app/friend-detail.tsx
+msgid "Close"
+msgstr "Schließen"
+
 #: components/FloatingNav.tsx
 #~ msgid "coming soon"
 #~ msgstr "bald verfügbar"
@@ -148,6 +193,12 @@ msgstr "Foto wählen"
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Couldn't complete your profile — tap Done to try again."
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Fertig“, um es noch einmal zu versuchen."
+
+#: app/(tabs)/friends.tsx
+#: app/friend-detail.tsx
+#: components/RelationAction.tsx
+msgid "Couldn't save — try again."
+msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
 
 #: app/(tabs)/festivals.tsx
 msgid "Couldn't save festival — try again."
@@ -164,6 +215,10 @@ msgstr "Dunkler Modus"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
 msgstr "Geburtsdatum"
+
+#: app/(tabs)/friends.tsx
+msgid "Decline"
+msgstr "Ablehnen"
 
 #: app/(auth)/verify.tsx
 #~ msgid "Didn't get a code? Resend"
@@ -186,6 +241,18 @@ msgstr "Bearbeiten kommt bald."
 msgid "Email"
 msgstr "E-Mail"
 
+#: app/friend-detail.tsx
+msgid "End"
+msgstr "Beenden"
+
+#: app/friend-detail.tsx
+msgid "End friendship"
+msgstr "Freundschaft beenden"
+
+#: app/friend-detail.tsx
+msgid "End this friendship?"
+msgstr "Freundschaft beenden?"
+
 #: app/(tabs)/mehr.tsx
 msgid "English"
 msgstr "Englisch"
@@ -197,6 +264,10 @@ msgstr "Code eingeben"
 #: app/festivals/index.tsx
 #~ msgid "Enter festival"
 #~ msgstr "Festival betreten"
+
+#: components/CameraScanPanel.tsx
+msgid "Enter handle instead"
+msgstr "Stattdessen Handle eingeben"
 
 #: app/(auth)/verify.tsx
 #~ msgid "Enter the 6-digit code we sent to {email}"
@@ -247,6 +318,19 @@ msgstr "Freundschaftsanfragen, kommt bald"
 msgid "Friends"
 msgstr "Friends"
 
+#: components/RelationAction.tsx
+msgctxt "relation chip"
+msgid "Friends"
+msgstr "Freunde"
+
+#: app/friend-detail.tsx
+msgid "Friends since {friendsSinceLabel}"
+msgstr "Freunde seit {friendsSinceLabel}"
+
+#: app/(tabs)/friends.tsx
+msgid "From you"
+msgstr "Von dir"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Gender"
 msgstr "Geschlecht"
@@ -283,6 +367,10 @@ msgstr "Sprache"
 msgid "Language switching is coming soon."
 msgstr "Sprachumschalter kommt bald."
 
+#: app/friends-qr.tsx
+msgid "Let the other person scan this code."
+msgstr "Lass dein Gegenüber diesen Code scannen."
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Loading festival…"
 msgstr "Festival wird geladen…"
@@ -297,8 +385,21 @@ msgid "Loading profile…"
 msgstr "Profil wird geladen…"
 
 #: app/(tabs)/friends.tsx
+msgid "Loading requests…"
+msgstr "Anfragen werden geladen…"
+
+#: app/(tabs)/friends.tsx
+msgid "Loading your crew…"
+msgstr "Deine Crew wird geladen…"
+
+#: app/(tabs)/friends.tsx
+#: app/friends-qr.tsx
 msgid "Loading your quiks code…"
 msgstr "Dein quiks-Code wird geladen…"
+
+#: components/CameraScanPanel.tsx
+msgid "Loading…"
+msgstr "Wird geladen…"
 
 #: app/(tabs)/mehr.tsx
 msgid "Location & Safety"
@@ -333,6 +434,10 @@ msgstr "Meine"
 msgid "More"
 msgstr "Mehr"
 
+#: app/friends-qr.tsx
+msgid "My code"
+msgstr "Mein Code"
+
 #: app/(tabs)/home.tsx
 msgid "My festivals"
 msgstr "Meine Festivals"
@@ -342,8 +447,8 @@ msgid "Name"
 msgstr "Name"
 
 #: app/(tabs)/friends.tsx
-msgid "Name or @handle"
-msgstr "Name oder @handle"
+#~ msgid "Name or @handle"
+#~ msgstr "Name oder @handle"
 
 #: app/(tabs)/festivals.tsx
 msgid "New festivals will show up here."
@@ -362,12 +467,20 @@ msgid "No festivals yet"
 msgstr "Noch keine Festivals"
 
 #: app/(tabs)/friends.tsx
-msgid "No one in your crew yet. Once you've added each other, you'll show up here."
-msgstr "Noch niemand in deiner Crew. Sobald ihr euch addet, seht ihr euch hier."
+msgid "No one found. Check the @handle spelling."
+msgstr "Niemand gefunden. Prüf die Schreibweise des @handles."
 
 #: app/(tabs)/friends.tsx
-msgid "No requests yet. Once someone adds you, it'll show up here."
-msgstr "Noch keine Anfragen. Sobald dich jemand addet, taucht es hier auf."
+msgid "No one in your crew yet. Add someone via search, code or QR."
+msgstr "Noch niemand in deiner Crew. Füg jemanden über Suche, Code oder QR hinzu."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "No one in your crew yet. Once you've added each other, you'll show up here."
+#~ msgstr "Noch niemand in deiner Crew. Sobald ihr euch addet, seht ihr euch hier."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "No requests yet. Once someone adds you, it'll show up here."
+#~ msgstr "Noch keine Anfragen. Sobald dich jemand addet, taucht es hier auf."
 
 #: app/(tabs)/festivals.tsx
 msgid "No saved festivals yet"
@@ -382,8 +495,16 @@ msgid "Notifications"
 msgstr "Benachrichtigungen"
 
 #: app/(tabs)/friends.tsx
-msgid "Once you have your first friends, we'll suggest more here."
-msgstr "Sobald du erste Freunde hast, schlagen wir dir hier weitere vor."
+msgid "Once someone adds you, the request shows up here."
+msgstr "Sobald dich jemand hinzufügt, taucht die Anfrage hier auf."
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Once you have your first friends, we'll suggest more here."
+#~ msgstr "Sobald du erste Freunde hast, schlagen wir dir hier weitere vor."
+
+#: app/(tabs)/friends.tsx
+msgid "Once you request someone, you'll see it here."
+msgstr "Sobald du jemanden anfragst, siehst du es hier."
 
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "One more step"
@@ -400,6 +521,10 @@ msgstr "Festival öffnen"
 #: app/(tabs)/mehr.tsx
 msgid "Open safenow.app"
 msgstr "safenow.app öffnen"
+
+#: components/CameraScanPanel.tsx
+msgid "Open Settings"
+msgstr "Einstellungen öffnen"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Optional"
@@ -422,13 +547,16 @@ msgid "Payment methods, coming soon"
 msgstr "Zahlungsmittel, kommt bald"
 
 #: app/(tabs)/friends.tsx
-msgid "People you may know"
-msgstr "Vielleicht kennst du"
+#~ msgid "People you may know"
+#~ msgstr "Vielleicht kennst du"
 
-#: app/(tabs)/friends.tsx
 #: app/profil.tsx
 msgid "Placeholder mark, coming soon"
 msgstr "Platzhalter-Marke, kommt bald"
+
+#: components/CameraScanPanel.tsx
+msgid "Point the camera at the other person's quiks code."
+msgstr "Richte die Kamera auf den quiks-Code deines Gegenübers."
 
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
@@ -443,6 +571,14 @@ msgstr "Pronomen"
 msgid "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
 msgstr "Pronomen, Alter, Geschlecht und Vibe sind optional — deine Lieblings-Acts erscheinen hier, sobald Spotify verbunden ist."
 
+#: app/friends-qr.tsx
+msgid "QR code"
+msgstr "QR-Code"
+
+#: components/CameraScanPanel.tsx
+msgid "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
+msgstr "quiks nutzt die Kamera, um den QR-Code einer Person zu scannen und Freundschaftsanfragen zu senden. Erlaub den Zugriff in den Einstellungen, um zu scannen."
+
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"
 msgstr "quiks empfehlen"
@@ -454,6 +590,11 @@ msgstr "quiks empfehlen, kommt bald"
 #: app/(tabs)/mehr.tsx
 msgid "Recommending is coming soon."
 msgstr "Empfehlen kommt bald."
+
+#: app/(tabs)/friends.tsx
+#: components/RelationAction.tsx
+msgid "Requested"
+msgstr "Angefragt"
 
 #: app/(tabs)/friends.tsx
 msgid "Requests"
@@ -475,6 +616,7 @@ msgstr "Erneut senden in {countdownLabel}"
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Retry"
 msgstr "Erneut versuchen"
@@ -495,17 +637,33 @@ msgstr "Acts gemerkt"
 msgid "Saving…"
 msgstr "Wird gespeichert…"
 
+#: app/friends-qr.tsx
+msgid "Scan"
+msgstr "Scannen"
+
+#: components/CameraScanPanel.tsx
+msgid "Scan again"
+msgstr "Nochmal scannen"
+
 #: app/profil.tsx
 msgid "Scanning is enough — no searching, no typing."
 msgstr "Scannen reicht — kein Suchen, kein Tippen."
 
 #: app/(tabs)/friends.tsx
-msgid "Search for people, coming soon"
-msgstr "Nach Leuten suchen, kommt bald"
+msgid "Search @username"
+msgstr "@username suchen"
 
 #: app/(tabs)/friends.tsx
-msgid "Searching for people is coming soon."
-msgstr "Suchen kommt bald."
+#~ msgid "Search for people, coming soon"
+#~ msgstr "Nach Leuten suchen, kommt bald"
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Searching for people is coming soon."
+#~ msgstr "Suchen kommt bald."
+
+#: app/(tabs)/friends.tsx
+msgid "Searching…"
+msgstr "Suche läuft…"
 
 #: app/(auth)/email.tsx
 msgid "Send code"
@@ -518,6 +676,10 @@ msgstr "Neuen Code senden"
 #: app/(auth)/email.tsx
 msgid "Sending…"
 msgstr "Code kommt"
+
+#: app/friends-qr.tsx
+msgid "Set your username first to show your code."
+msgstr "Leg zuerst deinen Username fest, um deinen Code zu zeigen."
 
 #: app/profil.tsx
 msgid "Share handle"
@@ -544,12 +706,16 @@ msgid "Show it, scan it, done — that's how you add each other."
 msgstr "Zeigen, scannen, fertig — so addet ihr euch."
 
 #: app/(tabs)/friends.tsx
-msgid "Show QR"
-msgstr "QR zeigen"
+msgid "Show or scan QR"
+msgstr "QR zeigen/scannen"
 
 #: app/(tabs)/friends.tsx
-msgid "Show QR, coming soon"
-msgstr "QR zeigen, kommt bald"
+#~ msgid "Show QR"
+#~ msgstr "QR zeigen"
+
+#: app/(tabs)/friends.tsx
+#~ msgid "Show QR, coming soon"
+#~ msgstr "QR zeigen, kommt bald"
 
 #: app/(auth)/verify.tsx
 msgid "Six digits sent to {email}."
@@ -560,7 +726,6 @@ msgid "Socials"
 msgstr "Socials"
 
 #: app/(festival)/f/[festivalSlug].tsx
-#: app/(tabs)/friends.tsx
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Soon"
@@ -602,13 +767,25 @@ msgstr "Sag uns, wie du in der App heißt."
 msgid "That code is wrong or has expired."
 msgstr "Der Code ist falsch oder abgelaufen."
 
+#: components/CameraScanPanel.tsx
+msgid "That's not a quiks code."
+msgstr "Das ist kein quiks-Code."
+
 #: app/(tabs)/mehr.tsx
 msgid "The night shift for your eyes."
 msgstr "Die Nachtschicht für deine Augen."
 
+#: components/CameraScanPanel.tsx
+msgid "This code is no longer valid."
+msgstr "Dieser Code ist nicht mehr gültig."
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
+
+#: components/RelationAction.tsx
+msgid "This person no longer exists."
+msgstr "Diese Person gibt's nicht mehr."
 
 #: app/profil.tsx
 msgid "TikTok, coming soon"
@@ -626,6 +803,10 @@ msgstr "Timetable-Erinnerungen"
 msgid "Timetable reminders, coming soon"
 msgstr "Timetable-Erinnerungen, kommt bald"
 
+#: app/(tabs)/friends.tsx
+msgid "To you"
+msgstr "An dich"
+
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 msgid "Too many attempts — try again in a few minutes."
@@ -634,6 +815,10 @@ msgstr "Zu viele Versuche — versuche es in ein paar Minuten erneut."
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Try something else, like @{suggestion}."
 msgstr "Nimm etwas anderes, zum Beispiel @{suggestion}."
+
+#: app/(tabs)/friends.tsx
+msgid "Type at least 2 characters."
+msgstr "Gib mindestens 2 Zeichen ein."
 
 #: app/(tabs)/mehr.tsx
 msgid "Updates from the organizer while you're on-site."
@@ -683,9 +868,17 @@ msgstr "Willkommen"
 msgid "When someone adds you to their crew."
 msgstr "Wenn dich jemand in seine Crew addet."
 
+#: app/(tabs)/friends.tsx
+msgid "Withdraw"
+msgstr "Zurückziehen"
+
 #: app/(tabs)/mehr.tsx
 msgid "You can always sign back in with an email code."
 msgstr "Du kannst dich jederzeit wieder per E-Mail-Code anmelden."
+
+#: app/friend-detail.tsx
+msgid "You'll need to send a new request to become friends again."
+msgstr "Ihr müsst euch danach erneut anfragen, um wieder Freunde zu werden."
 
 #: app/(auth)/email.tsx
 msgid "you@example.com"
@@ -718,3 +911,7 @@ msgstr "Dein nächstes Festival"
 #: app/(tabs)/friends.tsx
 msgid "Your quiks code"
 msgstr "Dein quiks-Code"
+
+#: components/QRMark.tsx
+msgid "Your quiks code as a scannable QR mark"
+msgstr "Dein quiks-Code als scannbare QR-Marke"

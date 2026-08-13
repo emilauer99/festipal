@@ -15,18 +15,18 @@
 Resolves **T-06-06**, the open obligation carried out of v1.0. This is the first milestone in which
 an endpoint serves a *foreign* profile, so the projection split is a prerequisite, not a polish item.
 
-- [ ] **VIS-01**: A visitor sees every field on their own profile; a *foreign* profile returns only the friend-view projection — no `birthDate`, no e-mail
-- [ ] **VIS-02**: Search results and request previews use that same friend-view projection — there is no second code path through which owner-only fields can escape
+- [x] **VIS-01**: A visitor sees every field on their own profile; a *foreign* profile returns only the friend-view projection — no `birthDate`, no e-mail
+- [x] **VIS-02**: Search results and request previews use that same friend-view projection — there is no second code path through which owner-only fields can escape
 
 ### Friends (FRND)
 
-- [ ] **FRND-02**: A visitor can send a friend request via quiks-code / handle
-- [ ] **FRND-03**: A visitor can find someone by username search and send a request
-- [ ] **FRND-04**: A visitor can display their own handle as a QR code and scan someone else's to send a request
-- [ ] **FRND-05**: A visitor can see incoming and outgoing requests and accept, decline, or withdraw them
-- [ ] **FRND-06**: A visitor sees their friends list; friendships are user-global and survive switching festivals (ADR-014)
+- [x] **FRND-02**: A visitor can send a friend request via quiks-code / handle
+- [x] **FRND-03**: A visitor can find someone by username search and send a request
+- [x] **FRND-04**: A visitor can display their own handle as a QR code and scan someone else's to send a request
+- [x] **FRND-05**: A visitor can see incoming and outgoing requests and accept, decline, or withdraw them
+- [x] **FRND-06**: A visitor sees their friends list; friendships are user-global and survive switching festivals (ADR-014)
 - [ ] **FRND-07**: Inside a festival, a visitor sees which of their friends have saved that festival — the intersection only, never a presence signal (ADR-014)
-- [ ] **FRND-08**: A visitor can end a friendship
+- [x] **FRND-08**: A visitor can end a friendship
 
 ### Activities (ACT)
 
@@ -84,14 +84,14 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| VIS-01 | Phase 7 | Planned |
-| VIS-02 | Phase 7 | Planned |
-| FRND-02 | Phase 8 | Planned |
-| FRND-03 | Phase 8 | Planned |
-| FRND-04 | Phase 8 | Planned |
-| FRND-05 | Phase 8 | Planned |
-| FRND-06 | Phase 8 | Planned |
-| FRND-08 | Phase 8 | Planned |
+| VIS-01 | Phase 7 | Complete |
+| VIS-02 | Phase 7 | Complete |
+| FRND-02 | Phase 8 | Complete |
+| FRND-03 | Phase 8 | Complete |
+| FRND-04 | Phase 8 | Complete |
+| FRND-05 | Phase 8 | Complete |
+| FRND-06 | Phase 8 | Complete |
+| FRND-08 | Phase 8 | Complete |
 | FRND-07 | Phase 9 | Planned |
 | NAV-01 | Phase 9 | Planned |
 | NAV-02 | Phase 9 | Planned |

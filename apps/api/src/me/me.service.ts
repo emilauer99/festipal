@@ -2,11 +2,11 @@ import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray, sql } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
 import { festival, festivalLocale, myFestival, visitorProfile, type Database } from '@quiks/db';
-import type { CompleteProfileBody, Festival, Locale, VisitorProfilePublic } from '@quiks/contracts';
+import type { CompleteProfileBody, Festival, Locale, VisitorProfileOwner } from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
 
-type CompleteProfileResult = { status: 'ok'; profile: VisitorProfilePublic } | { status: 'conflict' };
+type CompleteProfileResult = { status: 'ok'; profile: VisitorProfileOwner } | { status: 'conflict' };
 
 /**
  * The ONE `23505` that means "this username belongs to someone else" (see
@@ -21,7 +21,7 @@ export class MeService {
   constructor(@Inject(DB) private readonly db: Database) {}
 
   /** Returns null for "no profile yet" (first login, needs complete-profile). */
-  async getProfile(accountId: string): Promise<VisitorProfilePublic | null> {
+  async getProfile(accountId: string): Promise<VisitorProfileOwner | null> {
     const [row] = await this.db
       .select({
         accountId: visitorProfile.accountId,

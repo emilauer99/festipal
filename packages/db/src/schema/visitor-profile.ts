@@ -39,10 +39,16 @@ function lower(col: AnyPgColumn): SQL {
  * their profile without them stays valid. D-12a stores the BIRTH DATE, never a
  * derived age — the stored value does not go stale (editing is PROF-02, i.e.
  * later) and a future age gate / youth-protection policy from IDN-02 becomes
- * possible without another migration. NOTE (T-06-06, knowingly accepted): there
- * is NO per-field visibility policy in this phase; before any endpoint serves a
- * FOREIGN profile, the public projection must be split into an owner view and a
- * friend view. IDN-02 (visibility, age limit, disclaimer) remains pending.
+ * possible without another migration.
+ *
+ * T-06-06 is SETTLED (phase 07): the projection split landed in
+ * `packages/contracts/src/schemas.ts` as `visitorProfileForeignSchema` (the
+ * base, six fields) and `visitorProfileOwnerSchema` (the single named
+ * extension, base + `birthDate`). `birthDate` is therefore owner-only by
+ * construction — a column added to this table appears in NEITHER view until
+ * someone explicitly picks it. `gender` IS in the foreign view, deliberately
+ * (07-CONTEXT.md D-02). Still pending: IDN-02 (per-field visibility policy,
+ * age limit, disclaimer) — the foreign view is the place where it will apply.
  */
 export const visitorProfile = pgTable(
   'visitor_profile',
@@ -74,8 +80,9 @@ export const visitorProfile = pgTable(
  * enum-detection heuristic at the type level (see `drizzle-zod`'s
  * `GetZodType`/`GetEnumValuesFromColumn`). This is purely a static-type bug —
  * the RUNTIME schema (and therefore all request/response validation) was
- * always correct — but it made the exported `VisitorProfilePublic`/
- * `CompleteProfileBody` types in `@quiks/contracts` unusable for anything
+ * always correct — but it made the exported `VisitorProfileForeign`/
+ * `VisitorProfileOwner`/`CompleteProfileBody` types (which pick from the
+ * schemas below) in `@quiks/contracts` unusable for anything
  * beyond return-position assignment. `createInsertSchema`'s own `refine`
  * parameter re-triggers the same broken inference internally (it recomputes
  * the allowed-refinement type from the same `GetZodType`), so the fix has to

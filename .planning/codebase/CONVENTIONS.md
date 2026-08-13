@@ -303,7 +303,9 @@ last_mapped_at: 2026-08-02T17:17:40Z
 **Drift Detection:**
 
 - Schemas composed on drizzle-zod base (not hand-mirrored)
-- Example: `visitorProfilePublicSchema` uses `.pick()` on drizzle-zod's generated schema
+- Example: `visitorProfileForeignSchema` uses `.pick()` on drizzle-zod's generated schema, and
+  `visitorProfileOwnerSchema` extends that base rather than picking a second, independent list —
+  so a new `visitor_profile` column appears in neither view until someone explicitly picks it
 - Renaming a DB column breaks the schema typecheck (good!)
 
 ---

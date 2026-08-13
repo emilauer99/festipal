@@ -43,6 +43,14 @@
           "cameraPermission": "quiks needs access to your camera so you can take an avatar photo for your profile."
         }
       ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "quiks uses the camera to scan a person's QR code and send friend requests.",
+          "recordAudioAndroid": false,
+          "microphonePermission": false
+        }
+      ],
       "./plugins/with-windows-long-path-fix.js",
       "@react-native-community/datetimepicker"
     ],
