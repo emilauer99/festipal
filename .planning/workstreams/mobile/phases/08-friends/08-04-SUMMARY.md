@@ -99,7 +99,7 @@ coverage:
     requirement: FRND-04
     verification: []
     human_judgment: true
-    rationale: "Requires a live camera scan against a running build on a real device — genuinely unautomatable in this environment and explicitly the coordinator's own instruction to surface here rather than self-approve. Not performed in this session; see Issues Encountered."
+    rationale: "Requires a live camera scan against a running build on a real device — genuinely unautomatable in this environment and explicitly the coordinator's own instruction to surface here rather than self-approve. RESOLVED after the executor returned: the user performed the scan on device and reported 'verified' at the orchestrator's Wave-4 checkpoint (2026-08-13), covering both the CTA/mark rendering and the foreign-camera scan in light and dark mode. D3-D6 are closed; the Issues Encountered entry below predates that confirmation."
 
 duration: ~15min
 completed: 2026-08-13
@@ -188,6 +188,15 @@ Each task was committed atomically:
 **Impact on plan:** No scope creep — the fix satisfies exactly the behavior the plan's `<behavior>` block specifies, using a build-agnostic mechanism instead of a build-specific hook name.
 
 ## Issues Encountered
+
+> **RESOLVED 2026-08-13 (orchestrator, post-return).** The executor surfaced Task 2's device
+> check as a Wave-4 checkpoint instead of self-approving it. The user ran it on device and
+> replied "verified": the `QR zeigen` CTA renders at full opacity with a real small mark, the
+> QR screen opens on `Mein Code`, and a foreign camera app reads the big mark as plain
+> `quiks:u/<username>` — opening nothing — in **both** light and dark mode. Coverage D3–D6
+> are closed. The paragraph below records the state at executor-return time and is kept for
+> the audit trail; it is no longer the outstanding-work list. What remains open for the
+> phase-level UAT is only the *other* plans' items (08-01/08-02/08-03), not this one.
 
 **The on-device portion of Task 2's `<verify>` `<human-check>` was not performed in this session.** Per the coordinator's explicit instruction, this is surfaced here rather than self-approved: scanning the big "Mein Code" mark with a foreign QR/camera app to confirm it reads exactly `quiks:u/<username>` and opens nothing, repeating that scan in dark mode, and confirming the missing-handle edge-case copy on a fresh account, all require a running build on a real device. This executor has no device access, consistent with every prior plan in this phase (08-01 through 08-03). All automated gates pass: `vitest run` (226/226, full suite), `typecheck`, `lint`, `lingui compile --strict`. See `coverage` D3–D6 above for what remains human-judgment-gated — the orchestrator should collect this alongside the phase's other outstanding on-device items (08-01's relation mapping, 08-02's Requests race, 08-03's Crew/unfriend lifecycle) for one combined on-device UAT session, per 08-03's own "Next Phase Readiness" note.
 
