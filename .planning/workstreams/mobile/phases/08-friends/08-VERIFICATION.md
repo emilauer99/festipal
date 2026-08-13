@@ -1,27 +1,32 @@
 ---
 phase: 08-friends
 verified: 2026-08-13T14:20:00Z
-status: human_needed
+status: passed
 score: 8/13 must-haves verified
 behavior_unverified: 5 # present + wired, runtime behavior not exercised — all require a device; see behavior_unverified_items
 overrides_applied: 0
 behavior_unverified_items:
+
   - truth: "Scanning another visitor's QR code opens the confirmation card and a tap sends the request (SC1, scan half of FRND-04)"
     test: "Native rebuild first: stop Metro, then `cd apps/mobile && npx expo run:android`. Two devices: A switches the QR screen to 'Scan', grants the permission (dialog must appear ONLY at that moment — D-15), scans B's 'Mein Code'. Exactly ONE confirmation card with B's name/handle appears even while the code stays in frame; tapping 'Add' sends the request and B sees it under 'To you'."
     expected: "One decode → one lookup → one card; the request arrives on B's side; a foreign QR (website URL) shows 'That's not a quiks code.' with no browser, no navigation, no network call."
     why_human: "expo-camera is a new native module — the current installed APK does not contain it; no automated harness can exercise camera frames, the permission dialog, or the arm/disarm timing (IN-02's pre-disarm window is a live-camera claim)."
+
   - truth: "Requests section: both directions visible, accept/decline/withdraw work, and the list reflects the result without a manual refresh — including the concurrent-answer race (SC2/FRND-05)"
     test: "Two accounts. (a) B requests A → A sees the row under 'To you' with badge '1', taps Accept → row disappears, both are friends. (b) Decline and (c) Withdraw each remove the row with NO confirm dialog. (d) Race: B withdraws while A's screen is open, A then taps Accept → inline failure copy under that row, list reloads, no ghost row."
     expected: "All three lifecycle actions settle the list without leaving the screen; the 404 race shows 'Couldn't save — try again.' and the row vanishes on the settled refetch."
     why_human: "The onSettled friendKeys.all invalidation chain is code-proven, but the state transition (row removal without refresh) and the two-device race are runtime behaviors with no RN component-test harness (STATE.md structural limit)."
+
   - truth: "Crew list shows real friends sorted correctly on device; unfriend removes the friendship on BOTH sides and the person is re-findable via search with 'Add' (SC3/FRND-06/FRND-08)"
     test: "Account with ≥3 friends incl. umlaut names: list order has 'Ärzte' before 'Berta' (not after 'Zoe'). Tap a row → modal with 88px Sunset-ringed avatar, name, @handle, identity line (absent entirely when pronoun+gender empty), locale-formatted 'Friends since' date. 'End friendship' → Alert with destructive confirm → modal closes, row gone without refresh; B's crew list also loses A; A re-finds B via search with relation 'none'."
     expected: "Both-sides removal without manual refresh; no cooldown; correct locale date formatting."
     why_human: "Sort logic is unit-proven (13/13), but on-device Hermes collator behavior, modal rendering and the two-account unfriend lifecycle are device claims."
+
   - truth: "One decoded code triggers exactly one handle lookup — the scanner is disarmed after the first successful decode (T-08-21)"
     test: "Hold a valid quiks code steadily in frame after the card appears; watch the API log — exactly one GET /visitors/:username. 'Scan again' re-arms."
     expected: "One lookup per decode cycle despite the native callback firing per frame."
     why_human: "Prop-identity disarm is grep-confirmed (`onBarcodeScanned={scanState.kind === 'idle' ? … : undefined}` is the only assignment), but the frame-timing behavior only exists with a live camera."
+
   - truth: "The camera runs ONLY while the Scan panel is active, and the denied state is complete and permanently reachable (D-15/D-16, camera prohibition)"
     test: "(a) Switch to 'Mein Code' / leave the screen → the OS camera indicator goes off; return → preview resumes. (b) Hard-deny the permission in Android settings ('Don't ask again') → the callout renders with rationale, 'Open Settings' (jumps to system settings) and 'Enter handle instead' (lands in the Friends search field WITH focus). (c) App permission list shows Camera and NOT Microphone."
     expected: "No camera outside the active scan panel; the denied path is not a dead end; no audio permission in the built manifest."

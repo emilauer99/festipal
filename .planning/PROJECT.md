@@ -39,6 +39,18 @@ path must work.
 
 - ✓ The **owner-vs-foreign profile projection split** and a **user-global friendship backend** exist behind the login-first guard: `visitorProfileForeignSchema` (six fields) as the base, `visitorProfileOwnerSchema` (+ `birthDate`) as the single named extension; handle lookup, username prefix search, the four request transitions (send/accept/decline/withdraw) with auto-accept on the reverse-direction race, friends list, request lists and unfriend — all four foreign paths through **one** select map and **one** relation resolver. Friendships are one canonically ordered row (symmetric, no mirror) and survive switching festivals. Field absence is proven at the serialized HTTP body, and VIS-02 is pinned as an invariant test that walks the whole contract, so a second projection or a 1:1 message path cannot be added silently — **Validated in Phase 7: Profile Visibility & Friendship Backend** (VIS-01, VIS-02; discharges T-06-06)
 
+- ✓ The **Friends screen is real**: a visitor finds people three ways — quiks-code/handle, username
+  prefix search, and scanning another visitor's QR — and their own handle renders as a scannable
+  quiks code. Incoming and outgoing requests are visible with a count badge and accept/decline/
+  withdraw resolve without a manual refresh; the crew list sorts umlaut-correctly, the detail modal
+  shows only the friend-view fields plus "friends since", and unfriending removes the row on both
+  sides. Typing swaps the screen into search mode (D-03) and clearing restores it. The trailing
+  element of every row is driven by the one Phase-7 relation resolver, so all five relation states
+  render correctly — verified on device across all five. The camera is the first native capability
+  in this project: it is mounted only while the scan segment is active, asks for camera without
+  microphone, and its decoded text never reaches a router, a `Linking.openURL` or a WebView —
+  **Validated in Phase 8: Friends** (FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08)
+
 ### Active
 
 <!-- v1.0 "Visitor Shell" shipped 2026-08-12 — every hypothesis of that cycle moved to Validated
@@ -54,9 +66,13 @@ path must work.
       invariant test, so a second projection cannot be added silently. `gender` is deliberately part of
       the foreign view (D-02); the visibility *policy* question (IDN-02 — Flinta filter, age threshold)
       is untouched and still open.
-- [ ] Real Friends: search, requests, connections (FRND-02)
+- [x] **Real Friends: search, requests, connections — shipped in Phase 8 (2026-08-13).** FRND-02
+      through FRND-06 and FRND-08 are validated above. What ships **without** it is recorded, not
+      papered over: **FRND-09 (block/report) is still absent**, so v1.1 lets strangers find and
+      contact you with no way to stop them — schedule it before the first real user cohort.
 - [ ] Activities / connecting with friends (ADR-017) — the second differentiator
-- [ ] Tab route rename `home` → `start` (decided 2026-08-12; do it before new routes land)
+- [ ] Tab route rename `home` → `start` (decided 2026-08-12; do it before new routes land — Phase 9
+      carries it as NAV-03, and it touches the deep-link capture path)
 
 **Admin —** planned independently in `.planning/workstreams/admin/`, its own milestone track.
 
@@ -133,6 +149,10 @@ path must work.
 | A unique violation on the pair PK **is** the auto-accept transition, not an error (D-10) | Two people requesting each other simultaneously is the expected case, not a conflict; `23505` inside the transaction seals the friendship instead of surfacing a 409 | ✓ Shipped Phase 7 |
 | v1.1 ships username discoverability and requests from strangers with **no block, report, cooldown, opt-out or rate limit** (D-05/D-11/D-13) | A half measure with no UI behind it teaches false safety; the contract deliberately carries no visibility parameter and the exposure is recorded openly as FRND-09 rather than papered over. **Schedule FRND-09 before the first real user cohort** | ⚠ Shipped Phase 7 with a recorded exposure |
 | The ADR-020 exclusion of a 1:1 message channel is enforced **mechanically** | `projection-uniqueness.spec.ts` matches 13 direct-message segments against every contract route, so a future DM route breaks the suite instead of quietly landing | ✓ Shipped Phase 7 |
+| The scan panel is **unmounted, not hidden**, and the scanner is disarmed by **prop identity** (T-08-18/T-08-21) | Conditional render is what actually tears the camera down when the segment or screen is left; handing `onBarcodeScanned` `undefined` outside the idle state stops the native per-frame callback from entering JS at all, where an in-handler boolean guard would merely no-op after the fact | ✓ Shipped Phase 8 |
+| A scanned quiks code is **plain text, never a deep link** (Phase-7 D-17, enforced in T-08-19) | The decoded payload passes a pure parser and is discarded on `null`; it is never handed to the router, `Linking.openURL` or a WebView, so a forged code cannot reach a navigation or URL surface. The confirmation card (D-14) is what makes a forged handle harmless rather than the parser alone | ✓ Shipped Phase 8 |
+| `friend-detail` reads the friends **query cache** instead of fetching (D-04 consequence) | There is deliberately no foreign-profile *detail* endpoint — the four foreign paths from Phase 7 are the whole surface. Keying off the cache means the route param is only ever a local lookup key, so an unknown id closes the screen instead of probing a foreign identity | ✓ Shipped Phase 8 |
+| Two third-party packages (`qrcode-generator`, `expo-camera`) passed a **blocking legitimacy checkpoint before install** | With `research` off there is no automatic legitimacy audit, so both were treated as `[ASSUMED]` and verified by hand (publisher, repo, exact name, dependency tree) before the install command ran — the two `T-08-SC` entries in `08-SECURITY.md` carry the evidence | ✓ Shipped Phase 8 |
 
 ## Evolution
 
@@ -152,7 +172,9 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-12 after Phase 7 (Profile Visibility & Friendship Backend) — 5/5 plans, VIS-01 and VIS-02 validated, T-06-06 discharged. The three judgment-tier UAT claims were confirmed by the user, one of them (VIS-01) after replaying the decline flow live against the dev API with three real accounts. Next: Phase 8 (Friends UI).*
+*Last updated: 2026-08-13 after Phase 8 (Friends) — 5/5 plans, six requirements validated (FRND-02/03/04/05/06/08). UAT 8/8 passed on device after the `expo-camera` native rebuild, including the four checkpoints no device had seen (full five-state relation mapping, the WR-01/WR-02 fixes, the confirmation card across all five relation values, and the denied-permission callout at the longest catalog string in DE and EN). Security: 24/24 threats closed, `threats_open: 0`, four of them `high` (presence-signal absence, camera runtime, decoded-payload handling, and two package-legitimacy gates). Next: Phase 9 (Festival Navigation Shell) — context already gathered.*
+
+*Previously: 2026-08-12 after Phase 7 (Profile Visibility & Friendship Backend) — 5/5 plans, VIS-01 and VIS-02 validated, T-06-06 discharged. The three judgment-tier UAT claims were confirmed by the user, one of them (VIS-01) after replaying the decline flow live against the dev API with three real accounts.*
 
 ---
 *Milestone v1.0 close (2026-08-12) — **"Rollout" (Visitor Shell) closed for the mobile workstream.** 7/7 phases, 50/50 plans, 116 tasks, 20/20 v1 requirements; every phase `phase_complete` with `verification_status: passed`, so this is a `verified_closeout`, not an override. Shipped over 15 days (2026-07-28 → 2026-08-12) as PRs #4–#13, `main` at `44e7914`. Delivered end to end: identity/tenancy schema that cannot drift, passwordless email-OTP behind a login-first guard with `festivalId` isolation, the Expo shell with i18n enforced from the first line of UI, the full visitor path signed off on real Android hardware, the quiks rebrand + CI v1.0, and the global tab bar with Profile/Friends/Mehr. Archived to `workstreams/mobile/milestones/v1.0-*`; `REQUIREMENTS.md` removed so the next milestone starts fresh.*

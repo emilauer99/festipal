@@ -2,11 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 08
-current_phase_name: friends
-status: verifying
+current_phase: 09
+current_phase_name: Festival Navigation Shell
+status: planning
 stopped_at: Phase 9 context gathered
-last_updated: "2026-08-13T15:03:06.653Z"
+last_updated: "2026-08-13T15:06:30.274Z"
 last_activity: 2026-08-13
 last_activity_desc: Phase 08 execution started
 progress:
@@ -21,13 +21,13 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-12 — nach Phase 7)
+See: .planning/PROJECT.md (updated 2026-08-13 — nach Phase 8)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 08 — friends
-6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phase 7 ist durch.
+**Current focus:** Phase 09 — Festival Navigation Shell
+6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7 und 8 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
 > geplant und hat einen eigenen Milestone-Track — `mobile` wartet nicht auf `admin` und umgekehrt.
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 08 (friends) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-08-13 — Phase 08 execution started
+Phase: 09 — Festival Navigation Shell
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-08-13 — Phase 08 complete, transitioned to Phase 09
 
 ## Shipped
 
@@ -129,18 +129,33 @@ Milestone bindet:
   Anfrage. Skript-Muster für Wiederholung: OTP-Codes aus **Mailpit** (`localhost:8025`) lesen, nicht
   aus `.otp-dev-transport.local.json` — der Dev-Transport ist lokal nicht aktiv.
 
-- [Phase ?]: D-03 block-swap gates exactly the three named blocks (quiks-code card, Requests, Crew); Chats/People-you-may-know stay always-visible until 08-02 (D-05/D-06)
-- [Phase ?]: isSearching derived from immediate query text, not debounced value, so mode switch follows typing itself
-- [Phase ?]: Pending-mutation opacity dampening (0.45, existing constant) added to RelationAction's active pills after Task-1 device checkpoint showed dead-looking button
-- [Phase ?]: Requests section: real GET /me/friend-requests both directions, Accept/Decline/Withdraw via useFriendMutations(), Chats + suggestion blocks removed outright (D-05/D-06)
-- [Phase ?]: friend-sort.ts: Intl.Collator capability-probe-with-cache pattern (mirrors intl-capability.ts), fallback diacritic table proven directly, not through sortFriendsByDisplayName alone
-- [Phase ?]: friend-detail.tsx reads friendKeys.list from the query cache (validated shape, same idiom as findCachedFestivalBySlug) instead of a new fetch — no foreign-profile detail endpoint exists (Phase-7 D-04)
-- [Phase ?]: unfriend navigation uses a ref-tracked pending->settled transition to close only on success, without adding a second callback shape to the shared useFriendMutations() hook
-- [Phase ?]: 08-04: qrButton switched to solid primary/textOnPrimary pill (Pattern A dampening removed) per UI-SPEC's own reserved-accent rule for the now-real QR CTA
-- [Phase ?]: 08-04: qr-matrix.ts carries its own UTF-8 byte encoder instead of qrcode-generator's stringToBytesFuncs['UTF-8'] hook, which is absent from the package's resolved ESM build — pre-authorized by the plan's own fallback clause
-- [Phase ?]: 08-05: requestPermission() fired exactly once per mount via useRef guard, gated on the hook's own permission!==null check - the panel only mounts on segment=scan, so 'mount' IS the D-15-required ask moment
-- [Phase ?]: 08-05: onBarcodeScanned prop set to undefined outside scanState.kind==='idle' (not an in-handler guard) - the actual mechanism that stops the native per-frame callback from re-firing while a code sits in frame (T-08-21)
-- [Phase ?]: 08-05: native rebuild (npx expo run:android) deliberately NOT run by the executor per coordinator instruction on this Windows session - surfaced as a human-action checkpoint instead; FRND-04 requirements-completed left empty until on-device verification happens
+**Phase 8 (Friends) — abgeschlossen 2026-08-13, UAT 8/8, `threats_open: 0`.** Die dauerhaft
+bindenden Entscheidungen stehen in der Key-Decisions-Tabelle von `.planning/PROJECT.md`; hier bleibt,
+was die naechsten Phasen konkret betrifft:
+
+- **Der Scan-Screen ist die Vorlage fuer jede weitere native Faehigkeit:** Panel nur gemountet,
+  solange sein Segment aktiv ist (Unmount statt Verstecken), Permission-Ask genau einmal pro Mount
+  per `useRef`-Guard, und der Callback wird per **Prop-Identitaet** entwaffnet
+  (`onBarcodeScanned={idle ? handler : undefined}`), nicht per Guard im Handler. Ein
+  `useIsFocused`-Guard existiert bewusst nicht — es gibt derzeit keinen Pfad, der einen Screen ueber
+  `/friends-qr` pusht. **Wer das aendert, muss den Teardown neu beweisen.**
+- **`friend-detail` liest den Query-Cache, nicht das Netz** (Phase-7 D-04): es gibt keinen
+  Fremdprofil-Detail-Endpunkt, und der Routen-Parameter ist ausschliesslich lokaler Lookup-Key.
+  Gleiches Idiom wie `findCachedFestivalBySlug`.
+- **`friend-sort.ts` nutzt das Capability-Probe-with-Cache-Muster** von `intl-capability.ts`; die
+  Fallback-Diakritika-Tabelle ist direkt bewiesen, nicht nur ueber `sortFriendsByDisplayName`.
+- **`qr-matrix.ts` bringt seinen eigenen UTF-8-Byte-Encoder mit** — der `stringToBytesFuncs['UTF-8']`-
+  Hook von `qrcode-generator` fehlt im aufgeloesten ESM-Build. Bei einem Paket-Update pruefen.
+- **D-03-Block-Swap** schaltet exakt drei Bloecke (quiks-Code-Karte, Requests, Crew); `isSearching`
+  haengt am unmittelbaren Eingabetext, nicht am debounced Wert, damit der Moduswechsel dem Tippen
+  folgt statt ihm nachzulaufen.
+- **Paket-Legitimitaet ist ein manuelles Gate, solange `research: false` ist.** `qrcode-generator`
+  und `expo-camera` wurden vor der Installation von Hand geprueft (Publisher, Repo, exakter Name,
+  Abhaengigkeitsbaum); die Belege liegen als zwei `T-08-SC`-Eintraege in `08-SECURITY.md`. Jedes
+  weitere neue Paket laeuft genauso.
+- **Der native Rebuild ist ein Human-Checkpoint, kein Executor-Schritt** (Windows-Session):
+  `npx expo run:android` aus `apps/mobile`, nie aus dem Repo-Root. FRND-04 wurde erst nach der
+  Geraeteabnahme abgehakt.
 
 ### Blockers/Concerns
 
@@ -150,6 +165,11 @@ Milestone bindet:
   (`GET /api/v1/visitors/:username`) liefert nachweislich nur die Fremd-View, und
   `apps/api/test/foreign-projection.spec.ts` belegt die Abwesenheit von Geburtsdatum und E-Mail am
   serialisierten Body.
+
+- **FRND-09 ist ab jetzt eine echte Luecke, keine geplante mehr.** Mit Phase 8 ist die Faehigkeit
+  live, dass Fremde dich per Username finden und anfragen — ohne Blockieren, Melden, Cooldown,
+  Opt-out oder Rate-Limit. Das war eine bewusste Entscheidung (D-05/D-11/D-13), aber sie war bis
+  gestern theoretisch. **Vor der ersten echten Nutzerkohorte einplanen.**
 
 - **IDN-02 haengt an Birgits Konzept** (Sichtbarkeit pro Feld, Altersgrenze, Flinta-Filter,
   Signup-Disclaimer). Betrifft dieselbe Flaeche wie das erledigte T-06-06 — der Split loest die
@@ -175,11 +195,22 @@ Milestone bindet:
   auskommentierten noch einen zusaetzlich eingeschleusten Import. Der Fix selbst ist
   geraeteverifiziert und davon unberuehrt. Haerten, wenn der Entry das naechste Mal angefasst wird.
 
-- **`gsd-tools requirements.mark-complete` funktioniert im Workstream-Layout nicht** (07-01, weiterhin
-  offen): findet VIS-01/VIS-02 in `.planning/workstreams/mobile/REQUIREMENTS.md` nicht (`not_found`,
-  kein Write), und `phase.complete` meldet entsprechend `requirements_updated: false`. Beim
-  Phase-7-Abschluss wurden Checkbox und Traceability-Zeile **von Hand** gesetzt. Bei jedem weiteren
-  Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
+- **`gsd-tools requirements.mark-complete` funktioniert im Workstream-Layout nicht** (07-01, in Phase
+  8 erneut bestaetigt): findet die Requirements in `.planning/workstreams/mobile/REQUIREMENTS.md`
+  nicht (`not_found`, kein Write), und `phase.complete` meldet entsprechend
+  `requirements_updated: false`. Beim Abschluss von Phase 7 **und** Phase 8 wurden Checkbox und
+  Traceability-Zeile von Hand gesetzt (Phase 8: FRND-04, nach der Geraeteabnahme). Bei jedem
+  weiteren Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
+
+- **`phase.complete` meldet SUMMARY-Dateipfade als „not on disk", die sehr wohl existieren** (Phase
+  8, 21 Falschmeldungen): die SUMMARYs notieren Pfade relativ zu `apps/mobile`, der Checker loest
+  sie gegen das Repo-Root auf. Ebenso zaehlt er ADR-Nummern als fehlende REQ-IDs in der
+  Traceability-Tabelle. Beides ist Rauschen — nicht jedes Mal neu nachrecherchieren.
+
+- **Kosmetisch, aus dem Phase-8-Security-Audit:** `app/friend-detail.tsx:134` uebergibt an `unfriend`
+  den Routen-Parameter statt `friend.profile.accountId`. Hinter dem Exact-Match-Gate (`:126`)
+  beweisbar identisch, aber der direkte Feldzugriff wuerde den Beweis ueberfluessig machen. Beim
+  naechsten Anfassen der Datei mitnehmen.
 
 - **Testkommando:** `pnpm --filter @quiks/api test -- <name>` filtert NICHT (fuehrt die Gesamtsuite
   aus), steht aber unveraendert in den verify-Bloecken von 07-03 bis 07-05. Korrekt ist
@@ -219,15 +250,17 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T15:03:06.622Z
-Stopped at: Phase 9 context gathered
-Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09-CONTEXT.md
+Last session: 2026-08-13
+Stopped at: Phase 8 complete (UAT 8/8, security verified) — ready to plan Phase 9
+Resume file: None (Phase 9 hat bereits ein 09-CONTEXT.md — direkt planbar)
 
 ## Operator Next Steps
 
-- `/gsd-discuss-phase 8 --ws mobile` — Kontext fuer die Friends-UI auf dem Phase-7-Backend
-- Alternativ direkt: `/gsd-plan-phase 8 --ws mobile`
-- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`, Tab-Rename `home` → `start` (vor neuen Routen)
+- `/gsd-plan-phase 9 --ws mobile` — Kontext liegt schon vor (`09-CONTEXT.md`)
+- Alternativ: `/gsd-discuss-phase 9 --ws mobile`, wenn der Kontext nochmal aufgemacht werden soll
+- Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
+- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`. Der Tab-Rename `home` → `start` ist als NAV-03
+  in Phase 9 eingeplant — vor neuen Routen erledigen.
 
 ## Performance Metrics
 
