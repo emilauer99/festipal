@@ -66,4 +66,51 @@ describe('parseQuiksCodePayload', () => {
       username: 'feli.quiks',
     });
   });
+
+  /**
+   * WR-04 — the contract's username charset (`3–20 chars: a-z 0-9 _ .`) must
+   * be enforced HERE, since a scanned QR is attacker-controlled input and
+   * ts-rest's `insertParamsIntoPath` does not `encodeURIComponent` path
+   * params (verified against the installed `@ts-rest/core`). Every case
+   * below takes the parser's existing `null` — "not a quiks code" — path,
+   * never a throw.
+   */
+  describe('WR-04 — username charset enforcement', () => {
+    it('rejects an injected query string', () => {
+      expect(parseQuiksCodePayload('quiks:u/feli?x=1')).toBeNull();
+    });
+
+    it('rejects an injected fragment', () => {
+      expect(parseQuiksCodePayload('quiks:u/feli#frag')).toBeNull();
+    });
+
+    it('rejects a percent-encoded path traversal sequence', () => {
+      expect(parseQuiksCodePayload('quiks:u/%2Ffeli')).toBeNull();
+    });
+
+    it('rejects an embedded percent-encoded NUL byte', () => {
+      expect(parseQuiksCodePayload('quiks:u/feli%00')).toBeNull();
+    });
+
+    it('rejects a raw space inside the remainder', () => {
+      expect(parseQuiksCodePayload('quiks:u/fe li')).toBeNull();
+    });
+
+    it('rejects a remainder shorter than the 3-char floor', () => {
+      expect(parseQuiksCodePayload('quiks:u/ab')).toBeNull();
+    });
+
+    it('rejects a remainder longer than the 20-char ceiling', () => {
+      expect(parseQuiksCodePayload(`quiks:u/${'a'.repeat(21)}`)).toBeNull();
+    });
+
+    it('accepts the 3-char floor', () => {
+      expect(parseQuiksCodePayload('quiks:u/abc')).toEqual({ username: 'abc' });
+    });
+
+    it('accepts the 20-char ceiling', () => {
+      const username = 'a'.repeat(20);
+      expect(parseQuiksCodePayload(`quiks:u/${username}`)).toEqual({ username });
+    });
+  });
 });

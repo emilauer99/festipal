@@ -17,6 +17,19 @@
 /** The one fixed prefix every valid quiks code payload starts with. */
 export const QUIKS_CODE_PREFIX = 'quiks:u/';
 
+/**
+ * The contract's own username charset (`packages/db/src/schema/visitor-profile.ts`
+ * `visitorProfileInsertSchema`/`visitorProfileSelectSchema`: `.min(3).max(20)`
+ * + `.regex(/^[a-z0-9_.]+$/, …)`), re-declared here rather than imported —
+ * `apps/mobile` depends only on `@quiks/contracts` (no `@quiks/db`
+ * dependency; that schema is not re-exported from contracts), and
+ * `app/(profile-setup)/complete-profile.tsx` already re-declares the same
+ * min/max/charset client-side for the identical reason. Case-insensitive so
+ * a scanned/uppercase-typed handle still parses (WR-04); a case-sensitive
+ * lookup, if the server needs one, is the server's job, not the parser's.
+ */
+const USERNAME_PATTERN = /^[a-z0-9_.]{3,20}$/i;
+
 /** Builds the payload a `QRMark` encodes for a given handle. */
 export function encodeQuiksCodePayload(username: string): string {
   return `${QUIKS_CODE_PREFIX}${username}`;
@@ -34,7 +47,15 @@ export function encodeQuiksCodePayload(username: string): string {
  *   returned exactly as scanned, unchanged;
  * - the remainder after the prefix must be non-empty and must not contain a
  *   second `/` — exactly one segment, so `quiks:u/feli/extra` is rejected
- *   rather than silently taking the first segment.
+ *   rather than silently taking the first segment;
+ * - the remainder must match the contract's own username charset (WR-04:
+ *   `3–20 chars, a-z 0-9 _ .`) — a scanned QR is attacker-controlled input,
+ *   and ts-rest's `insertParamsIntoPath` does not `encodeURIComponent` path
+ *   params, so an unvalidated remainder can inject query params (`?x=1`),
+ *   truncate via a fragment (`#…`), or carry raw `%`/whitespace into the
+ *   request URL this payload eventually feeds `lookupVisitor`. Anything
+ *   outside the charset takes this function's existing "not a quiks code"
+ *   `null` path, never a throw.
  */
 export function parseQuiksCodePayload(raw: string): { username: string } | null {
   const trimmed = raw.trim();
@@ -47,6 +68,7 @@ export function parseQuiksCodePayload(raw: string): { username: string } | null 
   const rest = trimmed.slice(prefixLength);
   if (rest.length === 0) return null;
   if (rest.includes('/')) return null;
+  if (!USERNAME_PATTERN.test(rest)) return null;
 
   return { username: rest };
 }
