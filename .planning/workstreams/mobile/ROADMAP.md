@@ -1,321 +1,212 @@
-# Roadmap: festipal — Visitor Shell
+# Roadmap: quiks — Mobile (Visitor App)
 
-> Reconciled 2026-07-30 with the binding concept phase (docs/concept/04–10; ADR-009 auth, ADR-014
-> tenant boundary, ADR-016 identity, ADR-020 scope). Auth is passwordless email-OTP; identity is
-> `Account` → `VisitorProfile`; festival join is gate-less `MyFestival` (save); tenant isolation is
-> data-scoping by `festivalId`, not an access gate.
+> Workstream `mobile`. The admin/staff web UI is planned independently in
+> `.planning/workstreams/admin/` on its own milestone track — neither stream waits on the other.
+> Shared collision zones (`packages/contracts`, `packages/db`, `packages/ui`) are changed by one
+> stream at a time. **Admin builds the global activity-tag catalog and tag activation (ADR-018) in
+> its own stream — mobile only *consumes* the effective tag list. Serialize that schema change.**
 
-## Overview
+## Milestones
 
-This milestone delivers the visitor-shell slice: a navigable, online, login-first slice of the Expo
-mobile app that gets a visitor in (passwordless email-OTP), through first-login profile completion,
-connected to a festival they save/enter gate-lessly, and onto a home screen. It builds on the
-~⅓-scaffolded monorepo (NestJS API + `packages/{contracts,db,i18n,ui,config}`) in strict
-dependency-ordered layers: first the identity + membership schema and auth foundation, then the
-authenticated festival backend (OTP + browse/save) with correct `festivalId` data isolation, then
-the mobile app shell + i18n plumbing, and finally the three visitor-facing screen sets (auth +
-profile completion, festival selection + home, profile + friends placeholders). Every UI phase
-lands only after a live backend exists behind it.
+- ✅ **v1.0 Rollout — Visitor Shell** — Phases 1–6 (shipped 2026-08-12)
+- 🚧 **v1.1 Activities & Friends** — Phases 7–12 (in progress)
 
 ## Phases
 
-**Phase Numbering:**
+<details>
+<summary>✅ v1.0 Rollout — Visitor Shell (Phases 1–6, incl. inserted 5.1) — SHIPPED 2026-08-12</summary>
 
-- Integer phases (1, 2, 3): Planned milestone work
-- Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
+- [x] Phase 1: Identity Schema & Auth Foundation (3/3 plans) — completed 2026-07-30
+- [x] Phase 2: OTP Auth & Festival Backend API (6/6 plans) — completed 2026-08-02
+- [x] Phase 3: Mobile App Shell & i18n Foundation (6/6 plans) — completed 2026-08-04
+- [x] Phase 4: Visitor Auth & Profile Completion (7/7 plans) — completed 2026-08-05
+- [x] Phase 5: Festival Selection & Home (11/11 plans) — completed 2026-08-09
+- [x] Phase 5.1: quiks Rename & CI v1.0 Rollout *(INSERTED)* (7/7 plans) — completed 2026-08-11
+- [x] Phase 6: Profile & Friends Placeholders (10/10 plans) — completed 2026-08-12
 
-Decimal phases appear between their surrounding integers in numeric order.
+Detail: [`milestones/v1.0-ROADMAP.md`](./milestones/v1.0-ROADMAP.md) · Summary: [`MILESTONES.md`](./MILESTONES.md)
 
-- [x] **Phase 1: Identity Schema & Auth Foundation** - `Account` + `VisitorProfile` + `MyFestival` schema, better-auth (OTP) tables, username uniqueness, drizzle-zod, identity-model decision (completed 2026-07-30)
-- [x] **Phase 2: OTP Auth & Festival Backend API** - better-auth email-OTP in NestJS, profile-completion + festival browse/save endpoints, login-first guard + `festivalId` data isolation (completed 2026-08-02)
-- [x] **Phase 3: Mobile App Shell & i18n Foundation** - `apps/mobile` Expo scaffold, auth/api clients, `Stack.Protected` navigation, Lingui + lint (completed 2026-08-04)
-- [x] **Phase 4: Visitor Auth & Profile Completion** - Email-OTP welcome/code screens, first-login profile (username live-check + displayName), persistent session, logout, clear errors (completed 2026-08-05)
-- [x] **Phase 5: Festival Selection & Home** - Browse all / save to Meine, gate-less enter, land on festival home with basic overview (completed 2026-08-09)
-- [x] **Phase 5.1: quiks Rename & CI v1.0 Rollout** (INSERTED) - ADR-024 Code-Rename (`@festipal/*` → `@quiks/*`, `at.festipal.app`) + ADR-023 CI-v1.0-Token-Swap (Beere/Amber/Sunset) und hell-first Light-Mode-Wiring (completed 2026-08-11)
-- [x] **Phase 6: Profile & Friends Placeholders** - View-only profile and well-formed friends empty state from the home (completed 2026-08-12)
+</details>
+
+### 🚧 v1.1 Activities & Friends (Phases 7–12)
+
+- [ ] **Phase 7: Profile Visibility & Friendship Backend** — owner-view/friend-view projection split, user-global friendship + request model
+- [ ] **Phase 8: Friends** — the Phase-6 placeholder becomes real: add by handle, search, QR, requests, list
+- [ ] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename
+- [ ] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation
+- [ ] **Phase 11: Activities** — create, discover, join/leave, clone, route-opening location
+- [ ] **Phase 12: Activity Lobby Chat** — WS gateway + Redis, live group chat per activity
+
+**Cut deliberately homogeneous** (root `CLAUDE.md`, Phase & Gate Economy): backend slices are
+separated from UI slices so only the backend phases pay for the security and API-coverage gates.
+Target ≤ 6 plans per phase — v1.0 averaged 7.1 and its two 10-plan phases are what made it expensive.
 
 ## Phase Details
 
-### Phase 1: Identity Schema & Auth Foundation
+### Phase 7: Profile Visibility & Friendship Backend
 
-**Goal**: The database and shared packages model global `Account`/`VisitorProfile` identity, festival save-membership, and better-auth's OTP tables, ready for auth wiring, with no risk of contract/schema drift
-**Depends on**: Nothing (first phase; extends the existing `packages/db` scaffold)
-**Requirements**: PLAT-01
+**Goal**: The API can express who may see what about whom, and friendships exist as a real,
+user-global model with a request lifecycle — before any screen can leak anything
+**Depends on**: Phase 6 (identity fields, `GET /me`)
+**Requirements**: VIS-01, VIS-02
+**Also lands** (substrate consumed by Phases 8 and 9, not separately requirement-mapped): the
+friendship + friend-request schema, the request lifecycle endpoints, and username search.
+
 **Success Criteria** (what must be TRUE):
 
-  1. better-auth's core tables (`user`/Account, `session`, `account`, `verification`) plus a separate `visitor_profile` table (keyed by `accountId`, holding `username`, `displayName`, `avatar?`, and reserved `socials`/`socialsVisibility`) and a `my_festival(visitorId, festivalId, savedAt, camp?)` table exist in `packages/db` and migrate cleanly against Neon.
-  2. `username` is enforced case-insensitively unique via a `UNIQUE INDEX ON lower(username)`; the global `Account` carries no `festivalId` FK — `my_festival` (always queried by `visitorId`) is the only link between global and tenant data (ADR-014/016).
-  3. `drizzle-zod` derives base Zod schemas from the Drizzle tables so that renaming a DB column surfaces as a compile error rather than silent drift.
-  4. The identity/membership model is decided in writing (Account→VisitorProfile as a **separate** profile table; visitors modeled as gate-less `my_festival` saves, NOT better-auth's `organization` plugin and NOT its built-in `username` plugin — which would force a username onto staff-only accounts) and recorded as a plan/ADR note.
+1. A request for a *foreign* profile returns the friend-view projection only — no `birthDate`, no
+   e-mail — proven by a test that asserts field *absence*, not merely presence of what is allowed.
+2. Username search and request previews resolve through that same projection function; a test proves
+   there is no second code path that emits owner-only fields.
+3. Friendship is user-global: it carries no `festivalId`, and a friendship established while in one
+   festival is unchanged after switching to another.
+4. The request lifecycle is complete and idempotent — send, accept, decline, withdraw, unfriend —
+   with a mutual-friendship invariant that cannot express a one-sided friendship.
 
-**Plans**: 3/3 plans executed
-**Wave 1**
+**Notes**: This phase discharges **T-06-06**, the obligation carried out of v1.0. It is the reason
+this phase is first: v1.1 is the first milestone in which an endpoint serves a foreign profile.
+`code_review_depth: deep` — this is auth-adjacent with a migration. Watch the **duplicate-request /
+reverse-direction race**: A→B and B→A arriving concurrently must not create two rows or two
+friendships; solve it in the schema (canonical ordered pair + unique constraint), not in app logic.
+**UI hint**: no
 
-- [x] 01-01-PLAN.md — Confirm D-01..D-04, verify better-auth legitimacy, vendor `schema/auth.ts` + drizzle-zod bases, record identity-model ADR note
+### Phase 8: Friends
 
-**Wave 2** *(blocked on Wave 1 completion)*
+**Goal**: The Friends screen stops being a placeholder — a visitor can find people three ways,
+manage requests, and see a real friends list
+**Depends on**: Phase 7
+**Requirements**: FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08
 
-- [x] 01-02-PLAN.md — Tracer: `visitor_profile` (+ `lower(username)` unique index) through drizzle-zod → contracts drift proof → first Neon migration
-
-**Wave 3** *(blocked on Wave 2 completion)*
-
-- [x] 01-03-PLAN.md — Expand: `my_festival` gate-less save join, final full-schema Neon migration, live uniqueness proof
-
-**Notes**: Treat `schema/auth.ts` as CLI-owned/vendored — keep better-auth's `text` id convention and document it. Addresses Pitfalls 1 (org-plugin/identity-model decision), 6 (contract/DB drift), and the new Pitfall 12 (`username`-plugin breaks the Account/VisitorProfile split).
-
-### Phase 2: OTP Auth & Festival Backend API
-
-**Goal**: The NestJS API authenticates visitors passwordlessly via email-OTP, supports first-login profile completion and festival browse/save, and isolates festival-scoped data by `festivalId`
-**Depends on**: Phase 1
-**Requirements**: SEC-01, SEC-02
 **Success Criteria** (what must be TRUE):
 
-  1. better-auth's `emailOTP` plugin is wired into NestJS (instance + catch-all handler at `/api/auth/*`, 6-digit code, ~5-min expiry, built-in request rate-limit) behind a global `AuthGuard`; OTP send/verify plus `GET /api/v1/me`, `POST /api/v1/me/complete-profile`, `GET /api/v1/me/username-availability`, `GET /api/v1/festivals`, `POST /api/v1/festivals/:festivalId/save`, and `GET /api/v1/me/festivals` are reachable against a live dev API.
-  2. **Login-first (SEC-01):** every endpoint is explicitly tagged public vs protected in one deliberate pass (health + OTP send/verify anonymous, everything else protected), captured as an endpoint × auth-annotation table reviewed at phase end.
-  3. **Data isolation (SEC-02):** festival-scoped reads are always constrained by `festivalId`; an automated test proves one festival's tags/overview never appear in another festival's context. Saving/entering a festival is **gate-less** — any authenticated visitor may browse and enter any festival (no 403-on-unsaved); `save` only writes `my_festival`.
-  4. `bodyParser: false` plus re-added JSON parsing is smoke-tested so both an OTP verify POST and a non-auth ts-rest POST (save) receive correct request bodies.
-  5. `username-availability` is advisory (debounced check) while `complete-profile` is the source of truth, catching the unique-index violation as a TOCTOU-safe race guard; email OTP delivery uses an env-configured provider (e.g. Resend via `RESEND_API_KEY`) with a dev console/nodemailer fallback — no secrets committed.
-  6. The app endpoints derive their Zod shapes from `packages/contracts` (composed on Phase 1's drizzle-zod base); better-auth's own OTP routes are deliberately excluded from the contract.
+1. A visitor can send a friend request by entering a quiks-code/handle, by username search, and by
+   scanning another visitor's QR code; their own handle renders as a scannable QR.
+2. Incoming and outgoing requests are visible and can be accepted, declined, or withdrawn, with the
+   list reflecting the result without a manual refresh.
+3. The friends list shows real friends, and ending a friendship removes it from both sides.
+4. Every empty state still names its precondition rather than the absence (the D-11 rule from Phase 6
+   survives contact with real data).
+5. All new strings are in both Lingui catalogs; `username`/`displayName` are never translated.
 
-**Plans**: 6/6 plans executed
-
-**Wave 1**
-
-- [x] 02-01-PLAN.md — Foundation: install auth/email/test deps, memoize env, vitest harness, full drizzle-zod-derived /api/v1 contract surface
-
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 02-02-PLAN.md — Tracer: end-to-end email-OTP → sliding session → protected GET /me against the live dev API (proves guard + bodyParser + prefix wiring)
-
-**Wave 3** *(blocked on Wave 2, parallel)*
-
-- [x] 02-03-PLAN.md — me expansion: complete-profile (23505→409 TOCTOU guard), username-availability, caller-scoped my-festivals
-- [x] 02-04-PLAN.md — festival browse (D-04 shape) + gate-less idempotent save + frequency-2026 seed
-
-**Wave 4** *(blocked on Wave 3)*
-
-- [x] 02-05-PLAN.md — SEC-01 login-first guard proof + endpoint×auth table, SEC-02 cross-tenant denial test, two-POST body-parser proof
-
-**Gap closure** *(post-verification, closes CR-01)*
-
-- [x] 02-06-PLAN.md — Harden gate-less save: catch Postgres 23503 (missing visitor_profile) → clean 409 instead of 500, add contract response + controller branch + regression test
-
-**Notes**: MEDIUM research flag (downgraded 2026-07-30 after verifying current docs) — the community NestJS wrapper (`@thallesp/nestjs-better-auth`, requires `better-auth >= 1.5.0`) **automatically re-applies** body parsing for non-auth routes, so `bodyParser: false` + `AuthModule.forRoot({ auth, bodyParser: {...} })` is the whole wiring; ts-rest handlers (plain NestJS controllers) just consume the re-applied `req.body` — no manual `express.json()` exclusion. The spike now *confirms* rather than *designs*: (1) 2-request body proof (OTP-verify POST to `/api/auth/*` AND ts-rest `save` POST), (2) global-prefix collision — align `/api/v1` (ts-rest) vs `/api/auth` (better-auth) by excluding auth from `setGlobalPrefix` or setting better-auth `basePath`, (3) version-pin `better-auth >= 1.5.0`. Hand-rolled `@All('auth/*path')` catch-all kept as **Plan C** fallback. Addresses Pitfalls 3 (AuthGuard mis-tagging + body-parser), 4 (gate-less entry ≠ dropping `festivalId` isolation), 8 (OTP rate-limit/enumeration), and 11 (username race).
-
-### Phase 3: Mobile App Shell & i18n Foundation
-
-**Goal**: The Expo app exists, talks to the real API through the shared contract, and enforces localization from the first line of UI
-**Depends on**: Phase 2
-**Requirements**: PLAT-02, I18N-01
-**Success Criteria** (what must be TRUE):
-
-  1. `apps/mobile` (Expo Router, RN New Architecture) builds and launches, wiring `lib/auth-client.ts` (better-auth Expo client + `emailOTP` client plugin + `expo-secure-store` session persistence) and `lib/api-client.ts` (ts-rest client bound to `packages/contracts`, forwarding the session cookie) against the live API.
-  2. `Stack.Protected` route groups (`(auth)` / `festivals` / `(festival)`) gate navigation at the layout level, and a splash screen is held until session + selected-festival state resolve so no wrong route flashes on cold start.
-  3. Lingui extraction plus a no-literal-string lint rule are configured and passing before any product screen ships, with real (not stubbed) DE/EN catalogs; language follows device/system locale (ADR-012).
-  4. A single TanStack Query provider is mounted (without persistence this online-assumed slice) so later cacheable content features need no provider-tree rewiring.
-
-**Plans**: 5/6 plans executed
-
-**Wave 1**
-
-- [x] 03-01-PLAN.md — Local dev infra + backend wiring: docker-compose (Postgres 18 + Mailpit), Mailpit OTP transport, better-auth `trustedOrigins`
-- [x] 03-02-PLAN.md — TRACER: Expo app scaffold + Metro/pnpm resolution + Lingui i18n foundation (no-literal-string lint, DE/EN catalogs, D-07 German fallback)
-
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 03-03-PLAN.md — auth-client + api-client (cookie forwarding) + splash-held four-state `Stack.Protected` guard
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 03-04-PLAN.md — (auth) real email-OTP screens + minimal (profile-setup) stub
-
-**Wave 4** *(blocked on Wave 3)*
-
-- [x] 03-05-PLAN.md — festivals list (real `GET /festivals`) + gate-less save→enter + (festival) home placeholder
-
-**Wave 5** *(blocked on Wave 4)*
-
-- [x] 03-06-PLAN.md — dev-build cleartext config + on-device UAT (kill-and-relaunch, real festival, save→enter, DE/EN)
-
-**Notes**: MEDIUM research flags — Lingui in an Expo monorepo, Expo Router async guard behavior, the SecureStore ~2KB size limit, and that better-auth uses one sliding-window session token (no separate refresh endpoint — Pitfall 10). Addresses Pitfalls 5 (auth-flash / deep-link bypass) and 7 (hardcoded strings). Sets up the i18n lint rule Phases 4–6 rely on. Plan 04 builds a minimal profile-setup stub (RESEARCH Open Question 1) so a first-time OTP account is not a dead-end; D-07 resolved via a `uiFallback` param on `resolveUiLocale` (Plan 02), leaving the shared `DEFAULT_LOCALE` unchanged.
+**Notes**: The camera permission for QR scanning is the one native addition — it needs a rationale
+string and a graceful denial path, and `npx expo run:android` from `apps/mobile` before device
+testing. The `['me']` query key is already shared between Profil and Friends; extend rather than
+duplicate. **Blocking/reporting is deliberately NOT in this phase** — see the honest note in
+REQUIREMENTS.md Future Requirements: this ships the ability for strangers to contact you without the
+ability to stop them.
 **UI hint**: yes
 
-### Phase 4: Visitor Auth & Profile Completion
+### Phase 9: Festival Navigation Shell
 
-**Goal**: A visitor can log in passwordlessly via email-OTP, complete their profile on first login, stay logged in across restarts, and log out — with clear, localized errors
-**Depends on**: Phase 3
-**Requirements**: AUTH-01, AUTH-02, AUTH-03, AUTH-04, AUTH-05, IDN-01
+**Goal**: Inside a festival there is a real five-tab bar, its two content tabs are honest
+placeholders, the Friends tab shows friends who saved this festival, and the global first tab is
+finally named `start` everywhere
+**Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
+**Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
+
 **Success Criteria** (what must be TRUE):
 
-  1. A new visitor enters email → receives a 6-digit code → verifies and is taken to profile completion; a new email creates a global `Account` (AUTH-01).
-  2. On first login the visitor sets a required unique `username` (with live availability feedback) + `displayName` (avatar optional) before reaching the app; a returning visitor whose email already has a VisitorProfile skips this step and lands straight in (IDN-01, AUTH-02).
-  3. The visitor can log out, returning to the welcome/auth screen (AUTH-04), and the session persists across a full app force-quit-and-relaunch — they land logged-in on reopen — verified by killing the process, not by hot-reload (AUTH-03).
-  4. OTP edge cases and validation errors (wrong/expired code, resend, change-email, rate-limited requests, username taken) show clear, localized messages (AUTH-05).
-  5. A deep link to a protected route while logged out redirects to the auth flow instead of leaking content.
+1. Entering a festival lands on a five-tab bar — Dashboard · Aktivitäten · Friends · Timetable ·
+   Lageplan — with every tab a real registered route, none decorative.
+2. Timetable and Lageplan each state their precondition in the D-11/D-13 pattern; no dead control
+   fails silently, and the single shared `SoonToast` remains the only coming-soon mechanism.
+3. The festival Friends tab shows exactly the visitor's own friends who saved this festival — an
+   intersection, never a presence or location signal (ADR-014).
+4. The global first tab is `start` in the route, the msgid and the UI, and existing deep links
+   still resolve.
 
-**Plans**: 7/7 plans executed
-
-**Wave 1** *(foundation, parallel)*
-
-- [x] 04-01-PLAN.md — Mobile deps (icons/SVG/image-picker/MMKV/fonts) + package-legitimacy checkpoint + Vitest runner + non-blocking font module
-- [x] 04-02-PLAN.md — Real brand tokens (`packages/ui`) + D-03 server-side name caps (`packages/db` drizzle-zod `.extend()`) + rejection tests (no db:push)
-
-**Wave 2** *(tracer, blocked on Wave 1)*
-
-- [x] 04-03-PLAN.md — TRACER: Welcome/Email routing split + real first-login profile write (live username check + displayName) end-to-end → land in app; returning-user skip + force-quit persistence
-
-**Wave 3** *(blocked on tracer)*
-
-- [x] 04-04-PLAN.md — OTP screen restyle: 6-box auto-submit + unified error box + 60s resend countdown + change-email; `mapOtpError` extracted + unit-tested (AUTH-05)
-
-**Wave 4** *(blocked on Wave 3 — shared Lingui catalogs)*
-
-- [x] 04-05-PLAN.md — Profile polish: device-local avatar (MMKV, keyed by accountId) + AvatarTile + username-suggestion generator (≤20, unit-tested) + full taken-state (IDN-01)
-
-**Wave 5** *(blocked on Wave 4 — shared Lingui catalogs / root guard)*
-
-- [x] 04-06-PLAN.md — Logout (AUTH-04) + deep-link return-to through profile-completion (D-02/SC-5) + non-blocking brand splash restyle (D-04)
-
-**Wave 6** *(gap closure — from 04-VERIFICATION.md)*
-
-- [x] 04-07-PLAN.md — Close verification gaps: add the `@better-auth/expo` server `expo()` plugin so `signOut()` is accepted (no 403) and genuinely revokes server-side (AUTH-04, WINDOWS #2) + apply the registered weight-specific font keys across the 8 restyled screens so brand fonts render (ADR-015, WINDOWS #15)
-
-**Notes**: Verify native session persistence explicitly (Pitfall 2 — `expo-secure-store`, `trustedOrigins`, force-quit test) and re-auth-via-OTP on expiry. Deep-link redirect check covers Pitfall 5. Profile completion is a real VisitorProfile write, not a placeholder. Screen plans serialize on the shared `apps/mobile/locales/{de,en}/messages.po` catalogs (binding DE copy) and the root guard.
+**Notes**: The rename (NAV-03) touches the deep-link capture path — the same area that produced the
+Phase-5 unmatched-route bug, whose real cause was an Expo dev-client launch URL being captured as a
+route. Verify on device with `expo start -c`, not in the node-env runner. Three of the five tabs
+being placeholders is the cost of the user's decision to build the full shell now; NAV-02 is what
+keeps that honest rather than hollow.
 **UI hint**: yes
 
-### Phase 5: Festival Selection & Home
+### Phase 10: Activities Backend
 
-**Goal**: A visitor can browse all festivals, save ones to "Meine", enter any festival gate-lessly, and land on that festival's home with a basic overview they can open
-**Depends on**: Phase 4
-**Requirements**: FEST-01, FEST-02, FEST-03, FEST-04, HOME-01, HOME-02
+**Goal**: The API models activities, their tags and their attendees — festival-scoped, capacity-
+enforced, and provably isolated between festivals
+**Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
+**Requirements**: SEC-03
+
+**Also lands** (consumed by Phase 11): `activity` with tag-or-title, subtitle, description,
+location, `startTime`, `capacity`; the effective tag list (enabled global ∪ festival-own); the
+attendee join/leave endpoints; the optional geo point.
+
 **Success Criteria** (what must be TRUE):
 
-  1. The Festivals tab shows a Meine/Alle segment (default Meine); "Alle" lists every festival with name, dates, and place, visually distinguishing already-saved ones (FEST-01, FEST-02).
-  2. A visitor can save a festival to "Meine Festivals" in one tap; the save persists server-side (`my_festival`) and survives app restart (FEST-03).
-  3. A visitor can enter any festival gate-lessly — saved or browsed, no ticket/approval — landing on that festival's home / main menu (FEST-04 entry, HOME-01).
-  4. The home shows a basic festival overview (identity + key facts like name, dates, place) the visitor can open (HOME-02).
-  5. A visitor can return to the festival list from inside a festival without hitting a dead-end (FEST-04).
+1. Every new festival-scoped table carries `festivalId` and every query filters on it; a cross-tenant
+   test proves festival B's activities never appear in festival A's context (SEC-03, inheriting SEC-02).
+2. Capacity is enforced at the database level, not only in the service — concurrent joins on the last
+   remaining seat cannot both succeed.
+3. The effective tag list resolves as enabled-global ∪ festival-own, and a tag disabled by a festival
+   disappears from that festival's list without affecting any other festival.
+4. The creator is an attendee from creation, and the invariant cannot be violated by leaving.
 
-**Plans**: 11/11 plans executed
+**Notes**: **`packages/db` and `packages/contracts` collision risk is real here** — `admin` builds
+the tag catalog and activation UI (ADR-018) against the same tables. Agree the schema once, land it
+from one stream, and keep the other stream's changes additive. `ActivityTag` has a nullable
+`festivalId` (null = global catalog) — that nullable FK is the one place where the otherwise absolute
+"every tenant table filters on `festivalId`" rule has a deliberate exception, so it needs its own
+test rather than an assumption. `code_review_depth: deep` — migration + tenant scoping.
+**UI hint**: no
 
-**Wave 1** *(parallel — no file overlap)*
+### Phase 11: Activities
 
-- [x] 05-01-PLAN.md — TRACER backend: D-08 master-data vertical (db → contracts → API service projections → seed → migration) + api round-trip/cross-tenant proof (dates/place NULLABLE)
-- [x] 05-02-PLAN.md — Foundation: design tokens (radiiScale + translucent/glass roles) + expo-blur + typed routes
+**Goal**: A visitor can create, discover, join, leave and clone activities inside a festival, and
+open an activity's location as a route in an external maps app
+**Depends on**: Phase 9 (the Aktivitäten tab), Phase 10 (the API)
+**Requirements**: ACT-01, ACT-02, ACT-03, ACT-04, ACT-05, ACT-06
 
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 05-03-PLAN.md — TRACER client endpoint: formatDateRange + active-festival storage + ComingSoonTile + festival home renders real D-08 data end-to-end
-
-**Wave 3** *(parallel — blocked on Wave 2)*
-
-- [x] 05-04-PLAN.md — Owned list primitives: FestivalCard (flat + hero) + SegmentedControl
-- [x] 05-05-PLAN.md — App shell frame: FloatingNav tab bar + (tabs) group + root-guard swap + active-festival cold-start focus
-
-**Wave 4** *(parallel — blocked on Wave 3)*
-
-- [x] 05-06-PLAN.md — Festivals screen: Meine/Alle segment (segment=all param) + one-tap optimistic server-backed save (unwrapOk/throw + dedup)
-- [x] 05-07-PLAN.md — Home tab: lean "nächstes Festival" hero (selectNextFestival) + Meine-Festivals rail + empty state (segment=all CTA)
-
-**Wave 5** *(blocked on Wave 4 — final integration gate)*
-
-- [x] 05-08-PLAN.md — Phase-wide gate: full monorepo typecheck/lint/test + clean mobile build + on-device end-to-end acceptance flow
-
-**Gap closure** *(post-UAT, closes 05-UAT.md gaps; parallel — no file overlap)*
-
-- [x] 05-09-PLAN.md — Tab nav + cold-start restore: reliable see-all→Alle segment (G-05-2), restore only saved festivals (G-05-5b), Back→Home tab fallback (G-05-5a)
-- [x] 05-10-PLAN.md — Deep-link fixes: custom-scheme hostname+path reconstructor (G-05-7) + auth-agnostic capture so authenticated deep links beat the persisted slug (G-05-7b)
-- [x] 05-11-PLAN.md — Cold-start restore regression (G-05-5b-r2): clear the persisted slug on unsaved-festival entry so cold-start lands on Home unless the last-entered festival was saved
-
-**Notes**: `GET /festivals` (browse all) and the joined-vs-saved distinction rely on Phase 2's endpoints; confirm the home/overview read is correctly `festivalId`-scoped (SEC-02) even though entry is gate-less. Reconciliation flagged at planning (D-02/D-03): a global app-shell/tab-bar capability now lands in Phase 5 and HOME-03 (Profile/Friends nav) moves to the global tab bar (filled in Phase 6) — surface at phase transition.
-**UI hint**: yes
-
-### Phase 05.1: quiks Rename & CI v1.0 Rollout (INSERTED)
-
-**Goal:** The codebase carries the quiks name and the binding CI v1.0 end to end — packages/bundle IDs renamed per ADR-024, `packages/ui` tokens swapped to Beere/Amber with Sunset as the only gradient, and hell-first (light) as the default surface in `apps/mobile` — with all existing screens still passing lint, typecheck and tests
-**Requirements**: TBD (ADR-023 CI v1.0, ADR-024 Rename; source: `docs/brand/quiks-ci-v1.md`)
-**Depends on:** Phase 5
-**Plans:** 7/7 plans complete
-
-Plans:
-
-**Wave 1**
-
-- [x] 05.1-01-PLAN.md — Rename: native-identity tracer (scheme ↔ trustedOrigins ↔ bundle ID) + full `@quiks/*` scope rename, MMKV IDs, lint exclusion, wordmark string, CLAUDE.md
-
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 05.1-02-PLAN.md — Local dev infra: `docker-compose.yml` rename + explicit Compose project name, `.env` handover checkpoint, volume reset + migrate + seed
-- [x] 05.1-03-PLAN.md — CI v1.0 foundation tracer: `useColorScheme` → `useTheme()` mode resolution, `tokens.ts` Beere/Amber/Sunset swap (both modes), CI type roles + role-to-font-file resolver
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 05.1-04-PLAN.md — Component re-theme: `createStyles(colors)` migration, mode-aware nav glass + blur tint, Sunset hero gradient on `FestivalCard`, raw-literal tokenisation
-- [x] 05.1-05-PLAN.md — Screen re-theme: `createStyles(colors)` migration across all 8 screens, light-mode-legible status text, last raw literals removed
-- [x] 05.1-06-PLAN.md — Brand mark: shared glyph geometry, font-gated `WordmarkGlyph`, deterministic SVG→PNG icon generator, six regenerated app icons
-
-**Wave 4** *(blocked on Wave 3)*
-
-- [x] 05.1-07-PLAN.md — Phase gate: frozen install + root lint/typecheck/test + mobile export, mandatory Android device acceptance (both modes, auth, deep link, icons), D-15 post-merge rename checklist
-
-### Phase 6: Profile & Friends Placeholders
-
-**Goal**: The festival home links out to a view-only Profile and a well-formed Friends placeholder
-**Depends on**: Phase 5
-**Requirements**: HOME-03, PROF-01, FRND-01
 **Success Criteria** (what must be TRUE):
 
-  1. ~~The festival home provides clear navigation to both Profile and Friends (HOME-03).~~ **Superseded by D-01** (user-locked): navigation to Profile and Friends is delivered by the **global tab bar** (`Start · Festivals · Friends · Mehr`), with Profil as a pushed screen behind Mehr → Konto → Profil — not from the festival home. HOME-03 is satisfied there. Verify against D-01, not against this wording.
-  2. The Profile screen shows the visitor's username, displayName, avatar/initials, and email in a view-only layout, sourced from `GET /api/v1/me` (PROF-01).
-  3. The Friends screen renders a clear, non-broken empty state that reads as intentional, with no real connections yet (FRND-01). ~~framed as "friends who saved this festival"~~ **Superseded by D-10** (user-locked): Friends is **global** and reads no festival state, so the festival-scoped framing no longer applies. Verify against D-10, not against this wording.
-  4. All Profile/Friends strings are wrapped for i18n (no hardcoded placeholder text), verified by the no-literal-string lint rule from Phase 3.
+1. A visitor can create an activity with either a tag or a title — the auto-title rule holds (tag →
+   `tag.label` + optional subtitle; no tag → title required) — plus location, start time and capacity.
+2. The festival's activities are discoverable, and joining or leaving updates the seat count
+   immediately and survives an app restart.
+3. A full activity cannot be joined, and the UI says so rather than failing on submit.
+4. Cloning opens a prefilled create form where only time and place need changing.
+5. An activity with a geo point offers "open route", which hands off to an external maps app; one
+   without a geo point simply shows its free-text location.
+6. All strings are in both catalogs; user-entered activity titles and descriptions are never
+   translated (ADR-012/020).
 
-**Plans**: 10/10 plans executed in 6 waves (06-10 is a gap-closure plan added after UAT)
-
-**Wave 1**
-
-- [x] 06-01-PLAN.md — Tracer: four real tabs + Mehr → Profil push screen on live `GET /me` (D-01)
-- [x] 06-02-PLAN.md — [one-way] shared-package cut: `visitor_profile` identity columns, `meSchema.createdAt`, info tokens, `/me` widening, blocking Drizzle migration (D-04, D-12, D-12a)
-- [x] 06-03-PLAN.md — `lib/` logic: persisted theme override over the 05.1 resolver, age derivation, meta-line builders (D-08a, D-12a, D-04)
-
-**Wave 2** *(blocked on Wave 1)*
-
-- [x] 06-04-PLAN.md — Shared components: `ListRow`, `SettingsSwitch`, the single `SoonToast` mechanism (D-13)
-
-**Wave 3** *(blocked on Wave 2)*
-
-- [x] 06-05-PLAN.md — Mehr screen: five sections, live dark-mode switch, SafeNow callout, logout move with native confirm (D-08, D-08a, D-09)
-- [x] 06-06-PLAN.md — Friends screen: six blocks, per-section empty states, quiks-code card with the real handle (D-10, D-11)
-- [x] 06-07-PLAN.md — Profil screen + `AvatarSunsetRing` + ADR-023/brand-doc amendment (D-02…D-07)
-
-**Wave 4** *(blocked on Wave 3)*
-
-- [x] 06-08-PLAN.md — `complete-profile` optional identity fields + native date picker behind a package-legitimacy checkpoint (D-12, D-12a)
-
-**Wave 5** *(blocked on Wave 4)*
-
-- [x] 06-09-PLAN.md — Lingui catalogs, uncached monorepo gate, SC reconciliation, device UAT (D-14)
-
-**Wave 6** *(gap closure — UAT G-06-5, blocker)*
-
-- [x] 06-10-PLAN.md — Register `Intl.PluralRules` (`@formatjs/intl-pluralrules`) at a custom Expo Router entry so the Profile screen stops crashing on Hermes; wiring guard test + device confirmation
-
-**Notes**: Placeholder text still counts as shipped shell UI — do not skip i18n wrapping. `username`/`displayName` are user-generated and are NOT translated (ADR-012/020).
-
-**Success-criteria reconciliation (planning, 2026-08-11 — user-locked, do not re-litigate):** SC-1 is superseded by **D-01** — navigation to Profile and Friends is delivered by the global tab bar (`Start · Festivals · Friends · Mehr`, Profil as a pushed screen behind Mehr → Konto → Profil), NOT from the festival home; HOME-03 is satisfied there. SC-3 is superseded by **D-10** — Friends is global and reads no festival state, so the "friends who saved this festival" framing no longer applies. Verify this phase against D-01/D-10, not against the original SC wording. Phase 6 therefore ships **three** screens (Friends, Mehr, Profil) plus a `packages/db` → `packages/contracts` → `apps/api` identity-field cut (D-12/D-12a) pulled forward from IDN-02.
+**Notes**: The geo point is a **one-off, opt-in capture** for route handoff — it is emphatically not
+presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
+user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
 
-## Progress
+### Phase 12: Activity Lobby Chat
 
-**Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
+**Goal**: Attendees of an activity get a live group chat for it, which survives reconnects and ends
+when they leave
+**Depends on**: Phase 11
+**Requirements**: CHAT-01, CHAT-02, CHAT-03
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 1. Identity Schema & Auth Foundation | 3/3 | Complete    | 2026-07-30 |
-| 2. OTP Auth & Festival Backend API | 6/6 | Complete    | 2026-08-02 |
-| 3. Mobile App Shell & i18n Foundation | 6/6 | Complete    | 2026-08-04 |
-| 4. Visitor Auth & Profile Completion | 7/7 | Complete    | 2026-08-05 |
-| 5. Festival Selection & Home | 11/11 | Complete    | 2026-08-09 |
-| 05.1. quiks Rename & CI v1.0 Rollout | 7/7 | Complete    | 2026-08-11 |
-| 6. Profile & Friends Placeholders | 10/10 | Complete    | 2026-08-12 |
+**Success Criteria** (what must be TRUE):
+
+1. Joining an activity grants access to exactly that activity's group chat; there is no 1:1 DM path
+   anywhere in the API surface (ADR-020) — proven by an endpoint-inventory assertion, not by
+   inspection.
+2. A message sent by one attendee appears live for another attendee without a manual refresh.
+3. After a connection drop and reconnect, the recent history loads and no message is silently lost.
+4. Leaving an activity revokes chat access — both the socket subscription and the history read.
+
+**Notes**: **Turn `research` ON for this phase.** This is the only genuinely new territory in the
+milestone: NestJS WebSocket gateway + Redis adapter (ADR-010), authentication of the socket
+handshake, room scoping by activity, and reconnect/backfill semantics. None of it has a precedent in
+this codebase. Also settle explicitly what happens with the app backgrounded — without NOTF-01 (out
+of scope) chat is foreground-only in practice, and the UI should not imply otherwise.
+`code_review_depth: deep` — a socket that authorizes by room membership is an authorization surface.
+**UI hint**: yes
+
+## Carried Into Later Milestones
+
+Not scheduled in v1.1, tracked so it is not rediscovered:
+
+- **FRND-09 block/report** — v1.1 ships stranger-initiated contact without a way to stop it.
+  Schedule before the first real user cohort.
+- **NOTF-01 push** — friend requests and chat messages are invisible while the app is closed.
+- **`/gsd-ui-review 06`** — never run; the 6-pillar audit of the Phase-6 screens.
+- **iOS device verification** — deferred since Phase 3 (no Mac/Xcode).
+- **`.planning/WINDOWS.md`** — 26 open entries, largely stale; needs a reconciliation pass.

@@ -1,125 +1,115 @@
-# Requirements: festipal — Visitor Shell
+# Requirements: quiks Mobile — v1.1 Activities & Friends
 
-**Defined:** 2026-07-29
-**Reconciled:** 2026-07-30 with the binding concept phase (docs/concept/04–10; ADR-009 auth, ADR-014 tenant boundary, ADR-016 identity, ADR-020 scope)
-**Core Value:** A festival visitor can get into the app, connect to their festival, and reach everything about their festival experience from one home screen.
+> Scoped to milestone **v1.1**. The v1.0 "Visitor Shell" requirements shipped and are archived in
+> [`milestones/v1.0-REQUIREMENTS.md`](./milestones/v1.0-REQUIREMENTS.md).
+>
+> Grounded in decisions that are already binding — do not re-litigate without an ADR:
+> **ADR-014** friendships are user-global and there is no presence/"who is here" GPS ·
+> **ADR-017** the `Activity` / `ActivityTag` model, lobby chat per activity, one-off opt-in geo point ·
+> **ADR-020** no 1:1 DM between users, ever · **ADR-010** realtime via NestJS WS gateway + Redis.
 
-## v1 Requirements
+## v1.1 Requirements
 
-Requirements for the visitor-shell slice (navigable, online, mobile-first, login-first). Each maps to roadmap phases.
+### Visibility & Profile Projection (VIS)
 
-### Authentication (passwordless email-OTP)
+Resolves **T-06-06**, the open obligation carried out of v1.0. This is the first milestone in which
+an endpoint serves a *foreign* profile, so the projection split is a prerequisite, not a polish item.
 
-- [x] **AUTH-01**: A visitor enters their email, receives a 6-digit one-time code, and is logged in by entering it; a new email creates a global `Account` (no password stored)
-- [x] **AUTH-02**: A returning visitor (email already has a VisitorProfile) is taken straight into the app after OTP, skipping profile setup
-- [x] **AUTH-03**: A visitor's session is long-lived and auto-renews so they stay logged in across app restarts; on expiry they re-authenticate via OTP
-- [x] **AUTH-04**: A visitor can log out
-- [x] **AUTH-05**: OTP errors and edge cases (wrong/expired code, resend, change email, rate-limited requests) are shown clearly and localized
+- [ ] **VIS-01**: A visitor sees every field on their own profile; a *foreign* profile returns only the friend-view projection — no `birthDate`, no e-mail
+- [ ] **VIS-02**: Search results and request previews use that same friend-view projection — there is no second code path through which owner-only fields can escape
 
-### Identity & Profile
+### Friends (FRND)
 
-- [x] **IDN-01**: On first login, a visitor completes their VisitorProfile with a required unique `username` (live availability check) and `displayName`; `avatar` is optional (upload/camera, else initials tile)
-- [x] **PROF-01**: A visitor can open a Profile screen showing their username, displayName, avatar/initials, and email (view-only)
+- [ ] **FRND-02**: A visitor can send a friend request via quiks-code / handle
+- [ ] **FRND-03**: A visitor can find someone by username search and send a request
+- [ ] **FRND-04**: A visitor can display their own handle as a QR code and scan someone else's to send a request
+- [ ] **FRND-05**: A visitor can see incoming and outgoing requests and accept, decline, or withdraw them
+- [ ] **FRND-06**: A visitor sees their friends list; friendships are user-global and survive switching festivals (ADR-014)
+- [ ] **FRND-07**: Inside a festival, a visitor sees which of their friends have saved that festival — the intersection only, never a presence signal (ADR-014)
+- [ ] **FRND-08**: A visitor can end a friendship
 
-### Festival Selection
+### Activities (ACT)
 
-- [x] **FEST-01**: A visitor can browse all festivals, each showing name, dates, and place
-- [x] **FEST-02**: The Festivals tab offers a Meine/Alle segment (default Meine), distinguishing saved festivals
-- [x] **FEST-03**: A visitor can save a festival to "Meine Festivals" in one tap
-- [x] **FEST-04**: A visitor can enter a festival gate-lessly (no ticket/approval) and return to the list without a dead-end
+- [ ] **ACT-01**: A visitor can create an activity with either a tag or a title, plus optional subtitle and description, a location, a start time, and a capacity
+- [ ] **ACT-02**: A visitor can discover the activities of the festival they are in
+- [ ] **ACT-03**: A visitor can join and leave an activity up to its capacity; the creator is an attendee from the start
+- [ ] **ACT-04**: A visitor can clone an existing activity — fields prefilled, only time and place changed
+- [ ] **ACT-05**: An activity's location is free text plus an optional one-off geo point that opens a route in an external maps app (explicitly not presence tracking, ADR-017)
+- [ ] **ACT-06**: The selectable tag list is the festival's enabled global tags ∪ its own custom tags
 
-### Home & Navigation
+### Lobby Chat (CHAT)
 
-- [x] **HOME-01**: After entering a festival, the visitor lands on that festival's main menu / home
-- [x] **HOME-02**: The home shows a basic festival overview (identity + key facts) the visitor can open
-- [x] **HOME-03**: The home provides navigation to Profile and Friends
+- [ ] **CHAT-01**: Attendees of an activity get a group chat scoped to that activity — never a 1:1 DM (ADR-020)
+- [ ] **CHAT-02**: Messages arrive live; after a reconnect the recent history loads
+- [ ] **CHAT-03**: Leaving an activity ends chat access to it
 
-### Friends (placeholder)
+### Festival Navigation (NAV)
 
-- [x] **FRND-01**: A visitor can open a Friends screen with a clear, non-broken empty state (friends who saved the same festival — none yet)
+- [ ] **NAV-01**: Inside a festival, a five-tab bar: Dashboard · Aktivitäten · Friends · Timetable · Lageplan
+- [ ] **NAV-02**: The Timetable and Lageplan tabs are honest placeholders in the D-11/D-13 pattern — each names its precondition instead of simulating a working surface
+- [ ] **NAV-03**: The first global tab is `start` in the route as well as in the UI
 
-### Platform & Security
+### Security (SEC)
 
-- [x] **PLAT-01**: A single global `Account` underpins identity (`Account` → `VisitorProfile`); app users are global and NOT festival org-members
-- [x] **PLAT-02**: The Expo mobile app (`apps/mobile`) exists and consumes the real API via `packages/contracts`
-- [x] **SEC-01**: Login-first — all app functionality requires authentication (no anonymous browsing)
-- [x] **SEC-02**: Festival-scoped data is isolated by `festivalId` (one festival's data never leaks into another's context); saving/entering a festival is gate-less, not an access gate
-- [x] **I18N-01**: All UI-chrome strings are localizable via Lingui (no hardcoded strings); user-generated content (`username`/`displayName`) is not translated
+- [ ] **SEC-03**: Every new festival-scoped table (`activity`, the tag junction, `activity_message`) is `festivalId`-isolated, each with its own cross-tenant test — the SEC-02 obligation inherited from v1.0
 
-## v2 Requirements
+## Future Requirements
 
-Deferred to a future release. Tracked but not in the current roadmap.
+Deferred beyond v1.1. Tracked, not scheduled.
 
-### Onboarding & Auth
-
-- **AUTH-06**: Save a festival via shared link / ticket / QR scan
-- **AUTH-07**: Social login / SSO (Google/Apple) — 2027, schema kept account-linking-ready
-- **AUTH-08**: Staff/admin email+password login + invite/reset flows
-
-### Profile & Social
-
-- **PROF-02**: Edit profile (displayName, avatar) + manage `socials[]` + `socialsVisibility`
-- **FRND-02**: Friend search, requests, and connections
-- **FRND-03**: "Who's here" surfaced on an interactive map via opt-in location sharing (no GPS in MVP)
-- **IDN-02**: `birthDate` / `gender` / Flinta filter + signup safety disclaimer (pending Birgit's concept)
-
-### Platform
-
-- **TICKET-01**: `FestivalTicket` display-only QR (scan / paste / upload), offline-capable at the gate
-- **CAMP-01**: `MyFestival.camp` free-text UI
-- **OFF-01**: Offline-first behavior — persisted session + cached festival overview survive no connectivity
-- **THEME-01**: Per-festival color theming on the festival home (light + dark)
-- **NOTF-01**: Push notifications
+- **FRND-09**: Block and report a user. **Flagged at scoping and consciously deferred.** Note the exposure this creates: v1.1 is the first release in which a stranger can send you a request and find you by username, and it ships without any way to stop them. Schedule this before, not after, the first real user cohort.
+- **NOTF-01**: Push notifications for friend requests and chat messages. Without it a visitor learns of neither while the app is closed — v1.1 chat is therefore foreground-only in practice.
+- **ActInterest** — "friends are going" on timetable acts (ADR-017 §4); depends on the timetable, which is not in this milestone.
+- **FRND-03b**: Presence / "friends on the map" via opt-in location sharing — the later ADR-008/ADR-014 stage, needs its own location, visibility and retention rules.
+- **PROF-02**: Edit profile (`displayName`, avatar) and manage `socials[]` + `socialsVisibility`.
+- **IDN-02**: Per-field visibility, age threshold, Flinta filter, signup safety disclaimer — pending Birgit's concept. Overlaps the VIS surface; VIS-01/02 deliberately solve only the projection split, not the policy question.
 
 ## Out of Scope
 
-Explicitly excluded from this milestone. Documented to prevent scope creep.
+Explicitly excluded from v1.1.
 
-| Feature | Reason |
-|---------|--------|
-| Activities / timetable-social (ADR-017) | Core differentiator; its own milestone after the shell |
-| Timetable | Deep content feature; shell shows basic overview only |
-| Site map / Lageplan (ADR-019) | Deep content feature; deferred |
-| News / updates | Deep content feature; deferred |
-| Cashless (embedded WebView) | Not needed for entry/home; per-festival URL feature, later phase |
-| Help-/lend-board (ex-Tauschbörse, ADR-020) | Post-MVP differentiator |
-| Activity lobby chat / realtime | Belongs with activities; realtime scope deferred |
-| Admin web (`apps/admin`), two-tier admin (ADR-018) | Organizer side; visitor app is the priority this milestone |
-| Password login for visitors | Visitors are OTP-only per ADR-009; password is staff/admin-only |
+| Item | Reason |
+|---|---|
+| Timetable and Lageplan *content* | Only the tab shells ship (NAV-02). The content features are their own milestone. |
+| 1:1 direct messages | Permanently excluded by ADR-020 — chat exists only per activity. |
+| Presence / "who is here" via GPS | Excluded by ADR-014. FRND-07 is a saved-festival intersection, not a location signal. |
+| Cashless | Per-festival embedded URL (ADR-011); belongs with the festival dashboard content. |
+| Help/lend board (ex-Tauschbörse, ADR-020) | Post-MVP differentiator, own milestone. |
+| Admin-side tag catalog management | Belongs to the `admin` workstream (ADR-018). Mobile only *consumes* the effective tag list. |
+| Offline creation of activities or chat messages | ADR: activity create/join and chat send are online-only. Caching the read side is in scope where it is free. |
 
 ## Traceability
 
-Which phases cover which requirements.
+Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PLAT-01 | Phase 1 | Complete |
-| SEC-01 | Phase 2 | Complete |
-| SEC-02 | Phase 2 | Complete |
-| PLAT-02 | Phase 3 | Complete |
-| I18N-01 | Phase 3 | Complete |
-| AUTH-01 | Phase 4 | Complete |
-| AUTH-02 | Phase 4 | Complete |
-| AUTH-03 | Phase 4 | Complete |
-| AUTH-04 | Phase 4 | Complete |
-| AUTH-05 | Phase 4 | Complete |
-| IDN-01 | Phase 4 | Complete |
-| FEST-01 | Phase 5 | Complete |
-| FEST-02 | Phase 5 | Complete |
-| FEST-03 | Phase 5 | Complete |
-| FEST-04 | Phase 5 | Complete |
-| HOME-01 | Phase 5 | Complete |
-| HOME-02 | Phase 5 | Complete |
-| HOME-03 | Phase 6 | Complete |
-| PROF-01 | Phase 6 | Complete |
-| FRND-01 | Phase 6 | Complete |
+| VIS-01 | Phase 7 | Planned |
+| VIS-02 | Phase 7 | Planned |
+| FRND-02 | Phase 8 | Planned |
+| FRND-03 | Phase 8 | Planned |
+| FRND-04 | Phase 8 | Planned |
+| FRND-05 | Phase 8 | Planned |
+| FRND-06 | Phase 8 | Planned |
+| FRND-08 | Phase 8 | Planned |
+| FRND-07 | Phase 9 | Planned |
+| NAV-01 | Phase 9 | Planned |
+| NAV-02 | Phase 9 | Planned |
+| NAV-03 | Phase 9 | Planned |
+| SEC-03 | Phase 10 | Planned |
+| ACT-01 | Phase 11 | Planned |
+| ACT-02 | Phase 11 | Planned |
+| ACT-03 | Phase 11 | Planned |
+| ACT-04 | Phase 11 | Planned |
+| ACT-05 | Phase 11 | Planned |
+| ACT-06 | Phase 11 | Planned |
+| CHAT-01 | Phase 12 | Planned |
+| CHAT-02 | Phase 12 | Planned |
+| CHAT-03 | Phase 12 | Planned |
 
-**Coverage:**
-
-- v1 requirements: 20 total
-- Mapped to phases: 20 ✓
-- Unmapped: 0
-
----
-*Requirements defined: 2026-07-29*
-*Last updated: 2026-07-30 after reconciliation with the binding concept phase*
+**Note on backend phases.** Phases 7 and 10 carry few requirement IDs (VIS-01/02 and SEC-03) but
+substantial work — the friendship model, request lifecycle and username search in Phase 7, and the
+whole activity/tag/attendee model in Phase 10. Requirements here are written user-centrically
+("A visitor can…"), so they are only *observable* once the UI phase lands. The backend phases'
+"Also lands" blocks in ROADMAP.md record that substrate explicitly so a later verification pass does
+not mistake a thin requirement list for a thin phase.
