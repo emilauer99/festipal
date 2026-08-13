@@ -1,9 +1,9 @@
 ---
 status: complete
 phase: 08-friends
-source: [08-VERIFICATION.md]
+source: [08-VERIFICATION.md, quick/260813-o08-friends-tab-ux-refinements-phase-8-follo/260813-o08-SUMMARY.md]
 started: 2026-08-13T14:30:00Z
-updated: "2026-08-13T15:55:00Z"
+updated: "2026-08-13T18:05:00Z"
 ---
 
 ## Preconditions
@@ -14,6 +14,16 @@ updated: "2026-08-13T15:55:00Z"
 
 - Two real accounts. OTP sign-in codes are readable in Mailpit at `http://localhost:8025`.
 - The API must be running on port 8081 against the local Docker Postgres.
+
+## Runde 2 — Quick-Task 260813-o08 (Friends-Tab UX-Refinements)
+
+Tests 1–8 wurden am 2026-08-13 vollständig bestanden und bleiben unangetastet. Tests 9–14
+decken die nach der UAT gelandeten Änderungen aus `quick/260813-o08` ab (Commits `0aa5563`,
+`c3384ff`, `c0ca870`).
+
+- **Kein nativer Rebuild nötig** — der Quick-Task hat nur JS/TS geändert (keine neuen nativen
+  Module). Ein Metro-Reload (`r` im Metro-Fenster) reicht.
+- Für Test 14 wieder zwei echte Accounts + Mailpit (`http://localhost:8025`) und die API auf 8081.
 
 ## Current Test
 
@@ -61,10 +71,42 @@ result: pass
 expected: While running tests 1–5, confirm all three hold — no request is ever sent without an explicit tap on that specific person; open requests carry no urgency framing (bare count, no timestamps, no alarm colour); the crew list has no ordering other than alphabetical (no proximity or engagement signal).
 result: pass
 
+### 9. Inline-Suchtreffer statt Block-Swap, gedeckelt bei 10 (D1)
+
+expected: Trefferblock rendert direkt unter dem Suchfeld; quiks-Code-Karte, "Deine Crew" und "Anfragen" bleiben gleichzeitig sichtbar/scrollbar darunter (D-03-Blockverdrängung rückgängig); maximal 10 Trefferzeilen, auch wenn der Server bis zu 20 liefert.
+result: pass
+
+### 10. Clear-(X)-Button im Suchfeld (D2)
+
+expected: Das X-Icon erscheint nur, sobald Text im Feld steht; ein Tap leert das Feld, gibt ihm den Fokus zurück (Tastatur bleibt offen) und der Trefferblock verschwindet.
+result: pass
+
+### 11. Anfragen hinter "Deine Crew" (D3)
+
+expected: In der Scroll-Reihenfolge steht "Anfragen" UNTER "Deine Crew", nicht darüber.
+result: pass
+
+### 12. Kompakte Request-Rows + kleinere Sub-Headings (D4)
+
+expected: Anfragen-Zeilen sind sichtbar kompakter als Crew-Zeilen (kleinerer Avatar, weniger Padding); Aktionen liegen nebeneinander als 36pt-Pill "Annehmen" + 36pt Icon-Button (Ablehnen/Zurückziehen ohne Textlabel); beide sind trotz Größe zuverlässig einzeln treffbar (kein Fehlgriff auf den Nachbarn); "An dich"/"Von dir" rendern deutlich kleiner als "Anfragen"/"Deine Crew".
+result: pass
+
+### 13. QR-Button-Beschriftung (D5)
+
+expected: Der Button auf der quiks-Code-Karte liest "QR zeigen/scannen" (DE) bzw. "Show or scan QR" (EN).
+result: pass
+source: automated
+coverage_id: D5
+
+### 14. Scan → Auto-Return, nur bei Erfolg (D6)
+
+expected: Nach erfolgreichem Add/Annehmen über die Scan-Bestätigungskarte springt die App automatisch zurück auf den Friends-Tab. Gegenprobe im Flugmodus: derselbe Tap bleibt auf dem Scan-Screen stehen und zeigt die Fehlerzeile (kein Rücksprung). Nach Schließen des QR-Screens läuft die Kamera nicht weiter.
+result: pass
+
 ## Summary
 
-total: 8
-passed: 8
+total: 14
+passed: 14
 issues: 0
 pending: 0
 skipped: 0
