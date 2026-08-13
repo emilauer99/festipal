@@ -39,3 +39,22 @@ export const SEARCH_MIN_CHARS = 2;
 
 /** Debounce window between a keystroke and the `GET /visitors?q=` it triggers. */
 export const SEARCH_DEBOUNCE_MS = 300;
+
+/**
+ * The render ceiling for search hits (quick-260813-o08 D-A). This is a
+ * client-side presentation limit only — the server already caps the body at
+ * 20 independently of this value, and no `limit` parameter exists on
+ * `searchVisitors` in `packages/contracts`. A real server-side cap would be a
+ * contract change shared with the `admin` workstream; this constant exists so
+ * the screen never renders more than a handful of rows without needing one.
+ */
+export const SEARCH_MAX_RESULTS = 10;
+
+/**
+ * Trims a hits list down to `SEARCH_MAX_RESULTS`, keeping the first elements
+ * in their original order. Side-effect-free — the input array is never
+ * mutated, only read from.
+ */
+export function capSearchHits<T>(hits: readonly T[]): T[] {
+  return hits.slice(0, SEARCH_MAX_RESULTS);
+}

@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Check, Search } from 'lucide-react-native';
+import { Check, Search, X } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { Friend, FriendRequestItem, VisitorSummary } from '@quiks/contracts';
 
@@ -14,7 +14,12 @@ import { RelationAction } from '../../components/RelationAction';
 import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
-import { friendKeys, SEARCH_DEBOUNCE_MS, SEARCH_MIN_CHARS } from '../../lib/friend-queries';
+import {
+  capSearchHits,
+  friendKeys,
+  SEARCH_DEBOUNCE_MS,
+  SEARCH_MIN_CHARS,
+} from '../../lib/friend-queries';
 import { sortFriendsByDisplayName } from '../../lib/friend-sort';
 import { encodeQuiksCodePayload } from '../../lib/qr-payload';
 import { useFriendMutations } from '../../lib/use-friend-mutations';
@@ -205,20 +210,29 @@ export default function FriendsScreen() {
     if (searchQuery.data.status !== 200) {
       return { kind: 'error', variant: 'response', retry: () => void searchQuery.refetch() };
     }
-    return { kind: 'data', hits: searchQuery.data.body };
+    // capSearchHits is the ONLY place the 200 body gets trimmed — nowhere in
+    // the JSX below applies a second, independent limit (quick-260813-o08
+    // Task 1, D-A: a render ceiling, not a contract change).
+    return { kind: 'data', hits: capSearchHits(searchQuery.data.body) };
   }
 
   const searchState = computeSearchState();
 
   /**
-   * D-03 — the instant the field holds >=1 character (immediate `query`,
-   * NOT the debounced value: the mode switch reacts to typing itself, not
-   * to the request it eventually fires), the quiks-code card, Requests and
-   * Crew blocks are UNMOUNTED from the scroll flow (conditional render, not
-   * `display`/`opacity`) and replaced by the results area below. Clearing
-   * the field restores all three exactly as they were.
+   * quick-260813-o08 — reverses 08-01's D-03 block swap on explicit user
+   * request: the results area now renders ADDITIONALLY to the quiks-code
+   * card, Requests and Crew blocks, never IN PLACE of them. This flag only
+   * decides whether the results area exists at all (immediate `query`, NOT
+   * the debounced value — the area should appear the instant typing starts,
+   * not once the request eventually fires); the other three blocks below
+   * render unconditionally now.
    */
   const isSearching = query.trim().length > 0;
+
+  function clearSearch() {
+    setQuery('');
+    searchInputRef.current?.focus();
+  }
 
   function computeQuiksCodeState(): QuiksCodeViewState {
     if (meQuery.status === 'pending') return { kind: 'loading' };
@@ -320,11 +334,25 @@ export default function FriendsScreen() {
             placeholderTextColor={colors.textMuted}
             accessibilityLabel={t`Search @username`}
           />
+          {/* quick-260813-o08 Task 1 (6) — only present once the field holds
+              text; clears the input and returns focus to it via the existing
+              `focusSearch` ref, so the results area below disappears with it. */}
+          {query.length > 0 ? (
+            <Pressable
+              onPress={clearSearch}
+              accessibilityRole="button"
+              accessibilityLabel={t`Clear search`}
+              hitSlop={12}
+            >
+              <X size={SEARCH_ICON_SIZE} color={colors.textMuted} strokeWidth={2} />
+            </Pressable>
+          ) : null}
         </View>
 
-        {/* D-03 — the results area is the ONLY thing that renders below the
-            search field while `isSearching`; all five E1 states share this
-            one slot (hint · loading · error · empty · populated). */}
+        {/* quick-260813-o08 — the results area now renders ADDITIONALLY to
+            the quiks-code card, Requests and Crew blocks below, not in their
+            place; all five E1 states still share this one slot (hint ·
+            loading · error · empty · populated). */}
         {isSearching ? (
           <View style={styles.resultsArea}>
             {searchState.kind === 'idle' ? (
@@ -344,8 +372,8 @@ export default function FriendsScreen() {
                 <Text style={[styles.error, { fontFamily: bodySmFont }]}>
                   {searchState.variant === 'transport' ? (
                     <Trans>
-                      Can't reach the server — make sure your device is on the same Wi-Fi as the
-                      dev API.
+                      Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                      API.
                     </Trans>
                   ) : (
                     <Trans>Can't load results — check your connection and try again.</Trans>
@@ -383,34 +411,129 @@ export default function FriendsScreen() {
           </View>
         ) : null}
 
-        {/* D-03 — unmounted (not just hidden) while `isSearching`, restored
-            exactly as-is once the field is cleared. */}
-        {isSearching ? null : (
-          <>
-            {/* UI-SPEC #50 — the project-wide plain "Loading…" text pattern; ONE
-                query means ONE loading surface, never one per block. */}
-            {quiksCodeState.kind === 'loading' ? (
+        {/* quick-260813-o08 — these three blocks now render UNCONDITIONALLY;
+            the 08-01 D-03 swap that unmounted them while `isSearching` is
+            reversed. */}
+        <>
+          {/* UI-SPEC #50 — the project-wide plain "Loading…" text pattern; ONE
+              query means ONE loading surface, never one per block. */}
+          {quiksCodeState.kind === 'loading' ? (
+            <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+              <Trans>Loading your quiks code…</Trans>
+            </Text>
+          ) : null}
+
+          {/* UI-SPEC #51 — the existing, word-for-word transport-error copy plus
+                one Retry, identical to the Profil screen's; no new wording is
+                invented for this surface. */}
+          {quiksCodeState.kind === 'error' ? (
+            <View style={styles.stateBlock}>
+              <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+                {quiksCodeState.variant === 'transport' ? (
+                  <Trans>
+                    Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                    API.
+                  </Trans>
+                ) : (
+                  <Trans>Can't load your profile — check your connection and try again.</Trans>
+                )}
+              </Text>
+              <Pressable style={styles.retryButton} onPress={quiksCodeState.retry}>
+                <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                  <Trans>Retry</Trans>
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {/* UI-SPEC #52 — the one surface on this screen that shows REAL data. */}
+          {quiksCodeState.kind === 'data' ? (
+            <View style={styles.codeCard}>
+              <View style={styles.codeCardBody}>
+                <View style={styles.codeCardText}>
+                  <Text style={[styles.codeCardTitle, { fontFamily: cardTitleFont }]}>
+                    <Trans>Your quiks code</Trans>
+                  </Text>
+                  {/* UI-SPEC #49 — a missing handle omits this LINE entirely. It
+                        hangs on the value's own truthiness, never on a fallback
+                        string, so no empty slot and no placeholder dash can appear
+                        where an identity belongs. UI-SPEC #56 / ADR-012/020: the
+                        handle is single-line, tail-truncated and never translated. */}
+                  {quiksCodeState.username ? (
+                    <Text
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                      style={[styles.handle, { fontFamily: handleFont }]}
+                    >
+                      @{quiksCodeState.username}
+                    </Text>
+                  ) : null}
+                  <Text style={[styles.codeCardBodyText, { fontFamily: bodySmFont }]}>
+                    <Trans>Show it, scan it, done — that's how you add each other.</Trans>
+                  </Text>
+                </View>
+
+                {/* UI-SPEC #52/D-13 — a real, small mark once a handle
+                      exists; omitted (not a broken/empty graphic) when it
+                      doesn't, same omit-if-empty rule the handle line above
+                      already follows. */}
+                {quiksCodeState.username ? (
+                  <View style={styles.qrColumn}>
+                    <View style={styles.qrMarkCard}>
+                      <QRMark
+                        payload={encodeQuiksCodePayload(quiksCodeState.username)}
+                        size={CODE_CARD_MARK_SIZE}
+                      />
+                    </View>
+                  </View>
+                ) : null}
+              </View>
+
+              {/* UI-SPEC § Color item 4 — now a full-opacity CTA (Pattern
+                    A dampening removed, D-13): the QR flow is real. */}
+              <Pressable
+                style={styles.qrButton}
+                onPress={() => router.push('/friends-qr')}
+                accessibilityRole="button"
+                accessibilityLabel={t`Show QR`}
+              >
+                <Text style={[styles.qrButtonText, { fontFamily: buttonFont }]}>
+                  <Trans>Show QR</Trans>
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
+
+          {/* D-09/D-11/D-12 — the third block, moved ahead of Requests on
+                explicit user request (quick-260813-o08). Every row is the
+                SAME `PersonRow` search hits and requests already use; only
+                crew rows carry `onPress` (search hits and request rows do
+                not — D-09). The 200 body is pre-sorted by
+                `sortFriendsByDisplayName` inside `computeCrewState`. */}
+          <View style={styles.section}>
+            <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
+              <Trans>Your crew</Trans>
+            </Text>
+
+            {crewState.kind === 'loading' ? (
               <Text style={[styles.helper, { fontFamily: bodyFont }]}>
-                <Trans>Loading your quiks code…</Trans>
+                <Trans>Loading your crew…</Trans>
               </Text>
             ) : null}
 
-            {/* UI-SPEC #51 — the existing, word-for-word transport-error copy plus
-                one Retry, identical to the Profil screen's; no new wording is
-                invented for this surface. */}
-            {quiksCodeState.kind === 'error' ? (
+            {crewState.kind === 'error' ? (
               <View style={styles.stateBlock}>
                 <Text style={[styles.error, { fontFamily: bodySmFont }]}>
-                  {quiksCodeState.variant === 'transport' ? (
+                  {crewState.variant === 'transport' ? (
                     <Trans>
-                      Can't reach the server — make sure your device is on the same Wi-Fi as the
-                      dev API.
+                      Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                      API.
                     </Trans>
                   ) : (
-                    <Trans>Can't load your profile — check your connection and try again.</Trans>
+                    <Trans>Can't load your crew — check your connection and try again.</Trans>
                   )}
                 </Text>
-                <Pressable style={styles.retryButton} onPress={quiksCodeState.retry}>
+                <Pressable style={styles.retryButton} onPress={crewState.retry}>
                   <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
                     <Trans>Retry</Trans>
                   </Text>
@@ -418,220 +541,128 @@ export default function FriendsScreen() {
               </View>
             ) : null}
 
-            {/* UI-SPEC #52 — the one surface on this screen that shows REAL data. */}
-            {quiksCodeState.kind === 'data' ? (
-              <View style={styles.codeCard}>
-                <View style={styles.codeCardBody}>
-                  <View style={styles.codeCardText}>
-                    <Text style={[styles.codeCardTitle, { fontFamily: cardTitleFont }]}>
-                      <Trans>Your quiks code</Trans>
-                    </Text>
-                    {/* UI-SPEC #49 — a missing handle omits this LINE entirely. It
-                        hangs on the value's own truthiness, never on a fallback
-                        string, so no empty slot and no placeholder dash can appear
-                        where an identity belongs. UI-SPEC #56 / ADR-012/020: the
-                        handle is single-line, tail-truncated and never translated. */}
-                    {quiksCodeState.username ? (
-                      <Text
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                        style={[styles.handle, { fontFamily: handleFont }]}
-                      >
-                        @{quiksCodeState.username}
-                      </Text>
-                    ) : null}
-                    <Text style={[styles.codeCardBodyText, { fontFamily: bodySmFont }]}>
-                      <Trans>Show it, scan it, done — that's how you add each other.</Trans>
-                    </Text>
-                  </View>
-
-                  {/* UI-SPEC #52/D-13 — a real, small mark once a handle
-                      exists; omitted (not a broken/empty graphic) when it
-                      doesn't, same omit-if-empty rule the handle line above
-                      already follows. */}
-                  {quiksCodeState.username ? (
-                    <View style={styles.qrColumn}>
-                      <View style={styles.qrMarkCard}>
-                        <QRMark
-                          payload={encodeQuiksCodePayload(quiksCodeState.username)}
-                          size={CODE_CARD_MARK_SIZE}
-                        />
-                      </View>
-                    </View>
-                  ) : null}
-                </View>
-
-                {/* UI-SPEC § Color item 4 — now a full-opacity CTA (Pattern
-                    A dampening removed, D-13): the QR flow is real. */}
-                <Pressable
-                  style={styles.qrButton}
-                  onPress={() => router.push('/friends-qr')}
-                  accessibilityRole="button"
-                  accessibilityLabel={t`Show QR`}
-                >
-                  <Text style={[styles.qrButtonText, { fontFamily: buttonFont }]}>
-                    <Trans>Show QR</Trans>
-                  </Text>
-                </Pressable>
-              </View>
+            {/* D-11 (Phase 6) still binding, even with real data: the empty
+                  copy names the PRECONDITION — the three concrete ways to add
+                  someone — rather than the bare absence (UI-SPEC Copywriting
+                  Contract, success criterion 4). */}
+            {crewState.kind === 'data' && crewState.friends.length === 0 ? (
+              <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                <Trans>No one in your crew yet. Add someone via search, code or QR.</Trans>
+              </Text>
             ) : null}
 
-            {/* D-07/D-08 — ONE section, TWO labeled sub-groups, always both
-                visible: never a SegmentedControl between them, so a
-                withdrawn/received request is never hidden behind a toggle
-                the visitor forgot to flip. Fixed third position — this
-                block never reorders itself to the top on a new request. */}
-            <View style={styles.section}>
-              <View style={styles.sectionHeadRow}>
-                <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-                  <Trans>Requests</Trans>
-                </Text>
-                {/* D-08 — the count badge shows the INCOMING count only, and
+            {crewState.kind === 'data' && crewState.friends.length > 0 ? (
+              <View style={styles.resultsList}>
+                {crewState.friends.map((friend) => {
+                  const { accountId, displayName, username } = friend.profile;
+                  return (
+                    <PersonRow
+                      key={accountId}
+                      profile={friend.profile}
+                      onPress={() =>
+                        router.push({ pathname: '/friend-detail', params: { accountId } })
+                      }
+                      accessibilityLabel={t`${displayName}, @${username}`}
+                    />
+                  );
+                })}
+              </View>
+            ) : null}
+          </View>
+
+          {/* D-07/D-08 — the fourth and final block, ONE section with TWO
+                labeled sub-groups, always both visible: never a
+                SegmentedControl between them, so a withdrawn/received
+                request is never hidden behind a toggle the visitor forgot to
+                flip. Fixed position BEHIND Crew now (quick-260813-o08,
+                reverses 08-01's fixed-third-position placement on explicit
+                user request) — this block still never reorders itself to the
+                top on a new request. */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeadRow}>
+              <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
+                <Trans>Requests</Trans>
+              </Text>
+              {/* D-08 — the count badge shows the INCOMING count only, and
                     the element itself is absent at 0 (never a `0` badge). A
                     solid `colors.primary` fill, deliberately distinct from
                     the neutral "Bald" badge elsewhere on this screen — a
                     real, actionable count reads differently from a
                     decorative placeholder. */}
-                {requestsState.kind === 'data' && requestsState.incoming.length > 0 ? (
-                  <View style={styles.countBadge}>
-                    <Text style={[styles.countBadgeText, { fontFamily: microFont }]}>
-                      {requestsState.incoming.length}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-
-              {requestsState.kind === 'loading' ? (
-                <Text style={[styles.helper, { fontFamily: bodyFont }]}>
-                  <Trans>Loading requests…</Trans>
-                </Text>
-              ) : null}
-
-              {requestsState.kind === 'error' ? (
-                <View style={styles.stateBlock}>
-                  <Text style={[styles.error, { fontFamily: bodySmFont }]}>
-                    {requestsState.variant === 'transport' ? (
-                      <Trans>
-                        Can't reach the server — make sure your device is on the same Wi-Fi as
-                        the dev API.
-                      </Trans>
-                    ) : (
-                      <Trans>Can't load requests — check your connection and try again.</Trans>
-                    )}
+              {requestsState.kind === 'data' && requestsState.incoming.length > 0 ? (
+                <View style={styles.countBadge}>
+                  <Text style={[styles.countBadgeText, { fontFamily: microFont }]}>
+                    {requestsState.incoming.length}
                   </Text>
-                  <Pressable style={styles.retryButton} onPress={requestsState.retry}>
-                    <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
-                      <Trans>Retry</Trans>
-                    </Text>
-                  </Pressable>
-                </View>
-              ) : null}
-
-              {requestsState.kind === 'data' ? (
-                <View style={styles.requestsGroups}>
-                  <View style={styles.subGroup}>
-                    <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
-                      <Trans>To you</Trans>
-                    </Text>
-                    {requestsState.incoming.length === 0 ? (
-                      <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-                        <Trans>Once someone adds you, the request shows up here.</Trans>
-                      </Text>
-                    ) : (
-                      <View style={styles.resultsList}>
-                        {requestsState.incoming.map((item) => (
-                          <IncomingRequestRow key={item.profile.accountId} item={item} />
-                        ))}
-                      </View>
-                    )}
-                  </View>
-
-                  <View style={styles.subGroup}>
-                    <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
-                      <Trans>From you</Trans>
-                    </Text>
-                    {requestsState.outgoing.length === 0 ? (
-                      <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-                        <Trans>Once you request someone, you'll see it here.</Trans>
-                      </Text>
-                    ) : (
-                      <View style={styles.resultsList}>
-                        {requestsState.outgoing.map((item) => (
-                          <OutgoingRequestRow key={item.profile.accountId} item={item} />
-                        ))}
-                      </View>
-                    )}
-                  </View>
                 </View>
               ) : null}
             </View>
 
-            {/* D-09/D-11/D-12 — the fourth and final block. Every row is the
-                SAME `PersonRow` search hits and requests already use; only
-                crew rows carry `onPress` (search hits and request rows do
-                not — D-09). The 200 body is pre-sorted by
-                `sortFriendsByDisplayName` inside `computeCrewState`. */}
-            <View style={styles.section}>
-              <Text style={[styles.sectionHead, { fontFamily: headingFont }]}>
-                <Trans>Your crew</Trans>
+            {requestsState.kind === 'loading' ? (
+              <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+                <Trans>Loading requests…</Trans>
               </Text>
+            ) : null}
 
-              {crewState.kind === 'loading' ? (
-                <Text style={[styles.helper, { fontFamily: bodyFont }]}>
-                  <Trans>Loading your crew…</Trans>
+            {requestsState.kind === 'error' ? (
+              <View style={styles.stateBlock}>
+                <Text style={[styles.error, { fontFamily: bodySmFont }]}>
+                  {requestsState.variant === 'transport' ? (
+                    <Trans>
+                      Can't reach the server — make sure your device is on the same Wi-Fi as the dev
+                      API.
+                    </Trans>
+                  ) : (
+                    <Trans>Can't load requests — check your connection and try again.</Trans>
+                  )}
                 </Text>
-              ) : null}
-
-              {crewState.kind === 'error' ? (
-                <View style={styles.stateBlock}>
-                  <Text style={[styles.error, { fontFamily: bodySmFont }]}>
-                    {crewState.variant === 'transport' ? (
-                      <Trans>
-                        Can't reach the server — make sure your device is on the same Wi-Fi as
-                        the dev API.
-                      </Trans>
-                    ) : (
-                      <Trans>Can't load your crew — check your connection and try again.</Trans>
-                    )}
+                <Pressable style={styles.retryButton} onPress={requestsState.retry}>
+                  <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
+                    <Trans>Retry</Trans>
                   </Text>
-                  <Pressable style={styles.retryButton} onPress={crewState.retry}>
-                    <Text style={[styles.retryButtonText, { fontFamily: buttonFont }]}>
-                      <Trans>Retry</Trans>
+                </Pressable>
+              </View>
+            ) : null}
+
+            {requestsState.kind === 'data' ? (
+              <View style={styles.requestsGroups}>
+                <View style={styles.subGroup}>
+                  <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                    <Trans>To you</Trans>
+                  </Text>
+                  {requestsState.incoming.length === 0 ? (
+                    <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                      <Trans>Once someone adds you, the request shows up here.</Trans>
                     </Text>
-                  </Pressable>
+                  ) : (
+                    <View style={styles.resultsList}>
+                      {requestsState.incoming.map((item) => (
+                        <IncomingRequestRow key={item.profile.accountId} item={item} />
+                      ))}
+                    </View>
+                  )}
                 </View>
-              ) : null}
 
-              {/* D-11 (Phase 6) still binding, even with real data: the empty
-                  copy names the PRECONDITION — the three concrete ways to add
-                  someone — rather than the bare absence (UI-SPEC Copywriting
-                  Contract, success criterion 4). */}
-              {crewState.kind === 'data' && crewState.friends.length === 0 ? (
-                <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
-                  <Trans>No one in your crew yet. Add someone via search, code or QR.</Trans>
-                </Text>
-              ) : null}
-
-              {crewState.kind === 'data' && crewState.friends.length > 0 ? (
-                <View style={styles.resultsList}>
-                  {crewState.friends.map((friend) => {
-                    const { accountId, displayName, username } = friend.profile;
-                    return (
-                      <PersonRow
-                        key={accountId}
-                        profile={friend.profile}
-                        onPress={() =>
-                          router.push({ pathname: '/friend-detail', params: { accountId } })
-                        }
-                        accessibilityLabel={t`${displayName}, @${username}`}
-                      />
-                    );
-                  })}
+                <View style={styles.subGroup}>
+                  <Text style={[styles.subGroupHead, { fontFamily: headingFont }]}>
+                    <Trans>From you</Trans>
+                  </Text>
+                  {requestsState.outgoing.length === 0 ? (
+                    <Text style={[styles.emptyBody, { fontFamily: bodySmFont }]}>
+                      <Trans>Once you request someone, you'll see it here.</Trans>
+                    </Text>
+                  ) : (
+                    <View style={styles.resultsList}>
+                      {requestsState.outgoing.map((item) => (
+                        <OutgoingRequestRow key={item.profile.accountId} item={item} />
+                      ))}
+                    </View>
+                  )}
                 </View>
-              ) : null}
-            </View>
-          </>
-        )}
+              </View>
+            ) : null}
+          </View>
+        </>
       </ScrollView>
     </SafeAreaView>
   );
