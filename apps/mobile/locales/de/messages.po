@@ -64,7 +64,7 @@ msgstr "Diese Person hinzufügen?"
 #~ msgstr "QR-Adden kommt bald."
 
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "All"
 msgstr "Alle"
 
@@ -89,11 +89,11 @@ msgstr "Zurück"
 #~ msgid "Back to festivals"
 #~ msgstr "Zurück zu den Festivals"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Browse all festivals and save your first one."
 msgstr "Durchstöber alle Festivals und speichere dein erstes."
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Browse festivals"
 msgstr "Alle Festivals ansehen"
 
@@ -102,7 +102,7 @@ msgid "Camera unavailable"
 msgstr "Kamera nicht verfügbar"
 
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
@@ -130,7 +130,7 @@ msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 #: components/CameraScanPanel.tsx
@@ -351,10 +351,6 @@ msgstr "Los geht's"
 msgid "Handle"
 msgstr "Handle"
 
-#: components/FloatingNav.tsx
-msgid "Home"
-msgstr "Start"
-
 #: app/profil.tsx
 msgid "Instagram, coming soon"
 msgstr "Instagram, kommt bald"
@@ -376,7 +372,7 @@ msgid "Loading festival…"
 msgstr "Festival wird geladen…"
 
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Loading festivals…"
 msgstr "Festivals werden geladen…"
 
@@ -438,7 +434,7 @@ msgstr "Mehr"
 msgid "My code"
 msgstr "Mein Code"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "My festivals"
 msgstr "Meine Festivals"
 
@@ -458,7 +454,7 @@ msgstr "Neue Festivals erscheinen hier."
 msgid "News"
 msgstr "News"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "No festival saved yet"
 msgstr "Noch kein Festival gespeichert"
 
@@ -615,7 +611,7 @@ msgstr "Erneut senden in {countdownLabel}"
 #: app/(festival)/f/[festivalSlug].tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Retry"
@@ -734,6 +730,10 @@ msgstr "Bald"
 #: app/profil.tsx
 msgid "Spotify, coming soon"
 msgstr "Spotify, kommt bald"
+
+#: components/FloatingNav.tsx
+msgid "Start"
+msgstr "Start"
 
 #: app/(tabs)/mehr.tsx
 msgid "Stay safe"
@@ -904,7 +904,7 @@ msgstr "Deine E-Mail"
 msgid "Your festivals, your crew, your plan."
 msgstr "Deine Festivals, deine Crew, dein Plan."
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Your next festival"
 msgstr "Dein nächstes Festival"
 
