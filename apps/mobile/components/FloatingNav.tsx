@@ -25,7 +25,7 @@ const INACTIVE_STROKE = 2;
 // invariant: only the `tint` and the glass fill/border follow the theme.
 const BLUR_INTENSITY = 60;
 
-type LiveRouteName = 'home' | 'festivals' | 'friends' | 'mehr';
+type LiveRouteName = 'start' | 'festivals' | 'friends' | 'mehr';
 
 /**
  * 06-01 (RESEARCH Open Question 2, resolved): `Menu` — not `UserRound` — is the
@@ -33,16 +33,19 @@ type LiveRouteName = 'home' | 'festivals' | 'friends' | 'mehr';
  * Konto row inside Mehr and the Profil push screen behind it). Reusing one
  * glyph for both would make the tab and its own first row read as the same
  * destination.
+ *
+ * 09-01 (NAV-03 rename, D-19): the route key is `start`; the `Home` glyph
+ * itself is UNCHANGED — only the key that indexes it moves.
  */
 const LIVE_TAB_ICON: Record<LiveRouteName, LucideIcon> = {
-  home: Home,
+  start: Home,
   festivals: Tent,
   friends: Users,
   mehr: Menu,
 };
 
 function isLiveRouteName(name: string): name is LiveRouteName {
-  return name === 'home' || name === 'festivals' || name === 'friends' || name === 'mehr';
+  return name === 'start' || name === 'festivals' || name === 'friends' || name === 'mehr';
 }
 
 /**
@@ -90,7 +93,7 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
   // Source strings stay English (`lingui.config.ts` `sourceLocale: 'en'`) —
   // the design's German "Mehr" is the DE catalog value for the `More` msgid.
   const liveTabLabel: Record<LiveRouteName, string> = {
-    home: t`Home`,
+    start: t`Start`,
     festivals: t`Festivals`,
     friends: t`Friends`,
     mehr: t`More`,
@@ -122,7 +125,7 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
         <View style={styles.row}>
           {state.routes.map((route, index) => {
             const focused = index === state.index;
-            const routeName = isLiveRouteName(route.name) ? route.name : 'home';
+            const routeName = isLiveRouteName(route.name) ? route.name : 'start';
             const Icon = LIVE_TAB_ICON[routeName];
             const label = liveTabLabel[routeName];
             return (

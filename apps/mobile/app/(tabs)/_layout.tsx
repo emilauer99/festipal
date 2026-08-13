@@ -8,7 +8,7 @@ import { FloatingNav } from '../../components/FloatingNav';
  * `expo-router` API, RESEARCH Pattern 1) with the owned `FloatingNav` as its
  * `tabBar` render prop.
  *
- * 06-01 / D-01 — all FOUR tabs are now real, registered routes: `home`,
+ * 06-01 / D-01 — all FOUR tabs are now real, registered routes: `start`,
  * `festivals`, `friends`, `mehr`. The two placeholder items `FloatingNav` used
  * to render itself (Friends/Profil, Phase 5) are gone; Profil is no longer a
  * tab at all but a root-level push screen behind Mehr → Konto → Profil
@@ -19,19 +19,20 @@ import { FloatingNav } from '../../components/FloatingNav';
  * Start · Festivals · Friends · Mehr bar. Reordering these lines reorders the
  * nav.
  *
- * `initialRouteName="home"` is set explicitly (REVIEW 05-05 MEDIUM) so Home
- * is always the default tab regardless of file/declaration order.
+ * `initialRouteName="start"` is set explicitly (REVIEW 05-05 MEDIUM; 09-01
+ * NAV-03 rename) so Start is always the default tab regardless of
+ * file/declaration order.
  */
 export default function TabsLayout() {
   const { t } = useLingui();
 
   return (
     <Tabs
-      initialRouteName="home"
+      initialRouteName="start"
       tabBar={(props) => <FloatingNav {...props} />}
       screenOptions={{ headerShown: false }}
     >
-      <Tabs.Screen name="home" />
+      <Tabs.Screen name="start" />
       <Tabs.Screen name="festivals" options={{ headerShown: true, title: t`Festivals` }} />
       <Tabs.Screen name="friends" options={{ headerShown: true, title: t`Friends` }} />
       {/* Source strings stay ENGLISH (lingui.config.ts `sourceLocale: 'en'`);

@@ -348,7 +348,7 @@ function RootNavigation() {
   // (matchForEmptyPath), so with the only `/` route ((auth)/index) render-
   // filtered off once authenticated, Expo Router rendered its Unmatched Route
   // screen for quiks:/// — the reported bug, which neither the round-1
-  // empty-state `router.replace('/home')` nor the round-2 second group-index
+  // empty-state `router.replace` to the pre-rename first tab (09-01 NAV-03 renamed it to `/start`) nor the round-2 second group-index
   // ((root)/index, which never won the static empty-path match) fixed. app/index
   // is now the SINGLE `/` owner, declared OUTSIDE every guard so it is mounted in
   // all auth states, and hands off with a declarative redirect immune to that
