@@ -9,13 +9,14 @@ import { tokens } from '@quiks/ui';
 import type { Friend, FriendRequestItem, VisitorSummary } from '@quiks/contracts';
 
 import { PersonRow } from '../../components/PersonRow';
+import { QRMark } from '../../components/QRMark';
 import { RelationAction } from '../../components/RelationAction';
-import { useSoonToast } from '../../components/SoonToast';
 import { apiClient } from '../../lib/api-client';
 import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import { friendKeys, SEARCH_DEBOUNCE_MS, SEARCH_MIN_CHARS } from '../../lib/friend-queries';
 import { sortFriendsByDisplayName } from '../../lib/friend-sort';
+import { encodeQuiksCodePayload } from '../../lib/qr-payload';
 import { useFriendMutations } from '../../lib/use-friend-mutations';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
@@ -34,28 +35,13 @@ const ICON_SIZE = 18;
  */
 const PENDING_OPACITY = 0.45;
 
-/** UI-SPEC Placeholder Pattern A — the dampening factor for a "not real yet"
- * control, the same value `ListRow` already uses. On this screen it applies to
- * exactly ONE element: the card's action button. */
-const PATTERN_A_OPACITY = 0.45;
-
-const QR_CELL_SIZE = 16;
-/** 3 cells + 2 gaps — the mark itself. */
-const QR_GRID_SIZE = QR_CELL_SIZE * 3 + spacingScale['sp-2'] * 2;
 /**
- * The placeholder's fixed square. The inset is generous on purpose: the wrap
- * container must have visibly more room than one row of cells needs, or a
- * rounding difference could break the 3×3 into a ragged 2-per-row grid.
+ * 08-04 / D-13 — the card's small preview mark is now real, encoding the
+ * same `quiks:u/<username>` payload the QR screen's big "Mein Code" mark
+ * does. Sized for a row-height icon, not for scanning — the QR screen is
+ * where a stranger actually points a camera at this handle.
  */
-const QR_PLACEHOLDER_SIZE = QR_GRID_SIZE + spacingScale['sp-6'] * 2;
-/**
- * A FIXED, hand-written on/off pattern for the 3×3 placeholder mark. It encodes
- * nothing and is not derived from any value — it exists only so the square reads
- * as a deliberate stand-in for a scannable mark rather than as a loading
- * skeleton or a broken image. Nothing generates a scannable mark this phase and
- * no library capable of generating one is imported.
- */
-const QR_PATTERN = [true, false, true, false, true, true, true, true, false] as const;
+const CODE_CARD_MARK_SIZE = 56;
 
 /** UI-SPEC #54 — the card is one fixed-height surface. Expressed as a FLOOR
  * rather than a hard height so a larger system font scale grows the card instead
@@ -138,7 +124,6 @@ export default function FriendsScreen() {
   const { t } = useLingui();
   const { colors } = useTheme();
   const router = useRouter();
-  const showSoonToast = useSoonToast();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10): the family IS the weight, so no style
@@ -150,8 +135,6 @@ export default function FriendsScreen() {
   const cardTitleFont = fontFamilyForRole('bodyStrong', fontsReady);
   const handleFont = fontFamilyForRole('countdown', fontsReady);
   const buttonFont = fontFamilyForRole('title3', fontsReady);
-
-  const soonBadge = t`Soon`;
 
   /**
    * The ONE data source of this screen (D-10 keeps everything else offline) —
@@ -441,35 +424,29 @@ export default function FriendsScreen() {
                     </Text>
                   </View>
 
-                  {/* UI-SPEC #53 — a DELIBERATE static stand-in, badged as such, so
-                      it can never be read as an image that failed to load. */}
-                  <View style={styles.qrColumn}>
-                    <View
-                      style={styles.qrPlaceholder}
-                      accessible
-                      accessibilityLabel={t`Placeholder mark, coming soon`}
-                    >
-                      {QR_PATTERN.map((filled, index) => (
-                        <View
-                          key={index}
-                          style={[styles.qrCell, filled ? styles.qrCellFilled : null]}
+                  {/* UI-SPEC #52/D-13 — a real, small mark once a handle
+                      exists; omitted (not a broken/empty graphic) when it
+                      doesn't, same omit-if-empty rule the handle line above
+                      already follows. */}
+                  {quiksCodeState.username ? (
+                    <View style={styles.qrColumn}>
+                      <View style={styles.qrMarkCard}>
+                        <QRMark
+                          payload={encodeQuiksCodePayload(quiksCodeState.username)}
+                          size={CODE_CARD_MARK_SIZE}
                         />
-                      ))}
+                      </View>
                     </View>
-                    <View style={styles.badge}>
-                      <Text style={[styles.badgeText, { fontFamily: microFont }]}>
-                        {soonBadge}
-                      </Text>
-                    </View>
-                  </View>
+                  ) : null}
                 </View>
 
-                {/* Placeholder Pattern A — the ONLY dampened element on this screen. */}
+                {/* UI-SPEC § Color item 4 — now a full-opacity CTA (Pattern
+                    A dampening removed, D-13): the QR flow is real. */}
                 <Pressable
                   style={styles.qrButton}
-                  onPress={() => showSoonToast(t`Adding by QR is coming soon.`)}
+                  onPress={() => router.push('/friends-qr')}
                   accessibilityRole="button"
-                  accessibilityLabel={t`Show QR, coming soon`}
+                  accessibilityLabel={t`Show QR`}
                 >
                   <Text style={[styles.qrButtonText, { fontFamily: buttonFont }]}>
                     <Trans>Show QR</Trans>
@@ -808,18 +785,6 @@ function createStyles(colors: ThemeColors) {
     // 08-01-UI-SPEC § Search & Add-Flow Contract — search hits stack with the
     // same list-row gap the requests/crew lists will use.
     resultsList: { gap: spacingScale['sp-5'] },
-    // Mirrors `ComingSoonTile`/`ListRow`'s badge verbatim — still used by the
-    // quiks-code card's QR placeholder (D-13 real QR mark lands in 08-04).
-    badge: {
-      backgroundColor: colors.fillQuiet,
-      borderRadius: radiiScale['r-pill'],
-      paddingHorizontal: spacingScale['sp-4'],
-      paddingVertical: spacingScale['sp-1'],
-    },
-    badgeText: {
-      fontSize: typeRoles.micro.size,
-      color: colors.textMuted,
-    },
     helper: {
       fontSize: typeRoles.body.size,
       color: colors.textSecondary,
@@ -879,32 +844,25 @@ function createStyles(colors: ThemeColors) {
       color: colors.textMuted,
     },
     qrColumn: { alignItems: 'center', gap: spacingScale['sp-2'] },
-    qrPlaceholder: {
-      width: QR_PLACEHOLDER_SIZE,
-      height: QR_PLACEHOLDER_SIZE,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      alignContent: 'center',
-      justifyContent: 'center',
-      gap: spacingScale['sp-2'],
-      padding: spacingScale['sp-4'],
-      backgroundColor: colors.fillQuiet,
+    // D-13 — the small card behind the real preview mark: FIXED white
+    // (`primaryForeground`, mode-invariant) in both colour modes, same
+    // scannability exception `QRMark`/the QR screen's backdrop use.
+    qrMarkCard: {
+      padding: spacingScale['sp-2'],
+      backgroundColor: colors.primaryForeground,
       borderRadius: radiiScale['r-md'],
     },
-    qrCell: { width: QR_CELL_SIZE, height: QR_CELL_SIZE },
-    qrCellFilled: { backgroundColor: colors.textMuted },
     qrButton: {
       minHeight: layout.hitMin,
       paddingHorizontal: spacingScale['sp-8'],
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: colors.fillQuiet,
+      backgroundColor: colors.primary,
       borderRadius: radiiScale['r-pill'],
-      opacity: PATTERN_A_OPACITY,
     },
     qrButtonText: {
       fontSize: typeRoles.title3.size,
-      color: colors.textPrimary,
+      color: colors.textOnPrimary,
     },
     section: { gap: spacingScale['sp-5'] },
     sectionHead: {

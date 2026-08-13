@@ -56,8 +56,8 @@ msgid "Add"
 msgstr "Add"
 
 #: app/(tabs)/friends.tsx
-msgid "Adding by QR is coming soon."
-msgstr "Adding by QR is coming soon."
+#~ msgid "Adding by QR is coming soon."
+#~ msgstr "Adding by QR is coming soon."
 
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/home.tsx
@@ -111,6 +111,7 @@ msgid "Can't load your crew — check your connection and try again."
 msgstr "Can't load your crew — check your connection and try again."
 
 #: app/(tabs)/friends.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Can't load your profile — check your connection and try again."
 msgstr "Can't load your profile — check your connection and try again."
@@ -122,6 +123,7 @@ msgstr "Can't load your profile — check your connection and try again."
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
@@ -343,6 +345,10 @@ msgstr "Language"
 msgid "Language switching is coming soon."
 msgstr "Language switching is coming soon."
 
+#: app/friends-qr.tsx
+msgid "Let the other person scan this code."
+msgstr "Let the other person scan this code."
+
 #: app/(festival)/f/[festivalSlug].tsx
 msgid "Loading festival…"
 msgstr "Loading festival…"
@@ -365,6 +371,7 @@ msgid "Loading your crew…"
 msgstr "Loading your crew…"
 
 #: app/(tabs)/friends.tsx
+#: app/friends-qr.tsx
 msgid "Loading your quiks code…"
 msgstr "Loading your quiks code…"
 
@@ -400,6 +407,10 @@ msgstr "Mine"
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "More"
+
+#: app/friends-qr.tsx
+msgid "My code"
+msgstr "My code"
 
 #: app/(tabs)/home.tsx
 msgid "My festivals"
@@ -509,7 +520,6 @@ msgstr "Payment methods, coming soon"
 #~ msgid "People you may know"
 #~ msgstr "People you may know"
 
-#: app/(tabs)/friends.tsx
 #: app/profil.tsx
 msgid "Placeholder mark, coming soon"
 msgstr "Placeholder mark, coming soon"
@@ -526,6 +536,10 @@ msgstr "Pronouns"
 #: app/profil.tsx
 msgid "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
 msgstr "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
+
+#: app/friends-qr.tsx
+msgid "QR code"
+msgstr "QR code"
 
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"
@@ -564,6 +578,7 @@ msgstr "Resend in {countdownLabel}"
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/home.tsx
+#: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Retry"
 msgstr "Retry"
@@ -583,6 +598,10 @@ msgstr "Saved acts"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Saving…"
 msgstr "Saving…"
+
+#: app/friends-qr.tsx
+msgid "Scan"
+msgstr "Scan"
 
 #: app/profil.tsx
 msgid "Scanning is enough — no searching, no typing."
@@ -616,6 +635,10 @@ msgstr "Send new code"
 msgid "Sending…"
 msgstr "Sending…"
 
+#: app/friends-qr.tsx
+msgid "Set your username first to show your code."
+msgstr "Set your username first to show your code."
+
 #: app/profil.tsx
 msgid "Share handle"
 msgstr "Share handle"
@@ -645,8 +668,8 @@ msgid "Show QR"
 msgstr "Show QR"
 
 #: app/(tabs)/friends.tsx
-msgid "Show QR, coming soon"
-msgstr "Show QR, coming soon"
+#~ msgid "Show QR, coming soon"
+#~ msgstr "Show QR, coming soon"
 
 #: app/(auth)/verify.tsx
 msgid "Six digits sent to {email}."
@@ -657,7 +680,6 @@ msgid "Socials"
 msgstr "Socials"
 
 #: app/(festival)/f/[festivalSlug].tsx
-#: app/(tabs)/friends.tsx
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Soon"
@@ -831,3 +853,7 @@ msgstr "Your next festival"
 #: app/(tabs)/friends.tsx
 msgid "Your quiks code"
 msgstr "Your quiks code"
+
+#: components/QRMark.tsx
+msgid "Your quiks code as a scannable QR mark"
+msgstr "Your quiks code as a scannable QR mark"

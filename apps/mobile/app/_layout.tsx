@@ -499,6 +499,16 @@ function RootNavigation() {
                       deep-link capture path elsewhere in this file is
                       untouched. */}
                   <Stack.Screen name="friend-detail" />
+                  {/* 08-04 / D-13 — the QR screen, same root-level
+                      sibling-of-`(tabs)` shape as `profil`/`friend-detail`
+                      above. The quiks code it renders is namespaced
+                      PLAINTEXT (`quiks:u/<username>`, Phase-7 D-17), never a
+                      deep link — this registration and the payload format
+                      together are what keep this screen out of the
+                      deep-link capture path elsewhere in this file, the
+                      same path that produced the Phase-5
+                      first-login-unmatched-route bug. */}
+                  <Stack.Screen name="friends-qr" />
                 </Stack.Protected>
               </Stack>
             </ColdStartTargetContext.Provider>
