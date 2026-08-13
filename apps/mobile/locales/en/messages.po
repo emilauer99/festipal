@@ -41,6 +41,10 @@ msgstr "3–20 characters: a-z 0-9 _ ."
 msgid "A nudge just before your acts start."
 msgstr "A nudge just before your acts start."
 
+#: components/RelationAction.tsx
+msgid "Accept"
+msgstr "Accept"
+
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Account"
@@ -256,6 +260,7 @@ msgstr "Friend requests, coming soon"
 #: app/(tabs)/_layout.tsx
 #: app/profil.tsx
 #: components/FloatingNav.tsx
+#: components/RelationAction.tsx
 msgid "Friends"
 msgstr "Friends"
 
@@ -374,6 +379,10 @@ msgid "No festivals yet"
 msgstr "No festivals yet"
 
 #: app/(tabs)/friends.tsx
+msgid "No one found. Check the @handle spelling."
+msgstr "No one found. Check the @handle spelling."
+
+#: app/(tabs)/friends.tsx
 msgid "No one in your crew yet. Once you've added each other, you'll show up here."
 msgstr "No one in your crew yet. Once you've added each other, you'll show up here."
 
@@ -466,6 +475,10 @@ msgstr "Recommend quiks, coming soon"
 #: app/(tabs)/mehr.tsx
 msgid "Recommending is coming soon."
 msgstr "Recommending is coming soon."
+
+#: components/RelationAction.tsx
+msgid "Requested"
+msgstr "Requested"
 
 #: app/(tabs)/friends.tsx
 msgid "Requests"
@@ -654,6 +667,10 @@ msgstr "Too many attempts — try again in a few minutes."
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Try something else, like @{suggestion}."
 msgstr "Try something else, like @{suggestion}."
+
+#: app/(tabs)/friends.tsx
+msgid "Type at least 2 characters."
+msgstr "Type at least 2 characters."
 
 #: app/(tabs)/mehr.tsx
 msgid "Updates from the organizer while you're on-site."
