@@ -20,8 +20,8 @@ an endpoint serves a *foreign* profile, so the projection split is a prerequisit
 
 ### Friends (FRND)
 
-- [ ] **FRND-02**: A visitor can send a friend request via quiks-code / handle
-- [ ] **FRND-03**: A visitor can find someone by username search and send a request
+- [x] **FRND-02**: A visitor can send a friend request via quiks-code / handle
+- [x] **FRND-03**: A visitor can find someone by username search and send a request
 - [ ] **FRND-04**: A visitor can display their own handle as a QR code and scan someone else's to send a request
 - [ ] **FRND-05**: A visitor can see incoming and outgoing requests and accept, decline, or withdraw them
 - [ ] **FRND-06**: A visitor sees their friends list; friendships are user-global and survive switching festivals (ADR-014)
@@ -86,8 +86,8 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 |-------------|-------|--------|
 | VIS-01 | Phase 7 | Complete |
 | VIS-02 | Phase 7 | Complete |
-| FRND-02 | Phase 8 | Planned |
-| FRND-03 | Phase 8 | Planned |
+| FRND-02 | Phase 8 | Complete |
+| FRND-03 | Phase 8 | Complete |
 | FRND-04 | Phase 8 | Planned |
 | FRND-05 | Phase 8 | Planned |
 | FRND-06 | Phase 8 | Planned |

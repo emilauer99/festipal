@@ -102,13 +102,13 @@ friendships; solve it in the schema (canonical ordered pair + unique constraint)
 manage requests, and see a real friends list
 **Depends on**: Phase 7
 **Requirements**: FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08
-**Plans**: 5 plans (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
+**Plans**: 1/5 plans executed (5 Wellen — `app/(tabs)/friends.tsx` und die beiden Lingui-Kataloge sind
 geteilter Zustand über alle Slices hinweg, die Kette ist daher echt sequenziell, wie in Phase 7)
 
 Plans:
 **Wave 1**
 
-- [ ] 08-01-PLAN.md — Tracer: Suche → Treffer → Anfrage end-to-end, `PersonRow` + `RelationAction` + `useFriendMutations` (FRND-02/FRND-03, D-01…D-04)
+- [x] 08-01-PLAN.md — Tracer: Suche → Treffer → Anfrage end-to-end, `PersonRow` + `RelationAction` + `useFriendMutations` (FRND-02/FRND-03, D-01…D-04)
 
 **Wave 2** *(blockiert auf Wave 1)*
 

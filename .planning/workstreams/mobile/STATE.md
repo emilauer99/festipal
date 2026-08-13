@@ -2,18 +2,18 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 8
-current_phase_name: Friends
+current_phase: 08
+current_phase_name: friends
 status: executing
-stopped_at: Phase 8 UI-SPEC approved
-last_updated: "2026-08-13T11:32:43.021Z"
-last_activity: 2026-08-12
-last_activity_desc: Phase 07 verifiziert und abgeschlossen (VIS-01/VIS-02 validiert, T-06-06 getilgt)
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-08-13T12:25:37.699Z"
+last_activity: 2026-08-13
+last_activity_desc: Phase 08 execution started
 progress:
   total_phases: 6
   completed_phases: 1
   total_plans: 10
-  completed_plans: 5
+  completed_plans: 6
   percent: 17
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-08-12 — nach Phase 7)
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 8 — Friends (UI auf dem Phase-7-Backend)
+**Current focus:** Phase 08 — friends
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phase 7 ist durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 8 — Friends
-Plan: Not started
+Phase: 08 (friends) — EXECUTING
+Plan: 2 of 5
 Status: Ready to execute
-Last activity: 2026-08-12 — Phase 07 complete, transitioned to Phase 8
+Last activity: 2026-08-13 — Phase 08 execution started
 
 ## Shipped
 
@@ -129,6 +129,10 @@ Milestone bindet:
   Anfrage. Skript-Muster für Wiederholung: OTP-Codes aus **Mailpit** (`localhost:8025`) lesen, nicht
   aus `.otp-dev-transport.local.json` — der Dev-Transport ist lokal nicht aktiv.
 
+- [Phase ?]: D-03 block-swap gates exactly the three named blocks (quiks-code card, Requests, Crew); Chats/People-you-may-know stay always-visible until 08-02 (D-05/D-06)
+- [Phase ?]: isSearching derived from immediate query text, not debounced value, so mode switch follows typing itself
+- [Phase ?]: Pending-mutation opacity dampening (0.45, existing constant) added to RelationAction's active pills after Task-1 device checkpoint showed dead-looking button
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -206,9 +210,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-12T20:55:20.152Z
-Stopped at: Phase 8 UI-SPEC approved
-Resume file: .planning/workstreams/mobile/phases/08-friends/08-UI-SPEC.md
+Last session: 2026-08-13T12:25:37.681Z
+Stopped at: Completed 08-01-PLAN.md
+Resume file: None
 
 ## Operator Next Steps
 
@@ -225,3 +229,4 @@ Resume file: .planning/workstreams/mobile/phases/08-friends/08-UI-SPEC.md
 | Phase 07 P03 | 11min | 2 tasks | 5 files |
 | Phase 07 P04 | 16min | 2 tasks | 6 files |
 | Phase 07 P05 | 16min | 2 tasks | 2 files |
+| Phase 08 P01 | 51min | 2 tasks | 8 files |
