@@ -139,14 +139,21 @@ export function RelationAction({ relation, accountId, onDone }: RelationActionPr
         </View>
       );
 
-    case 'friends':
+    case 'friends': {
+      // `context="relation chip"` disambiguates this msgid from the tab bar
+      // title / `FloatingNav` / `profil.tsx`'s "Friends" — that msgid is
+      // deliberately kept English in `de` (the tab keeps its English name by
+      // design), while this chip must read "Freunde" (WR-02, UI-SPEC §
+      // Copywriting Contract "Row action — `friends`").
+      const chipLabel = t({ message: 'Friends', context: 'relation chip' });
       return (
-        <View style={styles.staticChip} accessibilityLabel={t`Friends`}>
+        <View style={styles.staticChip} accessibilityLabel={chipLabel}>
           <Text style={[styles.staticChipText, { fontFamily: chipFont }]}>
-            <Trans>Friends</Trans>
+            <Trans context="relation chip">Friends</Trans>
           </Text>
         </View>
       );
+    }
 
     case 'self':
       return null;

@@ -311,9 +311,13 @@ msgstr "Freundschaftsanfragen, kommt bald"
 #: app/(tabs)/_layout.tsx
 #: app/profil.tsx
 #: components/FloatingNav.tsx
-#: components/RelationAction.tsx
 msgid "Friends"
 msgstr "Friends"
+
+#: components/RelationAction.tsx
+msgctxt "relation chip"
+msgid "Friends"
+msgstr "Freunde"
 
 #: app/friend-detail.tsx
 msgid "Friends since {friendsSinceLabel}"
