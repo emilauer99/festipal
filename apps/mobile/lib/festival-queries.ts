@@ -5,12 +5,41 @@
  * both this plan's festival-home screen and 05-06's save mutation.
  */
 
+import type { QueryClient } from '@tanstack/react-query';
+import type { Festival } from '@quiks/contracts';
+
 /** Query-key factory — the single source for these keys across screens. */
 export const festivalKeys = {
   all: ['festivals'] as const,
   mine: ['me', 'festivals'] as const,
   detail: (slug: string) => ['festival', slug] as const,
 };
+
+/**
+ * Instant-paint source (RESEARCH.md Pattern 2, REVIEW 05-03 HIGH): the
+ * `['festivals']`/`['me','festivals']` caches hold FULL ts-rest response
+ * objects `{ status, body }`, never a bare `Festival[]` — reading `.body`
+ * off an un-narrowed cache hit is exactly the wrong-shape bug the review
+ * flagged, so `status === 200` and `Array.isArray(body)` are both checked
+ * before `.find()`. A stale/malformed cache entry is a miss, never a crash.
+ *
+ * 09-03 — hoisted unchanged from `f/[festivalSlug].tsx` (now
+ * `f/[festivalSlug]/index.tsx`) so two call sites can share it: the
+ * festival-navigator layout's D-10 gate and (starting 09-04) `AppHeader`.
+ */
+export function findCachedFestivalBySlug(
+  queryClient: QueryClient,
+  slug: string,
+): Festival | undefined {
+  for (const key of [festivalKeys.all, festivalKeys.mine]) {
+    const cached = queryClient.getQueryData<{ status: number; body: unknown }>(key);
+    if (cached?.status === 200 && Array.isArray(cached.body)) {
+      const hit = (cached.body as Festival[]).find((item) => item.slug === slug);
+      if (hit) return hit;
+    }
+  }
+  return undefined;
+}
 
 /**
  * Thrown by {@link unwrapOk} when a ts-rest response's `status` is not the

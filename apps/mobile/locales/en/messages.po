@@ -51,6 +51,10 @@ msgstr "Accept"
 msgid "Account"
 msgstr "Account"
 
+#: components/FloatingNav.tsx
+msgid "Activities"
+msgstr "Activities"
+
 #: components/RelationAction.tsx
 msgid "Add"
 msgstr "Add"
@@ -81,7 +85,6 @@ msgid "Appearance"
 msgstr "Appearance"
 
 #: app/(auth)/email.tsx
-#: app/(festival)/f/[festivalSlug].tsx
 msgid "Back"
 msgstr "Back"
 
@@ -126,7 +129,7 @@ msgstr "Can't load your profile — check your connection and try again."
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
@@ -143,8 +146,8 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: app/(festival)/f/[festivalSlug].tsx
-msgid "Cashless"
-msgstr "Cashless"
+#~ msgid "Cashless"
+#~ msgstr "Cashless"
 
 #: app/(auth)/verify.tsx
 msgid "Change email"
@@ -212,6 +215,10 @@ msgstr "Couldn't save festival — try again."
 msgid "Dark mode"
 msgstr "Dark mode"
 
+#: components/FloatingNav.tsx
+msgid "Dashboard"
+msgstr "Dashboard"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
 msgstr "Date of birth"
@@ -278,8 +285,8 @@ msgstr "Enter handle instead"
 #~ msgstr "Enter your code"
 
 #: app/(festival)/f/[festivalSlug].tsx
-msgid "Festival"
-msgstr "Festival"
+#~ msgid "Festival"
+#~ msgstr "Festival"
 
 #: app/(festival)/index.tsx
 #~ msgid "Festival home"
@@ -293,7 +300,7 @@ msgstr "Festival news"
 msgid "Festival news, coming soon"
 msgstr "Festival news, coming soon"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "Festival not found"
 msgstr "Festival not found"
 
@@ -367,7 +374,7 @@ msgstr "Language switching is coming soon."
 msgid "Let the other person scan this code."
 msgstr "Let the other person scan this code."
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "Loading festival…"
 msgstr "Loading festival…"
 
@@ -413,7 +420,7 @@ msgstr "Log out"
 msgid "Log out?"
 msgstr "Log out?"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/FloatingNav.tsx
 msgid "Map"
 msgstr "Map"
 
@@ -451,8 +458,8 @@ msgid "New festivals will show up here."
 msgstr "New festivals will show up here."
 
 #: app/(festival)/f/[festivalSlug].tsx
-msgid "News"
-msgstr "News"
+#~ msgid "News"
+#~ msgstr "News"
 
 #: app/(tabs)/start.tsx
 msgid "No festival saved yet"
@@ -608,7 +615,7 @@ msgstr "Resend code"
 msgid "Resend in {countdownLabel}"
 msgstr "Resend in {countdownLabel}"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/start.tsx
@@ -721,7 +728,6 @@ msgstr "Six digits sent to {email}."
 msgid "Socials"
 msgstr "Socials"
 
-#: app/(festival)/f/[festivalSlug].tsx
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Soon"
@@ -779,7 +785,7 @@ msgstr "The night shift for your eyes."
 msgid "This code is no longer valid."
 msgstr "This code is no longer valid."
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "This festival may have been removed or the link is out of date."
 
@@ -787,11 +793,18 @@ msgstr "This festival may have been removed or the link is out of date."
 msgid "This person no longer exists."
 msgstr "This person no longer exists."
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+#: app/(festival)/f/[festivalSlug]/map.tsx
+#: app/(festival)/f/[festivalSlug]/timetable.tsx
+msgid "This tab isn't built yet."
+msgstr "This tab isn't built yet."
+
 #: app/profil.tsx
 msgid "TikTok, coming soon"
 msgstr "TikTok, coming soon"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/FloatingNav.tsx
 msgid "Timetable"
 msgstr "Timetable"
 
