@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: Completed 09-01-PLAN.md (home -> start rename, NAV-03, device-verified)
-last_updated: "2026-08-13T21:45:32.946Z"
+stopped_at: Completed 09-02-PLAN.md (FRND-07 festival-friends endpoint + SEC-02 isolation spec)
+last_updated: "2026-08-13T23:52:23+02:00"
 last_activity: 2026-08-13
-last_activity_desc: Phase 08 execution started
+last_activity_desc: Phase 09 Plan 02 (festival-scoped friends endpoint) completed
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 11
+  completed_plans: 12
   percent: 33
 ---
 
@@ -36,9 +36,9 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 09 (festival-navigation-shell) — EXECUTING
-Plan: 2 of 6
-Status: Ready to execute
-Last activity: 2026-08-13 — Phase 09 execution started
+Plan: 3 of 6
+Status: Ready to execute (09-03 blocked on 09-01, unblocked; 09-02 done, packages/contracts collision zone free again)
+Last activity: 2026-08-13 — 09-02 completed (FRND-07 endpoint + SEC-02 isolation spec)
 
 ## Shipped
 
@@ -170,6 +170,20 @@ was die naechsten Phasen konkret betrifft:
   by the user (2026-08-13): tab label, cold start with/without saved festival, deep link, repeated
   dev-client launches, non-dead-end back — all six checks passed, no Unmatched-Route regression.
 
+- **Phase 09-02 (`GET /festivals/:festivalId/friends`, FRND-07, D-18):** the checkpoint (Einbahntür)
+  was resolved by the user as `publish-as-specified` — `:festivalId` stays a UUID path param
+  (consistent with `saveFestival`/`listTags`), the response is the wortgleiche `z.array(friendSchema)`
+  `listFriends` already uses (no second schema), and the contract entry is now published: path and
+  response shape are a breaking change plus client release from here on. `packages/contracts` is
+  free again for the `admin` stream. `FriendshipService.listFriendsInFestival` extends the
+  `listFriends` counterpart-join with exactly one more `innerJoin` on `myFestival`; both scopes
+  (`callerId`, `festivalId`) sit INSIDE the join condition, and `myFestival` contributes zero
+  columns to the select (ADR-014, no presence signal). No 404 branch for an unknown `festivalId`
+  (T-09-07, accepted). SEC-02 proven at HTTP level in
+  `apps/api/test/festival-friends-isolation.spec.ts` — the load-bearing case is the cross-tenant one
+  (same two friends, different `festivalId`, different result). Full suite: 16 files / 140 tests
+  green.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -264,8 +278,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T21:45:32.931Z
-Stopped at: Completed 09-01-PLAN.md (home -> start rename, NAV-03, device-verified)
+Last session: 2026-08-13T23:52:23+02:00
+Stopped at: Completed 09-02-PLAN.md (FRND-07 festival-friends endpoint + SEC-02 isolation spec)
 Resume file: None
 
 ## Operator Next Steps
@@ -291,3 +305,4 @@ Resume file: None
 | Phase 08 P04 | 15min | 2 tasks | 12 files |
 | Phase 08 P05 | ~14min | 2 tasks | 8 files |
 | Phase 09 P01 | 29min | 2 tasks | 10 files |
+| Phase 09 P02 | ~12min | 2 tasks | 4 files |

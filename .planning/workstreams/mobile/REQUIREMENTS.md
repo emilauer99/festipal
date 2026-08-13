@@ -92,7 +92,7 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 | FRND-05 | Phase 8 | Complete |
 | FRND-06 | Phase 8 | Complete |
 | FRND-08 | Phase 8 | Complete |
-| FRND-07 | Phase 9 | Planned |
+| FRND-07 | Phase 9 | In Progress (09-02 backend done; 09-05 UI pending) |
 | NAV-01 | Phase 9 | Planned |
 | NAV-02 | Phase 9 | Planned |
 | NAV-03 | Phase 9 | Complete (09-01) |
