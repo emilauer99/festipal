@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 26
+open_count: 28
 waived_count: 3
 fixed_count: 10
-total_count: 39
-last_updated: 2026-08-12T17:30:00.000Z
+total_count: 41
+last_updated: 2026-08-14T08:52:05.535Z
 ---
 
 # Broken Windows Ledger
@@ -54,6 +54,8 @@ last_updated: 2026-08-12T17:30:00.000Z
 | 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
 | 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | fixed |  | 2026-08-12T00:13:36.212Z | 2026-08-12T09:28:01.642Z |
 | 39 | 7 | deviation | apps/api/src/friendship/friendship.service.ts |  | 07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht | open |  | 2026-08-12T15:56:38.397Z |  |
+| 40 | 09 | unrun-verify | apps/mobile/components/PlaceholderScreen.tsx |  | 09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed. | open |  | 2026-08-14T08:51:59.963Z |  |
+| 41 | 09 | stub | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05. | open |  | 2026-08-14T08:52:05.535Z |  |
 
 ````json
 [
@@ -523,6 +525,30 @@ last_updated: 2026-08-12T17:30:00.000Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-12T15:56:38.397Z",
+    "resolved_at": null
+  },
+  {
+    "id": 40,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/components/PlaceholderScreen.tsx",
+    "line": null,
+    "description": "09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T08:51:59.963Z",
+    "resolved_at": null
+  },
+  {
+    "id": 41,
+    "kind": "stub",
+    "phase": "09",
+    "file": "apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx",
+    "line": null,
+    "description": "Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T08:52:05.535Z",
     "resolved_at": null
   }
 ]

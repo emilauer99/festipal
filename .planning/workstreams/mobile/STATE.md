@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: Completed 09-02-PLAN.md (FRND-07 festival-friends endpoint + SEC-02 isolation spec)
-last_updated: "2026-08-13T23:52:23+02:00"
-last_activity: 2026-08-13
-last_activity_desc: Phase 09 Plan 02 (festival-scoped friends endpoint) completed
+stopped_at: Completed 09-03-PLAN.md (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; mid-plan device-bug fix for Dashboard tab blank-on-reentry)
+last_updated: "2026-08-14T08:54:39.797Z"
+last_activity: 2026-08-14
+last_activity_desc: Phase 09 Plan 03 (five-tab festival navigator, layout D-10 gate, PlaceholderScreen) completed, incl. mid-plan device-bug fix
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 12
+  completed_plans: 13
   percent: 33
 ---
 
@@ -36,9 +36,9 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 09 (festival-navigation-shell) — EXECUTING
-Plan: 3 of 6
-Status: Ready to execute (09-03 blocked on 09-01, unblocked; 09-02 done, packages/contracts collision zone free again)
-Last activity: 2026-08-13 — 09-02 completed (FRND-07 endpoint + SEC-02 isolation spec)
+Plan: 4 of 6
+Status: Ready to execute (09-04 blocked on 09-03, unblocked; 09-03 done, device-verified after a mid-plan bugfix)
+Last activity: 2026-08-14 — 09-03 completed (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; Task 2 human-check still outstanding, WINDOWS #40)
 
 ## Shipped
 
@@ -184,6 +184,26 @@ was die naechsten Phasen konkret betrifft:
   (same two friends, different `festivalId`, different result). Full suite: 16 files / 140 tests
   green.
 
+- **Phase 09-03 (Five-Tab Festival Navigator, NAV-01/NAV-02, D-01/D-10/D-12…D-14):** the festival
+  navigator is a dedicated `Tabs` with a layout-level D-10 gate (`app/(festival)/f/[festivalSlug]/_layout.tsx`)
+  that replaces the WHOLE area (no tab bar, no tab content) on 404/transport-error;
+  `FloatingNav` is parametrized (`variant: 'global' | 'festival'`) instead of forked (D-01);
+  `PlaceholderScreen` is the one shared honest empty state for Aktivitaeten/Timetable/Lageplan
+  (D-12/D-13). **Mid-plan device bug (Rule 1 fix, `c16369f`):** the Dashboard tab went blank on
+  tab re-entry because it re-queried the SAME `festivalKeys.detail(slug)` key the layout gate
+  already subscribed to — two independent React Query observers of one key can transiently
+  disagree on tab re-focus. Fixed by extracting the gate branching into a pure, unit-tested
+  `lib/festival-gate.ts` (`resolveFestivalGateState`) and having tab screens read the layout's
+  already-resolved festival via `lib/festival-context.ts` (`useFestivalContext()`) instead of
+  re-querying it — the layout never unmounts across tab switches, so the context value can never
+  desync. **Pattern for any future nested Tabs/Stack gated on an async resolution:** the gating
+  layout owns the data and provides it via Context; children never re-derive it. Device-verified
+  by the user (2026-08-14) across two rounds — round 1 found the bug, round 2 confirmed all 8
+  checklist points including repeated tab-switch-and-return. Task 2's own `<human-check>`
+  (icon/heading/body per placeholder, max font scale, EN locale) was deferred and NOT yet
+  device-verified — tracked as `WINDOWS.md` #40. `friends.tsx` is a registered-route stub
+  ("This tab isn't built yet.") until 09-05 (`WINDOWS.md` #41).
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -278,17 +298,18 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T23:52:23+02:00
-Stopped at: Completed 09-02-PLAN.md (FRND-07 festival-friends endpoint + SEC-02 isolation spec)
+Last session: 2026-08-14T08:54:39.778Z
+Stopped at: Completed 09-03-PLAN.md (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; mid-plan device-bug fix for Dashboard tab blank-on-reentry)
 Resume file: None
 
 ## Operator Next Steps
 
-- `/gsd-plan-phase 9 --ws mobile` — Kontext liegt schon vor (`09-CONTEXT.md`)
-- Alternativ: `/gsd-discuss-phase 9 --ws mobile`, wenn der Kontext nochmal aufgemacht werden soll
+- `/gsd-execute-phase 9 --ws mobile` — weiter mit 09-04 (app-weiter `AppHeader`, blockiert auf 09-03, jetzt frei)
+- Vor 09-04 optional: Task 2's ausstehenden Geraete-Human-Check aus 09-03 nachholen
+  (`WINDOWS.md` #40 — Icon/Ueberschrift/Fliesstext je Platzhalter, maximale Systemschrift,
+  EN-Locale) — nicht blockierend, aber offen.
 - Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
-- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`. Der Tab-Rename `home` → `start` ist als NAV-03
-  in Phase 9 eingeplant — vor neuen Routen erledigen.
+- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
 
 ## Performance Metrics
 
@@ -306,3 +327,4 @@ Resume file: None
 | Phase 08 P05 | ~14min | 2 tasks | 8 files |
 | Phase 09 P01 | 29min | 2 tasks | 10 files |
 | Phase 09 P02 | ~12min | 2 tasks | 4 files |
+| Phase 09 P03 | ~55min (2 checkpoints) | 2 tasks | 16 files |
