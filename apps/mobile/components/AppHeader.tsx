@@ -200,7 +200,14 @@ export function AppHeader() {
           </View>
 
           <Pressable
-            onPress={() => router.push('/profil')}
+            // 09-04 WR-02 fix — `navigate`, not `push`: the header is mounted
+            // over every visible state including the `/profil` push screen
+            // itself, so a bare `push` here stacked a duplicate `/profil`
+            // entry on every repeat tap (and again from `friends-qr`/
+            // `friends-find`/`cashless`). Same idiom `goToStartTab`
+            // (`lib/festival-navigation.ts`) already documents: `navigate`
+            // reuses the existing screen instead of stacking a new one.
+            onPress={() => router.navigate('/profil')}
             accessibilityRole="button"
             accessibilityLabel={t`Profile`}
           >
