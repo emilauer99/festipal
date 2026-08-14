@@ -72,9 +72,9 @@ describe('auth guard (SEC-01 comprehensive)', () => {
       expect(res.status).toBe(401);
     });
 
-    it('GET /api/v1/festivals/:festivalId/tags', async () => {
+    it('GET /api/v1/festivals/:festivalId/activity-tags', async () => {
       const res = await request(app.getHttpServer()).get(
-        `/api/v1/festivals/${randomUUID()}/tags`,
+        `/api/v1/festivals/${randomUUID()}/activity-tags`,
       );
       expect(res.status).toBe(401);
     });

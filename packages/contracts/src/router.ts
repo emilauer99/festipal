@@ -1,7 +1,9 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
+import { localeSchema } from './locale';
 import {
+  activityTagSchema,
   completeProfileBodySchema,
   festivalSchema,
   friendRequestListsSchema,
@@ -180,6 +182,21 @@ export const contract = c.router(
       responses: { 200: z.array(friendSchema) },
       summary:
         'List the caller’s own friends who ALSO saved this festival — the intersection of `listFriends` and `listMyFestivals(festivalId)`. Caller from session only, festivalId from path only (SEC-02); carries no `my_festival` value (ADR-014, no presence signal). No friends or unsaved festival is `[]`, never 404',
+    },
+    // Replaces the removed `listTags` (D-01). Effective = enabled global
+    // (activity_tag.festivalId IS NULL, minus any festival_activity_tag
+    // enabled=false row) UNION this festival's own tags — titles resolved
+    // server-side to the requested (or festival default) locale (D-02). No
+    // 404 for an unknown festivalId — same "not an existence oracle" stance
+    // as `friendsInFestival`, `[]` instead.
+    listActivityTags: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activity-tags',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activityTagSchema) },
+      summary:
+        'The effective activity-tag catalog for a festival — activated global tags union the festival’s own, titles resolved to the requested locale (SEC-03: activity_tag.festivalId is the one deliberate nullable-tenant exception)',
     },
   },
   { pathPrefix: '/api/v1' },

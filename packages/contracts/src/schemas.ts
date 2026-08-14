@@ -34,6 +34,22 @@ export const festivalSchema = festivalSelectSchema
 export type Festival = z.infer<typeof festivalSchema>;
 
 /**
+ * An activity tag/chip with its title already resolved to the requested
+ * locale server-side (D-02) — `title` is a plain resolved `string`, never a
+ * `LocalizedText` map, because the client never needs to pick a locale
+ * itself. Field scope ends at three columns (D-03): `id`/`slug`/`title`. This
+ * schema is deliberately unaware of `festivalId` (global vs. festival-own) —
+ * that distinction only matters server-side (SEC-03's nullable-tenant
+ * exception) and is never exposed on the wire.
+ */
+export const activityTagSchema = z.object({
+  id: z.string().uuid(),
+  slug: z.string(),
+  title: z.string(),
+});
+export type ActivityTag = z.infer<typeof activityTagSchema>;
+
+/**
  * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod
  * base — NOT a hand-mirrored `z.object` (PITFALLS.md Pitfall 6) — so renaming a
  * `visitor_profile` column breaks this typecheck instead of silently drifting.
