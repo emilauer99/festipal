@@ -6,15 +6,15 @@ current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
 stopped_at: "Completed 09-07-PLAN.md (gap closure: G-09-2 header default, G-09-7 tab rename) — Phase 09 code-complete, device UAT pending"
-last_updated: "2026-08-14T19:33:40.254Z"
+last_updated: "2026-08-14T19:56:42.406Z"
 last_activity: 2026-08-14
 last_activity_desc: "Phase 09 Plan 07 (gap closure: G-09-2 header default moved to the navigator, G-09-7 festival tab rename to Live/quiks/Crew/Timetable/Karte) completed — Phase 09 is code-complete pending device UAT (WINDOWS.md unrun-verify entries)"
 progress:
   total_phases: 6
   completed_phases: 2
-  total_plans: 17
+  total_plans: 22
   completed_plans: 17
-  percent: 33
+  percent: 50
 ---
 
 # Project State — Workstream `mobile`
@@ -318,6 +318,7 @@ Resume file: None
   keine Leiste auf den Anmeldeflaechen, Freund-Detailkarte weiterhin schliessbar, die fuenf neuen
   Festival-Tab-Namen DE+EN, unveraenderte Friends-/Augenbraue-Flaechen). Danach `/gsd-progress` bzw.
   die passende Phasen-Abschluss-Aktion, um Phase 09 formal zu schliessen.
+
 - Drei offene `unrun-verify`-Eintraege in `WINDOWS.md` fuer diese Geraeterunde (09-07 Task 1/2/3);
   dazu weiterhin offen: `WINDOWS.md` #40 aus 09-03 (Icon/Ueberschrift/Fliesstext je Platzhalter,
   maximale Systemschrift, EN-Locale).
