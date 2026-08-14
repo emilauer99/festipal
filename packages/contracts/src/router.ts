@@ -3,6 +3,7 @@ import { z } from 'zod';
 
 import { localeSchema } from './locale';
 import {
+  activityJoinResultSchema,
   activitySchema,
   activityTagSchema,
   completeProfileBodySchema,
@@ -216,6 +217,35 @@ export const contract = c.router(
       responses: { 201: activitySchema, 404: errorSchema, 409: errorSchema },
       summary:
         'Create an activity in this festival. The caller becomes a participant in the same transaction (D-07); tagId must be a global tag or one owned/enabled by this festival (SEC-03)',
+    },
+    // The membership slice (D-08/D-09/D-10, plan 10-03). All three take
+    // `festivalId`/`activityId` from the path only — the actor always comes
+    // from the session, never from the body.
+    joinActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities/:activityId/join',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      body: z.object({}),
+      responses: { 200: activityJoinResultSchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        'Join an activity. Idempotent — joining twice is the same state (200 both times). 409 when the activity is full (capacity enforced by a DB trigger, D-07), has already started (D-10), or the caller has no completed profile; 404 for an activityId unknown in THIS festival',
+    },
+    leaveActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities/:activityId/leave',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      body: z.object({}),
+      responses: { 200: mutationResultSchema, 409: errorSchema },
+      summary:
+        'Leave an activity. No 404 branch — like decline/withdraw/unfriend, this is evidence-free: the SAME 200 body whether a participation existed or the activityId is unknown in this festival. The only other outcome is 409 for the creator (D-09) — leaving can never remove the creator from their own activity',
+    },
+    deleteActivity: {
+      method: 'DELETE',
+      path: '/festivals/:festivalId/activities/:activityId',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      responses: { 200: mutationResultSchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        '"Auflösen" — creator-only deletion of the activity plus ALL its participant rows (composite-FK cascade, D-09). Deliberately NOT evidence-free like leave: this is a visible state change a non-creator would otherwise wrongly render as gone. 200 for the creator, 409 for anyone else, 404 for an activityId unknown in this festival (the festival is already public within its own tenant, so there is no secret to protect here)',
     },
   },
   { pathPrefix: '/api/v1' },

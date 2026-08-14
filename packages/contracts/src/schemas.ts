@@ -126,6 +126,15 @@ export const createActivityBodySchema = z
 export type CreateActivityBody = z.infer<typeof createActivityBodySchema>;
 
 /**
+ * `POST .../join` success (D-09, plan 10-03). Leave and delete reuse the
+ * existing `mutationResultSchema` (`{ result: 'removed' }`) — join is the
+ * only new answer, because "you are now a participant" is a distinct fact
+ * from "removed", not a second name for the same thing.
+ */
+export const activityJoinResultSchema = z.object({ result: z.literal('joined') });
+export type ActivityJoinResult = z.infer<typeof activityJoinResultSchema>;
+
+/**
  * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod
  * base — NOT a hand-mirrored `z.object` (PITFALLS.md Pitfall 6) — so renaming a
  * `visitor_profile` column breaks this typecheck instead of silently drifting.

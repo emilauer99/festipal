@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, eq, isNull, or } from 'drizzle-orm';
+import { and, asc, eq, isNull, or, sql } from 'drizzle-orm';
 import {
   activity,
   activityParticipant,
@@ -27,6 +27,20 @@ export type CreateActivityResult =
   | { status: 'tag-not-found' }
   | { status: 'profile-required' }
   | { status: 'invalid' };
+
+export type JoinActivityResult =
+  | { status: 'joined' }
+  | { status: 'not-found' }
+  | { status: 'full' }
+  | { status: 'started' }
+  | { status: 'profile-required' };
+
+export type LeaveActivityResult = { status: 'removed' } | { status: 'creator' };
+
+export type RemoveActivityResult =
+  | { status: 'removed' }
+  | { status: 'not-found' }
+  | { status: 'not-creator' };
 
 @Injectable()
 export class ActivityService {
@@ -280,5 +294,106 @@ export class ActivityService {
     const view = await this.loadActivityView(insertedId, locale, fest.defaultLocale);
     if (!view) throw new Error('activity vanished immediately after its own insert');
     return { status: 'ok', activity: view };
+  }
+
+  /**
+   * Join an activity (D-08/D-09/D-10, plan 10-03). Both scope conditions
+   * (`id` AND `festivalId`) sit in the same WHERE clause the other three
+   * methods use — an `activityId` guessed from a foreign festival never
+   * resolves under this festival's path (SEC-03).
+   *
+   * `started` is computed by the DATABASE (`now() >= start_time`), never by
+   * comparing against a client-supplied timestamp (D-10) — the same
+   * server-time posture the migration 0010 trigger itself takes for the
+   * capacity race.
+   *
+   * The actual write is a bare `onConflictDoNothing()` insert — capacity is
+   * NOT re-checked here (that would reintroduce the check-then-insert race
+   * migration 0010 exists to remove). `postgresErrorOf` discriminates the
+   * trigger's `23514`/`activity_capacity_full_chk` from the FK's `23503`
+   * (an unfinished first login), the same idiom `create` above already uses.
+   */
+  async join(visitorId: string, festivalId: string, activityId: string): Promise<JoinActivityResult> {
+    const [row] = await this.db
+      .select({
+        id: activity.id,
+        started: sql<boolean>`now() >= ${activity.startTime}`,
+      })
+      .from(activity)
+      .where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)))
+      .limit(1);
+    if (!row) return { status: 'not-found' };
+    if (row.started) return { status: 'started' };
+
+    try {
+      await this.db
+        .insert(activityParticipant)
+        .values({ activityId, festivalId, visitorId })
+        .onConflictDoNothing();
+    } catch (err) {
+      const cause = postgresErrorOf(err);
+      // 23514/activity_capacity_full_chk: migration 0010's trigger refused
+      // the last seat.
+      if (cause?.code === '23514' && cause.constraint_name === 'activity_capacity_full_chk') {
+        return { status: 'full' };
+      }
+      // 23503: `activity_participant.visitor_id` FK to
+      // `visitor_profile.account_id` — an unfinished first login, same
+      // answer `create` gives above.
+      if (cause?.code === '23503') return { status: 'profile-required' };
+      throw err;
+    }
+
+    // `joined` regardless of whether `onConflictDoNothing` wrote a new row —
+    // a repeated join by an already-seated visitor is the same success, not
+    // a different outcome (idempotency).
+    return { status: 'joined' };
+  }
+
+  /**
+   * Leave an activity (D-09, plan 10-03). Deliberately evidence-free like
+   * `decline`/`withdraw`/`unfriend`: an unknown `activityId` (in this
+   * festival) and a caller who never joined both answer `removed`, exactly
+   * like a caller who did. The ONE branch that is NOT evidence-free is the
+   * creator — leaving must never be a hidden way to detach the creator from
+   * their own activity (the explicit `remove` below is the only door out).
+   */
+  async leave(visitorId: string, festivalId: string, activityId: string): Promise<LeaveActivityResult> {
+    const [row] = await this.db
+      .select({ creatorId: activity.creatorId })
+      .from(activity)
+      .where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)))
+      .limit(1);
+    if (!row) return { status: 'removed' };
+    if (row.creatorId === visitorId) return { status: 'creator' };
+
+    await this.db
+      .delete(activityParticipant)
+      .where(
+        and(eq(activityParticipant.activityId, activityId), eq(activityParticipant.visitorId, visitorId)),
+      );
+    return { status: 'removed' };
+  }
+
+  /**
+   * "Auflösen" — creator-only deletion of the activity (D-09, plan 10-03).
+   * Deliberately NOT evidence-free (unlike `leave`): existence within a
+   * festival is already public (Discovery), so there is no secret a 404
+   * would expose, and a non-creator getting a silent 200 would incorrectly
+   * remove a still-live activity from their own client. Participant rows
+   * disappear via `activity_participant_activity_fk`'s `ON DELETE CASCADE`
+   * (10-02) — no second delete statement needed.
+   */
+  async remove(callerId: string, festivalId: string, activityId: string): Promise<RemoveActivityResult> {
+    const [row] = await this.db
+      .select({ creatorId: activity.creatorId })
+      .from(activity)
+      .where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)))
+      .limit(1);
+    if (!row) return { status: 'not-found' };
+    if (row.creatorId !== callerId) return { status: 'not-creator' };
+
+    await this.db.delete(activity).where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)));
+    return { status: 'removed' };
   }
 }
