@@ -114,6 +114,10 @@ msgstr "Browse festivals"
 msgid "Camera unavailable"
 msgstr "Camera unavailable"
 
+#: app/cashless.tsx
+msgid "Can't load Cashless right now."
+msgstr "Can't load Cashless right now."
+
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/start.tsx
 msgid "Can't load festivals — check your connection and try again."
@@ -156,9 +160,10 @@ msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as
 msgid "Cancel"
 msgstr "Cancel"
 
-#: app/(festival)/f/[festivalSlug].tsx
-#~ msgid "Cashless"
-#~ msgstr "Cashless"
+#: app/(festival)/f/[festivalSlug]/index.tsx
+#: components/AppHeader.tsx
+msgid "Cashless"
+msgstr "Cashless"
 
 #: app/(auth)/verify.tsx
 msgid "Change email"
@@ -398,6 +403,10 @@ msgstr "Leave festival"
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
 msgstr "Let the other person scan this code."
+
+#: app/cashless.tsx
+msgid "Loading Cashless…"
+msgstr "Loading Cashless…"
 
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "Loading festival…"
@@ -661,6 +670,7 @@ msgstr "Resend in {countdownLabel}"
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/start.tsx
+#: app/cashless.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Retry"

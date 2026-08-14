@@ -4,10 +4,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { useLingui } from '@lingui/react/macro';
-import { CalendarClock, MapPin, Users } from 'lucide-react-native';
+import { ArrowRight, CalendarClock, MapPin, Users, Wallet } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
 import { apiClient } from '../../../../lib/api-client';
+import { resolveCashlessTarget } from '../../../../lib/cashless-url';
 import { friendKeys } from '../../../../lib/friend-queries';
 import { i18n } from '../../../../lib/i18n';
 import { useFestivalContext } from '../../../../lib/festival-context';
@@ -22,6 +23,11 @@ import { StatTile } from '../../../../components/StatTile';
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
 const { typeRoles, layout, spacingScale } = tokens;
+
+// 09-06 (D-09) — the Cashless tile's trailing "tap to open" glyph, sized
+// against `StatTile`'s existing eyebrow-icon precedent (15px), one size
+// smaller since this sits in the value row, not the eyebrow row.
+const CASHLESS_TRAILING_ICON_SIZE = 14;
 
 /**
  * The Dashboard tab (09-03 Task 1) — the former `f/[festivalSlug].tsx`
@@ -48,6 +54,19 @@ const { typeRoles, layout, spacingScale } = tokens;
  * tab (Task 2) reads, so the two can never disagree (one cache entry, one
  * invalidation). Unlike the removed `ComingSoonTile`s it is ALWAYS rendered
  * (D-11) — a friend count is real data, not a "coming soon" placeholder.
+ *
+ * 09-06 Task 2 (D-09, ADR-011) — the Cashless `StatTile` joins the row,
+ * LEFT of Crew (the primary action first). It renders ONLY when
+ * `resolveCashlessTarget(festival.cashlessUrl)` resolves — no dampened/inert
+ * substitute when it doesn't (a mock at a payment surface is the most
+ * dishonest place a mock could stand). It is the tab's one `tone="brand"`
+ * surface; Crew stays `tone="default"` so the two never compete for the
+ * accent. The tile carries NO value — the real balance lives behind the
+ * embedded page, not in this app's own data — only a trailing arrow saying
+ * "tap to open". The two tiles resolve from INDEPENDENT sources (the gate
+ * query vs. the friends query): either can be absent/failed without
+ * affecting the other, and a single remaining tile fills the row via its
+ * own `flex: 1` with no special-case styling.
  */
 export default function FestivalDashboardScreen() {
   const { t } = useLingui();
@@ -79,6 +98,12 @@ export default function FestivalDashboardScreen() {
   if (!festival) return null;
 
   const friendsHereLabel = t`Friends here`;
+  const cashlessLabel = t`Cashless`;
+  // 09-06 (D-09) — resolved from the ALREADY-fetched festival (the layout
+  // gate's own query, read via useFestivalContext()), not a second request.
+  // A hard omission when this is `null` — never a dampened/inert substitute
+  // (ADR-011).
+  const cashlessTarget = resolveCashlessTarget(festival.cashlessUrl);
 
   // A non-200 ts-rest result is a SUCCESSFUL React Query result, never
   // `query.status === 'error'` — same project-wide rule every other screen
@@ -132,17 +157,34 @@ export default function FestivalDashboardScreen() {
           </View>
         </View>
 
-        {/* 09-05 Task 1 — the tile row: exactly one `flex: 1` tile in this
-            plan (Crew). `tone="default"`: a friend count is information, not
-            a primary action, so it does not compete with `tone="brand"`
-            (reserved for 09-06's Cashless entry) for the tab's one accent
-            surface. A tap switches the ACTIVE TAB to Friends
-            (`router.navigate`, never `push` — this is a tab change, not a
-            stack push). The full D-11 empty-state sentence lives one tap
-            further, as the second empty state's body copy on the Friends
-            tab itself (Task 2) — it would run five to six lines in a
-            half-width tile and pull both tiles' height up with it. */}
+        {/* 09-05/09-06 — the tile row: up to two `flex: 1` tiles, Cashless
+            (tone="brand", conditional) then Crew (tone="default", always).
+            Crew's tap switches the ACTIVE TAB to Friends (`router.navigate`,
+            never `push` — this is a tab change, not a stack push). The full
+            D-11 empty-state sentence lives one tap further, as the second
+            empty state's body copy on the Friends tab itself — it would run
+            five to six lines in a half-width tile and pull both tiles'
+            height up with it. When Cashless is absent the row's single
+            remaining tile fills it via its own `flex: 1`, no special case. */}
         <View style={styles.tileRow}>
+          {cashlessTarget ? (
+            <StatTile
+              icon={Wallet}
+              label={cashlessLabel}
+              tone="brand"
+              trailing={
+                <ArrowRight
+                  size={CASHLESS_TRAILING_ICON_SIZE}
+                  color={colors.textMuted}
+                  strokeWidth={2}
+                />
+              }
+              onPress={() =>
+                router.push({ pathname: '/cashless', params: { uri: cashlessTarget.uri } })
+              }
+              accessibilityLabel={cashlessLabel}
+            />
+          ) : null}
           <StatTile
             icon={Users}
             label={friendsHereLabel}
