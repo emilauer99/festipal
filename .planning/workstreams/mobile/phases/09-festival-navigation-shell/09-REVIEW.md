@@ -55,6 +55,13 @@ findings:
   warning: 3
   info: 5
   total: 9
+fixed:
+  - id: CR-01
+    commit: bd983a7
+  - id: WR-01
+    commit: c37a716
+  - id: WR-02
+    commit: fec9fc8
 status: issues_found
 ---
 
@@ -63,7 +70,7 @@ status: issues_found
 **Reviewed:** 2026-08-14
 **Depth:** standard
 **Files Reviewed:** 46
-**Status:** issues_found
+**Status:** issues_found (CR-01, WR-01, WR-02 fixed; WR-03 open by deliberate product decision; Info findings not applied)
 
 ## Summary
 
@@ -76,6 +83,8 @@ Two findings matter. First, the Cashless WebView's documented sandbox invariant 
 ## Critical Issues
 
 ### CR-01: Cashless origin lock does not block cross-origin navigations — it opens them in the external browser
+
+**FIXED** — commit `bd983a7`. `originWhitelist` now passes `['*']` (always matches), making the strict-origin `onShouldStartLoadWithRequest` callback the sole gate; the library's `Linking.openURL` external-open branch is now unreachable. T-09-22 comments updated to name this as deliberate.
 
 **File:** `apps/mobile/app/cashless.tsx:114-128`
 **Issue:** The screen's comment states the sandbox contract: "any in-page navigation attempt whose origin differs from the configured one is rejected, never opened externally" (T-09-22). That is not the library's behavior. Verified in the installed `react-native-webview@13.16.1` (`lib/WebViewShared.js`, `createOnShouldStartLoadWithRequest`): the whitelist check runs FIRST, and a URL that fails `originWhitelist` triggers `Linking.canOpenURL(url).then(... Linking.openURL(url))` — the URL is opened externally — and the user-supplied `onShouldStartLoadWithRequest` is only ever invoked for URLs that PASS the whitelist (the `else if` branch):
@@ -107,6 +116,8 @@ onShouldStartLoadWithRequest={(request: ShouldStartLoadRequest) => {
 
 ### WR-01: Festival gate renders a permanently blank screen for a non-200/non-404 response with a cold cache
 
+**FIXED** — commit `c37a716`. `resolveFestivalGateState` now routes a success response with an unexpected status (neither 200 nor 404) into `showTransportError`, so the existing error + Retry branch renders. `success(500)`/`success(503)` cases added to `festival-gate.test.ts`.
+
 **File:** `apps/mobile/lib/festival-gate.ts:55-64` (rendered by `apps/mobile/app/(festival)/f/[festivalSlug]/_layout.tsx:104-153`)
 **Issue:** The derivation handles exactly three query outcomes: pending, transport error, and success with 200/404. A success whose status is anything else — a 500/502/503 from the API or a proxy — is a SUCCESSFUL React Query result (`apps/mobile/lib/api-client.ts` sets no `throwOnUnknownStatus`, so ts-rest resolves unknown statuses), and for it every flag comes out false when no `cachedFestival` exists: `showLoading` false (not pending), `showTransportError` false (not `'error'`), `notFound`/`showNotFound` false (status ≠ 404), `showTabs` false (`festival` undefined). The layout's `!showTabs` branch then renders a `SafeAreaView` whose three conditional blocks are all `null` — a blank screen with no copy, no retry, and no way out except the header's home button. Every other screen in this phase branches `data.status !== 200` into an error state (`(festival)/friends.tsx:110`, `(tabs)/friends.tsx:227`, `start.tsx:79`); the gate — the single choke point for the whole festival area — is the one place that doesn't. `festival-gate.test.ts` has no case for it either.
 **Fix:** Treat an unexpected success status as a transport-class failure so the existing error + Retry branch renders:
@@ -119,11 +130,15 @@ const showTransportError = !missingSlug && (query.status === 'error' || unexpect
 
 ### WR-02: AppHeader avatar stacks duplicate `/profil` screens on repeated taps
 
+**FIXED** — commit `fec9fc8`. The avatar `Pressable` now calls `router.navigate('/profil')` instead of `router.push`, matching the `goToStartTab` idiom in `lib/festival-navigation.ts`.
+
 **File:** `apps/mobile/components/AppHeader.tsx:202-206`
 **Issue:** The trailing avatar is always `router.push('/profil')`. The header is mounted over every visible state including the push state — so on the `/profil` screen itself, tapping the avatar pushes a SECOND `/profil` onto the root stack (and a third, and so on); the visitor then has to press Back once per accidental tap to unwind. The same applies from `friends-qr`/`friends-find`/`cashless`, where stacking `profil` on top is at least intended once, but repeated taps still accumulate copies — the exact duplicate-stacking problem `goToStartTab`'s comment (`lib/festival-navigation.ts:34-37`) documents `navigate`-over-`push` as the cure for.
 **Fix:** Use `router.navigate('/profil')` instead of `push` (idempotent for the already-on-profil case), or short-circuit: `if (headerContext.kind === 'push' && headerContext.route === 'profil') return;`.
 
 ### WR-03: Transport error discards a warm cached festival — the festival area dead-ends offline despite having the data
+
+**OPEN — not fixed in this pass.** This is a deliberate product decision pinned by an existing test (`festival-gate.test.ts:103-114`, "a transport error hides the Tabs, regardless of any cached hint"); the user re-makes this call consciously rather than having it silently reversed by an automated fix.
 
 **File:** `apps/mobile/lib/festival-gate.ts:62-64`
 **Issue:** `showTransportError` fires on `query.status === 'error'` regardless of `cachedFestival`, and `showTabs` is suppressed by it. Entering a festival with no connectivity — the flagship festival-grounds scenario — therefore shows "Can't reach the server" and no tabs even when `findCachedFestivalBySlug` just produced the full `Festival` from the list caches. The same cached value IS trusted while the query is merely pending (`showTabs: true`, `_layout.tsx:69-91`), so the cache is deemed good enough to open the navigator during a refetch but not during a failure — the inconsistent direction. This conflicts with the workstream's non-negotiable offline-first principle ("map, timetable, ticket/wallet must work with no connectivity"; the CLAUDE.md architecture list). I note it is pinned deliberately by `festival-gate.test.ts:103-114` ("a transport error hides the Tabs, regardless of any cached hint"), so this is a decision to re-make consciously, not an accidental slip.
