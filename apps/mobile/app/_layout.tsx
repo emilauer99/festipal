@@ -471,7 +471,24 @@ function RootNavigation() {
                   (`QueryClientProvider`/`I18nProvider`/`ThemeProvider`/
                   `SafeAreaProvider`), which the header's own hooks need. */}
               <View style={rootStyles.authenticatedTree}>
-                <Stack>
+                {/* 09-07 gap closure (G-09-2) — `screenOptions={{ headerShown:
+                    false }}` is the navigator DEFAULT: a Native Stack screen
+                    with no explicit header option renders a VISIBLE (blank)
+                    native header, and react-native-screens lays the nested
+                    navigator it hosts out BELOW that header's own height — a
+                    ~80dp band the AppHeader glass then hid instead of making
+                    visible (device-measured root cause,
+                    .planning/debug/header-content-whitespace.md). The default
+                    lives HERE, at the navigator, so a new sibling
+                    registration can't forget it the way
+                    profil/friends-qr/friends-find/cashless individually did
+                    below before this fix, and (tabs)/(festival) never did at
+                    all. The ONE exception is `friend-detail` below, which
+                    turns its own header back on in its in-screen
+                    `<Stack.Screen options>` — that is where its close button
+                    lives (09-04 Flagged Assumption 1). Guarded by
+                    `lib/__tests__/native-header-default.test.ts`. */}
+                <Stack screenOptions={{ headerShown: false }}>
                 {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
                       is the SINGLE owner of path `/` and is declared OUTSIDE every
                       Stack.Protected block, so it is mounted in ALL auth states.
@@ -504,17 +521,17 @@ function RootNavigation() {
 
                       09-04 — its header/title are now `AppHeader`'s push state
                       (`resolveHeaderContext`), not its own `<Stack.Screen
-                      options>` (Task 3 of 09-04-PLAN.md removes that block from
-                      `app/profil.tsx` itself). `headerShown: false` is set HERE,
-                      at this root registration, because a Native Stack screen
-                      with no explicit header option defaults to a VISIBLE
-                      (blank) native header — without this the removal in Task 3
-                      would leave a blank bar sitting above `AppHeader`.
-                      `friend-detail` below is deliberately NOT given this
-                      option: it keeps its own customized header (close button)
-                      via its own `<Stack.Screen options>`, unchanged by this
-                      phase (Flagged Assumption 1, 09-04-PLAN.md). */}
-                  <Stack.Screen name="profil" options={{ headerShown: false }} />
+                      options>` (Task 3 of 09-04-PLAN.md removed that block
+                      from `app/profil.tsx` itself). The navigator's own
+                      `screenOptions` default (see the comment above the
+                      `<Stack>` element) is what now keeps a blank native
+                      header from sitting above `AppHeader` — no per-screen
+                      option is needed here any more (09-07 gap closure).
+                      `friend-detail` below is deliberately NOT covered by
+                      that default: it keeps its own customized header (close
+                      button) via its own `<Stack.Screen options>`, unchanged
+                      by this phase (Flagged Assumption 1, 09-04-PLAN.md). */}
+                  <Stack.Screen name="profil" />
                   {/* 08-03 / D-09 — the friend detail modal, same root-level
                       sibling-of-`(tabs)` shape as `profil` above, registered
                       exhaustively for the same reason: an unregistered
@@ -524,19 +541,19 @@ function RootNavigation() {
                       untouched. */}
                   <Stack.Screen name="friend-detail" />
                   {/* 08-04 / D-13 — the QR screen, same root-level
-                      sibling-of-`(tabs)` shape as `profil`/`friend-detail`
+                      sibling-of-`(tabs)`/`friend-detail` shape as `profil`
                       above. The quiks code it renders is namespaced
                       PLAINTEXT (`quiks:u/<username>`, Phase-7 D-17), never a
                       deep link — this registration and the payload format
                       together are what keep this screen out of the
                       deep-link capture path elsewhere in this file, the
                       same path that produced the Phase-5
-                      first-login-unmatched-route bug. */}
-                  {/* 09-04 — same reasoning as `profil` above: `headerShown:
-                      false` here is what keeps a blank native header from
-                      reappearing once Task 3 removes this screen's own
-                      `<Stack.Screen options>` block. */}
-                  <Stack.Screen name="friends-qr" options={{ headerShown: false }} />
+                      first-login-unmatched-route bug. The navigator's
+                      `screenOptions` default (see the comment above the
+                      `<Stack>` element) keeps a blank native header from
+                      appearing here too — no per-screen option needed
+                      (09-07 gap closure). */}
+                  <Stack.Screen name="friends-qr" />
                   {/* 09-05 (D-16) — the "Find friends" push-over entry from
                       the Festival-Friends-Tab: a root-level SIBLING of
                       `(tabs)`, same shape as `profil`/`friends-qr` above.
@@ -544,12 +561,12 @@ function RootNavigation() {
                       own default export — this registration is what gives
                       THAT re-exported mount its push header/back state and
                       hides `FloatingNav`, while the (tabs) registration of
-                      the same component is untouched. `headerShown: false`
-                      here for the same reason as `profil`/`friends-qr`: a
-                      Native Stack screen with no explicit header option
-                      defaults to a visible blank native header, which would
-                      sit above `AppHeader`'s own push-state title. */}
-                  <Stack.Screen name="friends-find" options={{ headerShown: false }} />
+                      the same component is untouched. The navigator's
+                      `screenOptions` default is what keeps a blank native
+                      header from sitting above `AppHeader`'s own push-state
+                      title here — no per-screen option needed
+                      (09-07 gap closure). */}
+                  <Stack.Screen name="friends-find" />
                   {/* 09-06 (D-09) — the Cashless WebView push screen, same
                       root-level sibling-of-`(tabs)` shape as `profil`/
                       `friends-qr`/`friends-find` above. Pushed ONLY from the
@@ -560,11 +577,12 @@ function RootNavigation() {
                       Unmatched Route screen), but the SCREEN itself
                       re-validates the address it receives (T-09-23) rather
                       than trusting this registration to only ever be reached
-                      with a good one. `headerShown: false` for the same
-                      reason as the three screens above it. `cashless` is NOT
-                      a deep-link target — the deep-link capture path
-                      elsewhere in this file is untouched. */}
-                  <Stack.Screen name="cashless" options={{ headerShown: false }} />
+                      with a good one. The navigator's `screenOptions`
+                      default keeps a blank native header from appearing here
+                      too (09-07 gap closure). `cashless` is NOT a deep-link
+                      target — the deep-link capture path elsewhere in this
+                      file is untouched. */}
+                  <Stack.Screen name="cashless" />
                 </Stack.Protected>
                 </Stack>
                 <AppHeader />

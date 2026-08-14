@@ -172,6 +172,13 @@ export default function FriendDetailScreen() {
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       <Stack.Screen
         options={{
+          // 09-07 gap closure (T-09-25) — the root Stack's navigator-level
+          // header default (app/_layout.tsx) now hides the native header
+          // everywhere; this screen turns it back on for itself because its
+          // close button lives IN that native header (09-04 Flagged
+          // Assumption 1) — without this override the card would render
+          // with no way out.
+          headerShown: true,
           presentation: 'modal',
           title: '',
           headerLeft: () => null,
