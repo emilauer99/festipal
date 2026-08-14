@@ -111,14 +111,30 @@ export default function CashlessScreen() {
           ref={webviewRef}
           source={{ uri: target.uri }}
           style={styles.webview}
-          // T-09-22 — sandbox lock #1: restrict to the CONFIGURED origin
-          // only, never the library default (which allows every http/https
-          // origin). Covers the reload/redirect case.
-          originWhitelist={[target.origin]}
-          // T-09-22 — sandbox lock #2: any in-page navigation attempt whose
-          // origin differs from the configured one is rejected, never opened
-          // externally. Covers the in-page-navigation case; together with
-          // originWhitelist above this is the whole ADR-011 sandbox.
+          // T-09-22 — sandbox lock, single gate. `originWhitelist={['*']}` is
+          // DELIBERATE, not a leftover default: the library's own whitelist
+          // check runs BEFORE `onShouldStartLoadWithRequest` and, for any URL
+          // that fails it, hands the URL to `Linking.openURL` instead of
+          // calling our callback — a same-origin whitelist here would mean
+          // every cross-origin navigation gets opened in the external
+          // browser (or any app registered for its scheme) rather than
+          // silently blocked. Passing `['*']` makes the whitelist check
+          // always pass, so the library's external-open branch is
+          // unreachable and the strict-origin callback below becomes the
+          // SOLE gate — a `false` return blocks the navigation with no
+          // external launch. Do not narrow this back to `[target.origin]`.
+          originWhitelist={['*']}
+          // T-09-22 — sandbox lock: any in-page navigation attempt whose
+          // origin differs from the configured one is rejected, silently,
+          // never opened externally (also rejects `about:blank` and any
+          // unparsable URL via the `catch` below). This is now the WHOLE
+          // ADR-011 sandbox — see the `originWhitelist` comment above for
+          // why the whitelist itself must stay permissive.
+          //
+          // Residual platform caveat: on Android, `shouldOverrideUrlLoading`
+          // (which this callback wraps) is not invoked for POST navigations
+          // — a documented react-native-webview/WebView limitation shared by
+          // both mechanisms, not something either can close.
           onShouldStartLoadWithRequest={(request: ShouldStartLoadRequest) => {
             try {
               return new URL(request.url).origin === new URL(target.origin).origin;
