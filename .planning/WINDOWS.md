@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 26
+open_count: 34
 waived_count: 3
-fixed_count: 10
-total_count: 39
-last_updated: 2026-08-12T17:30:00.000Z
+fixed_count: 11
+total_count: 48
+last_updated: 2026-08-14T19:31:13.132Z
 ---
 
 # Broken Windows Ledger
@@ -54,6 +54,15 @@ last_updated: 2026-08-12T17:30:00.000Z
 | 37 | 06 | stub | apps/mobile/app/profil.tsx |  | Profil-Ausblick-Bloecke ohne Backing: Adden-Code-Karte, Socials, Vibe, Stat-Kacheln (D-02, gedaempft + Bald-Badge) | open |  | 2026-08-12T00:02:55.728Z |  |
 | 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | fixed |  | 2026-08-12T00:13:36.212Z | 2026-08-12T09:28:01.642Z |
 | 39 | 7 | deviation | apps/api/src/friendship/friendship.service.ts |  | 07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht | open |  | 2026-08-12T15:56:38.397Z |  |
+| 40 | 09 | unrun-verify | apps/mobile/components/PlaceholderScreen.tsx |  | 09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed. | fixed | Geschlossen ueber UAT Runde 1 Test 1 (2026-08-14, pass): Icon/Ueberschrift/Fliesstext je Tab, drei unterschiedliche Precondition-Saetze, kein Spinner/Badge/Datumsversprechen, Scroll statt Clip bei max. Schriftskalierung, EN-Strings ohne rohe msgids. Schliessender Nachweis ist die Nutzerabnahme am Geraet (09-UAT.md Runde 1, Git 2f66ff4). | 2026-08-14T08:51:59.963Z | 2026-08-14T22:45:00.000Z |
+| 41 | 09 | stub | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05. | fixed |  | 2026-08-14T08:52:05.535Z | 2026-08-14T09:37:10.171Z |
+| 42 | 09 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | 09-04 Task 2 human-check not run on device: three header states visually distinct (global wordmark, festival title, push back+title), home/leave-festival/goToStart actions correct, avatar tap opens Profil, initials fallback, long festival name truncates, header absent on auth screens, cold-start-into-festival exit not a dead end. Automated verify (typecheck/lint/vitest/lingui compile) passed. | fixed | Geschlossen ueber UAT Runde 1 Test 2 (Header-Zustaende, Aktionen, Avatar, Auth-Grenze, Konto-Wechsel: bestanden — das dabei gefundene Layout-Issue war die separate Gap G-09-2) plus Runde 2 Test 1 nach dem 09-07-Fix. Schliessender Nachweis ist die Nutzerabnahme am Geraet (2f66ff4 + 6ed7e8f). | 2026-08-14T09:18:39.074Z | 2026-08-14T22:45:00.000Z |
+| 43 | 09 | unrun-verify | apps/mobile/app/(tabs)/start.tsx |  | 09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed. | fixed | Geschlossen ueber UAT Runde 1 Test 3 (pass: keine native Leiste ueber dem Glas, Festivalname genau einmal, Single-Line-Header bei max. Schrift) und erneut Runde 2 Test 1 (Ruheabstand ~18-20dp nach 09-07, Notch + max. Schriftskalierung). Nutzerabnahme am Geraet (2f66ff4 + 6ed7e8f). | 2026-08-14T09:18:39.478Z | 2026-08-14T22:45:00.000Z |
+| 44 | 09 | unrun-verify | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | 09-05 Task 2 human-check (9 device points: three empty states, no presence/location/chat surface, tap-through to friend-detail, error+retry, Crew tile parity, dark mode) not run on device this session | fixed | Geschlossen ueber UAT Runde 1 Test 4 (pass, echte Accounts): drei Leerzustaende, Intersection-only-Liste, kein Praesenz-/Chat-Surface, Tap-through zu friend-detail, Error+Retry, Crew-Tile-Paritaet, Dark Mode. Nutzerabnahme am Geraet (2f66ff4). | 2026-08-14T09:36:37.690Z | 2026-08-14T22:45:00.000Z |
+| 45 | 09 | unrun-verify | apps/mobile/app/friends-find.tsx |  | 09-05 Task 3 human-check (6 device points: pill visible in every state, push-over opens with back arrow + Friends title + no FloatingNav, search/requests/QR behave identically at the push position, Back returns to the festival Friends tab, unchanged global-tab behavior, max font scale on the pill) not run on device this session | fixed | Geschlossen ueber UAT Runde 1 Test 5 (pass): Pill in jedem Tab-Zustand, Push-over mit Back-Pfeil + Friends-Titel ohne FloatingNav, identisches Verhalten an beiden Positionen, Back landet im Festival-Friends-Tab, max. Schriftskalierung. Nutzerabnahme am Geraet (2f66ff4). | 2026-08-14T09:36:44.120Z | 2026-08-14T22:45:00.000Z |
+| 46 | 09 | unrun-verify | apps/mobile/app/cashless.tsx |  | 09-06 Task 2 human-check (8 device points: two tiles when the festival has a cashless address vs. exactly one tile when it doesn't, tapping Cashless opens a full-bleed WebView under the header with a Back arrow and 'Cashless' title, loading copy shows then clears, a foreign-origin link inside the page is blocked both in-page and externally, airplane-mode load shows error+retry and the retry reloads in place, no native balance element/booking list/pay QR/browser chrome anywhere on the screen, a blank-but-successful load leaves a plain empty frame with Back always reachable) not run on device this session. Requires a native rebuild (npx expo run:android from apps/mobile, never the repo root) before device testing — react-native-webview ships native code not present in the currently-installed APK. `gsd-tools windows append` returned no output/no write this session (recorded manually, matching this project's documented requirements.mark-complete workstream-path workaround). | fixed | Geschlossen ueber UAT Runde 1 Test 6 (pass, nach nativem Rebuild aus apps/mobile): Tile-Logik mit/ohne Cashless-Adresse, Full-Bleed-WebView unter Push-Header, Cross-Origin in-page geblockt UND nicht extern geoeffnet (CR-01-Fix), Offline-Fehler + In-Place-Retry, keines der vier ADR-011-ausgeschlossenen Elemente; Test 7c deckte den Blank-but-successful-Fall. Nutzerabnahme am Geraet (2f66ff4). | 2026-08-14T12:05:00.000Z | 2026-08-14T22:45:00.000Z |
+| 47 | 09 | unrun-verify | apps/mobile/app/_layout.tsx |  | 09-07 Task 1 device human-check (resting gap under glass, no route name on auth screens, friend-detail close button, notch/max-font) not yet run on device | fixed | Geschlossen ueber UAT Runde 2 Test 1 (2026-08-15, pass): Ruheabstand unter dem Glas ~18-20dp, kein Routenname hinter dem Glas, keine native Leiste auf Welcome/E-Mail/Code, friend-detail-Modal weiterhin schliessbar, haelt auf Notch-Geraet und bei max. Schriftskalierung, ohne nativen Rebuild. Nutzerabnahme am Geraet (6ed7e8f). | 2026-08-14T19:31:12.678Z | 2026-08-14T22:45:00.000Z |
+| 48 | 09 | unrun-verify | apps/mobile/components/FloatingNav.tsx |  | 09-07 Task 2 device human-check (five new tab labels/icon, DE+EN, untouched Friends/eyebrow surfaces, narrow-width truncation, no state dot on Live) not yet run on device | fixed | Geschlossen ueber UAT Runde 2 Test 2 (2026-08-15, pass): fuenf gerenderte Labels DE+EN (Live, quiks lowercase/ungeuebersetzt, Crew, Timetable, Karte/Map), AudioLines-Glyph auf Position 1, Crew-Kachel-Eyebrow und globaler Friends-Tab unveraendert, saubere Truncation bei schmaler Breite, KEIN statischer Live-Punkt. Nutzerabnahme am Geraet (6ed7e8f). | 2026-08-14T19:31:13.132Z | 2026-08-14T22:45:00.000Z |
 
 ````json
 [
@@ -523,6 +532,114 @@ last_updated: 2026-08-12T17:30:00.000Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-12T15:56:38.397Z",
+    "resolved_at": null
+  },
+  {
+    "id": 40,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/components/PlaceholderScreen.tsx",
+    "line": null,
+    "description": "09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T08:51:59.963Z",
+    "resolved_at": null
+  },
+  {
+    "id": 41,
+    "kind": "stub",
+    "phase": "09",
+    "file": "apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx",
+    "line": null,
+    "description": "Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05.",
+    "status": "fixed",
+    "reason": "",
+    "recorded_at": "2026-08-14T08:52:05.535Z",
+    "resolved_at": "2026-08-14T09:37:10.171Z"
+  },
+  {
+    "id": 42,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/components/AppHeader.tsx",
+    "line": null,
+    "description": "09-04 Task 2 human-check not run on device: three header states visually distinct (global wordmark, festival title, push back+title), home/leave-festival/goToStart actions correct, avatar tap opens Profil, initials fallback, long festival name truncates, header absent on auth screens, cold-start-into-festival exit not a dead end. Automated verify (typecheck/lint/vitest/lingui compile) passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:18:39.074Z",
+    "resolved_at": null
+  },
+  {
+    "id": 43,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/(tabs)/start.tsx",
+    "line": null,
+    "description": "09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:18:39.478Z",
+    "resolved_at": null
+  },
+  {
+    "id": 44,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx",
+    "line": null,
+    "description": "09-05 Task 2 human-check (9 device points: three empty states, no presence/location/chat surface, tap-through to friend-detail, error+retry, Crew tile parity, dark mode) not run on device this session",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:36:37.690Z",
+    "resolved_at": null
+  },
+  {
+    "id": 45,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/friends-find.tsx",
+    "line": null,
+    "description": "09-05 Task 3 human-check (6 device points: pill visible in every state, push-over opens with back arrow + Friends title + no FloatingNav, search/requests/QR behave identically at the push position, Back returns to the festival Friends tab, unchanged global-tab behavior, max font scale on the pill) not run on device this session",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:36:44.120Z",
+    "resolved_at": null
+  },
+  {
+    "id": 46,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/cashless.tsx",
+    "line": null,
+    "description": "09-06 Task 2 human-check (8 device points: two tiles when the festival has a cashless address vs. exactly one tile when it doesn't, tapping Cashless opens a full-bleed WebView under the header with a Back arrow and 'Cashless' title, loading copy shows then clears, a foreign-origin link inside the page is blocked both in-page and externally, airplane-mode load shows error+retry and the retry reloads in place, no native balance element/booking list/pay QR/browser chrome anywhere on the screen, a blank-but-successful load leaves a plain empty frame with Back always reachable) not run on device this session. Requires a native rebuild (npx expo run:android from apps/mobile, never the repo root) before device testing — react-native-webview ships native code not present in the currently-installed APK. `gsd-tools windows append` returned no output/no write this session (recorded manually, matching this project's documented requirements.mark-complete workstream-path workaround).",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T12:05:00.000Z",
+    "resolved_at": null
+  },
+  {
+    "id": 47,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/_layout.tsx",
+    "line": null,
+    "description": "09-07 Task 1 device human-check (resting gap under glass, no route name on auth screens, friend-detail close button, notch/max-font) not yet run on device",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T19:31:12.678Z",
+    "resolved_at": null
+  },
+  {
+    "id": 48,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/components/FloatingNav.tsx",
+    "line": null,
+    "description": "09-07 Task 2 device human-check (five new tab labels/icon, DE+EN, untouched Friends/eyebrow surfaces, narrow-width truncation, no state dot on Live) not yet run on device",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T19:31:13.132Z",
     "resolved_at": null
   }
 ]

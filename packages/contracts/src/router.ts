@@ -173,6 +173,24 @@ export const contract = c.router(
       responses: { 200: z.array(festivalSchema) },
       summary: 'List the caller’s saved festivals (SEC-02: festivalId/visitorId-scoped, never client-filtered)',
     },
+    // FRND-07 (D-18, published — path/response are now a one-way door). The
+    // caller comes ONLY from the session, `festivalId` ONLY from the path —
+    // there is no third parameter a client could use to ask for somebody
+    // else's intersection (SEC-02, same "client-supplied scope" pattern as
+    // `listFriends`/`unfriend`). The response is the SAME `friendSchema` shape
+    // `listFriends` already uses, not a new schema. No `my_festival` value
+    // (timestamp, festivalId, visitorId) ever appears on the wire — the table
+    // is a join-only filter (ADR-014: no presence signal). `[]` for an unknown
+    // or unsaved festivalId, never 404 — this endpoint is not a festival
+    // existence oracle.
+    friendsInFestival: {
+      method: 'GET',
+      path: '/festivals/:festivalId/friends',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      responses: { 200: z.array(friendSchema) },
+      summary:
+        'List the caller’s own friends who ALSO saved this festival — the intersection of `listFriends` and `listMyFestivals(festivalId)`. Caller from session only, festivalId from path only (SEC-02); carries no `my_festival` value (ADR-014, no presence signal). No friends or unsaved festival is `[]`, never 404',
+    },
   },
   { pathPrefix: '/api/v1' },
 );

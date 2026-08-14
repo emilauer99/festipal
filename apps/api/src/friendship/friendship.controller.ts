@@ -117,6 +117,29 @@ export class FriendshipController {
     });
   }
 
+  // FRND-07 (D-18). Lives HERE, in the friendship module, and not on
+  // `FestivalController` even though its path starts with `/festivals/` —
+  // ts-rest binds by contract KEY, not by a controller path prefix, and the
+  // VIS-02 projection rule (`foreignProfileColumns`/`pickForeignProfile`) lives
+  // in this module. A handler on `FestivalController` would either have to
+  // inject `FriendshipService` or re-list the foreign-view columns, which is
+  // exactly the second projection `visitor-projection.ts` exists to prevent.
+  // `params.festivalId` is the ONLY scope besides the session (T-09-04); no
+  // `@AllowAnonymous`, so the global AuthGuard (SEC-01) still gates it. No 404
+  // branch for an unknown `festivalId`: an empty intersection is a normal
+  // state of the resource, and a 404 here would make the endpoint a festival
+  // existence oracle for no client benefit (T-09-07).
+  @TsRestHandler(contract.friendsInFestival)
+  friendsInFestival(@Session() session: UserSession) {
+    return tsRestHandler(contract.friendsInFestival, async ({ params }) => {
+      const friends = await this.friendship.listFriendsInFestival(
+        session.user.id,
+        params.festivalId,
+      );
+      return { status: 200, body: friends };
+    });
+  }
+
   // `:accountId` is the COUNTERPART here too, never the actor — the caller is
   // always one half of the pair, so a friendship they are not part of cannot be
   // addressed (T-07-20). Single 200 branch, so the answer cannot disclose

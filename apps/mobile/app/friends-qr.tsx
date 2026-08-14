@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
 
+import { useHeaderClearance } from '../components/AppHeader';
 import { CameraScanPanel } from '../components/CameraScanPanel';
 import { QRMark } from '../components/QRMark';
 import { SegmentedControl } from '../components/SegmentedControl';
@@ -57,6 +57,7 @@ export default function FriendsQrScreen() {
   const { t } = useLingui();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   const bodyFont = fontFamilyForRole('body', fontsReady);
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
@@ -88,9 +89,7 @@ export default function FriendsQrScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <Stack.Screen options={{ headerShown: true, title: t`QR code` }} />
-
-      <View style={styles.content}>
+      <View style={[styles.content, { paddingTop: headerClearance + layout.screenPad }]}>
         <SegmentedControl
           options={[
             { value: 'mine', label: t`My code` },

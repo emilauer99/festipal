@@ -2,32 +2,32 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 09
-current_phase_name: Festival Navigation Shell
-status: "Phase 8 shipped — PR #15"
-stopped_at: Phase 9 UI-SPEC approved
-last_updated: "2026-08-13T16:59:46.752Z"
-last_activity: 2026-08-13
+current_phase: 10
+current_phase_name: Activities Backend
+status: "Phase 09 shipped — PR #16"
+stopped_at: Phase 09 complete (UAT R1 6/8 + R2 3/3 device-passed, 32/32 threats closed, VERIFICATION passed) — ready to ship branch + execute Phase 10
+last_updated: "2026-08-14T23:02:35.266Z"
+last_activity: 2026-08-15
 progress:
   total_phases: 6
-  completed_phases: 2
-  total_plans: 10
-  completed_plans: 10
-  percent: 33
-last_activity_desc: Phase 08 execution started
+  completed_phases: 3
+  total_plans: 22
+  completed_plans: 17
+  percent: 50
+last_activity_desc: Phase 09 complete, transitioned to Phase 10
 ---
 
 # Project State — Workstream `mobile`
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-13 — nach Phase 8)
+See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 9)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 09 — Festival Navigation Shell
-6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7 und 8 sind durch.
+**Current focus:** Phase 10 — Activities Backend (Plaene liegen bereits: 5 Plaene, 5 Wellen)
+6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–9 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
 > geplant und hat einen eigenen Milestone-Track — `mobile` wartet nicht auf `admin` und umgekehrt.
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 09 — Festival Navigation Shell
+Phase: 10 — Activities Backend
 Plan: Not started
-Status: Phase 8 shipped — PR #15
-Last activity: 2026-08-13
+Status: Phase 09 shipped — PR #16
+Last activity: 2026-08-15
 
 ## Shipped
 
@@ -163,6 +163,84 @@ was die naechsten Phasen konkret betrifft:
   `npx expo run:android` aus `apps/mobile`, nie aus dem Repo-Root. FRND-04 wurde erst nach der
   Geraeteabnahme abgehakt.
 
+**Phase 9 (Festival Navigation Shell) — abgeschlossen 2026-08-15, UAT R1 6/8 + R2 3/3 am Geraet,
+`threats_open: 0` (32/32, `09-SECURITY.md`), alle acht Phase-9-`WINDOWS.md`-Eintraege (#40, #42–#48)
+gegen die beiden UAT-Runden geschlossen.** Die dauerhaft bindenden Entscheidungen stehen in der
+Key-Decisions-Tabelle von `.planning/PROJECT.md`; die Plan-Details darunter bleiben, weil die
+Phasen 10–12 direkt auf ihnen aufbauen:
+
+- **Phase 09-01 (`home` -> `start` rename, NAV-03):** `ColdStartRedirect`'s discriminant was
+  renamed `'home'` -> `'start'` alongside its href (D-19 hard rename, no second name for the same
+  route). EN Lingui msgstr for the renamed msgid is "Start", not "Home" (D-20). No alias route was
+  left behind (`grep -rn "'/home'" apps/mobile/app apps/mobile/lib` — zero matches). Device-verified
+  by the user (2026-08-13): tab label, cold start with/without saved festival, deep link, repeated
+  dev-client launches, non-dead-end back — all six checks passed, no Unmatched-Route regression.
+
+- **Phase 09-02 (`GET /festivals/:festivalId/friends`, FRND-07, D-18):** the checkpoint (Einbahntür)
+  was resolved by the user as `publish-as-specified` — `:festivalId` stays a UUID path param
+  (consistent with `saveFestival`/`listTags`), the response is the wortgleiche `z.array(friendSchema)`
+  `listFriends` already uses (no second schema), and the contract entry is now published: path and
+  response shape are a breaking change plus client release from here on. `packages/contracts` is
+  free again for the `admin` stream. `FriendshipService.listFriendsInFestival` extends the
+  `listFriends` counterpart-join with exactly one more `innerJoin` on `myFestival`; both scopes
+  (`callerId`, `festivalId`) sit INSIDE the join condition, and `myFestival` contributes zero
+  columns to the select (ADR-014, no presence signal). No 404 branch for an unknown `festivalId`
+  (T-09-07, accepted). SEC-02 proven at HTTP level in
+  `apps/api/test/festival-friends-isolation.spec.ts` — the load-bearing case is the cross-tenant one
+  (same two friends, different `festivalId`, different result). Full suite: 16 files / 140 tests
+  green.
+
+- **Phase 09-03 (Five-Tab Festival Navigator, NAV-01/NAV-02, D-01/D-10/D-12…D-14):** the festival
+  navigator is a dedicated `Tabs` with a layout-level D-10 gate (`app/(festival)/f/[festivalSlug]/_layout.tsx`)
+  that replaces the WHOLE area (no tab bar, no tab content) on 404/transport-error;
+  `FloatingNav` is parametrized (`variant: 'global' | 'festival'`) instead of forked (D-01);
+  `PlaceholderScreen` is the one shared honest empty state for Aktivitaeten/Timetable/Lageplan
+  (D-12/D-13). **Mid-plan device bug (Rule 1 fix, `c16369f`):** the Dashboard tab went blank on
+  tab re-entry because it re-queried the SAME `festivalKeys.detail(slug)` key the layout gate
+  already subscribed to — two independent React Query observers of one key can transiently
+  disagree on tab re-focus. Fixed by extracting the gate branching into a pure, unit-tested
+  `lib/festival-gate.ts` (`resolveFestivalGateState`) and having tab screens read the layout's
+  already-resolved festival via `lib/festival-context.ts` (`useFestivalContext()`) instead of
+  re-querying it — the layout never unmounts across tab switches, so the context value can never
+  desync. **Pattern for any future nested Tabs/Stack gated on an async resolution:** the gating
+  layout owns the data and provides it via Context; children never re-derive it. Device-verified
+  by the user (2026-08-14) across two rounds — round 1 found the bug, round 2 confirmed all 8
+  checklist points including repeated tab-switch-and-return. Task 2's own `<human-check>`
+  (icon/heading/body per placeholder, max font scale, EN locale) was later covered by Phase-UAT
+  Runde 1 Test 1 — `WINDOWS.md` #40 ist geschlossen. `friends.tsx` stub was replaced in 09-05
+  (`WINDOWS.md` #41 fixed).
+
+- **Phase 09-04 (AppHeader):** AppHeader mounts once at the authenticated-tree root and decides its
+  own visibility per route via `resolveHeaderContext` (pure, fail-closed default) — T-09-13's
+  mitigation lives in the derivation function, not a mount-site condition. `headerShown:false` was
+  added explicitly on the profil/friends-qr root `Stack.Screen` registrations (`app/_layout.tsx`)
+  to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately
+  excluded (keeps its own modal header).
+
+- **Phase 09-05 (Festival Friends tab, FRND-07):** `friendKeys.inFestival(festivalId)` is one shared
+  query key read by both the Dashboard Crew StatTile and the Friends-tab list — one cache entry, one
+  invalidation, so the two numbers can never disagree. Which of the two empty states shows is
+  decided by the GLOBAL friend list's length (`friendKeys.list`), never the intersection's own
+  length (D-17). `friend-detail.tsx`'s cache read now also searches `friendKeys.inFestival(*)`
+  entries, scope-filtered against `friendKeys.requests`/`search` to avoid false structural matches.
+  `app/friends-find.tsx` re-exports the global Friends screen at a second push-over position (D-16)
+  — one implementation, two navigation positions.
+
+- **Phase 09-06 (Cashless):** ships as ADR-011 allows — hard-omitted tile unless
+  `festival.cashlessUrl` resolves via `resolveCashlessTarget` (HTTPS-only, non-empty host),
+  full-bleed WebView locked to its own origin via `originWhitelist` + `onShouldStartLoadWithRequest`
+  (two independent locks), no `injectedJavaScript`/`onMessage`. `react-native-webview@13.16.1`
+  cleared through the manual package-legitimacy gate (T-09-SC) with registry.npmjs.org evidence
+  verified by the orchestrator before install.
+
+- **Phase 09-07 (Gap Closure G-09-2/G-09-7):** Header default moved to the navigator
+  (`screenOptions`), not per-`Stack.Screen` — the same forgotten-option bug had recurred three times
+  in phase 09. Crew is a NEW msgid at `FloatingNav.tsx`'s festival variant, never a msgstr rewrite
+  of the shared Friends entry (profil.tsx/AppHeader.tsx/global tab keep Friends). The ADR-014
+  Crew-as-UI-label prohibition was amended via a dated 2026-08-14 change note (not rewritten) — the
+  underlying data class/friend-graph rule stays explicitly in force. Kein statischer Live-Punkt am
+  Live-Tab; er kommt erst mit einem echten Live-Signal (Deferred Follow-Up in `09-UAT.md`).
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -193,8 +271,11 @@ was die naechsten Phasen konkret betrifft:
 - **iOS ist seit Phase 3 unverifiziert** (kein Mac/Xcode). Android ist durchgaengig abgenommen.
 - **`/gsd-ui-review 06` ist nie gelaufen** — der visuelle 6-Saeulen-Audit der drei Phase-6-Screens.
 - **`.planning/WINDOWS.md` hat 26 offene Eintraege**, ueberwiegend veraltete `unrun-verify`-Punkte
-  aus Phase 5, die die Phase-5/6-UATs faktisch abgedeckt haben. Der Ledger ueberzeichnet die
-  Schuld; Gate ist aus (`windows_enforce: false`). Braucht einen Abgleich.
+  aus Phase 4/5, die die Phase-5/6-UATs faktisch abgedeckt haben. Der Ledger ueberzeichnet die
+  Schuld; Gate ist aus (`windows_enforce: false`). Braucht einen Abgleich. **Alle acht
+  Phase-9-Eintraege (#40, #42–#48) sind seit 2026-08-15 mit Evidenz aus den UAT-Runden 1+2
+  geschlossen** — offen bleiben aus juengerer Zeit nur #30/#31 (05.1 Themed Icons / Outfit-Tracking
+  am Geraet) und #39 (07-03 Deviation-Notiz).
 
 - **LOW (aus 06-10-REVIEW):** `lib/__tests__/intl-polyfill.test.ts` matcht Quelltext als String
   inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — faengt weder einen
@@ -204,9 +285,10 @@ was die naechsten Phasen konkret betrifft:
 - **`gsd-tools requirements.mark-complete` funktioniert im Workstream-Layout nicht** (07-01, in Phase
   8 erneut bestaetigt): findet die Requirements in `.planning/workstreams/mobile/REQUIREMENTS.md`
   nicht (`not_found`, kein Write), und `phase.complete` meldet entsprechend
-  `requirements_updated: false`. Beim Abschluss von Phase 7 **und** Phase 8 wurden Checkbox und
-  Traceability-Zeile von Hand gesetzt (Phase 8: FRND-04, nach der Geraeteabnahme). Bei jedem
-  weiteren Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
+  `requirements_updated: false`. Beim Abschluss von Phase 7, 8 **und** 9 wurden Checkbox und
+  Traceability-Zeile von Hand gesetzt (Phase 9: Checkboxen waren schon gesetzt, nur die
+  Traceability-Vermerke „device UAT pending" mussten nachgezogen werden). Bei jedem weiteren
+  Phasenabschluss dieses Workstreams selbst nachziehen, bis das Tool den Pfad aufloest.
 
 - **`phase.complete` meldet SUMMARY-Dateipfade als „not on disk", die sehr wohl existieren** (Phase
   8, 21 Falschmeldungen): die SUMMARYs notieren Pfade relativ zu `apps/mobile`, der Checker loest
@@ -257,17 +339,27 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-13T16:49:11.428Z
-Stopped at: Phase 9 UI-SPEC approved
-Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09-UI-SPEC.md
+Last session: 2026-08-15 (UAT Runde 2 + Phasenabschluss)
+Stopped at: Phase 09 complete, ready to plan/execute Phase 10 (Plaene liegen bereits)
+Resume file: None
 
 ## Operator Next Steps
 
-- `/gsd-plan-phase 9 --ws mobile` — Kontext liegt schon vor (`09-CONTEXT.md`)
-- Alternativ: `/gsd-discuss-phase 9 --ws mobile`, wenn der Kontext nochmal aufgemacht werden soll
+- **Phase 09 ist KOMPLETT (2026-08-15):** UAT Runde 2 3/3 am Geraet bestanden (Runde 1: 6/8 + zwei
+  per 09-07 geschlossene Gaps), `09-SECURITY.md` mit `threats_open: 0` (32/32), VERIFICATION
+  `passed`, ROADMAP/STATE/PROJECT/REQUIREMENTS nachgezogen, alle acht Phase-9-`WINDOWS.md`-Eintraege
+  geschlossen. Naechster Schritt: **`/gsd-ship 9 --ws mobile`** — Branch
+  `feat/mobile-phase-09-nav-shell` als PR gegen `main` (Review laeuft im Ship-Flow).
+
+- Danach: **`/gsd-execute-phase 10 --ws mobile`** — die 5 Plaene (5 Wellen) fuer das
+  Activities-Backend liegen bereits; Kollisionsregel beachten (Schema-Abstimmung mit dem
+  `admin`-Stream: Activity-Tabellen landen aus DIESEM Stream, admin bleibt additiv).
+
+- Fuer Phase 9 noch moeglich: `/gsd-ui-review 9 --ws mobile` (6-Saeulen-Audit der neuen
+  Navigation/Cashless-Screens).
+
 - Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
-- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`. Der Tab-Rename `home` → `start` ist als NAV-03
-  in Phase 9 eingeplant — vor neuen Routen erledigen.
+- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
 
 ## Performance Metrics
 
@@ -283,3 +375,10 @@ Resume file: .planning/workstreams/mobile/phases/09-festival-navigation-shell/09
 | Phase 08 P03 | 27min | 3 tasks | 7 files |
 | Phase 08 P04 | 15min | 2 tasks | 12 files |
 | Phase 08 P05 | ~14min | 2 tasks | 8 files |
+| Phase 09 P01 | 29min | 2 tasks | 10 files |
+| Phase 09 P02 | ~12min | 2 tasks | 4 files |
+| Phase 09 P03 | ~55min (2 checkpoints) | 2 tasks | 16 files |
+| Phase 09 P04 | ~50min | 3 tasks | 24 files |
+| Phase 09 P05 | ~45min | 3 tasks | 12 files |
+| Phase 09 P06 | ~55min | 2 tasks | 12 files |
+| Phase 09 P07 | 25min | 3 tasks | 10 files |

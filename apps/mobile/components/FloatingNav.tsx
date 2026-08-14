@@ -1,7 +1,17 @@
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
-import { Home, Menu, Tent, Users, type LucideIcon } from 'lucide-react-native';
+import {
+  AudioLines,
+  CalendarClock,
+  Home,
+  MapPin,
+  Menu,
+  Sparkles,
+  Tent,
+  Users,
+  type LucideIcon,
+} from 'lucide-react-native';
 import { useLingui } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
 import type { BottomTabBarProps } from 'expo-router/build/react-navigation/bottom-tabs';
@@ -23,9 +33,18 @@ const INACTIVE_STROKE = 2;
 // Tab bar contract) — expo-blur's `intensity` has no 1:1 px mapping to CSS
 // `backdrop-filter: blur()`, tuned by eye against the source design. Mode-
 // invariant: only the `tint` and the glass fill/border follow the theme.
-const BLUR_INTENSITY = 60;
+//
+// Exported (09-04) so `AppHeader` reuses this SAME constant for its own glass
+// overlay instead of a second, independently-tuned number — the App Header
+// Contract requires it ("reuse the pattern, do not reinvent a second blur
+// constant").
+export const BLUR_INTENSITY = 60;
 
-type LiveRouteName = 'home' | 'festivals' | 'friends' | 'mehr';
+type GlobalRouteName = 'start' | 'festivals' | 'friends' | 'mehr';
+type FestivalRouteName = 'index' | 'activities' | 'friends' | 'timetable' | 'map';
+
+/** `variant` picks which of the two item tables below this bar renders (D-01). */
+export type FloatingNavVariant = 'global' | 'festival';
 
 /**
  * 06-01 (RESEARCH Open Question 2, resolved): `Menu` — not `UserRound` — is the
@@ -33,16 +52,48 @@ type LiveRouteName = 'home' | 'festivals' | 'friends' | 'mehr';
  * Konto row inside Mehr and the Profil push screen behind it). Reusing one
  * glyph for both would make the tab and its own first row read as the same
  * destination.
+ *
+ * 09-01 (NAV-03 rename, D-19): the route key is `start`; the `Home` glyph
+ * itself is UNCHANGED — only the key that indexes it moves.
  */
-const LIVE_TAB_ICON: Record<LiveRouteName, LucideIcon> = {
-  home: Home,
+const GLOBAL_TAB_ICON: Record<GlobalRouteName, LucideIcon> = {
+  start: Home,
   festivals: Tent,
   friends: Users,
   mehr: Menu,
 };
 
-function isLiveRouteName(name: string): name is LiveRouteName {
-  return name === 'home' || name === 'festivals' || name === 'friends' || name === 'mehr';
+/**
+ * 09-07 gap closure (G-09-7, UAT decision 2026-08-14) — the festival tab
+ * bar now follows the user's own screen designs
+ * (docs/concept/designs/quiks-v2/quiks-screens.template.html:2035) instead
+ * of the Phase-09 divergence 09-UI-SPEC.md documented: `AudioLines` replaces
+ * the data-less `LayoutDashboard` glyph at position 1. The other four
+ * glyphs already matched the designs and stay unchanged — in particular
+ * `Friends` here still reuses the SAME `Users` glyph as the global Friends
+ * tab on purpose (same destination *kind*, different scope), unaffected by
+ * the label rename below.
+ */
+const FESTIVAL_TAB_ICON: Record<FestivalRouteName, LucideIcon> = {
+  index: AudioLines,
+  activities: Sparkles,
+  friends: Users,
+  timetable: CalendarClock,
+  map: MapPin,
+};
+
+function isGlobalRouteName(name: string): name is GlobalRouteName {
+  return name === 'start' || name === 'festivals' || name === 'friends' || name === 'mehr';
+}
+
+function isFestivalRouteName(name: string): name is FestivalRouteName {
+  return (
+    name === 'index' ||
+    name === 'activities' ||
+    name === 'friends' ||
+    name === 'timetable' ||
+    name === 'map'
+  );
 }
 
 /**
@@ -68,8 +119,18 @@ function isLiveRouteName(name: string): name is LiveRouteName {
  * `useTheme()` falls back to the LIGHT set for an unresolved device scheme
  * (lib/theme.ts), so neither role can ever be undefined and the nav can never
  * paint transparent on its first frame (UI-SPEC E3/loading).
+ *
+ * 09-03 (D-01) — `variant` parametrizes this SAME component for the
+ * five-tab festival context instead of forking a second bar: everything
+ * below the item-resolution branch (glass, pill, colours, truncation,
+ * `flex: 1` distribution) stays identical between the two variants.
  */
-export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
+export function FloatingNav({
+  state,
+  navigation,
+  insets,
+  variant = 'global',
+}: BottomTabBarProps & { variant?: FloatingNavVariant }) {
   const { t } = useLingui();
   const { mode, colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -89,11 +150,24 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
   //
   // Source strings stay English (`lingui.config.ts` `sourceLocale: 'en'`) —
   // the design's German "Mehr" is the DE catalog value for the `More` msgid.
-  const liveTabLabel: Record<LiveRouteName, string> = {
-    home: t`Home`,
+  const globalTabLabel: Record<GlobalRouteName, string> = {
+    start: t`Start`,
     festivals: t`Festivals`,
     friends: t`Friends`,
     mehr: t`More`,
+  };
+  const festivalTabLabel: Record<FestivalRouteName, string> = {
+    index: t`Live`,
+    // 09-07 (Brand & Design § quiks CI v1.0 / UAT-Entscheid 1, 2026-08-14) —
+    // the quiks brand noun, not a `t` macro call: it is never translated and
+    // renders identically in both languages, lowercase, with no trailing
+    // dot and no coloured character — a tab label is plain micro-role text
+    // like its four siblings; the coloured-dot wordmark form belongs to the
+    // header only.
+    activities: 'quiks',
+    friends: t`Crew`,
+    timetable: t`Timetable`,
+    map: t`Map`,
   };
 
   function handlePress(route: { key: string; name: string }, focused: boolean) {
@@ -122,9 +196,19 @@ export function FloatingNav({ state, navigation, insets }: BottomTabBarProps) {
         <View style={styles.row}>
           {state.routes.map((route, index) => {
             const focused = index === state.index;
-            const routeName = isLiveRouteName(route.name) ? route.name : 'home';
-            const Icon = LIVE_TAB_ICON[routeName];
-            const label = liveTabLabel[routeName];
+            // The type-guard and fallback route name are resolved PER
+            // VARIANT (09-03 D-01) — the two tables never mix.
+            let Icon: LucideIcon;
+            let label: string;
+            if (variant === 'festival') {
+              const routeName = isFestivalRouteName(route.name) ? route.name : 'index';
+              Icon = FESTIVAL_TAB_ICON[routeName];
+              label = festivalTabLabel[routeName];
+            } else {
+              const routeName = isGlobalRouteName(route.name) ? route.name : 'start';
+              Icon = GLOBAL_TAB_ICON[routeName];
+              label = globalTabLabel[routeName];
+            }
             return (
               <Pressable
                 key={route.key}

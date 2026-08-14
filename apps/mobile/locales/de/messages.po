@@ -13,6 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/friends.tsx
 msgid "{displayName}, @{username}"
 msgstr "{displayName}, @{username}"
@@ -51,9 +52,21 @@ msgstr "Annehmen"
 msgid "Account"
 msgstr "Konto"
 
+#: components/FloatingNav.tsx
+#~ msgid "Activities"
+#~ msgstr "Aktivitäten"
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Activities are on the way"
+msgstr "quiks kommen noch"
+
 #: components/RelationAction.tsx
 msgid "Add"
 msgstr "Hinzufügen"
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Add someone via search, code or QR — then you'll see who's saved this festival."
+msgstr "Füg jemanden über Suche, Code oder QR hinzu — dann siehst du hier, wer von ihnen dieses Festival gespeichert hat."
 
 #: components/CameraScanPanel.tsx
 msgid "Add this person?"
@@ -64,7 +77,7 @@ msgstr "Diese Person hinzufügen?"
 #~ msgstr "QR-Adden kommt bald."
 
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "All"
 msgstr "Alle"
 
@@ -81,7 +94,7 @@ msgid "Appearance"
 msgstr "Darstellung"
 
 #: app/(auth)/email.tsx
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/AppHeader.tsx
 msgid "Back"
 msgstr "Zurück"
 
@@ -89,11 +102,11 @@ msgstr "Zurück"
 #~ msgid "Back to festivals"
 #~ msgstr "Zurück zu den Festivals"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Browse all festivals and save your first one."
 msgstr "Durchstöber alle Festivals und speichere dein erstes."
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Browse festivals"
 msgstr "Alle Festivals ansehen"
 
@@ -101,8 +114,12 @@ msgstr "Alle Festivals ansehen"
 msgid "Camera unavailable"
 msgstr "Kamera nicht verfügbar"
 
+#: app/cashless.tsx
+msgid "Can't load Cashless right now."
+msgstr "Cashless kann gerade nicht geladen werden."
+
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Can't load festivals — check your connection and try again."
 msgstr "Festivals konnten nicht geladen werden — überprüfe deine Verbindung und versuche es erneut."
 
@@ -126,11 +143,12 @@ msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung
 
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 #: components/CameraScanPanel.tsx
@@ -142,7 +160,8 @@ msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WL
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/index.tsx
+#: components/AppHeader.tsx
 msgid "Cashless"
 msgstr "Cashless"
 
@@ -208,9 +227,17 @@ msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
 
+#: components/FloatingNav.tsx
+msgid "Crew"
+msgstr "Crew"
+
 #: app/(tabs)/mehr.tsx
 msgid "Dark mode"
 msgstr "Dunkler Modus"
+
+#: components/FloatingNav.tsx
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
@@ -277,7 +304,7 @@ msgstr "Stattdessen Handle eingeben"
 #~ msgid "Enter your code"
 #~ msgstr "Gib deinen Code ein"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/AppHeader.tsx
 msgid "Festival"
 msgstr "Festival"
 
@@ -293,16 +320,18 @@ msgstr "Festival-News"
 msgid "Festival news, coming soon"
 msgstr "Festival-News, kommt bald"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "Festival not found"
 msgstr "Festival nicht gefunden"
 
-#: app/(tabs)/_layout.tsx
-#: app/(tabs)/festivals.tsx
 #: app/profil.tsx
 #: components/FloatingNav.tsx
 msgid "Festivals"
 msgstr "Festivals"
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Find friends"
+msgstr "Freunde finden"
 
 #: app/(tabs)/mehr.tsx
 msgid "Friend requests"
@@ -312,8 +341,8 @@ msgstr "Freundschaftsanfragen"
 msgid "Friend requests, coming soon"
 msgstr "Freundschaftsanfragen, kommt bald"
 
-#: app/(tabs)/_layout.tsx
 #: app/profil.tsx
+#: components/AppHeader.tsx
 #: components/FloatingNav.tsx
 msgid "Friends"
 msgstr "Friends"
@@ -322,6 +351,10 @@ msgstr "Friends"
 msgctxt "relation chip"
 msgid "Friends"
 msgstr "Freunde"
+
+#: app/(festival)/f/[festivalSlug]/index.tsx
+msgid "Friends here"
+msgstr "Freunde hier"
 
 #: app/friend-detail.tsx
 msgid "Friends since {friendsSinceLabel}"
@@ -347,13 +380,13 @@ msgstr "Hol dir einen neuen Code."
 msgid "Get started"
 msgstr "Los geht's"
 
+#: components/AppHeader.tsx
+msgid "Go to Start"
+msgstr "Zu Start"
+
 #: app/profil.tsx
 msgid "Handle"
 msgstr "Handle"
-
-#: components/FloatingNav.tsx
-msgid "Home"
-msgstr "Start"
 
 #: app/profil.tsx
 msgid "Instagram, coming soon"
@@ -367,16 +400,28 @@ msgstr "Sprache"
 msgid "Language switching is coming soon."
 msgstr "Sprachumschalter kommt bald."
 
+#: components/AppHeader.tsx
+msgid "Leave festival"
+msgstr "Festival verlassen"
+
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
 msgstr "Lass dein Gegenüber diesen Code scannen."
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/FloatingNav.tsx
+msgid "Live"
+msgstr "Live"
+
+#: app/cashless.tsx
+msgid "Loading Cashless…"
+msgstr "Lädt Cashless…"
+
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "Loading festival…"
 msgstr "Festival wird geladen…"
 
 #: app/(tabs)/festivals.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "Loading festivals…"
 msgstr "Festivals werden geladen…"
 
@@ -397,6 +442,7 @@ msgstr "Deine Crew wird geladen…"
 msgid "Loading your quiks code…"
 msgstr "Dein quiks-Code wird geladen…"
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: components/CameraScanPanel.tsx
 msgid "Loading…"
 msgstr "Wird geladen…"
@@ -417,9 +463,9 @@ msgstr "Abmelden"
 msgid "Log out?"
 msgstr "Abmelden?"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/FloatingNav.tsx
 msgid "Map"
-msgstr "Lageplan"
+msgstr "Karte"
 
 #: app/profil.tsx
 msgid "member since {year}"
@@ -429,7 +475,6 @@ msgstr "seit {year} dabei"
 msgid "Mine"
 msgstr "Meine"
 
-#: app/(tabs)/_layout.tsx
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "Mehr"
@@ -438,7 +483,7 @@ msgstr "Mehr"
 msgid "My code"
 msgstr "Mein Code"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "My festivals"
 msgstr "Meine Festivals"
 
@@ -455,10 +500,10 @@ msgid "New festivals will show up here."
 msgstr "Neue Festivals erscheinen hier."
 
 #: app/(festival)/f/[festivalSlug].tsx
-msgid "News"
-msgstr "News"
+#~ msgid "News"
+#~ msgstr "News"
 
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
 msgid "No festival saved yet"
 msgstr "Noch kein Festival gespeichert"
 
@@ -486,6 +531,18 @@ msgstr "Noch niemand in deiner Crew. Füg jemanden über Suche, Code oder QR hin
 msgid "No saved festivals yet"
 msgstr "Noch keine gespeicherten Festivals"
 
+#: app/(festival)/f/[festivalSlug]/map.tsx
+msgid "No site map yet"
+msgstr "Noch keine Karte"
+
+#: app/(festival)/f/[festivalSlug]/timetable.tsx
+msgid "No timetable yet"
+msgstr "Noch kein Timetable"
+
+#: app/(festival)/f/[festivalSlug]/index.tsx
+msgid "Nobody yet"
+msgstr "Noch niemand gespeichert"
+
 #: app/profil.tsx
 msgid "Not connected"
 msgstr "Nicht verbunden"
@@ -493,6 +550,10 @@ msgstr "Nicht verbunden"
 #: app/(tabs)/mehr.tsx
 msgid "Notifications"
 msgstr "Benachrichtigungen"
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Once one of them does, they'll show up here."
+msgstr "Sobald einer von ihnen es speichert, taucht er hier auf."
 
 #: app/(tabs)/friends.tsx
 msgid "Once someone adds you, the request shows up here."
@@ -559,7 +620,7 @@ msgid "Point the camera at the other person's quiks code."
 msgstr "Richte die Kamera auf den quiks-Code deines Gegenübers."
 
 #: app/(tabs)/mehr.tsx
-#: app/profil.tsx
+#: components/AppHeader.tsx
 msgid "Profile"
 msgstr "Profil"
 
@@ -571,7 +632,7 @@ msgstr "Pronomen"
 msgid "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
 msgstr "Pronomen, Alter, Geschlecht und Vibe sind optional — deine Lieblings-Acts erscheinen hier, sobald Spotify verbunden ist."
 
-#: app/friends-qr.tsx
+#: components/AppHeader.tsx
 msgid "QR code"
 msgstr "QR-Code"
 
@@ -612,10 +673,12 @@ msgstr "Code erneut senden"
 msgid "Resend in {countdownLabel}"
 msgstr "Erneut senden in {countdownLabel}"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
-#: app/(tabs)/home.tsx
+#: app/(tabs)/start.tsx
+#: app/cashless.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 msgid "Retry"
@@ -725,7 +788,6 @@ msgstr "Sechs Ziffern an {email}."
 msgid "Socials"
 msgstr "Socials"
 
-#: app/(festival)/f/[festivalSlug].tsx
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
 msgid "Soon"
@@ -734,6 +796,10 @@ msgstr "Bald"
 #: app/profil.tsx
 msgid "Spotify, coming soon"
 msgstr "Spotify, kommt bald"
+
+#: components/FloatingNav.tsx
+msgid "Start"
+msgstr "Start"
 
 #: app/(tabs)/mehr.tsx
 msgid "Stay safe"
@@ -779,7 +845,15 @@ msgstr "Die Nachtschicht für deine Augen."
 msgid "This code is no longer valid."
 msgstr "Dieser Code ist nicht mehr gültig."
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: app/(festival)/f/[festivalSlug]/timetable.tsx
+msgid "This festival hasn't added a lineup yet. It'll show up here once they do."
+msgstr "Dieses Festival hat noch keinen Line-up eingetragen. Sobald sie loslegen, siehst du ihn hier."
+
+#: app/(festival)/f/[festivalSlug]/map.tsx
+msgid "This festival hasn't added a site map yet. It'll show up here once they do."
+msgstr "Dieses Festival hat noch keine Karte hinterlegt. Sobald sie loslegen, siehst du sie hier."
+
+#: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
 
@@ -787,11 +861,15 @@ msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
 msgid "This person no longer exists."
 msgstr "Diese Person gibt's nicht mehr."
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+#~ msgid "This tab isn't built yet."
+#~ msgstr "Dieser Tab ist noch nicht fertig."
+
 #: app/profil.tsx
 msgid "TikTok, coming soon"
 msgstr "TikTok, kommt bald"
 
-#: app/(festival)/f/[festivalSlug].tsx
+#: components/FloatingNav.tsx
 msgid "Timetable"
 msgstr "Timetable"
 
@@ -856,6 +934,10 @@ msgstr "Wir schicken dir einen 6-stelligen Code — kein Passwort nötig."
 msgid "We'll send you a code in a moment."
 msgstr "Wir schicken dir gleich einen Code."
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "We're building this at quiks — for every festival, not just this one."
+msgstr "Daran bauen wir gerade — für jedes Festival, nicht nur für dieses."
+
 #: app/(auth)/welcome.tsx
 msgid "Welcome"
 msgstr "Willkommen"
@@ -875,6 +957,10 @@ msgstr "Zurückziehen"
 #: app/(tabs)/mehr.tsx
 msgid "You can always sign back in with an email code."
 msgstr "Du kannst dich jederzeit wieder per E-Mail-Code anmelden."
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "You don't have any friends yet"
+msgstr "Du hast noch keine Freunde"
 
 #: app/friend-detail.tsx
 msgid "You'll need to send a new request to become friends again."
@@ -904,7 +990,11 @@ msgstr "Deine E-Mail"
 msgid "Your festivals, your crew, your plan."
 msgstr "Deine Festivals, deine Crew, dein Plan."
 
-#: app/(tabs)/home.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Your friends haven't saved this festival yet"
+msgstr "Deine Freunde haben dieses Festival noch nicht gespeichert"
+
+#: app/(tabs)/start.tsx
 msgid "Your next festival"
 msgstr "Dein nächstes Festival"
 

@@ -17,6 +17,7 @@ import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
+import { useHeaderClearance } from '../../components/AppHeader';
 import { FestivalCard } from '../../components/FestivalCard';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
@@ -46,6 +47,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10) — the family IS the weight, so no style
   // below sets a numeric `fontWeight` on top of one.
@@ -132,7 +134,10 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingTop: headerClearance + layout.screenPad }]}
+        showsVerticalScrollIndicator={false}
+      >
         {viewState.kind === 'loading' ? (
           <Text style={[styles.helper, { fontFamily: bodyFont }]}>
             <Trans>Loading festivals…</Trans>

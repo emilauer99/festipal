@@ -27,6 +27,7 @@ import { ThemeProvider, useTheme } from '../lib/theme-context';
 import type { ThemeColors } from '../lib/theme';
 import { ToastProvider } from '../components/SoonToast';
 import { WordmarkGlyph } from '../components/WordmarkGlyph';
+import { AppHeader } from '../components/AppHeader';
 
 const { typeRoles } = tokens;
 
@@ -122,6 +123,12 @@ const AUTH_FLOW_PATHS = new Set(['welcome', 'email', 'verify', 'complete-profile
 // unavailable at runtime (e.g. a bare/unexpected config shape); matches
 // app.json's `expo.scheme` ("quiks", ADR-024).
 const APP_SCHEME_FALLBACK = 'quiks';
+
+// 09-04 (D-03) — mode-invariant (no colour), so this stays a module-level
+// StyleSheet unlike the theme-dependent styles elsewhere in this app.
+const rootStyles = StyleSheet.create({
+  authenticatedTree: { flex: 1 },
+});
 
 /**
  * D-01 (05.1) — the root is now a thin provider shell so that BOTH branches of
@@ -348,7 +355,7 @@ function RootNavigation() {
   // (matchForEmptyPath), so with the only `/` route ((auth)/index) render-
   // filtered off once authenticated, Expo Router rendered its Unmatched Route
   // screen for quiks:/// — the reported bug, which neither the round-1
-  // empty-state `router.replace('/home')` nor the round-2 second group-index
+  // empty-state `router.replace` to the pre-rename first tab (09-01 NAV-03 renamed it to `/start`) nor the round-2 second group-index
   // ((root)/index, which never won the static empty-path match) fixed. app/index
   // is now the SINGLE `/` owner, declared OUTSIDE every guard so it is mounted in
   // all auth states, and hands off with a declarative redirect immune to that
@@ -455,7 +462,33 @@ function RootNavigation() {
         <I18nProvider i18n={i18n}>
           <AuthStateContext.Provider value={authState}>
             <ColdStartTargetContext.Provider value={coldStartTarget}>
-              <Stack>
+              {/* 09-04 (D-03) — the `<Stack>` is now wrapped in a `flex: 1`
+                  `View` so `AppHeader` can render as its SIBLING, after it,
+                  and therefore visually above it. `AppHeader` decides its own
+                  visibility per route (`resolveHeaderContext`), so no extra
+                  condition is needed at this mount site — but the mount
+                  itself stays inside this same provider tree
+                  (`QueryClientProvider`/`I18nProvider`/`ThemeProvider`/
+                  `SafeAreaProvider`), which the header's own hooks need. */}
+              <View style={rootStyles.authenticatedTree}>
+                {/* 09-07 gap closure (G-09-2) — `screenOptions={{ headerShown:
+                    false }}` is the navigator DEFAULT: a Native Stack screen
+                    with no explicit header option renders a VISIBLE (blank)
+                    native header, and react-native-screens lays the nested
+                    navigator it hosts out BELOW that header's own height — a
+                    ~80dp band the AppHeader glass then hid instead of making
+                    visible (device-measured root cause,
+                    .planning/debug/header-content-whitespace.md). The default
+                    lives HERE, at the navigator, so a new sibling
+                    registration can't forget it the way
+                    profil/friends-qr/friends-find/cashless individually did
+                    below before this fix, and (tabs)/(festival) never did at
+                    all. The ONE exception is `friend-detail` below, which
+                    turns its own header back on in its in-screen
+                    `<Stack.Screen options>` — that is where its close button
+                    lives (09-04 Flagged Assumption 1). Guarded by
+                    `lib/__tests__/native-header-default.test.ts`. */}
+                <Stack screenOptions={{ headerShown: false }}>
                 {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
                       is the SINGLE owner of path `/` and is declared OUTSIDE every
                       Stack.Protected block, so it is mounted in ALL auth states.
@@ -486,10 +519,18 @@ function RootNavigation() {
                       T-06-01: it lives INSIDE this authenticated guard, never
                       beside it — `/profil` renders account data.
 
-                      Header/title are set by the SCREEN itself (`app/profil.tsx`'s
-                      own `<Stack.Screen options>`), matching every other screen in
-                      this app — `useLingui()` cannot be called here, since this
-                      component is the one that RENDERS `<I18nProvider>`. */}
+                      09-04 — its header/title are now `AppHeader`'s push state
+                      (`resolveHeaderContext`), not its own `<Stack.Screen
+                      options>` (Task 3 of 09-04-PLAN.md removed that block
+                      from `app/profil.tsx` itself). The navigator's own
+                      `screenOptions` default (see the comment above the
+                      `<Stack>` element) is what now keeps a blank native
+                      header from sitting above `AppHeader` — no per-screen
+                      option is needed here any more (09-07 gap closure).
+                      `friend-detail` below is deliberately NOT covered by
+                      that default: it keeps its own customized header (close
+                      button) via its own `<Stack.Screen options>`, unchanged
+                      by this phase (Flagged Assumption 1, 09-04-PLAN.md). */}
                   <Stack.Screen name="profil" />
                   {/* 08-03 / D-09 — the friend detail modal, same root-level
                       sibling-of-`(tabs)` shape as `profil` above, registered
@@ -500,17 +541,52 @@ function RootNavigation() {
                       untouched. */}
                   <Stack.Screen name="friend-detail" />
                   {/* 08-04 / D-13 — the QR screen, same root-level
-                      sibling-of-`(tabs)` shape as `profil`/`friend-detail`
+                      sibling-of-`(tabs)`/`friend-detail` shape as `profil`
                       above. The quiks code it renders is namespaced
                       PLAINTEXT (`quiks:u/<username>`, Phase-7 D-17), never a
                       deep link — this registration and the payload format
                       together are what keep this screen out of the
                       deep-link capture path elsewhere in this file, the
                       same path that produced the Phase-5
-                      first-login-unmatched-route bug. */}
+                      first-login-unmatched-route bug. The navigator's
+                      `screenOptions` default (see the comment above the
+                      `<Stack>` element) keeps a blank native header from
+                      appearing here too — no per-screen option needed
+                      (09-07 gap closure). */}
                   <Stack.Screen name="friends-qr" />
+                  {/* 09-05 (D-16) — the "Find friends" push-over entry from
+                      the Festival-Friends-Tab: a root-level SIBLING of
+                      `(tabs)`, same shape as `profil`/`friends-qr` above.
+                      `app/friends-find.tsx` re-exports `(tabs)/friends.tsx`'s
+                      own default export — this registration is what gives
+                      THAT re-exported mount its push header/back state and
+                      hides `FloatingNav`, while the (tabs) registration of
+                      the same component is untouched. The navigator's
+                      `screenOptions` default is what keeps a blank native
+                      header from sitting above `AppHeader`'s own push-state
+                      title here — no per-screen option needed
+                      (09-07 gap closure). */}
+                  <Stack.Screen name="friends-find" />
+                  {/* 09-06 (D-09) — the Cashless WebView push screen, same
+                      root-level sibling-of-`(tabs)` shape as `profil`/
+                      `friends-qr`/`friends-find` above. Pushed ONLY from the
+                      Dashboard's Cashless tile (Task 2), which itself only
+                      renders when `resolveCashlessTarget(festival.cashlessUrl)`
+                      resolves — this registration exists regardless (an
+                      unregistered sibling dead-ends on Expo Router's
+                      Unmatched Route screen), but the SCREEN itself
+                      re-validates the address it receives (T-09-23) rather
+                      than trusting this registration to only ever be reached
+                      with a good one. The navigator's `screenOptions`
+                      default keeps a blank native header from appearing here
+                      too (09-07 gap closure). `cashless` is NOT a deep-link
+                      target — the deep-link capture path elsewhere in this
+                      file is untouched. */}
+                  <Stack.Screen name="cashless" />
                 </Stack.Protected>
-              </Stack>
+                </Stack>
+                <AppHeader />
+              </View>
             </ColdStartTargetContext.Provider>
           </AuthStateContext.Provider>
         </I18nProvider>

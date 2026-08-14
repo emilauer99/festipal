@@ -174,6 +174,24 @@ export const typeRoles = {
   otpDigit: { size: 27, weight: fontWeights.medium, lineHeight: 1, family: fontFamilies.mono },
   // derived: CI Mono weight at bodySm size (D-09)
   countdown: { size: 13.5, weight: fontWeights.medium, lineHeight: 1.3, family: fontFamilies.mono },
+  // 09-04 (D-08/D-09, App Header Contract) — the two AppHeader-only roles.
+  // Both Outfit/black like `wordmark`/`display2`, both derived (not literal in
+  // the CI doc) and both require their letterSpacing to be set at every
+  // consumer (type-tracking.test.ts's tracked-role coupling gate).
+  headerTitle: {
+    size: 17,
+    weight: fontWeights.black,
+    lineHeight: 1.15,
+    family: fontFamilies.display,
+    letterSpacing: -0.34, // derived: 17 x -2% (CI §4 Outfit-tracking corridor)
+  },
+  headerWordmark: {
+    size: 21,
+    weight: fontWeights.black,
+    lineHeight: 1,
+    family: fontFamilies.display,
+    letterSpacing: -0.84, // derived: 21 x -4% — distinct from the 56px `wordmark` role
+  },
 } as const;
 
 /**

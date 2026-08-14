@@ -33,18 +33,38 @@ function normalizeAccountId(raw: string | string[] | undefined): string {
 
 /**
  * Same read-the-cache idiom `(festival)/f/[festivalSlug].tsx`'s
- * `findCachedFestivalBySlug` already establishes: `friendKeys.list` holds the
- * FULL ts-rest response (`{ status, body }`), not a bare `Friend[]`, so the
- * shape is validated before `.find()` runs. A stale/malformed cache entry is
- * a miss, never a crash.
+ * `findCachedFestivalBySlug` already establishes: every candidate cache
+ * entry holds the FULL ts-rest response (`{ status, body }`), not a bare
+ * `Friend[]`, so the shape is validated before `.find()` runs. A stale or
+ * malformed entry is a miss, never a crash.
+ *
+ * 09-05 Task 2 (4) — extended beyond `friendKeys.list` to ALSO search any
+ * `friendKeys.inFestival(festivalId)` entry already in the cache: opening
+ * this card from the Festival-Friends-Tab populates that key, not
+ * `friendKeys.list`, and there is still no foreign-profile detail endpoint
+ * (Phase-7 D-04) to fetch from instead. `getQueriesData` with the SHARED
+ * `friendKeys.all` prefix finds every friend-shaped list under it without
+ * needing to know which `festivalId` (if any) is live; the `scope` guard
+ * below excludes sibling keys under the same prefix — `friendKeys.requests`
+ * (a `{incoming,outgoing}` object, not an array) and `friendKeys.search(q)`
+ * (an array of `VisitorSummary`, which carries no `friendsSince` field) —
+ * neither is a valid substitute for a `Friend` entry.
  */
 function findCachedFriend(
   queryClient: ReturnType<typeof useQueryClient>,
   accountId: string,
 ): Friend | undefined {
-  const cached = queryClient.getQueryData<{ status: number; body: unknown }>(friendKeys.list);
-  if (cached?.status !== 200 || !Array.isArray(cached.body)) return undefined;
-  return (cached.body as Friend[]).find((entry) => entry.profile.accountId === accountId);
+  const entries = queryClient.getQueriesData<{ status: number; body: unknown }>({
+    queryKey: friendKeys.all,
+  });
+  for (const [key, cached] of entries) {
+    const scope = key[1];
+    if (scope !== 'list' && scope !== 'inFestival') continue;
+    if (cached?.status !== 200 || !Array.isArray(cached.body)) continue;
+    const hit = (cached.body as Friend[]).find((entry) => entry.profile.accountId === accountId);
+    if (hit) return hit;
+  }
+  return undefined;
 }
 
 /**
@@ -152,6 +172,13 @@ export default function FriendDetailScreen() {
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       <Stack.Screen
         options={{
+          // 09-07 gap closure (T-09-25) — the root Stack's navigator-level
+          // header default (app/_layout.tsx) now hides the native header
+          // everywhere; this screen turns it back on for itself because its
+          // close button lives IN that native header (09-04 Flagged
+          // Assumption 1) — without this override the card would render
+          // with no way out.
+          headerShown: true,
           presentation: 'modal',
           title: '',
           headerLeft: () => null,

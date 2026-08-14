@@ -8,6 +8,7 @@ import { Check, Search, X } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { Friend, FriendRequestItem, VisitorSummary } from '@quiks/contracts';
 
+import { useHeaderClearance } from '../../components/AppHeader';
 import { PersonRow } from '../../components/PersonRow';
 import { QRMark } from '../../components/QRMark';
 import { RelationAction } from '../../components/RelationAction';
@@ -142,6 +143,7 @@ export default function FriendsScreen() {
   const { colors } = useTheme();
   const router = useRouter();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10): the family IS the weight, so no style
   // below sets a numeric `fontWeight` on top of a real weight file.
@@ -329,7 +331,10 @@ export default function FriendsScreen() {
       {/* UI-SPEC #6 — the scroll container's bottom pad frees the last block
           from the FloatingNav that floats above it; the blocks stack vertically
           and nothing runs off to the side. */}
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingTop: headerClearance + layout.screenPad }]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* D-01/D-02 — the field is real now: ONE input satisfies both the
             handle lookup (FRND-02, the exact handle is by construction the
             first prefix-search hit) and the username search (FRND-03). The

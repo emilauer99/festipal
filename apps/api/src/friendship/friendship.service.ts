@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
-import { friendRequest, friendship, visitorProfile, type Database } from '@quiks/db';
+import { friendRequest, friendship, myFestival, visitorProfile, type Database } from '@quiks/db';
 import type {
   Friend,
   FriendRequestItem,
@@ -547,6 +547,52 @@ export class FriendshipService {
           and(eq(friendship.lowerId, callerId), eq(visitorProfile.accountId, friendship.higherId)),
           and(eq(friendship.higherId, callerId), eq(visitorProfile.accountId, friendship.lowerId)),
         ),
+      )
+      .orderBy(asc(visitorProfile.username));
+
+    return rows.map((row) => ({
+      profile: pickForeignProfile(row),
+      friendsSince: toIsoString(row.friendsSince),
+    }));
+  }
+
+  /**
+   * The festival-scoped friend list (FRND-07, D-18) — the intersection of
+   * {@link listFriends} and "saved this `festivalId`". Same counterpart-
+   * resolving join on `friendship` as `listFriends`, plus exactly ONE more
+   * `innerJoin` on `myFestival` that requires the COUNTERPART (not the caller)
+   * to have saved the given festival.
+   *
+   * Both scopes live INSIDE the join condition, not in a filter applied after
+   * the fact: `callerId` comes from the session (the join's `friendship` half)
+   * and `festivalId` comes from the path (the join's `myFestival` half). There
+   * is no third parameter, so there is no value a client could supply to read
+   * another visitor's intersection (T-09-04, same "client-supplied scope"
+   * pattern `listFriends`/`unfriend` already use).
+   *
+   * `myFestival` contributes NOTHING to the `select` — it is a pure filter.
+   * Selecting its `savedAt` would be a weak arrival signal ADR-014 forbids
+   * (T-09-06); selecting `festivalId` or `visitorId` would leak the join key
+   * itself. Both are prohibited by `must_haves.prohibitions` in 09-02-PLAN.md.
+   *
+   * Same `foreignProfileColumns`/`pickForeignProfile` projection as every other
+   * D-04 path (VIS-02) and the same `orderBy(username)` as `listFriends`, so
+   * the response shape and ordering are identical to the unscoped list.
+   */
+  async listFriendsInFestival(callerId: string, festivalId: string): Promise<Friend[]> {
+    const rows = await this.db
+      .select({ ...foreignProfileColumns, friendsSince: friendship.createdAt })
+      .from(visitorProfile)
+      .innerJoin(
+        friendship,
+        or(
+          and(eq(friendship.lowerId, callerId), eq(visitorProfile.accountId, friendship.higherId)),
+          and(eq(friendship.higherId, callerId), eq(visitorProfile.accountId, friendship.lowerId)),
+        ),
+      )
+      .innerJoin(
+        myFestival,
+        and(eq(myFestival.visitorId, visitorProfile.accountId), eq(myFestival.festivalId, festivalId)),
       )
       .orderBy(asc(visitorProfile.username));
 

@@ -26,11 +26,11 @@ describe('rootRedirectTarget', () => {
     );
   });
 
-  it('sends a fully authenticated visitor to the resolved cold-start target (Home)', () => {
+  it('sends a fully authenticated visitor to the resolved cold-start target (Start)', () => {
     // The end-to-end regression: fresh account, no deep link, no active festival
-    // → coldStartRedirectHref resolves to '/home' → app/index redirects there,
+    // → coldStartRedirectHref resolves to '/start' → app/index redirects there,
     // instead of dead-ending on the Unmatched Route screen for `/`.
-    expect(rootRedirectTarget({ status: 'authenticated' }, '/home' as Href)).toBe('/home');
+    expect(rootRedirectTarget({ status: 'authenticated' }, '/start' as Href)).toBe('/start');
   });
 
   it('forwards a resolved active-festival / deep-link target verbatim when authenticated', () => {

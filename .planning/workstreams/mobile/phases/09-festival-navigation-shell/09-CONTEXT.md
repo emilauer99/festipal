@@ -149,8 +149,8 @@ hat dieses Festival gespeichert" (FRND-07), und der globale erste Tab heißt üb
   (Phase-8-D-12, inkl. Hermes-Fallback); Tap öffnet die Phase-8-Detailkarte `friend-detail`.
   **Kein Ort, kein Status, keine Distanz, kein Präsenzpunkt** — ADR-014.
 
-- **D-16 — Unter der Liste ein Einstieg in den globalen Friends-Screen, der sich über das Festival
-  legt.** Er wird als **Push-Screen** über den Festival-Kontext gelegt, sein Header trägt den
+- **D-16 — Unter der Liste ein Einstieg in den globalen Friends-Screen, der sich über das Festival legt.**
+  Er wird als **Push-Screen** über den Festival-Kontext gelegt, sein Header trägt den
   `arrow-left`-Zustand, und Zurück landet wieder im Festival-Friends-Tab. Begründung: wer jemanden
   hinzufügt, während er auf dem Gelände steht, will danach zurück ins Festival.
   ⚠️ **Konkrete Folge für den Planner, kein Stilhinweis:** der Friends-Screen muss dann an **zwei**

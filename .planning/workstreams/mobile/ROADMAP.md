@@ -32,7 +32,7 @@ Detail: [`milestones/v1.0-ROADMAP.md`](./milestones/v1.0-ROADMAP.md) · Summary:
 
 - [x] **Phase 7: Profile Visibility & Friendship Backend** — owner-view/friend-view projection split, user-global friendship + request model (completed 2026-08-12)
 - [x] **Phase 8: Friends** — the Phase-6 placeholder becomes real: add by handle, search, QR, requests, list (completed 2026-08-13)
-- [ ] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename
+- [x] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename (completed 2026-08-15)
 - [ ] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation
 - [ ] **Phase 11: Activities** — create, discover, join/leave, clone, route-opening location
 - [ ] **Phase 12: Activity Lobby Chat** — WS gateway + Redis, live group chat per activity
@@ -155,6 +155,36 @@ placeholders, the Friends tab shows friends who saved this festival, and the glo
 finally named `start` everywhere
 **Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
 **Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
+**Plans**: 7/7 plans executed in 5 Wellen, dazu 1 Gap-Closure-Plan aus dem UAT (Welle 6) — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
+`packages/contracts` + `apps/api`, null Dateiüberschneidung); ab Welle 2 ist die Kette sequenziell,
+weil `app/(festival)/f/[festivalSlug]/index.tsx`, `app/_layout.tsx` und die beiden Lingui-Kataloge
+geteilter Zustand sind
+
+Plans:
+**Wave 1** *(parallel)*
+
+- [x] 09-01-PLAN.md — `home` → `start`: harte Umbenennung in Route, msgid und UI, Geräteabnahme des Deep-Link-Pfads (NAV-03, D-19…D-21) · **nicht autonom** (Gerätecheck)
+- [x] 09-02-PLAN.md — `GET /festivals/:festivalId/friends`: Contract, Join über `my_festival` × `friendship`, SEC-02-Cross-Tenant-Spec (FRND-07, D-18) · **nicht autonom** (Einbahntür-Checkpoint) — Checkpoint-Ausgang: `publish-as-specified`
+
+**Wave 2** *(blockiert auf 09-01)*
+
+- [x] 09-03-PLAN.md — **Tracer**: Fünf-Tab-Festival-Navigator mit Layout-Gate, parametrisierte `FloatingNav`, `PlaceholderScreen` für die drei ehrlichen Platzhalter (NAV-01/NAV-02, D-01/D-05/D-10/D-12…D-14) · **nicht autonom** (Gerätecheck)
+
+**Wave 3** *(blockiert auf 09-03)*
+
+- [x] 09-04-PLAN.md — app-weiter `AppHeader` mit drei Zuständen, zwei neue Outfit-Rollen, Ablösung des nativen Headers auf elf Screens (NAV-01, D-02…D-04/D-06/D-08) · **nicht autonom** (Gerätecheck)
+
+**Wave 4** *(blockiert auf 09-02 und 09-04)*
+
+- [x] 09-05-PLAN.md — Festival-Friends-Tab (Schnittmenge, drei Leerzustände), `StatTile` + Crew-Kachel, „Freunde finden" als Push über dem Festival (FRND-07, D-11/D-15…D-18) · **nicht autonom** (Gerätecheck)
+
+**Wave 5** *(blockiert auf 09-05)*
+
+- [x] 09-06-PLAN.md — Cashless: `react-native-webview`, ursprungsbeschränkter WebView-Push-Screen, Kachel nur bei hinterlegter Adresse (NAV-01, D-09) · **nicht autonom** (Paket-Legitimitäts-Gate + nativer Rebuild)
+
+**Wave 6** *(Gap-Closure aus dem UAT, blockiert auf 09-06)*
+
+- [x] 09-07-PLAN.md — G-09-2: nativer Header-Default an die Navigatoren (der ~80dp-Streifen hinter dem Glas) · G-09-7: Tab-Umbenennung auf Live · quiks · Crew · Timetable · Karte samt Glyph, Katalogen, deutscher Platzhalter-Copy und ADR-014-Änderungsnotiz (NAV-01/NAV-02)
 
 **Success Criteria** (what must be TRUE):
 
@@ -183,6 +213,30 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
+**Plans**: 5 plans in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+`router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
+Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
+
+Plans:
+**Wave 1**
+
+- [ ] 10-01-PLAN.md — **Tracer**: effektive Tag-Liste end-to-end — `tag`/`tag_translation`/`listTags` raus, `activity_tag` + `activity_tag_translation` + `festival_activity_tag` rein, Migrationen 0007/0008, 10 globale Seed-Tags DE+EN, neues `ActivityModule` (SEC-03, D-01…D-06)
+
+**Wave 2** *(blockiert auf 10-01)*
+
+- [ ] 10-02-PLAN.md — Aktivität anlegen: `activity` + `activity_participant` mit zusammengesetztem Tenant-FK, Migration 0009, `createActivity` mit Creator-als-Teilnehmer in einer Transaktion, geteilter `postgresErrorOf` (SEC-03, D-04/D-07/D-08)
+
+**Wave 3** *(blockiert auf 10-02)*
+
+- [ ] 10-03-PLAN.md — Beitreten/Verlassen/Auflösen: Kapazitäts-Trigger als Custom-Migration 0010 (`FOR UPDATE` + `activity_capacity_full_chk`), Rennen-Beweis auf DB- und HTTP-Ebene, Creator-Leave 409 (SEC-03, D-08/D-09/D-10)
+
+**Wave 4** *(blockiert auf 10-03)*
+
+- [ ] 10-04-PLAN.md — Discovery: öffentliche Liste mit `startTime`-Schnitt, eigene `my-activities`-Sicht ohne Schnitt, Zahl + `joined` in der Liste, Teilnehmernamen nur im Detail über die eine Fremd-Projektion (SEC-03, D-04/D-10/D-11/D-12)
+
+**Wave 5** *(blockiert auf 10-04)*
+
+- [ ] 10-05-PLAN.md — SEC-03: Cross-Tenant-Verhaltensnachweis pro neuer Tabelle inkl. eigenem Block für den nullable-`activity_tag`-Sonderfall, strukturelle Invarianten gegen `information_schema` + Contract-Walk gegen client-gesetzten Scope, Requirements-Nachzug von Hand (SEC-03)
 
 **Also lands** (consumed by Phase 11): `activity` with tag-or-title, subtitle, description,
 location, `startTime`, `capacity`; the effective tag list (enabled global ∪ festival-own); the
