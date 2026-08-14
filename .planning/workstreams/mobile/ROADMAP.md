@@ -213,7 +213,7 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 2/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 3/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
@@ -228,7 +228,7 @@ Plans:
 
 **Wave 3** *(blockiert auf 10-02)*
 
-- [ ] 10-03-PLAN.md — Beitreten/Verlassen/Auflösen: Kapazitäts-Trigger als Custom-Migration 0010 (`FOR UPDATE` + `activity_capacity_full_chk`), Rennen-Beweis auf DB- und HTTP-Ebene, Creator-Leave 409 (SEC-03, D-08/D-09/D-10)
+- [x] 10-03-PLAN.md — Beitreten/Verlassen/Auflösen: Kapazitäts-Trigger als Custom-Migration 0010 (`FOR UPDATE` + `activity_capacity_full_chk`), Rennen-Beweis auf DB- und HTTP-Ebene, Creator-Leave 409 (SEC-03, D-08/D-09/D-10)
 
 **Wave 4** *(blockiert auf 10-03)*
 

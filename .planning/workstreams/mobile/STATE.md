@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 10
 current_phase_name: activities-backend
 status: executing
-stopped_at: Completed 10-02-PLAN.md (activity create)
-last_updated: "2026-08-14T23:40:11.995Z"
+stopped_at: "Completed 10-03-PLAN.md (activity membership: join/leave/delete)"
+last_updated: "2026-08-14T23:53:19.472Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 09 complete, transitioned to Phase 10
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 22
-  completed_plans: 19
+  completed_plans: 20
   percent: 50
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 10 (activities-backend) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-15 — Phase 10 execution started
 
@@ -245,6 +245,8 @@ Phasen 10–12 direkt auf ihnen aufbauen:
 - [Phase ?]: 10-01: drop and create migrations generated in two separate drizzle-kit passes — Avoids drizzle-kit's interactive rename-detection prompt when a diff both drops tag/tag_translation and creates activity_tag in the same pass, which would hang an autonomous executor
 - [Phase ?]: 10-02: activity.tagId onDelete restrict, not set null — a title-less activity relies entirely on its tag for the auto-title; set null on tag deletion would silently violate activity_title_or_tag_chk, so deleting a used tag now fails loudly instead
 - [Phase ?]: 10-02: activity_capacity_positive_chk named distinctly from the planned activity_capacity_full_chk (10-03) — avoids a constraint_name collision when 10-03 adds the join-time capacity-full check
+- [Phase ?]: 10-03: activity capacity race closed via a BEFORE INSERT trigger with SELECT...FOR UPDATE on the parent activity row, not a check-then-insert in ActivityService — A service-level check cannot be made race-free under READ COMMITTED without this row lock; the trigger's 'already a participant' branch is required so onConflictDoNothing rejoin idempotency survives the capacity guard
+- [Phase ?]: 10-03: leave stays evidence-free (same 200 body always); delete ('Auflösen') deliberately is not, because activity existence is already public within its own festival — A silent 200 for a non-creator delete would desync their client from a still-live activity instead of protecting a secret
 
 ### Blockers/Concerns
 
@@ -344,8 +346,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T23:40:05.066Z
-Stopped at: Completed 10-02-PLAN.md (activity create)
+Last session: 2026-08-14T23:53:11.226Z
+Stopped at: Completed 10-03-PLAN.md (activity membership: join/leave/delete)
 Resume file: None
 
 ## Operator Next Steps
@@ -389,3 +391,4 @@ Resume file: None
 | Phase 09 P07 | 25min | 3 tasks | 10 files |
 | Phase 10 P01 | ~20min | 3 tasks | 19 files |
 | Phase 10 P02 | ~25min | 3 tasks | 15 files |
+| Phase 10 P03 | 9min | 3 tasks | 9 files |
