@@ -357,3 +357,45 @@ export type CompleteProfileBody = z.infer<typeof completeProfileBodySchema>;
 
 export const usernameAvailabilitySchema = z.object({ available: z.boolean() });
 export type UsernameAvailability = z.infer<typeof usernameAvailabilitySchema>;
+
+/**
+ * One row of `activityDetailSchema.participants` (D-12/VIS-02, plan 10-04) —
+ * the participant's identity plus when they joined. `profile` is bound to the
+ * ONE allowed foreign view, `visitorProfileForeignSchema`, never a
+ * hand-assembled "only what's needed" object: `projection-uniqueness.spec.ts`
+ * walks every route that embeds an object under a `profile` key and demands
+ * exactly these six field names, so a bespoke shape here would be exactly the
+ * second projection VIS-02 exists to catch. `joinedAt` travels as an ISO
+ * string, the same wire convention `friendsSince` already uses.
+ */
+export const activityParticipantSchema = z.object({
+  profile: visitorProfileForeignSchema,
+  joinedAt: z.string(),
+});
+export type ActivityParticipant = z.infer<typeof activityParticipantSchema>;
+
+/**
+ * One row of the discovery lists — `GET .../activities` and
+ * `GET .../my-activities` (D-10/D-11/D-12, plan 10-04). Extends `activitySchema`
+ * with the two caller-relative signals a list entry can carry WITHOUT rolling
+ * out the guest list: `participantCount` (the total seated, creator included
+ * per D-07) and `joined` — the CALLER's own status, never a third party's.
+ * Deliberately carries no `participants` key: names exist only on the detail
+ * response (D-12), so a list scroll can never dump every attendee of every
+ * meetup in one payload.
+ */
+export const activitySummarySchema = activitySchema.extend({
+  participantCount: z.number().int(),
+  joined: z.boolean(),
+});
+export type ActivitySummary = z.infer<typeof activitySummarySchema>;
+
+/**
+ * `GET .../activities/:activityId` response (D-12/VIS-02, plan 10-04) — the
+ * summary plus the full participant list, each entry embedding the one
+ * allowed foreign view via `activityParticipantSchema`.
+ */
+export const activityDetailSchema = activitySummarySchema.extend({
+  participants: z.array(activityParticipantSchema),
+});
+export type ActivityDetail = z.infer<typeof activityDetailSchema>;

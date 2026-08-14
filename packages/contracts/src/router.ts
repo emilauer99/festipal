@@ -3,8 +3,10 @@ import { z } from 'zod';
 
 import { localeSchema } from './locale';
 import {
+  activityDetailSchema,
   activityJoinResultSchema,
   activitySchema,
+  activitySummarySchema,
   activityTagSchema,
   completeProfileBodySchema,
   createActivityBodySchema,
@@ -246,6 +248,39 @@ export const contract = c.router(
       responses: { 200: mutationResultSchema, 404: errorSchema, 409: errorSchema },
       summary:
         '"Auflösen" — creator-only deletion of the activity plus ALL its participant rows (composite-FK cascade, D-09). Deliberately NOT evidence-free like leave: this is a visible state change a non-creator would otherwise wrongly render as gone. 200 for the creator, 409 for anyone else, 404 for an activityId unknown in this festival (the festival is already public within its own tenant, so there is no secret to protect here)',
+    },
+    // The Discovery/detail read slice (D-04/D-10/D-11/D-12, plan 10-04). All
+    // three take `festivalId`/`activityId` from the path only; the caller
+    // comes exclusively from the session (`my-activities`'s own participation,
+    // a list's `joined` flag). None of the three has a 404 branch for an
+    // unknown festivalId — same "not an existence oracle" stance as
+    // `friendsInFestival`/`listActivityTags`, `[]` instead.
+    listActivities: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activitySummarySchema) },
+      summary:
+        'Public activity discovery for a festival (D-10): activities whose startTime has already passed are excluded — a started activity disappears from this list even for a non-participant. Distinct from `listMyActivities` (caller-scoped, no time cutoff), same "browse vs mine" split as `listFestivals`/`listMyFestivals`. Each entry carries `participantCount` and the caller\'s own `joined` flag, never participant names (D-12)',
+    },
+    listMyActivities: {
+      method: 'GET',
+      path: '/festivals/:festivalId/my-activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activitySummarySchema) },
+      summary:
+        'The caller\'s own activities in this festival (D-11) — deliberately carries NO time cutoff, so a participant (including the creator) keeps reading their meeting point after `startTime`, unlike `listActivities`. The caller comes only from the session; there is no parameter to ask for a third party\'s participation (same "client-supplied scope" guard as `friendsInFestival`)',
+    },
+    getActivity: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activities/:activityId',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: activityDetailSchema, 404: errorSchema },
+      summary:
+        'Activity detail, readable by ANY signed-in visitor within the festival — including after `startTime` and regardless of participation. D-10 cuts the public LIST and JOINING, not readability: an activity is already publicly discoverable within its own tenant, so an extra read-gate here would be an access gate ADR-014 deliberately does not want. Carries the full participant list, each entry the one allowed foreign view (D-12/VIS-02). 404 for an activityId unknown in this festival (SEC-03)',
     },
   },
   { pathPrefix: '/api/v1' },
