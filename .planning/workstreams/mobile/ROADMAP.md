@@ -213,7 +213,7 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 1/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 2/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
@@ -224,7 +224,7 @@ Plans:
 
 **Wave 2** *(blockiert auf 10-01)*
 
-- [ ] 10-02-PLAN.md — Aktivität anlegen: `activity` + `activity_participant` mit zusammengesetztem Tenant-FK, Migration 0009, `createActivity` mit Creator-als-Teilnehmer in einer Transaktion, geteilter `postgresErrorOf` (SEC-03, D-04/D-07/D-08)
+- [x] 10-02-PLAN.md — Aktivität anlegen: `activity` + `activity_participant` mit zusammengesetztem Tenant-FK, Migration 0009, `createActivity` mit Creator-als-Teilnehmer in einer Transaktion, geteilter `postgresErrorOf` (SEC-03, D-04/D-07/D-08)
 
 **Wave 3** *(blockiert auf 10-02)*
 

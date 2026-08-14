@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 10
 current_phase_name: activities-backend
 status: executing
-stopped_at: Completed 10-01-PLAN.md (activity-tags tracer)
-last_updated: "2026-08-14T23:27:49.258Z"
+stopped_at: Completed 10-02-PLAN.md (activity create)
+last_updated: "2026-08-14T23:40:11.995Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 09 complete, transitioned to Phase 10
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 22
-  completed_plans: 18
+  completed_plans: 19
   percent: 50
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 10 (activities-backend) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-15 — Phase 10 execution started
 
@@ -243,6 +243,8 @@ Phasen 10–12 direkt auf ihnen aufbauen:
 
 - [Phase ?]: 10-01: nullable activity_tag.festivalId enforced with two partial unique indexes (global vs per-festival slug scope), not one plain constraint — A plain unique(festivalId, slug) would let two NULL-festivalId rows collide-free, silently allowing duplicate global tag slugs
 - [Phase ?]: 10-01: drop and create migrations generated in two separate drizzle-kit passes — Avoids drizzle-kit's interactive rename-detection prompt when a diff both drops tag/tag_translation and creates activity_tag in the same pass, which would hang an autonomous executor
+- [Phase ?]: 10-02: activity.tagId onDelete restrict, not set null — a title-less activity relies entirely on its tag for the auto-title; set null on tag deletion would silently violate activity_title_or_tag_chk, so deleting a used tag now fails loudly instead
+- [Phase ?]: 10-02: activity_capacity_positive_chk named distinctly from the planned activity_capacity_full_chk (10-03) — avoids a constraint_name collision when 10-03 adds the join-time capacity-full check
 
 ### Blockers/Concerns
 
@@ -342,8 +344,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T23:27:49.232Z
-Stopped at: Completed 10-01-PLAN.md (activity-tags tracer)
+Last session: 2026-08-14T23:40:05.066Z
+Stopped at: Completed 10-02-PLAN.md (activity create)
 Resume file: None
 
 ## Operator Next Steps
@@ -386,3 +388,4 @@ Resume file: None
 | Phase 09 P06 | ~55min | 2 tasks | 12 files |
 | Phase 09 P07 | 25min | 3 tasks | 10 files |
 | Phase 10 P01 | ~20min | 3 tasks | 19 files |
+| Phase 10 P02 | ~25min | 3 tasks | 15 files |
