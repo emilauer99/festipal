@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: Completed 09-03-PLAN.md (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; mid-plan device-bug fix for Dashboard tab blank-on-reentry)
-last_updated: "2026-08-14T08:54:39.797Z"
+stopped_at: Completed 09-04-PLAN.md (AppHeader app-wide, native headers replaced on all 11 screens; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries)
+last_updated: "2026-08-14T09:21:01.042Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 09 Plan 03 (five-tab festival navigator, layout D-10 gate, PlaceholderScreen) completed, incl. mid-plan device-bug fix
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 13
+  completed_plans: 14
   percent: 33
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 09 (festival-navigation-shell) — EXECUTING
-Plan: 4 of 6
+Plan: 5 of 6
 Status: Ready to execute (09-04 blocked on 09-03, unblocked; 09-03 done, device-verified after a mid-plan bugfix)
 Last activity: 2026-08-14 — 09-03 completed (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; Task 2 human-check still outstanding, WINDOWS #40)
 
@@ -204,6 +204,9 @@ was die naechsten Phasen konkret betrifft:
   device-verified — tracked as `WINDOWS.md` #40. `friends.tsx` is a registered-route stub
   ("This tab isn't built yet.") until 09-05 (`WINDOWS.md` #41).
 
+- [Phase ?]: AppHeader mounts once at the authenticated-tree root and decides its own visibility per route via resolveHeaderContext (pure, fail-closed default) — T-09-13's mitigation lives in the derivation function, not a mount-site condition.
+- [Phase ?]: headerShown:false added explicitly on the profil/friends-qr root Stack.Screen registrations (app/_layout.tsx) ahead of Task 3's removal of their own header-options blocks, to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately excluded (keeps its own modal header).
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -298,8 +301,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T08:54:39.778Z
-Stopped at: Completed 09-03-PLAN.md (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; mid-plan device-bug fix for Dashboard tab blank-on-reentry)
+Last session: 2026-08-14T09:21:01.016Z
+Stopped at: Completed 09-04-PLAN.md (AppHeader app-wide, native headers replaced on all 11 screens; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries)
 Resume file: None
 
 ## Operator Next Steps
@@ -308,6 +311,7 @@ Resume file: None
 - Vor 09-04 optional: Task 2's ausstehenden Geraete-Human-Check aus 09-03 nachholen
   (`WINDOWS.md` #40 — Icon/Ueberschrift/Fliesstext je Platzhalter, maximale Systemschrift,
   EN-Locale) — nicht blockierend, aber offen.
+
 - Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
 - Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
 
@@ -328,3 +332,4 @@ Resume file: None
 | Phase 09 P01 | 29min | 2 tasks | 10 files |
 | Phase 09 P02 | ~12min | 2 tasks | 4 files |
 | Phase 09 P03 | ~55min (2 checkpoints) | 2 tasks | 16 files |
+| Phase 09 P04 | ~50min | 3 tasks | 24 files |

@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 28
+open_count: 30
 waived_count: 3
 fixed_count: 10
-total_count: 41
-last_updated: 2026-08-14T08:52:05.535Z
+total_count: 43
+last_updated: 2026-08-14T09:18:39.478Z
 ---
 
 # Broken Windows Ledger
@@ -56,6 +56,8 @@ last_updated: 2026-08-14T08:52:05.535Z
 | 39 | 7 | deviation | apps/api/src/friendship/friendship.service.ts |  | 07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht | open |  | 2026-08-12T15:56:38.397Z |  |
 | 40 | 09 | unrun-verify | apps/mobile/components/PlaceholderScreen.tsx |  | 09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed. | open |  | 2026-08-14T08:51:59.963Z |  |
 | 41 | 09 | stub | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05. | open |  | 2026-08-14T08:52:05.535Z |  |
+| 42 | 09 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | 09-04 Task 2 human-check not run on device: three header states visually distinct (global wordmark, festival title, push back+title), home/leave-festival/goToStart actions correct, avatar tap opens Profil, initials fallback, long festival name truncates, header absent on auth screens, cold-start-into-festival exit not a dead end. Automated verify (typecheck/lint/vitest/lingui compile) passed. | open |  | 2026-08-14T09:18:39.074Z |  |
+| 43 | 09 | unrun-verify | apps/mobile/app/(tabs)/start.tsx |  | 09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed. | open |  | 2026-08-14T09:18:39.478Z |  |
 
 ````json
 [
@@ -549,6 +551,30 @@ last_updated: 2026-08-14T08:52:05.535Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-14T08:52:05.535Z",
+    "resolved_at": null
+  },
+  {
+    "id": 42,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/components/AppHeader.tsx",
+    "line": null,
+    "description": "09-04 Task 2 human-check not run on device: three header states visually distinct (global wordmark, festival title, push back+title), home/leave-festival/goToStart actions correct, avatar tap opens Profil, initials fallback, long festival name truncates, header absent on auth screens, cold-start-into-festival exit not a dead end. Automated verify (typecheck/lint/vitest/lingui compile) passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:18:39.074Z",
+    "resolved_at": null
+  },
+  {
+    "id": 43,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/(tabs)/start.tsx",
+    "line": null,
+    "description": "09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed.",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:18:39.478Z",
     "resolved_at": null
   }
 ]
