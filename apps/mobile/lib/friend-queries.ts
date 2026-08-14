@@ -26,6 +26,17 @@ export const friendKeys = {
   requests: ['friends', 'requests'] as const,
   list: ['friends', 'list'] as const,
   handle: (username: string) => ['friends', 'handle', username] as const,
+  /**
+   * 09-05 (D-18) — the festival-scoped intersection (`GET
+   * /festivals/:festivalId/friends`), shared by the Dashboard's Crew
+   * `StatTile` and the Festival-Friends-Tab list: ONE key, ONE cache entry,
+   * so the Kachel's number can never disagree with the list below it.
+   * Starts with the same `['friends', ...]` prefix as every other entry in
+   * this factory, so the existing `friendKeys.all` prefix invalidation after
+   * a friendship mutation (unfriend, in particular) refreshes this list too
+   * — unfriending someone in a festival must not leave them visible here.
+   */
+  inFestival: (festivalId: string) => ['friends', 'inFestival', festivalId] as const,
 };
 
 /**
