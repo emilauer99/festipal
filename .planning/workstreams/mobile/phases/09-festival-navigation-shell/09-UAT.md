@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 09-festival-navigation-shell
 source: [09-VERIFICATION.md]
 started: 2026-08-14T10:40:00Z
-updated: 2026-08-14T14:13:17Z
+updated: 2026-08-14T15:04:14Z
 ---
 
 ## Current Test
@@ -72,8 +72,16 @@ blocked: 0
   reason: "User reported: pass. Aber das screen layout passt jetzt nicht mehr. es ist jetzt sehr viel whitespace zwischen AppHeader und dem start vom page content"
   severity: major
   test: 2
-  artifacts: []
-  missing: []
+  root_cause: "Root-Stack in apps/mobile/app/_layout.tsx registriert index/(auth)/(profile-setup)/(tabs)/(festival) OHNE headerShown:false — native-stack rendert einen default-sichtbaren ~80dp Native-Header (Titel = Routenname), react-native-screens layoutet den Navigator-Content DARUNTER; das 09-04-Glas-Overlay verdeckt die Leiste nur, und jeder Screen paddet zusaetzlich useHeaderClearance() → ~80dp toter Papier-Streifen (Ruhe-Abstand 99dp statt 18dp; am Emulator verifiziert: TextView '(tabs)' [0,0][1080,210] hinter dem Glas)"
+  artifacts:
+    - path: "apps/mobile/app/_layout.tsx"
+      issue: "Root-<Stack>-Registrierungen fuer index, (auth), (profile-setup), (tabs), (festival) ohne headerShown:false (~Zeilen 484–493); profil/friends-qr/friends-find/cashless haben es bereits"
+    - path: "apps/mobile/app/friend-detail.tsx"
+      issue: "Constraint fuer die Fix-Variante screenOptions: eigener Modal-Header setzt headerShown nicht explizit (Zeilen 173–189) — braeuchte dann headerShown:true"
+  missing:
+    - "headerShown:false auf den fuenf ungeschuetzten Root-Registrierungen (Muster profil/friends-qr) ODER screenOptions={{headerShown:false}} am Root-Stack + explizites headerShown:true in friend-detail"
+    - "Device-Nachpruefung: Ruhe-Abstand ~18–20px auf Start/Dashboard; Welcome ohne (auth)-Leiste"
+  debug_session: ".planning/debug/header-content-whitespace.md"
 
 - gap_id: G-09-7
   truth: "Die fuenf Tab-Labels heissen Live, Quiks, Crew, Timetable, Karte und tragen die Icons aus den Screen-Designs"
@@ -81,5 +89,18 @@ blocked: 0
   reason: "User reported: pass, aber ich will die tab labels umbenennen, so: Live, Quiks, Crew, Timetable, Karte. Siehe screen designs für die richtigen icons"
   severity: minor
   test: 7
-  artifacts: []
-  missing: []
+  root_cause: "Kein Defekt — bewusste Phase-09-Design-Abweichung, die der User zuruecknimmt: 09-UI-SPEC.md liess 'Crew'/'Live' aus den Designs bewusst weg (ADR-014: 'als UI-Label entfaellt Crew') und ersetzte audio-lines durch LayoutDashboard. Aenderort ist genau eine Komponente: apps/mobile/components/FloatingNav.tsx (FESTIVAL_TAB_ICON :75–81, festivalTabLabel :157–163, Icon-Set lucide-react-native) + Lingui-Kataloge apps/mobile/locales/{de,en}/messages.po. Mapping positional 1:1: Dashboard→Live (Icon LayoutDashboard→AudioLines), Aktivitäten→Quiks, Friends→Crew (NEUE msgid — msgid 'Friends' teilen 3 Call-Sites), Timetable bleibt, Lageplan→Karte (nur DE-msgstr der msgid 'Map'). Designs liegen im Repo: docs/concept/designs/quiks-v2/quiks-screens.template.html:2035. Keine Tests/Snapshots betroffen."
+  artifacts:
+    - path: "apps/mobile/components/FloatingNav.tsx"
+      issue: "FESTIVAL_TAB_ICON.index LayoutDashboard→AudioLines (AudioLines bereits in profil.tsx importiert); festivalTabLabel Dashboard→Live, Activities→Quiks, Friends→Crew (neue msgid, nie msgstr-Edit); obsoleter Kommentar :66–74"
+    - path: "apps/mobile/locales/de/messages.po"
+      issue: "msgstrs Live/Crew neu; msgid 'Map': DE 'Lageplan'→'Karte' (:460); Regeneration via pnpm extract + compile --strict (auch en/messages.po + kompilierte messages.js)"
+    - path: ".planning/workstreams/mobile/REQUIREMENTS.md"
+      issue: "NAV-01 (:48) zaehlt die alten fuenf Tab-Namen auf"
+    - path: "docs/DEVELOPMENT_DECISIONS.md"
+      issue: "ADR-014-Amendment noetig: Crew-als-UI-Label-Verbot per User-Entscheid 2026-08-14 (UAT Phase 09) aufgehoben"
+  missing:
+    - "Label/Icon-Swap in FloatingNav (beide Varianten) + Katalog-Regeneration"
+    - "User-Entscheide vor Planung: Quiks-Casing (Markenregel lowercase vs getippt 'Quiks'), Lingui-Behandlung von Quiks, Crew-Kachel-Eyebrow 'Freunde hier', Placeholder-Wording (Aktivitäten/Lageplan), navLiveDot (rotes Punkt-Element der Designs) in/out of scope"
+    - "ADR-014-Amendment-Notiz"
+  debug_session: ".planning/debug/tab-labels-icons-redesign.md"
