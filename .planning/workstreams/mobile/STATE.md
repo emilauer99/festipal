@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 10
 current_phase_name: Activities Backend
-status: planning
-stopped_at: "Phase 09 complete (UAT R1 6/8 + R2 3/3 device-passed, 32/32 threats closed, VERIFICATION passed) — ready to ship branch + execute Phase 10"
-last_updated: "2026-08-14T22:48:28.883Z"
+status: "Phase 09 shipped — PR #16"
+stopped_at: Phase 09 complete (UAT R1 6/8 + R2 3/3 device-passed, 32/32 threats closed, VERIFICATION passed) — ready to ship branch + execute Phase 10
+last_updated: "2026-08-14T23:02:35.266Z"
 last_activity: 2026-08-15
-last_activity_desc: Phase 09 complete, transitioned to Phase 10
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 22
   completed_plans: 17
   percent: 50
+last_activity_desc: Phase 09 complete, transitioned to Phase 10
 ---
 
 # Project State — Workstream `mobile`
@@ -37,8 +37,8 @@ everything about their festival experience from one home screen.
 
 Phase: 10 — Activities Backend
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-15 — Phase 09 complete, transitioned to Phase 10
+Status: Phase 09 shipped — PR #16
+Last activity: 2026-08-15
 
 ## Shipped
 
@@ -216,6 +216,7 @@ Phasen 10–12 direkt auf ihnen aufbauen:
   added explicitly on the profil/friends-qr root `Stack.Screen` registrations (`app/_layout.tsx`)
   to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately
   excluded (keeps its own modal header).
+
 - **Phase 09-05 (Festival Friends tab, FRND-07):** `friendKeys.inFestival(festivalId)` is one shared
   query key read by both the Dashboard Crew StatTile and the Friends-tab list — one cache entry, one
   invalidation, so the two numbers can never disagree. Which of the two empty states shows is
@@ -224,12 +225,14 @@ Phasen 10–12 direkt auf ihnen aufbauen:
   entries, scope-filtered against `friendKeys.requests`/`search` to avoid false structural matches.
   `app/friends-find.tsx` re-exports the global Friends screen at a second push-over position (D-16)
   — one implementation, two navigation positions.
+
 - **Phase 09-06 (Cashless):** ships as ADR-011 allows — hard-omitted tile unless
   `festival.cashlessUrl` resolves via `resolveCashlessTarget` (HTTPS-only, non-empty host),
   full-bleed WebView locked to its own origin via `originWhitelist` + `onShouldStartLoadWithRequest`
   (two independent locks), no `injectedJavaScript`/`onMessage`. `react-native-webview@13.16.1`
   cleared through the manual package-legitimacy gate (T-09-SC) with registry.npmjs.org evidence
   verified by the orchestrator before install.
+
 - **Phase 09-07 (Gap Closure G-09-2/G-09-7):** Header default moved to the navigator
   (`screenOptions`), not per-`Stack.Screen` — the same forgotten-option bug had recurred three times
   in phase 09. Crew is a NEW msgid at `FloatingNav.tsx`'s festival variant, never a msgstr rewrite
@@ -354,6 +357,7 @@ Resume file: None
 
 - Fuer Phase 9 noch moeglich: `/gsd-ui-review 9 --ws mobile` (6-Saeulen-Audit der neuen
   Navigation/Cashless-Screens).
+
 - Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
 - Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
 
