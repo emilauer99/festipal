@@ -298,6 +298,22 @@ Sichtbarkeitsregel (nur aktives Festival, nur Freunde, nur mit aktiviertem Teile
   Eine echte Ticketing-Anbieter-Integration wäre eine spätere Stufe. Modell: `FestivalTicket`
   (ADR-016).
 
+**Änderung (2026-08-14, Phase 09 UAT / Nutzer-Entscheid) — „Crew" ist wieder als UI-Label
+erlaubt:** Punkt 3 der Entscheidung und der erste Aufzählungspunkt der Konkretisierung vom
+2026-07-29 schlossen „Crew" als UI-Label ausdrücklich aus (hieß „Friends"). Der User hat das bei
+der Geräteabnahme der Phase 09 zurückgenommen, weil seine eigenen Screen-Designs
+(`docs/concept/designs/quiks-v2/quiks-screens.template.html:2035`) die Festival-Tab-Leiste so
+beschriften (Befund: `.planning/debug/tab-labels-icons-redesign.md`). **Was aufgehoben ist:**
+ausschließlich die Sprachregel für dieses eine Tab. **Was ausdrücklich in Kraft bleibt:** „Crew"
+bezeichnet weiterhin genau die Schnittmenge aus globaler Freundesliste und „hat dieses Festival
+gespeichert" (Punkt 3 oben) — ohne Standort, ohne Präsenz und ohne Retention; die Datenklassen
+und die Freundes-Graph-Regel aus Punkt 3 sind unberührt, nur ihr internes „Crew"-Vokabular darf
+jetzt auch im UI stehen. Die Dashboard-Kachel-Augenbraue spricht weiterhin von Freunden
+(„Freunde hier" / „Friends here", eigener Entscheid desselben Tages, 09-UAT.md). Die
+Festival-Bottom-Nav aus der Konkretisierung oben heißt damit neu **Live · quiks · Crew ·
+Timetable · Karte** — Labelwechsel, keine Tab- oder Routenänderung. Nachgezogen in
+`.planning/workstreams/mobile/REQUIREMENTS.md` (NAV-01/NAV-02).
+
 ### ADR-015 — Design-System-Fundament & Festival-Theming-Vertrag · **ENTSCHIEDEN**
 Basis: der **festipal Brand Guide** (Juli 2026) + die Token-Datei. Details in
 `docs/concept/03-design-system.md`.

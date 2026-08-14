@@ -45,8 +45,8 @@ an endpoint serves a *foreign* profile, so the projection split is a prerequisit
 
 ### Festival Navigation (NAV)
 
-- [x] **NAV-01**: Inside a festival, a five-tab bar: Dashboard · Aktivitäten · Friends · Timetable · Lageplan
-- [x] **NAV-02**: The Timetable and Lageplan tabs are honest placeholders in the D-11/D-13 pattern — each names its precondition instead of simulating a working surface
+- [x] **NAV-01**: Inside a festival, a five-tab bar: Live · quiks · Crew · Timetable · Karte (renamed from Dashboard · Aktivitäten · Friends · Timetable · Lageplan, 09-07 gap closure / ADR-014 change note, 2026-08-14)
+- [x] **NAV-02**: The Timetable and Karte tabs are honest placeholders in the D-11/D-13 pattern — each names its precondition instead of simulating a working surface
 - [x] **NAV-03**: The first global tab is `start` in the route as well as in the UI
 
 ### Security (SEC)
