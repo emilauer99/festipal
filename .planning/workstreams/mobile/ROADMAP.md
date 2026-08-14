@@ -213,14 +213,14 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 5 plans in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 1/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
 Plans:
 **Wave 1**
 
-- [ ] 10-01-PLAN.md — **Tracer**: effektive Tag-Liste end-to-end — `tag`/`tag_translation`/`listTags` raus, `activity_tag` + `activity_tag_translation` + `festival_activity_tag` rein, Migrationen 0007/0008, 10 globale Seed-Tags DE+EN, neues `ActivityModule` (SEC-03, D-01…D-06)
+- [x] 10-01-PLAN.md — **Tracer**: effektive Tag-Liste end-to-end — `tag`/`tag_translation`/`listTags` raus, `activity_tag` + `activity_tag_translation` + `festival_activity_tag` rein, Migrationen 0007/0008, 10 globale Seed-Tags DE+EN, neues `ActivityModule` (SEC-03, D-01…D-06)
 
 **Wave 2** *(blockiert auf 10-01)*
 

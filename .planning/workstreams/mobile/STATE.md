@@ -3,18 +3,18 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 10
-current_phase_name: Activities Backend
-status: "Phase 09 shipped — PR #16"
-stopped_at: Phase 09 complete (UAT R1 6/8 + R2 3/3 device-passed, 32/32 threats closed, VERIFICATION passed) — ready to ship branch + execute Phase 10
-last_updated: "2026-08-14T23:02:35.266Z"
+current_phase_name: activities-backend
+status: executing
+stopped_at: Completed 10-01-PLAN.md (activity-tags tracer)
+last_updated: "2026-08-14T23:27:49.258Z"
 last_activity: 2026-08-15
+last_activity_desc: Phase 09 complete, transitioned to Phase 10
 progress:
   total_phases: 6
   completed_phases: 3
   total_plans: 22
-  completed_plans: 17
+  completed_plans: 18
   percent: 50
-last_activity_desc: Phase 09 complete, transitioned to Phase 10
 ---
 
 # Project State — Workstream `mobile`
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 9)
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 10 — Activities Backend (Plaene liegen bereits: 5 Plaene, 5 Wellen)
+**Current focus:** Phase 10 — activities-backend
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–9 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 10 — Activities Backend
-Plan: Not started
-Status: Phase 09 shipped — PR #16
-Last activity: 2026-08-15
+Phase: 10 (activities-backend) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-15 — Phase 10 execution started
 
 ## Shipped
 
@@ -241,6 +241,9 @@ Phasen 10–12 direkt auf ihnen aufbauen:
   underlying data class/friend-graph rule stays explicitly in force. Kein statischer Live-Punkt am
   Live-Tab; er kommt erst mit einem echten Live-Signal (Deferred Follow-Up in `09-UAT.md`).
 
+- [Phase ?]: 10-01: nullable activity_tag.festivalId enforced with two partial unique indexes (global vs per-festival slug scope), not one plain constraint — A plain unique(festivalId, slug) would let two NULL-festivalId rows collide-free, silently allowing duplicate global tag slugs
+- [Phase ?]: 10-01: drop and create migrations generated in two separate drizzle-kit passes — Avoids drizzle-kit's interactive rename-detection prompt when a diff both drops tag/tag_translation and creates activity_tag in the same pass, which would hang an autonomous executor
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -339,8 +342,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15 (UAT Runde 2 + Phasenabschluss)
-Stopped at: Phase 09 complete, ready to plan/execute Phase 10 (Plaene liegen bereits)
+Last session: 2026-08-14T23:27:49.232Z
+Stopped at: Completed 10-01-PLAN.md (activity-tags tracer)
 Resume file: None
 
 ## Operator Next Steps
@@ -382,3 +385,4 @@ Resume file: None
 | Phase 09 P05 | ~45min | 3 tasks | 12 files |
 | Phase 09 P06 | ~55min | 2 tasks | 12 files |
 | Phase 09 P07 | 25min | 3 tasks | 10 files |
+| Phase 10 P01 | ~20min | 3 tasks | 19 files |
