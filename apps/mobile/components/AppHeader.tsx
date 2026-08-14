@@ -130,6 +130,10 @@ export function AppHeader() {
   const pushScreenTitle: Record<PushScreenRoute, string> = {
     profil: t`Profile`,
     'friends-qr': t`QR code`,
+    // 09-05 (D-16) — the re-exported global Friends screen at its push
+    // position. Reuses the EXACT `Friends` msgid the tab bar/`profil.tsx`
+    // stat row already use, not a new string.
+    'friends-find': t`Friends`,
   };
 
   const festivalTitle =

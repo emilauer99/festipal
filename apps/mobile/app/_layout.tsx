@@ -537,6 +537,19 @@ function RootNavigation() {
                       reappearing once Task 3 removes this screen's own
                       `<Stack.Screen options>` block. */}
                   <Stack.Screen name="friends-qr" options={{ headerShown: false }} />
+                  {/* 09-05 (D-16) — the "Find friends" push-over entry from
+                      the Festival-Friends-Tab: a root-level SIBLING of
+                      `(tabs)`, same shape as `profil`/`friends-qr` above.
+                      `app/friends-find.tsx` re-exports `(tabs)/friends.tsx`'s
+                      own default export — this registration is what gives
+                      THAT re-exported mount its push header/back state and
+                      hides `FloatingNav`, while the (tabs) registration of
+                      the same component is untouched. `headerShown: false`
+                      here for the same reason as `profil`/`friends-qr`: a
+                      Native Stack screen with no explicit header option
+                      defaults to a visible blank native header, which would
+                      sit above `AppHeader`'s own push-state title. */}
+                  <Stack.Screen name="friends-find" options={{ headerShown: false }} />
                 </Stack.Protected>
                 </Stack>
                 <AppHeader />

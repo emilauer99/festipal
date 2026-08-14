@@ -25,10 +25,16 @@
  * header (`app/friend-detail.tsx`'s `Stack.Screen` options), so
  * `resolveHeaderContext` must return an invisible state for it, not a push
  * state (09-04-PLAN.md Flagged Assumption 1).
+ *
+ * 09-05 (D-16) — `friends-find` joins this set: the root-level push
+ * registration of `app/friends-find.tsx`, which re-exports the SAME
+ * `(tabs)/friends.tsx` screen the global Friends tab already mounts. Adding
+ * it here is what gives that second mount position its push header/back
+ * state instead of falling back to invisible.
  */
-export const PUSH_SCREEN_ROUTES = new Set(['profil', 'friends-qr'] as const);
+export const PUSH_SCREEN_ROUTES = new Set(['profil', 'friends-qr', 'friends-find'] as const);
 
-export type PushScreenRoute = 'profil' | 'friends-qr';
+export type PushScreenRoute = 'profil' | 'friends-qr' | 'friends-find';
 
 /**
  * First segments over which the header NEVER appears, regardless of what

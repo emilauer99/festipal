@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { UserPlus } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { Friend } from '@quiks/contracts';
 
@@ -21,6 +22,8 @@ import { PersonRow } from '../../../../components/PersonRow';
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
 const { typeRoles, layout, radiiScale, spacingScale } = tokens;
+
+const FIND_FRIENDS_ICON_SIZE = 18;
 
 /**
  * The three-state-plus-populated view state (09-05 Task 2, D-17). Not a
@@ -52,8 +55,12 @@ type ViewState =
  * friends.tsx`) already owns. Both are read-only observers here; neither
  * screen's mutation surface is touched.
  *
- * The "Find friends" pill (D-16) lands in Task 3, in the space left below
- * every branch of this render.
+ * The "Find friends" pill (09-05 Task 3, D-16) renders below EVERY branch
+ * above, list or empty or error — it is a `View` sibling after the
+ * conditional block, not inside any single branch, so it can never
+ * disappear along with one. It lives INSIDE this `ScrollView`'s content, so
+ * it scrolls with the list and clears `layout.scrollBottomPad` like every
+ * other tab's last block; it can never end up trapped under `FloatingNav`.
  */
 export default function FestivalFriendsScreen() {
   const { t } = useLingui();
@@ -196,6 +203,22 @@ export default function FestivalFriendsScreen() {
             })}
           </View>
         ) : null}
+
+        {/* 09-05 Task 3 (D-16) — always rendered, regardless of `viewState`.
+            `minHeight` (not a fixed `height`) is what lets a large system
+            font grow the pill instead of truncating the label — an action
+            label is never what gets ellipsized. */}
+        <Pressable
+          style={styles.findFriendsButton}
+          onPress={() => router.push('/friends-find')}
+          accessibilityRole="button"
+          accessibilityLabel={t`Find friends`}
+        >
+          <UserPlus size={FIND_FRIENDS_ICON_SIZE} color={colors.textOnPrimary} strokeWidth={2} />
+          <Text style={[styles.findFriendsButtonText, { fontFamily: buttonFont }]}>
+            <Trans>Find friends</Trans>
+          </Text>
+        </Pressable>
       </ScrollView>
     </SafeAreaView>
   );
@@ -240,5 +263,20 @@ function createStyles(colors: ThemeColors) {
       color: colors.textPrimary,
     },
     resultsList: { gap: spacingScale['sp-5'] },
+    findFriendsButton: {
+      minHeight: layout.hitMin,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-3'],
+      paddingHorizontal: spacingScale['sp-8'],
+      paddingVertical: spacingScale['sp-4'],
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+    },
+    findFriendsButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
   });
 }

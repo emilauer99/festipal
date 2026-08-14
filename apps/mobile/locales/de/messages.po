@@ -13,6 +13,7 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/friends.tsx
 msgid "{displayName}, @{username}"
 msgstr "{displayName}, @{username}"
@@ -62,6 +63,10 @@ msgstr "Aktivitäten kommen noch"
 #: components/RelationAction.tsx
 msgid "Add"
 msgstr "Hinzufügen"
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Add someone via search, code or QR — then you'll see who's saved this festival."
+msgstr "Füg jemanden über Suche, Code oder QR hinzu — dann siehst du hier, wer von ihnen dieses Festival gespeichert hat."
 
 #: components/CameraScanPanel.tsx
 msgid "Add this person?"
@@ -135,6 +140,7 @@ msgstr "Dein Profil konnte nicht geladen werden — überprüfe deine Verbindung
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
@@ -314,6 +320,10 @@ msgstr "Festival nicht gefunden"
 msgid "Festivals"
 msgstr "Festivals"
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Find friends"
+msgstr "Freunde finden"
+
 #: app/(tabs)/mehr.tsx
 msgid "Friend requests"
 msgstr "Freundschaftsanfragen"
@@ -323,6 +333,7 @@ msgid "Friend requests, coming soon"
 msgstr "Freundschaftsanfragen, kommt bald"
 
 #: app/profil.tsx
+#: components/AppHeader.tsx
 #: components/FloatingNav.tsx
 msgid "Friends"
 msgstr "Friends"
@@ -331,6 +342,10 @@ msgstr "Friends"
 msgctxt "relation chip"
 msgid "Friends"
 msgstr "Freunde"
+
+#: app/(festival)/f/[festivalSlug]/index.tsx
+msgid "Friends here"
+msgstr "Freunde hier"
 
 #: app/friend-detail.tsx
 msgid "Friends since {friendsSinceLabel}"
@@ -410,6 +425,7 @@ msgstr "Deine Crew wird geladen…"
 msgid "Loading your quiks code…"
 msgstr "Dein quiks-Code wird geladen…"
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: components/CameraScanPanel.tsx
 msgid "Loading…"
 msgstr "Wird geladen…"
@@ -506,6 +522,10 @@ msgstr "Noch kein Lageplan"
 msgid "No timetable yet"
 msgstr "Noch kein Timetable"
 
+#: app/(festival)/f/[festivalSlug]/index.tsx
+msgid "Nobody yet"
+msgstr "Noch niemand gespeichert"
+
 #: app/profil.tsx
 msgid "Not connected"
 msgstr "Nicht verbunden"
@@ -513,6 +533,10 @@ msgstr "Nicht verbunden"
 #: app/(tabs)/mehr.tsx
 msgid "Notifications"
 msgstr "Benachrichtigungen"
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Once one of them does, they'll show up here."
+msgstr "Sobald einer von ihnen es speichert, taucht er hier auf."
 
 #: app/(tabs)/friends.tsx
 msgid "Once someone adds you, the request shows up here."
@@ -633,6 +657,7 @@ msgid "Resend in {countdownLabel}"
 msgstr "Erneut senden in {countdownLabel}"
 
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
+#: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/start.tsx
@@ -819,8 +844,8 @@ msgid "This person no longer exists."
 msgstr "Diese Person gibt's nicht mehr."
 
 #: app/(festival)/f/[festivalSlug]/friends.tsx
-msgid "This tab isn't built yet."
-msgstr "Dieser Tab ist noch nicht fertig."
+#~ msgid "This tab isn't built yet."
+#~ msgstr "Dieser Tab ist noch nicht fertig."
 
 #: app/profil.tsx
 msgid "TikTok, coming soon"
@@ -915,6 +940,10 @@ msgstr "Zurückziehen"
 msgid "You can always sign back in with an email code."
 msgstr "Du kannst dich jederzeit wieder per E-Mail-Code anmelden."
 
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "You don't have any friends yet"
+msgstr "Du hast noch keine Freunde"
+
 #: app/friend-detail.tsx
 msgid "You'll need to send a new request to become friends again."
 msgstr "Ihr müsst euch danach erneut anfragen, um wieder Freunde zu werden."
@@ -942,6 +971,10 @@ msgstr "Deine E-Mail"
 #: app/(auth)/welcome.tsx
 msgid "Your festivals, your crew, your plan."
 msgstr "Deine Festivals, deine Crew, dein Plan."
+
+#: app/(festival)/f/[festivalSlug]/friends.tsx
+msgid "Your friends haven't saved this festival yet"
+msgstr "Deine Freunde haben dieses Festival noch nicht gespeichert"
 
 #: app/(tabs)/start.tsx
 msgid "Your next festival"

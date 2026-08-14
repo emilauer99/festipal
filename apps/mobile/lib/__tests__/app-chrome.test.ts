@@ -50,6 +50,14 @@ describe('resolveHeaderContext (09-04, D-03 App Header Contract)', () => {
     });
   });
 
+  it('shows the push state with route "friends-find" for the "Find friends" entry (09-05, D-16)', () => {
+    expect(resolveHeaderContext(['friends-find'])).toEqual({
+      visible: true,
+      kind: 'push',
+      route: 'friends-find',
+    });
+  });
+
   it('hides on the welcome (auth) screen', () => {
     expect(resolveHeaderContext(['(auth)', 'welcome'])).toEqual({ visible: false });
   });
