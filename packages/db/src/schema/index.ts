@@ -6,3 +6,4 @@ export * from './visitor-profile';
 export * from './my-festival';
 export * from './friendship';
 export * from './friend-request';
+export * from './activity-tag';

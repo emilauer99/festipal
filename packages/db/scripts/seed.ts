@@ -1,7 +1,14 @@
 import 'dotenv/config';
 
+import { sql } from 'drizzle-orm';
+
 import { createDatabase } from '../src/client';
-import { festival, festivalLocale } from '../src/schema';
+import {
+  activityTag,
+  activityTagTranslation,
+  festival,
+  festivalLocale,
+} from '../src/schema';
 
 /**
  * Idempotent dev/staging seed (D-03): plants the user-defined festivals below.
@@ -33,6 +40,26 @@ const SEED_FESTIVALS = [
     place: 'Graz, Steiermark',
   },
 ];
+
+/**
+ * The ~10 global start tags (D-06), `festivalId: null` — every festival sees
+ * them by default (D-05, no `festival_activity_tag` row needed = enabled).
+ * DE is every festival's most common `defaultLocale` today, EN backs the
+ * fallback chain for an English-default festival. Content, not fixture — the
+ * user reviews this exact list in the plan and can amend it here.
+ */
+const SEED_ACTIVITY_TAGS = [
+  { slug: 'pre-drink', de: 'Vorglühen', en: 'Pre-Drinks' },
+  { slug: 'camp-hangout', de: 'Camp-Hängen', en: 'Camp Hangout' },
+  { slug: 'stage-meetup', de: 'Bühnen-Treffpunkt', en: 'Stage Meetup' },
+  { slug: 'food-run', de: 'Essen holen', en: 'Food Run' },
+  { slug: 'morning-coffee', de: 'Morgenkaffee', en: 'Morning Coffee' },
+  { slug: 'shower-run', de: 'Duschen gehen', en: 'Shower Run' },
+  { slug: 'workshop', de: 'Workshop', en: 'Workshop' },
+  { slug: 'sports-games', de: 'Sport & Spiele', en: 'Sports & Games' },
+  { slug: 'chill-recharge', de: 'Chillen & Aufladen', en: 'Chill & Recharge' },
+  { slug: 'afterparty', de: 'Afterparty', en: 'Afterparty' },
+] as const;
 
 async function seed() {
   const connectionString = process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL;
@@ -70,6 +97,36 @@ async function seed() {
         .onConflictDoNothing();
 
       console.log(`Seeded festival: ${fest.slug} (${fest.id})`);
+    }
+
+    for (const values of SEED_ACTIVITY_TAGS) {
+      // Upsert against the partial unique index `activity_tag_global_slug_unq`
+      // (slug WHERE festival_id IS NULL) — `targetWhere` pins the conflict
+      // target to that partial index, not a plain slug-only constraint (which
+      // doesn't exist). The `set` is a harmless no-op touch so re-running the
+      // seed refreshes `updatedAt` instead of erroring on an empty SET.
+      const [row] = await db
+        .insert(activityTag)
+        .values({ festivalId: null, slug: values.slug })
+        .onConflictDoUpdate({
+          target: activityTag.slug,
+          targetWhere: sql`${activityTag.festivalId} is null`,
+          set: { updatedAt: sql`now()` },
+        })
+        .returning();
+      if (!row) {
+        throw new Error(`activity_tag upsert returned no row for ${values.slug}`);
+      }
+
+      await db
+        .insert(activityTagTranslation)
+        .values([
+          { tagId: row.id, locale: 'de', title: values.de },
+          { tagId: row.id, locale: 'en', title: values.en },
+        ])
+        .onConflictDoNothing();
+
+      console.log(`Seeded activity tag: ${values.slug} (${row.id})`);
     }
   } finally {
     // postgres.js keeps the connection (and the process's event loop) open
