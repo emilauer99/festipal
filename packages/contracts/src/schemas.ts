@@ -1,4 +1,5 @@
 import {
+  activitySelectSchema,
   festivalSelectSchema,
   visitorProfileInsertSchema,
   visitorProfileSelectSchema,
@@ -48,6 +49,81 @@ export const activityTagSchema = z.object({
   title: z.string(),
 });
 export type ActivityTag = z.infer<typeof activityTagSchema>;
+
+/** An activity's optional one-off geo point (ADR-017 §2) — both fields or neither. */
+export const activityGeoSchema = z.object({
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+});
+export type ActivityGeo = z.infer<typeof activityGeoSchema>;
+
+/**
+ * Drift-detection proof (D-07/D-08/D-04, ADR-017 auto-title rule): composed on
+ * `activitySelectSchema.pick(...)`, not a hand-mirrored `z.object` — a column
+ * rename on `activity` breaks this typecheck instead of drifting silently.
+ *
+ * Four deliberate deviations from the raw columns, each commented:
+ * - `title` is the RESOLVED display title (explicit title if set, otherwise
+ *   the localized tag title) — the ADR-017 auto-title rule is resolved
+ *   server-side so Phase 11 never has to rebuild it client-side.
+ * - `tag` is the joined tag object, not a bare column.
+ * - `geo` collapses the two nullable columns into one nullable object.
+ * - `startTime` travels as an ISO string, never a `Date` — the same wire
+ *   convention `friendsSince`/`festivalSchema.startDate` already use.
+ *
+ * `createdAt`/`updatedAt` are deliberately NOT picked: `projection-uniqueness
+ * .spec.ts` derives its owner-only key set from `visitorProfileSelectSchema`
+ * and both names appear there, so a route exposing either would turn that
+ * existing spec red. There is also deliberately NO embedded creator profile
+ * here — the creator is a participant, and the foreign-view profile only ever
+ * appears once, in the participant list of the detail response (plan 10-04).
+ */
+export const activitySchema = activitySelectSchema
+  .pick({
+    id: true,
+    festivalId: true,
+    creatorId: true,
+    subtitle: true,
+    description: true,
+    location: true,
+  })
+  .extend({
+    tag: activityTagSchema.nullable(),
+    title: z.string(),
+    geo: activityGeoSchema.nullable(),
+    startTime: z.string(),
+    capacity: z.number().int().nullable(),
+  });
+export type Activity = z.infer<typeof activitySchema>;
+
+/**
+ * `POST /festivals/:festivalId/activities` request body. Neither `creatorId`
+ * nor `festivalId` is a key here — the creator comes from `session.user.id`
+ * and the festival from the path, never from the body (ARCHITECTURE.md
+ * §Anti-Patterns "Client-Supplied Scope").
+ *
+ * The `.refine` is the client-side pre-emption of the `activity_title_or_tag
+ * _chk` DB CHECK (ADR-017 auto-title rule): without it, a request with
+ * neither `tagId` nor `title` would round-trip all the way to a 23514 driver
+ * error and come back as a 500 instead of a validation response — the same
+ * lesson `birthDate` in `visitor-profile.ts` already teaches.
+ */
+export const createActivityBodySchema = z
+  .object({
+    tagId: z.string().uuid().nullable().optional(),
+    title: z.string().max(80).nullable().optional(),
+    subtitle: z.string().max(120).nullable().optional(),
+    description: z.string().max(2000).nullable().optional(),
+    location: z.string().max(200).nullable().optional(),
+    geo: activityGeoSchema.nullable().optional(),
+    startTime: z.string().datetime(),
+    capacity: z.number().int().min(1).nullable().optional(),
+  })
+  .refine((body) => Boolean(body.tagId) || Boolean(body.title && body.title.trim().length > 0), {
+    message: 'either tagId or a non-empty title is required',
+    path: ['title'],
+  });
+export type CreateActivityBody = z.infer<typeof createActivityBodySchema>;
 
 /**
  * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod

@@ -3,8 +3,10 @@ import { z } from 'zod';
 
 import { localeSchema } from './locale';
 import {
+  activitySchema,
   activityTagSchema,
   completeProfileBodySchema,
+  createActivityBodySchema,
   festivalSchema,
   friendRequestListsSchema,
   friendRequestResultSchema,
@@ -197,6 +199,23 @@ export const contract = c.router(
       responses: { 200: z.array(activityTagSchema) },
       summary:
         'The effective activity-tag catalog for a festival — activated global tags union the festival’s own, titles resolved to the requested locale (SEC-03: activity_tag.festivalId is the one deliberate nullable-tenant exception)',
+    },
+    // The first Activity write path (D-07): creator and activity participant
+    // row are written in ONE transaction, so no activity ever exists without
+    // its creator on the attendee list. `creatorId` comes from the session,
+    // `festivalId` from the path — the body declares neither. 404 for a
+    // festival or tag that does not resolve for THIS caller's path (a foreign
+    // or disabled tag gets the same 404 as a nonexistent one, SEC-03); 409 for
+    // a caller without a completed profile or a body the DB CHECKs reject.
+    createActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      body: createActivityBodySchema,
+      responses: { 201: activitySchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        'Create an activity in this festival. The caller becomes a participant in the same transaction (D-07); tagId must be a global tag or one owned/enabled by this festival (SEC-03)',
     },
   },
   { pathPrefix: '/api/v1' },
