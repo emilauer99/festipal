@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 31
+open_count: 32
 waived_count: 3
 fixed_count: 11
-total_count: 45
-last_updated: 2026-08-14T09:37:10.171Z
+total_count: 46
+last_updated: 2026-08-14T12:05:00.000Z
 ---
 
 # Broken Windows Ledger
@@ -60,6 +60,7 @@ last_updated: 2026-08-14T09:37:10.171Z
 | 43 | 09 | unrun-verify | apps/mobile/app/(tabs)/start.tsx |  | 09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed. | open |  | 2026-08-14T09:18:39.478Z |  |
 | 44 | 09 | unrun-verify | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | 09-05 Task 2 human-check (9 device points: three empty states, no presence/location/chat surface, tap-through to friend-detail, error+retry, Crew tile parity, dark mode) not run on device this session | open |  | 2026-08-14T09:36:37.690Z |  |
 | 45 | 09 | unrun-verify | apps/mobile/app/friends-find.tsx |  | 09-05 Task 3 human-check (6 device points: pill visible in every state, push-over opens with back arrow + Friends title + no FloatingNav, search/requests/QR behave identically at the push position, Back returns to the festival Friends tab, unchanged global-tab behavior, max font scale on the pill) not run on device this session | open |  | 2026-08-14T09:36:44.120Z |  |
+| 46 | 09 | unrun-verify | apps/mobile/app/cashless.tsx |  | 09-06 Task 2 human-check (8 device points: two tiles with address vs. one without, tap opens full-bleed WebView under header, foreign-origin navigation blocked in-page and externally, offline error+in-place retry, no native balance/booking/QR/browser-chrome, blank-but-successful load leaves reachable Back) not run on device this session. Requires a native rebuild (npx expo run:android from apps/mobile) first — react-native-webview ships native code not present in the currently-installed APK. | open |  | 2026-08-14T12:05:00.000Z |  |
 
 ````json
 [
@@ -601,6 +602,18 @@ last_updated: 2026-08-14T09:37:10.171Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-14T09:36:44.120Z",
+    "resolved_at": null
+  },
+  {
+    "id": 46,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/cashless.tsx",
+    "line": null,
+    "description": "09-06 Task 2 human-check (8 device points: two tiles when the festival has a cashless address vs. exactly one tile when it doesn't, tapping Cashless opens a full-bleed WebView under the header with a Back arrow and 'Cashless' title, loading copy shows then clears, a foreign-origin link inside the page is blocked both in-page and externally, airplane-mode load shows error+retry and the retry reloads in place, no native balance element/booking list/pay QR/browser chrome anywhere on the screen, a blank-but-successful load leaves a plain empty frame with Back always reachable) not run on device this session. Requires a native rebuild (npx expo run:android from apps/mobile, never the repo root) before device testing — react-native-webview ships native code not present in the currently-installed APK. `gsd-tools windows append` returned no output/no write this session (recorded manually, matching this project's documented requirements.mark-complete workstream-path workaround).",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T12:05:00.000Z",
     "resolved_at": null
   }
 ]

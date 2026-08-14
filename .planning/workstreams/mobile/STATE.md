@@ -5,16 +5,16 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: "Completed 09-05-PLAN.md (Festival Friends tab real content, FRND-07; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries #44/#45)"
-last_updated: "2026-08-14T09:40:12.058Z"
+stopped_at: "Completed 09-06-PLAN.md (Cashless: react-native-webview package-legitimacy gate approved, resolveCashlessTarget + WebView screen + Dashboard tile; Task 2 human-check deferred as WINDOWS.md unrun-verify entry #46, native rebuild required before device UAT). Phase 9 (Festival Navigation Shell) complete: 6/6 plans."
+last_updated: "2026-08-14T10:09:55.508Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 09 Plan 03 (five-tab festival navigator, layout D-10 gate, PlaceholderScreen) completed, incl. mid-plan device-bug fix
 progress:
   total_phases: 6
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 16
-  completed_plans: 15
-  percent: 33
+  completed_plans: 16
+  percent: 50
 ---
 
 # Project State — Workstream `mobile`
@@ -207,6 +207,7 @@ was die naechsten Phasen konkret betrifft:
 - [Phase ?]: AppHeader mounts once at the authenticated-tree root and decides its own visibility per route via resolveHeaderContext (pure, fail-closed default) — T-09-13's mitigation lives in the derivation function, not a mount-site condition.
 - [Phase ?]: headerShown:false added explicitly on the profil/friends-qr root Stack.Screen registrations (app/_layout.tsx) ahead of Task 3's removal of their own header-options blocks, to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately excluded (keeps its own modal header).
 - [Phase ?]: Phase 09-05 (Festival Friends tab, FRND-07): friendKeys.inFestival(festivalId) is one shared query key read by both the Dashboard Crew StatTile and the Friends-tab list — one cache entry, one invalidation, so the two numbers can never disagree. Which of the two empty states shows is decided by the GLOBAL friend list's length (friendKeys.list), never the intersection's own length (D-17). friend-detail.tsx's cache read now also searches friendKeys.inFestival(*) entries, scope-filtered against friendKeys.requests/search to avoid false structural matches. app/friends-find.tsx re-exports the global Friends screen at a second push-over position (D-16) — one implementation, two navigation positions.
+- [Phase ?]: 09-06: Cashless ships as ADR-011 allows — hard-omitted tile unless festival.cashlessUrl resolves via resolveCashlessTarget (HTTPS-only, non-empty host), full-bleed WebView locked to its own origin via originWhitelist + onShouldStartLoadWithRequest (two independent locks), no injectedJavaScript/onMessage. react-native-webview@13.16.1 cleared through the manual package-legitimacy gate (T-09-SC) with registry.npmjs.org evidence verified by the orchestrator before install.
 
 ### Blockers/Concerns
 
@@ -302,8 +303,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T09:40:12.036Z
-Stopped at: Completed 09-05-PLAN.md (Festival Friends tab real content, FRND-07; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries #44/#45)
+Last session: 2026-08-14T10:09:55.493Z
+Stopped at: Completed 09-06-PLAN.md (Cashless: react-native-webview package-legitimacy gate approved, resolveCashlessTarget + WebView screen + Dashboard tile; Task 2 human-check deferred as WINDOWS.md unrun-verify entry #46, native rebuild required before device UAT). Phase 9 (Festival Navigation Shell) complete: 6/6 plans.
 Resume file: None
 
 ## Operator Next Steps
@@ -335,3 +336,4 @@ Resume file: None
 | Phase 09 P03 | ~55min (2 checkpoints) | 2 tasks | 16 files |
 | Phase 09 P04 | ~50min | 3 tasks | 24 files |
 | Phase 09 P05 | ~45min | 3 tasks | 12 files |
+| Phase 09 P06 | ~55min | 2 tasks | 12 files |

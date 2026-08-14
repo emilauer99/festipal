@@ -155,7 +155,7 @@ placeholders, the Friends tab shows friends who saved this festival, and the glo
 finally named `start` everywhere
 **Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
 **Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
-**Plans**: 5/6 plans executed in 5 Wellen — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
+**Plans**: 6/6 plans executed in 5 Wellen — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
 `packages/contracts` + `apps/api`, null Dateiüberschneidung); ab Welle 2 ist die Kette sequenziell,
 weil `app/(festival)/f/[festivalSlug]/index.tsx`, `app/_layout.tsx` und die beiden Lingui-Kataloge
 geteilter Zustand sind
@@ -180,7 +180,7 @@ Plans:
 
 **Wave 5** *(blockiert auf 09-05)*
 
-- [ ] 09-06-PLAN.md — Cashless: `react-native-webview`, ursprungsbeschränkter WebView-Push-Screen, Kachel nur bei hinterlegter Adresse (NAV-01, D-09) · **nicht autonom** (Paket-Legitimitäts-Gate + nativer Rebuild)
+- [x] 09-06-PLAN.md — Cashless: `react-native-webview`, ursprungsbeschränkter WebView-Push-Screen, Kachel nur bei hinterlegter Adresse (NAV-01, D-09) · **nicht autonom** (Paket-Legitimitäts-Gate + nativer Rebuild)
 
 **Success Criteria** (what must be TRUE):
 
