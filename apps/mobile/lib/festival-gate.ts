@@ -58,8 +58,17 @@ export function resolveFestivalGateState(params: {
       ? (query.data.body as Festival)
       : cachedFestival;
 
+  // A SUCCESSFUL query result whose status is neither 200 nor 404 (e.g. a
+  // 500/502/503 from the API or a proxy) is not modeled by ts-rest as an
+  // `error` — `lib/api-client.ts` sets no `throwOnUnknownStatus`, so it
+  // resolves as `status: 'success'` with an unexpected `data.status`.
+  // Treated as transport-error-class here so the existing error + Retry
+  // branch renders instead of every flag coming out false (blank screen).
+  const unexpectedStatus =
+    query.status === 'success' && query.data.status !== 200 && query.data.status !== 404;
+
   const showLoading = !missingSlug && query.status === 'pending' && !cachedFestival;
-  const showTransportError = !missingSlug && query.status === 'error';
+  const showTransportError = !missingSlug && (query.status === 'error' || unexpectedStatus);
   const showNotFound = !showTransportError && (missingSlug || notFound);
   const showTabs = !showTransportError && !showNotFound && festival !== undefined;
 

@@ -113,6 +113,30 @@ describe('resolveFestivalGateState (D-10 — single source of truth for the fest
     expect(state.notFound).toBe(false);
   });
 
+  it('a success response with an unexpected status (e.g. 500) is treated as a transport error, not a blank screen', () => {
+    const state = resolveFestivalGateState({
+      missingSlug: false,
+      query: success(500),
+      cachedFestival: undefined,
+    });
+    expect(state.showTransportError).toBe(true);
+    expect(state.showLoading).toBe(false);
+    expect(state.showNotFound).toBe(false);
+    expect(state.showTabs).toBe(false);
+    expect(state.notFound).toBe(false);
+  });
+
+  it('a success response with an unexpected status still shows a transport error even with a cached hint present', () => {
+    const cached = makeFestival();
+    const state = resolveFestivalGateState({
+      missingSlug: false,
+      query: success(503),
+      cachedFestival: cached,
+    });
+    expect(state.showTransportError).toBe(true);
+    expect(state.showTabs).toBe(false);
+  });
+
   it('a missing slug shows not-found without ever touching the query or marking notFound', () => {
     const state = resolveFestivalGateState({
       missingSlug: true,
