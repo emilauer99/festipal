@@ -11,6 +11,7 @@ import { fontFamilyForRole } from '../../../../lib/fonts';
 import { useFontsReady } from '../../../../lib/fonts-context';
 import type { ThemeColors } from '../../../../lib/theme';
 import { useTheme } from '../../../../lib/theme-context';
+import { useHeaderClearance } from '../../../../components/AppHeader';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
@@ -30,19 +31,20 @@ const { typeRoles, layout, spacingScale } = tokens;
  * News have no place on the Dashboard until later plans (09-06 adds the
  * Cashless `StatTile`; News never lands on the Dashboard, D-07).
  *
- * The back-navigation `Stack.Screen`/`headerLeft` block is also gone — its
- * successor is the `AppHeader` home button (09-04, D-02/D-03). Until then
- * the only way out of a festival is the system/gesture back navigation
- * (Flagged Assumption 3, 09-03-PLAN.md).
+ * 09-04 (D-08) — the festival-name heading is REMOVED ERSATZLOS: the name
+ * now lives exactly once, in `AppHeader`'s festival state, where it says on
+ * all five tabs which festival you're in. The Dashboard now begins with the
+ * two key-fact rows. The back-navigation `Stack.Screen`/`headerLeft` block
+ * is also gone — its successor is `AppHeader`'s home button (D-02/D-03).
  */
 export default function FestivalDashboardScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10) — the family carries the weight, so the
   // matching styles set no numeric `fontWeight`.
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
-  const nameFont = fontFamilyForRole('display2', fontsReady);
 
   const festival = useFestivalContext();
 
@@ -55,11 +57,14 @@ export default function FestivalDashboardScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.content,
+          { paddingTop: headerClearance + spacingScale['sp-7'] },
+        ]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.identityBlock}>
-          <Text style={[styles.name, { fontFamily: nameFont }]} numberOfLines={2}>
-            {festival.name}
-          </Text>
           {/* UI-SPEC §Accent + key-fact contract: the identity block shows
               two accent-icon key-fact rows (calendar-clock/map-pin in
               colors.primary). */}
@@ -95,12 +100,6 @@ function createStyles(colors: ThemeColors) {
     },
     identityBlock: {
       gap: spacingScale['sp-4'],
-    },
-    name: {
-      fontSize: typeRoles.display2.size,
-      letterSpacing: typeRoles.display2.letterSpacing,
-      lineHeight: typeRoles.display2.size * typeRoles.display2.lineHeight,
-      color: colors.textPrimary,
     },
     keyFacts: {
       gap: spacingScale['sp-3'],

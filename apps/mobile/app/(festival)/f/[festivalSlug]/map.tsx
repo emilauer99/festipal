@@ -6,6 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import type { ThemeColors } from '../../../../lib/theme';
 import { useTheme } from '../../../../lib/theme-context';
+import { useHeaderClearance } from '../../../../components/AppHeader';
 import { PlaceholderScreen } from '../../../../components/PlaceholderScreen';
 
 /**
@@ -17,10 +18,11 @@ import { PlaceholderScreen } from '../../../../components/PlaceholderScreen';
 export default function FestivalMapScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const { t } = useLingui();
 
   return (
-    <SafeAreaView style={styles.screen} edges={['bottom']}>
+    <SafeAreaView style={[styles.screen, { paddingTop: headerClearance }]} edges={['bottom']}>
       <PlaceholderScreen
         icon={MapPin}
         heading={t`No site map yet`}

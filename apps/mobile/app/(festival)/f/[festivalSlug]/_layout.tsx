@@ -18,6 +18,7 @@ import { fontFamilyForRole } from '../../../../lib/fonts';
 import { useFontsReady } from '../../../../lib/fonts-context';
 import type { ThemeColors } from '../../../../lib/theme';
 import { useTheme } from '../../../../lib/theme-context';
+import { useHeaderClearance } from '../../../../components/AppHeader';
 import { FloatingNav } from '../../../../components/FloatingNav';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
@@ -55,6 +56,7 @@ export default function FestivalTabsLayout() {
   const festivalSlug = normalizeSlug(params.festivalSlug);
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10) — the family carries the weight, so the
   // matching styles set no numeric `fontWeight`.
@@ -108,7 +110,10 @@ export default function FestivalTabsLayout() {
     // block. See 09-03-PLAN.md Flagged Assumption 1 if this ever needs
     // revisiting.
     return (
-      <SafeAreaView style={styles.screen} edges={['bottom']}>
+      <SafeAreaView
+        style={[styles.screen, { paddingTop: headerClearance }]}
+        edges={['bottom']}
+      >
         {showLoading ? (
           <View style={styles.centered}>
             <Text style={[styles.helper, { fontFamily: bodyFont }]}>

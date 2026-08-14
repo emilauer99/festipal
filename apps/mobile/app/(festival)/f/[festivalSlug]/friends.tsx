@@ -7,6 +7,7 @@ import { fontFamilyForRole } from '../../../../lib/fonts';
 import { useFontsReady } from '../../../../lib/fonts-context';
 import type { ThemeColors } from '../../../../lib/theme';
 import { useTheme } from '../../../../lib/theme-context';
+import { useHeaderClearance } from '../../../../components/AppHeader';
 
 /**
  * Registered route stub (09-03 Task 1) — a real, navigable tab so NAV-01's
@@ -18,11 +19,12 @@ import { useTheme } from '../../../../lib/theme-context';
 export default function FestivalFriendsScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   const bodyFont = fontFamilyForRole('body', fontsReady);
 
   return (
-    <SafeAreaView style={styles.screen} edges={['bottom']}>
+    <SafeAreaView style={[styles.screen, { paddingTop: headerClearance }]} edges={['bottom']}>
       <Text style={[styles.text, { fontFamily: bodyFont }]}>
         <Trans>This tab isn't built yet.</Trans>
       </Text>

@@ -309,8 +309,6 @@ msgstr "Festival-News, kommt bald"
 msgid "Festival not found"
 msgstr "Festival nicht gefunden"
 
-#: app/(tabs)/_layout.tsx
-#: app/(tabs)/festivals.tsx
 #: app/profil.tsx
 #: components/FloatingNav.tsx
 msgid "Festivals"
@@ -324,7 +322,6 @@ msgstr "Freundschaftsanfragen"
 msgid "Friend requests, coming soon"
 msgstr "Freundschaftsanfragen, kommt bald"
 
-#: app/(tabs)/_layout.tsx
 #: app/profil.tsx
 #: components/FloatingNav.tsx
 msgid "Friends"
@@ -445,7 +442,6 @@ msgstr "seit {year} dabei"
 msgid "Mine"
 msgstr "Meine"
 
-#: app/(tabs)/_layout.tsx
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "Mehr"
@@ -583,7 +579,6 @@ msgid "Point the camera at the other person's quiks code."
 msgstr "Richte die Kamera auf den quiks-Code deines Gegenübers."
 
 #: app/(tabs)/mehr.tsx
-#: app/profil.tsx
 #: components/AppHeader.tsx
 msgid "Profile"
 msgstr "Profil"
@@ -596,7 +591,6 @@ msgstr "Pronomen"
 msgid "Pronouns, age, gender and vibe are optional — your favourite artists show up here once Spotify is connected."
 msgstr "Pronomen, Alter, Geschlecht und Vibe sind optional — deine Lieblings-Acts erscheinen hier, sobald Spotify verbunden ist."
 
-#: app/friends-qr.tsx
 #: components/AppHeader.tsx
 msgid "QR code"
 msgstr "QR-Code"

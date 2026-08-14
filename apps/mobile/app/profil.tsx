@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Stack } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { plural } from '@lingui/core/macro';
@@ -29,6 +28,7 @@ import { deriveAge } from '../lib/profile-age';
 import { buildIdentityLine, buildProfileMetaLine, createdAtYear } from '../lib/profile-meta-line';
 import type { ThemeColors } from '../lib/theme';
 import { useTheme } from '../lib/theme-context';
+import { useHeaderClearance } from '../components/AppHeader';
 import { AvatarSunsetRing } from '../components/AvatarSunsetRing';
 import { AvatarTile } from '../components/AvatarTile';
 import { ComingSoonTile } from '../components/ComingSoonTile';
@@ -105,6 +105,7 @@ export default function ProfilScreen() {
   const { t } = useLingui();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   const showSoonToast = useSoonToast();
   // Role-resolved families (05.1 D-10): the family IS the weight, so no style
@@ -209,9 +210,10 @@ export default function ProfilScreen() {
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <Stack.Screen options={{ headerShown: true, title: t`Profile` }} />
-
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingTop: headerClearance + layout.screenPad }]}
+        showsVerticalScrollIndicator={false}
+      >
         {/* UI-SPEC #10 — the project-wide plain "Loading…" text pattern, and
             UI-SPEC #16: ONE /me query means ONE screen-wide loading surface,
             never a spinner per row. */}

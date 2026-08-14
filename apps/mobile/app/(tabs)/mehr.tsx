@@ -6,6 +6,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Languages, LogOut, Share2, ShieldAlert, UserRound, Wallet } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
+import { useHeaderClearance } from '../../components/AppHeader';
 import { ListRow } from '../../components/ListRow';
 import { SettingsSwitch } from '../../components/SettingsSwitch';
 import { useSoonToast } from '../../components/SoonToast';
@@ -55,6 +56,7 @@ export default function MehrScreen() {
   const { setThemeOverride } = useThemeOverride();
   const showSoonToast = useSoonToast();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10): the family IS the weight, so no style
   // below sets a numeric `fontWeight` on top of a real weight file.
@@ -151,7 +153,10 @@ export default function MehrScreen() {
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       {/* UI-SPEC #28 — the scroll container's bottom pad frees the last row from
           the FloatingNav that floats above it. */}
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={[styles.content, { paddingTop: headerClearance + layout.screenPad }]}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={styles.section}>
           <Text style={[styles.eyebrow, { fontFamily: eyebrowFont }]}>
             <Trans>Account</Trans>

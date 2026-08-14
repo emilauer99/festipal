@@ -1,5 +1,4 @@
 import { Tabs } from 'expo-router';
-import { useLingui } from '@lingui/react/macro';
 
 import { FloatingNav } from '../../components/FloatingNav';
 
@@ -22,10 +21,14 @@ import { FloatingNav } from '../../components/FloatingNav';
  * `initialRouteName="start"` is set explicitly (REVIEW 05-05 MEDIUM; 09-01
  * NAV-03 rename) so Start is always the default tab regardless of
  * file/declaration order.
+ *
+ * 09-04 (D-03) — the per-tab native titles/`headerShown: true` overrides on
+ * `festivals`/`friends`/`mehr` are gone ERSATZLOS: `AppHeader` now shows the
+ * "quiks." wordmark uniformly across all four global tabs, no per-tab title,
+ * since `FloatingNav`'s active pill already communicates which tab is open.
+ * All four tabs inherit `headerShown: false` from `screenOptions` below.
  */
 export default function TabsLayout() {
-  const { t } = useLingui();
-
   return (
     <Tabs
       initialRouteName="start"
@@ -33,11 +36,9 @@ export default function TabsLayout() {
       screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen name="start" />
-      <Tabs.Screen name="festivals" options={{ headerShown: true, title: t`Festivals` }} />
-      <Tabs.Screen name="friends" options={{ headerShown: true, title: t`Friends` }} />
-      {/* Source strings stay ENGLISH (lingui.config.ts `sourceLocale: 'en'`);
-          the design's German "Mehr" is the DE catalog value for this msgid. */}
-      <Tabs.Screen name="mehr" options={{ headerShown: true, title: t`More` }} />
+      <Tabs.Screen name="festivals" />
+      <Tabs.Screen name="friends" />
+      <Tabs.Screen name="mehr" />
     </Tabs>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { Stack, useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -16,6 +16,7 @@ import { fontFamilyForRole } from '../../lib/fonts';
 import { useFontsReady } from '../../lib/fonts-context';
 import type { ThemeColors } from '../../lib/theme';
 import { useTheme } from '../../lib/theme-context';
+import { useHeaderClearance } from '../../components/AppHeader';
 import { FestivalCard } from '../../components/FestivalCard';
 import { SegmentedControl } from '../../components/SegmentedControl';
 
@@ -68,6 +69,7 @@ export default function FestivalsScreen() {
   const { t } = useLingui();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const headerClearance = useHeaderClearance();
   const fontsReady = useFontsReady();
   // Role-resolved families (05.1 D-10): every role maps to a REAL weight file,
   // so the matching style objects carry no numeric `fontWeight` — an override
@@ -282,12 +284,10 @@ export default function FestivalsScreen() {
   const viewState = segment === 'meine' ? computeMeineState() : computeAlleState();
 
   return (
-    <SafeAreaView style={styles.screen} edges={['bottom']}>
-      {/* D-09 — the header carries the title ONLY. The sign-out affordance that
-          used to live in this slot moved to Mehr → App, behind a native
-          confirm; this screen has no logout control any more. */}
-      <Stack.Screen options={{ title: t`Festivals` }} />
-
+    <SafeAreaView
+      style={[styles.screen, { paddingTop: headerClearance + layout.screenPad }]}
+      edges={['bottom']}
+    >
       <View style={styles.segmentedControlWrapper}>
         <SegmentedControl
           options={[
