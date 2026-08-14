@@ -1,7 +1,6 @@
 import { initContract } from '@ts-rest/core';
 import { z } from 'zod';
 
-import { localeSchema } from './locale';
 import {
   completeProfileBodySchema,
   festivalSchema,
@@ -11,7 +10,6 @@ import {
   friendSchema,
   meSchema,
   mutationResultSchema,
-  tagSchema,
   usernameAvailabilitySchema,
   visitorProfileOwnerSchema,
   visitorSearchQuerySchema,
@@ -40,14 +38,6 @@ export const contract = c.router(
       pathParams: z.object({ slug: z.string() }),
       responses: { 200: festivalSchema, 404: errorSchema },
       summary: 'Fetch a festival (tenant) by slug',
-    },
-    listTags: {
-      method: 'GET',
-      path: '/festivals/:festivalId/tags',
-      pathParams: z.object({ festivalId: z.string().uuid() }),
-      query: z.object({ locale: localeSchema.optional() }),
-      responses: { 200: z.array(tagSchema) },
-      summary: 'List a festival’s tags, titles resolved to the requested locale',
     },
     getMe: {
       method: 'GET',

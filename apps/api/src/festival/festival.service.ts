@@ -1,21 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { eq, inArray } from 'drizzle-orm';
 import { PostgresError } from 'postgres';
-import {
-  festival,
-  festivalLocale,
-  myFestival,
-  tag,
-  tagTranslation,
-  type Database,
-} from '@quiks/db';
-import {
-  resolveLocalized,
-  type Festival,
-  type Locale,
-  type LocalizedText,
-  type Tag,
-} from '@quiks/contracts';
+import { festival, festivalLocale, myFestival, type Database } from '@quiks/db';
+import { type Festival, type Locale } from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
 
@@ -47,43 +34,6 @@ export class FestivalService {
       endDate: row.endDate,
       place: row.place,
     };
-  }
-
-  /** Tenant-scoped tag list with titles resolved to the requested (or festival default) locale. */
-  async listTags(festivalId: string, requested?: Locale): Promise<Tag[]> {
-    const [fest] = await this.db
-      .select({ defaultLocale: festival.defaultLocale })
-      .from(festival)
-      .where(eq(festival.id, festivalId))
-      .limit(1);
-    if (!fest) return [];
-
-    const rows = await this.db
-      .select({
-        id: tag.id,
-        slug: tag.slug,
-        locale: tagTranslation.locale,
-        title: tagTranslation.title,
-      })
-      .from(tag)
-      .leftJoin(tagTranslation, eq(tagTranslation.tagId, tag.id))
-      .where(eq(tag.festivalId, festivalId));
-
-    const byTag = new Map<string, { slug: string; titles: LocalizedText }>();
-    for (const r of rows) {
-      const entry = byTag.get(r.id) ?? { slug: r.slug, titles: {} };
-      if (r.locale && r.title) {
-        entry.titles[r.locale] = r.title;
-      }
-      byTag.set(r.id, entry);
-    }
-
-    const locale = requested ?? fest.defaultLocale;
-    return [...byTag.entries()].map(([id, entry]) => ({
-      id,
-      slug: entry.slug,
-      title: resolveLocalized(entry.titles, locale, fest.defaultLocale),
-    }));
   }
 
   /**

@@ -33,14 +33,6 @@ export const festivalSchema = festivalSelectSchema
   });
 export type Festival = z.infer<typeof festivalSchema>;
 
-/** A tag/chip with its title already resolved to the requested locale server-side. */
-export const tagSchema = z.object({
-  id: z.string().uuid(),
-  slug: z.string(),
-  title: z.string(),
-});
-export type Tag = z.infer<typeof tagSchema>;
-
 /**
  * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod
  * base — NOT a hand-mirrored `z.object` (PITFALLS.md Pitfall 6) — so renaming a
