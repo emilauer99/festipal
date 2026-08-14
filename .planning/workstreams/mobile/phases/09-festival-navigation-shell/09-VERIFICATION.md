@@ -1,180 +1,154 @@
 ---
 phase: 09-festival-navigation-shell
-verified: 2026-08-14T10:35:00Z
+verified: 2026-08-14T20:45:00Z
 status: human_needed
 score: 12/14 must-haves verified
-behavior_unverified: 2 # present + wired, runtime behavior not exercisable without device/native rebuild
+behavior_unverified: 2 # G-09-2's rendered layout outcome — wiring guard-proven, pixel result device-only
 overrides_applied: 0
+re_verification:
+  previous_status: human_needed
+  previous_score: 12/14
+  gaps_closed:
+    - "G-09-2: dead ~80dp paper strip between AppHeader glass and content — native-header default moved to the navigators (root/(auth)/(profile-setup)), friend-detail sole explicit exception; guarded by native-header-default.test.ts"
+    - "G-09-7: festival tab bar renamed to Live · quiks · Crew · Timetable · Karte with the AudioLines glyph; guarded by festival-tab-naming.test.ts; ADR-014 change note + NAV-01/NAV-02 updated"
+    - "Prior device-UAT resolution: WINDOWS #40/#43/#44/#45/#46 device checks PASSED in 09-UAT.md (tests 1, 3-6, 8) — the two prior PRESENT_BEHAVIOR_UNVERIFIED truths (festival Friends tab client rendering, cashless sandbox runtime) are now device-verified"
+  gaps_remaining: []
+  regressions: []
 behavior_unverified_items:
-  - truth: "SC3 (client half): the Festival-Friends-Tab renders exactly the intersection with three independently-worded empty states decided by the GLOBAL list length (D-17)"
-    test: "With three real accounts (OTP via Mailpit :8025): (1) no friends -> empty state 1, (2) friends but none saved -> empty state 2, (3) friend saves festival -> exactly one row, stranger never appears; tap row -> friend-detail shows content; stop API -> error + retry recovers"
-    expected: "Three distinct texts for three distinct situations; no presence/location/distance/chat surface anywhere on the tab; Crew tile count equals list length"
-    why_human: "No RN component-test harness in this project (STATE.md structural limitation) — computeViewState lives inline in the screen and cannot run under the node-env Vitest runner; the server half IS behaviorally proven (festival-friends-isolation.spec.ts re-run live, 8/8). WINDOWS.md #44/#45."
-  - truth: "Cashless WebView sandbox at runtime: a cross-origin navigation is rejected silently and never opened externally (T-09-22, CR-01 sole-gate fix)"
-    test: "After `npx expo run:android` from apps/mobile (native rebuild REQUIRED — react-native-webview is not in the installed APK): open the Cashless tile, tap a link to a foreign domain inside the page"
-    expected: "Navigation does not happen in-page AND no external browser/app opens; offline shows error copy + in-place retry; blank-but-successful load leaves a reachable Back, never an endless spinner"
-    why_human: "The origin-comparison callback is pure code (14 URL tests pass), but the library interplay (react-native-webview's whitelist/Linking.openURL branch that CR-01 neutralizes with originWhitelist=['*']) only exists at native runtime. WINDOWS.md #46."
+  - truth: "G-09-2 outcome: on every screen the content starts directly under the header glass — the resting gap is the designed narrow spacing, not the device-measured ~99dp strip; no route name ghosts through the glass; no white bar on welcome/email/code"
+    test: "Device run per 09-07 Task 1 <human-check> (WINDOWS #47): light+dark, start tab + festival dashboard resting gap, all 9 tabs scroll under the glass, log out and inspect welcome/email/code, open friend-detail card (close button must survive), push screens, notch + max font scale"
+    expected: "Narrow designed gap everywhere; no blank native bar; friend-detail still closable; no route-name text behind the glass"
+    why_human: "The wiring guard (33/33, re-run by the verifier) proves headerShown:false is the navigator default in ALL 7 _layout.tsx files and friend-detail re-enables its own — but the rendered gap is pure native layout math with no node-env equivalent; the welcome-screen point is exactly where emulator and phone findings diverged before (plan demands explicit re-check)"
+  - truth: "G-09-7 rendered result: the five festival tab labels render as Live · quiks · Crew · Timetable · Karte (EN: Map) with the AudioLines glyph, single-line/ellipsized at narrowest width and max font scale, and NO state dot on the Live tab"
+    test: "Device run per 09-07 Task 2 <human-check> (WINDOWS #48): open a festival in DE and EN, check the five labels + glyph, verify global Friends tab / Profil push title / 'Freunde hier' eyebrow are unchanged, narrow-width truncation, no red dot"
+    expected: "New names in the festival, old names everywhere else, eyebrow unchanged, no live-dot indicator"
+    why_human: "Catalog values and FloatingNav wiring are fully test-pinned (verifier re-ran festival-tab-naming.test.ts, pass); the visual render, truncation behavior, and glyph appearance need eyes on a device"
 human_verification:
-  - test: "Placeholder tabs on device (WINDOWS #40 — 09-03 Task 2): open Aktivitaeten/Timetable/Lageplan in both color modes and EN locale; set max system font scale"
-    expected: "Per-tab icon + heading + one sentence, three DIFFERENT precondition sentences (Timetable/Lageplan name the festival, Aktivitaeten names quiks); no spinner/badge/date promise; body scrolls instead of clipping at max font scale; EN strings render (no raw msgids)"
-    why_human: "RN visual rendering + font-scale + locale behavior has no node-env equivalent; copy/structure/lint/lingui evidence is complete"
-  - test: "AppHeader three states + auth boundary (WINDOWS #42 — 09-04 Task 2): all four global tabs, a festival, profil/friends-qr; log out, log back in with another account"
-    expected: "Wordmark (dot in Beere) / festival name / push title + back arrow; home button leaves a cold-start-opened festival without exiting the app; Start-tab home tap is a visible no-op (no toast); avatar tap opens Profil (repeated taps do NOT stack copies — WR-02); NO header on welcome/email/code screens; after re-login the new account's avatar shows"
-    why_human: "Header visibility derivation is unit-tested fail-closed (14 cases), but the visual states, logout hygiene and the cold-start non-dead-end need a device"
-  - test: "No double header / clearance (WINDOWS #43 — 09-04 Task 3): every screen, notch + non-notch, max font scale, both color modes"
-    expected: "No native title bar above the glass anywhere; content starts under the glass and scrolls behind it; festival name appears ONCE (header only, not on the Dashboard); header stays single-line with ellipsis"
-    why_human: "headerShown:false coverage and useHeaderClearance() on all 11 screens + gate are grep-verified; the pixel result (notch geometry, font scale) is not"
-  - test: "Festival-Friends-Tab with real accounts (WINDOWS #44 — 09-05 Task 2) — see behavior_unverified item 1"
-    expected: "Three distinct empty states, intersection-only list, no presence/chat surface, tap-through to friend-detail with content, error + retry, Crew tile parity with list length, dark mode"
-    why_human: "See behavior_unverified item 1"
-  - test: "friends-find push-over (WINDOWS #45 — 09-05 Task 3): tap the 'Find friends' pill in each tab state; use search/requests/QR at the push position; go back"
-    expected: "Pill present in every state; global Friends screen opens OVER the festival (no FloatingNav, back arrow + 'Friends' title); identical behavior at both positions; Back lands in the festival Friends tab; pill grows in height at max font scale, label never ellipsized"
-    why_human: "Navigation-stack behavior across two mount positions of one screen is device-only truth"
-  - test: "Cashless on device (WINDOWS #46 — 09-06 Task 2) — NATIVE REBUILD FIRST (`npx expo run:android` from apps/mobile, never repo root) — see behavior_unverified item 2"
-    expected: "Festival WITH address: two tiles (Cashless brand-toned, arrow, NO number); WITHOUT address: exactly one tile, no inert substitute; full-bleed WebView under push header; cross-origin nav blocked in-page AND not opened externally; offline error + in-place retry; none of the four ADR-011-excluded elements"
-    why_human: "See behavior_unverified item 2"
-  - test: "Backstop truths (plan-declared `verification: backstop`): (a) five DE tab labels on the narrowest supported device width, (b) gate copy at max font scale not clipped, (c) blank-but-successful cashless page distinguishable from a hung load, (d) no page-title chrome anywhere"
-    expected: "(a) five flex-1 columns hold with numberOfLines={1} ellipsize; (b) centered gate message fully readable; (c) empty frame with reachable Back, loading hint ends; (d) the embedded page's own title never appears in native chrome"
-    why_human: "Explicitly declared non-inferable by the plans — device-only claims"
-  - test: "Judgment-tier prohibitions (verification: manual) — human confirmation folded into the device checks above: NAV-02 honesty (no simulated surface), NAV-01 header privacy (no account data outside auth), FRND-07 privacy/safety (no presence signal, no chat entry), NAV-01 cashless safety (no payment element, no inert placeholder)"
-    expected: "Each upheld on device as it is upheld in code (structural evidence strong: no fake data/spinner in placeholders; fail-closed header; PersonRow limited to profile/onPress/accessibilityLabel; no balance/booking/QR/browser chrome; hard tile omission)"
-    why_human: "Manual-tier prohibitions get a NON-AUTHORITATIVE code-level verdict only; final resolution belongs to the end-of-phase human checkpoint"
+  - test: "09-07 Task 1 device check (WINDOWS #47) — see behavior_unverified item 1"
+    expected: "Resting gap narrow, no route name behind glass, no bar on auth screens, friend-detail closable, notch + max font scale clean"
+    why_human: "Rendered native layout has no node-env equivalent"
+  - test: "09-07 Task 2 device check (WINDOWS #48) — see behavior_unverified item 2"
+    expected: "Live · quiks · Crew · Timetable · Karte (EN Map), AudioLines glyph, untouched Friends/eyebrow surfaces, truncation holds, no state dot on Live"
+    why_human: "Visual rendering of the pinned labels/glyph"
+  - test: "09-07 Task 3 read-through: read the ADR-014 change note once — does it state WHAT is lifted (only the label rule for this one tab) and WHAT stays in force (no presence, no location, no retention)?"
+    expected: "A later reader cannot conclude the data rule fell with the label. NOTE: verifier's non-authoritative read — the note explicitly separates 'Was aufgehoben ist' from 'Was ausdruecklich in Kraft bleibt' and restates the intersection definition — reads as PASS, but the plan classifies this as human judgment. Not logged in WINDOWS.md (SUMMARY claims three unrun-verify entries, only #47/#48 exist)."
+    why_human: "Documentation-quality judgment on prose intent"
+  - test: "Judgment-tier prohibitions (verification: manual, NON-AUTHORITATIVE code verdict rendered): (a) NAV-02 — the rename claims no capability: no navLiveDot, no content, no counts added; (b) NAV-01/FRND-07 — 'Crew' label adds no presence signal"
+    expected: "Upheld on device as in code. Code evidence strong: commit a114834's footprint is exactly FloatingNav + catalogs + a layout comment + the guard test (no content file touched); FloatingNav contains no dot/badge element; the ADR note preserves the data rule verbatim"
+    why_human: "Manual-tier prohibitions get a non-authoritative code-level verdict only; final resolution belongs to the end-of-phase human checkpoint (folded into device checks #47/#48)"
 ---
 
-# Phase 9: Festival Navigation Shell — Verification Report
+# Phase 9: Festival Navigation Shell — Verification Report (Re-verification)
 
 **Phase Goal:** Inside a festival there is a real five-tab bar, its two content tabs are honest placeholders, the Friends tab shows friends who saved this festival, and the global first tab is finally named `start` everywhere.
-**Verified:** 2026-08-14
+**Verified:** 2026-08-14T20:45:00Z
 **Status:** human_needed
-**Re-verification:** No — initial verification
+**Re-verification:** Yes — after UAT gap closure (plan 09-07, gaps G-09-2 and G-09-7). Supersedes the 2026-08-14T10:35:00Z report.
+
+## What Changed Since the Previous Verification
+
+1. The full device UAT ran (`09-UAT.md`): **6 of 8 passed** — including the two truths the previous report held as PRESENT_BEHAVIOR_UNVERIFIED (festival Friends tab with three real accounts, test 4; cashless sandbox after native rebuild, test 6). Both are now device-verified.
+2. The 2 UAT issues became gaps G-09-2 (major, dead ~80dp strip) and G-09-7 (minor, tab rename change request) and were closed by plan 09-07 in commits `6c5d9a7`, `a114834`, `c7d45de` — all three verified present on the branch with footprints matching the claims.
 
 ## Goal Achievement
 
-### Observable Truths
+### Observable Truths — Roadmap Success Criteria (regression-checked)
 
 | # | Truth | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | **SC1**: Entering a festival lands on a five-tab bar, every tab a real registered route | ✓ VERIFIED | `app/(festival)/f/[festivalSlug]/` contains exactly `_layout.tsx` + 5 route files; 5 `Tabs.Screen` declared in order `index/activities/friends/timetable/map`, `initialRouteName="index"`, `tabBar` = `<FloatingNav variant="festival" />` (`_layout.tsx:160-168`); user-run device UAT 09-03 round 2 passed all 8 points incl. all five tabs navigating |
-| 2 | **SC2**: Timetable/Lageplan/Aktivitaeten are honest placeholders naming their real precondition; `SoonToast` stays the only coming-soon mechanism | ✓ VERIFIED | `PlaceholderScreen.tsx` owns no copy (`{icon, heading, body}` props); three tabs pass distinct copy (activities names quiks, timetable/map name the festival, no date/phase promise); grep: zero `useSoonToast`/`useQuery`/`apiClient` imports in the three tabs; `SoonToast` consumers unchanged (`mehr.tsx`, `profil.tsx`); `lingui compile --strict` green. On-device visual = human item #40 |
-| 3 | **SC3**: Festival Friends tab shows exactly the intersection, never a presence signal | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED (client) / ✓ server proven | Server: `festival-friends-isolation.spec.ts` **re-run live by the verifier — 8/8 passed** (cross-tenant, stranger-view, field-absence, self-exclusion, no-oracle 404, 401). Client: `friends.tsx` wired (D-17 branching on `globalListQuery` length, `PersonRow` with only `profile/onPress/accessibilityLabel`, `sortFriendsByDisplayName`), but no RN harness exercises the screen — WINDOWS #44/#45 |
-| 4 | **SC4**: First global tab is `start` in route, msgid and UI; existing deep links resolve | ✓ VERIFIED | `(tabs)/start.tsx` exists, `home.tsx` gone; `initialRouteName="start"` + `Tabs.Screen name="start"`; FloatingNav union/icon/guard/fallback/label all `start`; grep `'/home'` → zero matches; `msgid "Start"`/`msgstr "Start"` both catalogs, zero `msgid "Home"`; cold-start/root-redirect tests re-run pass; **user-verified 6-point device UAT (09-01)** incl. deep link + dev-client launches, no Unmatched-Route |
-| 5 | SEC-02: the `friendship × my_festival` join is tenant-isolated, caller from session only | ✓ VERIFIED | Both scopes inside join conditions (`friendship.service.ts:582-597`); handler passes `session.user.id` + `params.festivalId` only; isolation spec re-run 8/8 |
-| 6 | ADR-014: no `my_festival` value (timestamp/festivalId/visitorId) reaches the wire | ✓ VERIFIED | `select` = `...foreignProfileColumns` + `friendsSince` only; field-absence assertion in the spec ran and passed; `projection-uniqueness` invariant untouched |
-| 7 | D-10 gate replaces the WHOLE area on 404/transport error — incl. unexpected success statuses (WR-01 fix) | ✓ VERIFIED | `festival-gate.ts:67-73` routes non-200/non-404 success into `showTransportError`; `_layout.tsx` renders NO `Tabs` in the `!showTabs` branch; `festival-gate.test.ts` incl. `success(500)`/`success(503)` cases **re-run, pass**; 404/transport paths device-verified in 09-03 round 2 |
-| 8 | D-01: FloatingNav is ONE component with `variant: 'global' | 'festival'`, global call site unchanged | ✓ VERIFIED | `FloatingNav.tsx:130` `variant = 'global'` default; two item tables; no second tab-bar component in `components/` |
-| 9 | One AppHeader, three states, fail-closed visibility — never over an unauthenticated screen | ✓ VERIFIED | `resolveHeaderContext` fail-closed (`app-chrome.ts`, `HEADER_HIDDEN_ROUTES` incl. `(auth)`/`(profile-setup)`/`index`/`friend-detail`); `app-chrome.test.ts` (incl. friends-find + cashless cases) **re-run, pass**; mounted once as `Stack` sibling (`_layout.tsx:570`); avatar tap uses `router.navigate` (WR-02 fix, `AppHeader.tsx:210`); shared `['me']` key + `BLUR_INTENSITY` import. Visual states = human items #42 |
-| 10 | Native headers replaced app-wide; every screen holds header clearance; festival name lives once | ✓ VERIFIED | `headerShown: false` via `screenOptions` on `(tabs)`, `(festival)` stack, festival `Tabs`, and per-registration on `profil`/`friends-qr`/`friends-find`/`cashless`; `useHeaderClearance()` in all 11 screens + gate + cashless (grep, 13 files); Dashboard heading removed. Pixel truth = human item #43 |
-| 11 | Cashless sandbox: HTTPS-only validation before the tile AND in the screen; sole-gate origin callback (CR-01 fix); no JS bridge | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED (runtime) | `resolveCashlessTarget` HTTPS-only, 14 behavior tests **re-run, pass**; `cashless.tsx:126` `originWhitelist={['*']}` with strict-origin `onShouldStartLoadWithRequest` as sole gate (CR-01, commit bd983a7), re-validates its own route param, no `injectedJavaScript`/`onMessage`. Runtime block behavior needs native rebuild + device — WINDOWS #46 |
-| 12 | Cashless tile: hard omission without address, no value, the tab's one brand-toned surface | ✓ VERIFIED | `index.tsx:170` `{cashlessTarget ? <StatTile tone="brand" .../> : null}` — no else branch, no `value`/`note`; Crew tile stays `tone="default"` and always renders (D-11) |
-| 13 | D-18: Crew tile and Friends list read ONE query key — the numbers cannot disagree | ✓ VERIFIED | `friendKeys.inFestival` defined once (`friend-queries.ts`), exactly two consumers (`index.tsx:88`, `friends.tsx:84`), same prefix as the friend-key family (invalidation coverage) |
-| 14 | D-16: one Friends-screen implementation at two navigation positions | ✓ VERIFIED | `friends-find.tsx` is a pure `export { default } from './(tabs)/friends'` (no JSX); registered in the authenticated `Stack.Protected` block with `headerShown:false`; in `PUSH_SCREEN_ROUTES` + push-title map; pill rendered outside the `viewState` branching (`friends.tsx:207-220`, every state) |
+| SC1 | Entering a festival lands on a five-tab bar, every tab a real registered route | ✓ VERIFIED | 5 route files + `_layout.tsx` present; 5 `Tabs.Screen` in order `index/activities/friends/timetable/map` unchanged by the rename (`_layout.tsx:168-172`, commit a114834 touched only the comment); device UAT 09-03 round 2 + UAT test 8 |
+| SC2 | Timetable/Karte/quiks tabs are honest placeholders naming their real precondition | ✓ VERIFIED | **Device UAT test 1 PASSED** (was human-pending); `PlaceholderScreen` copy sources unchanged; DE catalog copy follows the rename — `No site map yet`→`Noch keine Karte`, body names Karte not Lageplan, `Activities are on the way`→`quiks kommen noch`, brand named exactly once (pinned by festival-tab-naming.test.ts, re-run pass) |
+| SC3 | Festival Friends tab shows exactly the intersection, never a presence signal | ✓ VERIFIED | Server: `festival-friends-isolation.spec.ts` live-proven 8/8 (prior verification). Client: **device UAT test 4 PASSED with three real accounts** (three empty states, intersection-only, tap-through, error+retry, Crew tile parity). `friends.tsx` untouched by 09-07 (commit footprints) |
+| SC4 | First global tab is `start` in route, msgid and UI; deep links resolve | ✓ VERIFIED | `(tabs)/start.tsx` present, no `home.tsx`; FloatingNav global table `start: t\`Start\`` unchanged; device-verified in 09-01 UAT (prior, unregressed) |
 
-**Score:** 12/14 truths verified (2 present, behavior-unverified — both device-only, tracked as WINDOWS #44–#46)
+### Observable Truths — 09-07 Gap-Closure Must-Haves
 
-### Required Artifacts
+| # | Truth | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Content starts directly under the glass; the ~80dp strip is gone (G-09-2) | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | Fix present + wired (truth 2); rendered gap is device-only — WINDOWS #47 |
+| 2 | No navigator shows a native header by default; the default lives at the navigator; friend-detail is the sole re-enabling exception | ✓ VERIFIED | All 7 `_layout.tsx` under `app/` carry `screenOptions={{ headerShown: false }}` (grep verified: root :491, (auth) :18, (profile-setup) :13, (festival) :15, (tabs) :36, festival Tabs :166); root registrations for profil/friends-qr/friends-find/cashless bare; `friend-detail.tsx:181` `headerShown: true` as first property before `presentation`, close button intact (:185-194); **guard test re-run by verifier: 33/33 pass**; guard walks the directory (no hand list), strips comments, non-vacuum assertions present |
+| 3 | No white bar with a route name on welcome/email/code screens | ⚠️ PRESENT_BEHAVIOR_UNVERIFIED | `(auth)/_layout.tsx` default set (the measured cause removed); the exact point where emulator and phone diverged before — WINDOWS #47 point 4 |
+| 4 | Five festival tabs named (DE) Live · quiks · Crew · Timetable · Karte; AudioLines glyph at position 1, other four glyphs unchanged | ✓ VERIFIED | `FloatingNav.tsx:77-83` `FESTIVAL_TAB_ICON` index=`AudioLines` (import :5), Sparkles/Users/CalendarClock/MapPin unchanged; `LayoutDashboard` gone; labels :159-171; catalogs: `Live`→Live, `Crew`→Crew, `Map`→DE Karte/EN Map (test-pinned, re-run pass); compiled gitignored `messages.js` regenerated (contain `Crew`). Visual render = #48 |
+| 5 | `quiks` tab label is a lowercase plain literal, NOT through Lingui, identical in both languages | ✓ VERIFIED | `FloatingNav.tsx:167` `activities: 'quiks'` — plain string, no `t` macro, no trailing dot, no coloured character; guard asserts the literal |
+| 6 | Shared `Friends` msgid untouched (global tab, push title, profil) | ✓ VERIFIED | `Friends`→`Friends` in BOTH catalogs (test-pinned); global table still `friends: t\`Friends\``; `Crew` is a NEW msgid; commit a114834 touched none of profil.tsx/AppHeader.tsx/friends-find.tsx |
+| 7 | Crew tile eyebrow stays "Freunde hier" / "Friends here" | ✓ VERIFIED | `index.tsx:100` `t\`Friends here\`` untouched (not in any 09-07 commit); catalog DE `Freunde hier` / EN `Friends here` test-pinned |
+| 8 | No placeholder text names a label the navigation no longer carries | ✓ VERIFIED | DE map copy names Karte, contains no `Lageplan`; DE quiks copy follows the new naming, brand named once (heading only) — all pinned in festival-tab-naming.test.ts, re-run pass; EN source strings deliberately unchanged (Flagged Assumption 2) |
+| 9 | The rename changes ONLY labels — no tab gets content, no tile a number, no state dot (navLiveDot NOT built) | ✓ VERIFIED | Commit a114834 footprint: FloatingNav + catalogs + one layout comment + guard test, nothing else; no dot/badge element in FloatingNav (grep clean); `Dashboard`/`Activities` msgids obsolete in both catalogs (test-pinned) |
+| 10 | ADR-014 carries a dated change note; NAV-01/NAV-02 enumerate the new five names | ✓ VERIFIED | `docs/DEVELOPMENT_DECISIONS.md:301-315` dated "Änderung (2026-08-14, Phase 09 UAT / Nutzer-Entscheid)" in ADR-023 amendment form — states what is lifted (label rule only) AND what stays (no location/presence/retention, data classes untouched), names the new five-tab row, references 09-UAT.md; original rule text preserved. `REQUIREMENTS.md:48-49` NAV-01/NAV-02 name the new row, both checkmarks intact |
+
+**Score:** 12/14 truths verified (2 present, behavior-unverified — both are the rendered device outcome of G-09-2/G-09-7, tracked as WINDOWS #47/#48)
+
+### Required Artifacts (09-07)
 
 | Artifact | Expected | Status | Details |
-| -------- | ----------- | ------ | ------- |
-| `apps/mobile/app/(tabs)/start.tsx` | renamed first global tab | ✓ VERIFIED | exists; `home.tsx` absent; wired via `_layout` + FloatingNav |
-| `apps/mobile/app/(festival)/f/[festivalSlug]/_layout.tsx` | 5-tab navigator + D-10 gate | ✓ VERIFIED | gate branch renders no `Tabs`; `FestivalContextProvider`; single `festivalKeys.detail` query |
-| `apps/mobile/app/(festival)/f/[festivalSlug]/{index,activities,friends,timetable,map}.tsx` | five real routes | ✓ VERIFIED | all present, substantive, registered |
-| `apps/mobile/components/PlaceholderScreen.tsx` | shared honest empty state | ✓ VERIFIED | exports `PlaceholderScreen`/`PlaceholderScreenProps`; no owned copy; ScrollView `flexGrow:1` |
-| `apps/mobile/components/FloatingNav.tsx` | parametrized bar | ✓ VERIFIED | `variant` prop, two item tables, `BLUR_INTENSITY` exported |
-| `apps/mobile/components/AppHeader.tsx` | 3-state header + `useHeaderClearance` | ✓ VERIFIED | both exported; shared `['me']` + `festivalKeys.detail` keys; no `AvatarSunsetRing` import |
-| `apps/mobile/lib/app-chrome.ts` | pure header derivation | ✓ VERIFIED | no react/expo-router import; `PUSH_SCREEN_ROUTES` = profil/friends-qr/friends-find/cashless |
-| `apps/mobile/lib/festival-gate.ts` + `festival-context.ts` | pure gate + layout-owned context (blank-on-reentry fix) | ✓ VERIFIED | 11 gate tests pass incl. WR-01 cases; Dashboard reads context, zero own query |
-| `apps/mobile/lib/cashless-url.ts` | pure HTTPS-only validator | ✓ VERIFIED | framework-free; 14 tests pass |
-| `apps/mobile/app/cashless.tsx` | origin-locked WebView push screen | ✓ VERIFIED (code) | sole-gate callback (CR-01); re-validates route param; no bridge |
-| `apps/mobile/components/StatTile.tsx` | Dashboard tile primitive | ✓ VERIFIED | `StatTile`/`StatTileProps` exported; no fixed `flexBasis`; View/Pressable per interactivity |
-| `apps/mobile/app/friends-find.tsx` | re-export route | ✓ VERIFIED | pure re-export, registered |
-| `packages/contracts/src/router.ts` | `friendsInFestival` entry | ✓ VERIFIED | UUID pathParam, `z.array(friendSchema)`, SEC-02 summary |
-| `apps/api/src/friendship/friendship.{service,controller}.ts` | join + handler | ✓ VERIFIED | scopes inside join; session-only caller; no 404 oracle |
-| `apps/api/test/festival-friends-isolation.spec.ts` | SEC-02 proof | ✓ VERIFIED | 10 `it` blocks; **re-run live: 8/8 pass** (2 grouped) |
-| `packages/ui/src/tokens.ts` | `headerTitle`/`headerWordmark` roles | ✓ VERIFIED | tracked in `type-tracking.test.ts`; `fonts.ts` exhaustiveness extended |
-| `apps/mobile/package.json` | `react-native-webview` | ✓ VERIFIED | 13.16.1, expo-install selected; legitimacy gate user-approved (09-06 checkpoint) |
+| -------- | -------- | ------ | ------- |
+| `apps/mobile/lib/__tests__/support/source-text.ts` | `readMobileFile`/`stripComments` shared helper | ✓ VERIFIED | Both named exports; `://`-in-string protection implemented and self-tested; not a `*.test.ts` name (imported, not collected) |
+| `apps/mobile/lib/__tests__/native-header-default.test.ts` | G-09-2 wiring guard | ✓ VERIFIED | Directory-walked layout list (non-vacuum: fails on empty list, asserts root inclusion), comment-stripped matching, exactly-one-default assertion on root, friend-detail exception assertion; **re-run: pass** |
+| `apps/mobile/lib/__tests__/festival-tab-naming.test.ts` | G-09-7 catalog + wiring guard | ✓ VERIFIED | Own `.po` parser skipping `#~`/`msgctxt` (self-tested non-vacuum); pins all five labels, both untouched surfaces, obsolete old msgids, FloatingNav wiring; **re-run: pass** |
+| `apps/mobile/app/_layout.tsx` | root navigator default, bare registrations | ✓ VERIFIED | :491; four former per-screen options removed; comments consolidated at the navigator, per-registration comments reference the gap closure |
+| `apps/mobile/app/(auth)/_layout.tsx` + `(profile-setup)/_layout.tsx` | navigator defaults | ✓ VERIFIED | One-line `(festival)` form, both with G-09-2 rationale comments |
+| `apps/mobile/app/friend-detail.tsx` | explicit `headerShown: true` | ✓ VERIFIED | :181, first property before `presentation`; close-button block unchanged |
+| `apps/mobile/components/FloatingNav.tsx` | renamed labels + glyph, one component | ✓ VERIFIED | See truths 4-6; variant parametrization unchanged (regression) |
+| `docs/DEVELOPMENT_DECISIONS.md` | ADR-014 change note | ✓ VERIFIED | See truth 10 |
 
-### Key Link Verification
+### Key Link Verification (09-07 + regression)
 
 | From | To | Via | Status | Details |
 | ---- | --- | --- | ------ | ------- |
-| `(tabs)/_layout.tsx` | `(tabs)/start.tsx` | `Tabs.Screen name` + `initialRouteName` | ✓ WIRED | both literal `"start"` |
-| `lib/cold-start-redirect.ts` / `lib/festival-navigation.ts` | `/start` | href literals | ✓ WIRED | tests pin literals, re-run pass |
-| festival `_layout.tsx` | `FloatingNav` | `tabBar` render prop, `variant="festival"` | ✓ WIRED | line 161 |
-| festival `_layout.tsx` | `lib/festival-queries.ts` | `festivalKeys.detail(slug)` single gate query | ✓ WIRED | context replaces second observer (stricter than planned, blank-on-reentry fix c16369f) |
-| placeholder tabs | `PlaceholderScreen` | caller-supplied icon/heading/body | ✓ WIRED | three distinct copy sets |
-| `friendship.controller` | `friendship.service` | `session.user.id` + `params.festivalId` | ✓ WIRED | no client-supplied caller |
-| contracts `friendsInFestival` | controller handler | `@TsRestHandler(contract.friendsInFestival)` | ✓ WIRED | line 132 |
-| `service` | `visitor-projection.ts` | `foreignProfileColumns` + `pickForeignProfile` | ✓ WIRED | one projection, uniqueness invariant intact |
-| Dashboard + Friends tab | `friendKeys.inFestival` | shared key | ✓ WIRED | exactly one definition, two consumers |
-| Friends tab | `friends-find.tsx` | `router.push('/friends-find')`, pill in every state | ✓ WIRED | pill outside state branch |
-| `friend-detail.tsx` | `friendKeys.inFestival(*)` cache | `getQueriesData` scope-filtered `list | inFestival` | ✓ WIRED | no second network call |
-| Dashboard | `cashless.tsx` | `router.push({pathname:'/cashless', params:{uri}})` behind `resolveCashlessTarget` | ✓ WIRED | screen re-validates param |
-| `_layout.tsx` | `AppHeader` | single mount, Stack sibling in authenticated tree | ✓ WIRED | line 570 |
-
-### Data-Flow Trace (Level 4)
-
-| Artifact | Data Variable | Source | Produces Real Data | Status |
-| -------- | ------------- | ------ | ------------------ | ------ |
-| Festival gate/tabs | `festival` | `apiClient.getFestival` → context | Yes | ✓ FLOWING |
-| Friends tab list | `intersectionQuery` | `apiClient.friendsInFestival` (real DB join, live-proven) | Yes | ✓ FLOWING |
-| Crew tile count | same cache entry | shared `friendKeys.inFestival` | Yes | ✓ FLOWING |
-| AppHeader festival title | `festivalKeys.detail(slug)` | shared gate query | Yes | ✓ FLOWING |
-| Placeholder tabs | none (by design) | no data source | N/A — NAV-02 mandates no fetch | ✓ (intentional) |
-| Cashless WebView | `uri` route param | `festival.cashlessUrl` (server value), validated twice | Yes | ✓ FLOWING |
+| `app/_layout.tsx` | `AppHeader` | navigator default is what lets `useHeaderClearance()` offset by glass height only | ✓ WIRED | Default at :491, `<AppHeader />` still mounted as Stack sibling :588; no change to AppHeader/useHeaderClearance/paddingTop values (commit footprint) |
+| `friend-detail.tsx` | root `_layout.tsx` | in-screen `headerShown: true` overrides the navigator default | ✓ WIRED | :181 in its own `<Stack.Screen options>`; guard asserts ordering |
+| `FloatingNav.tsx` | `locales/*/messages.po` | `t` macros generate Live/Crew/Timetable/Map msgids; `quiks` deliberately generates none | ✓ WIRED | Catalog entries exist and are compiled (`Crew` present in gitignored `messages.js`); `Dashboard`/`Activities` obsolete — proof the source macros really changed |
+| festival `_layout.tsx` | `FloatingNav variant="festival"` | tabBar render prop | ✓ WIRED | :165 unchanged (regression) |
+| `cashless.tsx` | CR-01 sole-gate | `originWhitelist={['*']}` + strict callback | ✓ WIRED | :126, unregressed |
 
 ### Behavioral Spot-Checks
 
 | Behavior | Command | Result | Status |
 | -------- | ------- | ------ | ------ |
-| Gate branching incl. WR-01 500/503, cold-start/root redirect literals, header derivation, cashless URL validation | `pnpm exec vitest run` (5 named files, apps/mobile) | 58/58 pass, 268 ms | ✓ PASS |
-| SEC-02 tenant isolation live vs. local Docker Postgres | `pnpm exec vitest run test/festival-friends-isolation.spec.ts` (apps/api) | 8/8 pass, 2.3 s | ✓ PASS |
-| Device: five-tab bar, D-10 area replacement, blank-on-reentry regression | 09-03 Task 1 round-2 device UAT | user-verified 8/8 (2026-08-14) | ✓ PASS (human, prior) |
-| Device: start rename, deep links, dev-client launches | 09-01 Task 2 device UAT | user-verified 6/6 | ✓ PASS (human, prior) |
-| Remaining device checks | WINDOWS #40, #42–#46 | not run (native rebuild required for #46) | ? SKIP → human |
+| Both 09-07 wiring guards (header default in all 7 layouts, exactly-one-default, friend-detail exception, all catalog values, FloatingNav wiring, untouched surfaces) | `pnpm exec vitest run` (2 named files, apps/mobile) — run in verifier's own process | 33/33 pass, 248 ms | ✓ PASS |
+| Full mobile suite + API suite + typecheck | orchestrator run (this session) | mobile 320/320, API 140/140, typecheck clean | ✓ PASS (orchestrator) |
+| TDD RED claim | SUMMARY claims 5/13 failing assertions pre-fix | not independently re-derivable post-fix | ℹ️ accepted (guards demonstrably non-vacuous by construction) |
+| Device: G-09-2 rendered gap, G-09-7 rendered labels | WINDOWS #47/#48 | not run | ? SKIP → human |
 
 ### Probe Execution
 
-No probes declared or present (`scripts/*/tests/probe-*.sh` — none in this repo; plans/summaries reference none). SKIPPED.
+No probes declared or present (`scripts/*/tests/probe-*.sh` — none in repo). SKIPPED.
 
 ### Requirements Coverage
 
 | Requirement | Source Plan | Description | Status | Evidence |
-| ----------- | ---------- | ----------- | ------ | -------- |
-| NAV-01 | 09-03, 09-04, 09-06 | five-tab bar inside a festival | ✓ SATISFIED | truths 1, 7–12; device visual polish pending (#42/#43/#46) |
-| NAV-02 | 09-03 | honest placeholders naming preconditions | ✓ SATISFIED | truth 2; #40 pending |
-| NAV-03 | 09-01 | first global tab is `start` everywhere | ✓ SATISFIED | truth 4, device-verified |
-| FRND-07 | 09-02, 09-05 | intersection only, never presence | ✓ SATISFIED (server proven live) | truths 3, 5, 6, 13; client rendering pending #44/#45 |
+| ----------- | ----------- | ----------- | ------ | -------- |
+| NAV-01 | 09-03, 09-04, 09-06, 09-07 | five-tab bar inside a festival (now Live · quiks · Crew · Timetable · Karte) | ✓ SATISFIED | SC1 + truths 4-7, 10; device UAT tests 3/6/8 passed; rename render = #48 |
+| NAV-02 | 09-03, 09-07 | honest placeholders naming preconditions | ✓ SATISFIED | SC2 + truths 8-9; device UAT test 1 passed; no navLiveDot (prohibition upheld in code) |
+| NAV-03 | 09-01 | first global tab is `start` everywhere | ✓ SATISFIED | SC4, device-verified, unregressed |
+| FRND-07 | 09-02, 09-05 | intersection only, never presence | ✓ SATISFIED | SC3 — server live-proven 8/8 AND client device-verified (UAT test 4); Crew label adds no data (truth 9, ADR note) |
 
-No orphaned requirements: REQUIREMENTS.md maps exactly these four IDs to Phase 9.
+No orphaned requirements: REQUIREMENTS.md maps exactly these four IDs to Phase 9 (traceability table :95-98).
 
 ### Anti-Patterns Found
 
 | File | Line | Pattern | Severity | Impact |
 | ---- | ---- | ------- | -------- | ------ |
-| — | — | none | — | Zero TBD/FIXME/XXX/TODO/HACK markers in phase-modified files; the 09-03 interim stub (`friends.tsx` "This tab isn't built yet.") was replaced by 09-05 (WINDOWS #41 marked fixed, confirmed in code) |
+| — | — | none | — | Zero TBD/FIXME/XXX/TODO/HACK markers in all 09-07-modified files (scanned) |
 
-**Code-review fixes verified in code (not taken from SUMMARY):** CR-01 `originWhitelist={['*']}` + sole-gate callback (`cashless.tsx:126-144`, bd983a7); WR-01 unexpected-status→transport-error (`festival-gate.ts:67-71` + 500/503 tests, c37a716); WR-02 `router.navigate('/profil')` (`AppHeader.tsx:210`, fec9fc8). All three commits present on the branch.
+**SUMMARY discrepancy (info):** 09-07-SUMMARY claims "three open unrun-verify entries in WINDOWS.md"; only two exist (#47, #48). The third item — Task 3's ADR-note read-through — was never logged. Covered here as human-verification item 3 so it is not lost; verifier's non-authoritative read of the note is PASS (it explicitly separates the lifted label rule from the intact data rule).
 
-**Deliberately open (not a gap):** WR-03 — a transport error hides the tabs even with a warm cached festival, pinned by `festival-gate.test.ts` ("regardless of any cached hint") and matching 09-03's own must_have ("bei 404 oder Transportfehler gibt es keine Tableiste"). Conflicts with the offline-first principle long-term; recorded as a conscious product decision to re-make, not a phase-9 defect. Info findings IN-01…IN-05 were not applied (review policy: info not auto-applied); IN-05 (ambiguous contract summary prose) remains as worded.
+**Deliberately open (unchanged from prior report, not gaps):** WR-03 warm-cache transport-error behavior (conscious product decision); `navLiveDot` deferred follow-up in 09-UAT.md (correctly NOT built — building it statically would violate NAV-02); WINDOWS #40/#42-#46 remain formally "open" in WINDOWS.md although 09-UAT.md records their device checks as passed — bookkeeping lag, not a verification gap (the UAT file is the authoritative record of the pass).
 
 ### Human Verification Required
 
-See frontmatter `human_verification` — 8 items. In short:
+See frontmatter `human_verification` — 4 items, 2 of them device runs:
 
-1. **#40** Placeholder-Tabs visuell (Copy je Tab, max. Schriftskalierung scrollt, EN-Locale)
-2. **#42** AppHeader-Zustände, Logout-Hygiene, Cold-Start-Ausstieg, Avatar-Navigate (WR-02)
-3. **#43** Kein Doppel-Header, Clearance auf allen Screens, Notch, Festivalname genau einmal
-4. **#44** Friends-Tab mit drei echten Konten (drei Leerzustände, kein Präsenzsignal, Tap-Through, Fehler+Retry)
-5. **#45** friends-find Push-over (Pille in jedem Zustand, Back landet im Festival-Tab)
-6. **#46** Cashless am Gerät — **erst nach `npx expo run:android` aus `apps/mobile`** (react-native-webview fehlt im installierten APK)
-7. Backstop-Truths (schmalste Breite × 5 Spalten, Gate-Copy bei max. Schrift, leere-aber-erfolgreiche Cashless-Seite, keine Titel-Chrome)
-8. Judgment-Tier-Prohibitions (NAV-02-Ehrlichkeit, Header-Privacy, Präsenz/Chat-Verbot, Bezahl-Verbot) — Code-Evidenz stark, finale Bestätigung im Device-Durchlauf
+1. **WINDOWS #47** — 09-07 Task 1 device check: resting gap under the glass (light+dark), no route name behind the glass, no bar on welcome/email/code, friend-detail close button survives, notch + max font scale. No native rebuild needed (no new native module in 09-07).
+2. **WINDOWS #48** — 09-07 Task 2 device check: Live · quiks · Crew · Timetable · Karte (EN: Map) + AudioLines glyph; global Friends tab / Profil push title / "Freunde hier" eyebrow unchanged; narrow-width truncation; NO state dot on Live.
+3. **Task 3 read-through** of the ADR-014 change note (verifier non-authoritative: PASS) — not in WINDOWS.md.
+4. **Judgment-tier prohibitions** (non-authoritative code verdict: PASS, strong evidence) — folded into #47/#48.
 
 ### Gaps Summary
 
-Keine Gaps. Alle vier Roadmap-Erfolgskriterien sind im Code nachweisbar erfüllt; die Backend-Hälfte von FRND-07 wurde vom Verifier live gegen die lokale Datenbank bewiesen (8/8), die drei Code-Review-Fixes sind im Code verifiziert, und es existieren weder Stubs noch Debt-Marker noch verwaiste Requirements. Was aussteht, ist ausschliesslich Geräte-Verifikation: sechs offene WINDOWS-Einträge (#40, #42–#46), die per Plan-Design (kein RN-Component-Harness) nur am Gerät prüfbar sind, plus die vier plan-deklarierten Backstop-Truths. Für #46 ist zuvor ein nativer Rebuild Pflicht. Zwei Truths bleiben deshalb PRESENT_BEHAVIOR_UNVERIFIED (Friends-Tab-Client-Rendering, Cashless-Sandbox-Laufzeitverhalten) — Code vorhanden und verdrahtet, Laufzeitverhalten ungeprüft.
+Keine Gaps. Beide UAT-Befunde sind im Code nachweislich geschlossen: G-09-2 durch den Navigator-Default in allen sieben `_layout.tsx` (mit friend-detail als getesteter Einzelausnahme), G-09-7 durch den Label-/Glyph-Tausch in genau einer Komponente plus Katalog-Regeneration — beides durch neue, nicht-vakuöse Wiring-Guards festgeschrieben, die der Verifier selbst erneut ausgeführt hat (33/33). Die drei Commits existieren und ihre Datei-Footprints decken sich exakt mit den Behauptungen (insbesondere: die Umbenennung hat keine Inhaltsdatei berührt). Die Geräte-UAT dieser Phase hat zudem fünf der sechs zuvor offenen Device-Checks bestanden, darunter beide vormals PRESENT_BEHAVIOR_UNVERIFIED-Truths. Was aussteht, ist ausschliesslich die Geräte-Nachprüfung der beiden 09-07-Fixes selbst (WINDOWS #47/#48 — der gerenderte Ruheabstand und die gerenderten Labels) plus zwei Urteils-Items. Kein Regressionsbefund an den 14 zuvor verifizierten Truths.
 
 ---
 
-_Verified: 2026-08-14T10:35:00Z_
-_Verifier: Claude (gsd-verifier)_
+_Verified: 2026-08-14T20:45:00Z_
+_Verifier: Claude (gsd-verifier), re-verification after gap closure_
