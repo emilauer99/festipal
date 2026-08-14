@@ -15,7 +15,7 @@ const SCAN_ROOTS = [join(MOBILE_ROOT, 'app'), join(MOBILE_ROOT, 'components')];
  * −2 %", 05.1 D-08). Giving a fourth role a `letterSpacing` token without
  * listing it here fails the coupling assertion below.
  */
-const TRACKED_ROLES = ['wordmark', 'display2', 'title2'] as const;
+const TRACKED_ROLES = ['wordmark', 'display2', 'title2', 'headerTitle', 'headerWordmark'] as const;
 type TrackedRole = (typeof TRACKED_ROLES)[number];
 
 /** CI tracking corridor, expressed as a fraction of the role's size. */

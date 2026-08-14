@@ -81,6 +81,9 @@ const ROLE_FONT_FAMILY: Record<TypeRole, string> = {
   mono: FONT_MONO_MEDIUM,
   otpDigit: FONT_MONO,
   countdown: FONT_MONO,
+  // 09-04 — both AppHeader-only roles are Outfit/black like `wordmark`/`display2`.
+  headerTitle: FONT_WORDMARK,
+  headerWordmark: FONT_WORDMARK,
 };
 
 /**

@@ -68,6 +68,9 @@ describe('fontFamilyForRole (D-10 — a real weight file per role, no faux-bold)
     // Pre-existing gap, out of scope this phase: weight 500 declared, 400 file loaded.
     otpDigit: FONT_MONO,
     countdown: FONT_MONO,
+    // 09-04 — both AppHeader-only roles are Outfit/black like wordmark/display2.
+    headerTitle: FONT_WORDMARK,
+    headerWordmark: FONT_WORDMARK,
   };
 
   it.each(ALL_ROLES)('maps %s to its weight-specific font file', (role) => {
