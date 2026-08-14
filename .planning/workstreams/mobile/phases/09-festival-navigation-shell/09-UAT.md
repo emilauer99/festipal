@@ -101,6 +101,12 @@ blocked: 0
       issue: "ADR-014-Amendment noetig: Crew-als-UI-Label-Verbot per User-Entscheid 2026-08-14 (UAT Phase 09) aufgehoben"
   missing:
     - "Label/Icon-Swap in FloatingNav (beide Varianten) + Katalog-Regeneration"
-    - "User-Entscheide vor Planung: Quiks-Casing (Markenregel lowercase vs getippt 'Quiks'), Lingui-Behandlung von Quiks, Crew-Kachel-Eyebrow 'Freunde hier', Placeholder-Wording (Aktivitäten/Lageplan), navLiveDot (rotes Punkt-Element der Designs) in/out of scope"
+    - "Entschieden (User, 2026-08-14): Tab-Label lowercase 'quiks' (Markenregel); Crew-Kachel-Eyebrow 'Freunde hier' bleibt; Placeholder-Texte an neue Namen angleichen (Karte statt Lageplan, Aktivitaeten-Placeholder folgt quiks-Wording); navLiveDot NICHT in Scope (Deferred Follow-Up)"
     - "ADR-014-Amendment-Notiz"
   debug_session: ".planning/debug/tab-labels-icons-redesign.md"
+
+## Deferred Follow-Ups
+
+- test: 7
+  idea: "navLiveDot aus den Screen-Designs (roter Punkt am Live-Tab, quiks-screens.template.html:1938/:2055) — erst mit echtem Live-Signal einbauen (NAV-02-Ehrlichkeit), nicht statisch simulieren"
+  deferred_at: 2026-08-14
