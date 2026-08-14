@@ -96,4 +96,43 @@ export class ActivityController {
       }
     });
   }
+
+  // The discovery/detail read slice (D-10/D-11/D-12, plan 10-04). The caller
+  // comes ONLY from the session in all three — `listMyActivities`'s
+  // participation and every list entry's `joined` flag are always the
+  // CALLER's own, never a third party's (ARCHITECTURE.md §Anti-Patterns
+  // "Client-Supplied Scope").
+  @TsRestHandler(contract.listActivities)
+  listActivities(@Session() session: UserSession) {
+    return tsRestHandler(contract.listActivities, async ({ params, query }) => {
+      const activities = await this.activities.listForFestival(
+        session.user.id,
+        params.festivalId,
+        query.locale,
+      );
+      return { status: 200, body: activities };
+    });
+  }
+
+  @TsRestHandler(contract.listMyActivities)
+  listMyActivities(@Session() session: UserSession) {
+    return tsRestHandler(contract.listMyActivities, async ({ params, query }) => {
+      const activities = await this.activities.listMine(session.user.id, params.festivalId, query.locale);
+      return { status: 200, body: activities };
+    });
+  }
+
+  @TsRestHandler(contract.getActivity)
+  getActivity(@Session() session: UserSession) {
+    return tsRestHandler(contract.getActivity, async ({ params, query }) => {
+      const detail = await this.activities.getDetail(
+        session.user.id,
+        params.festivalId,
+        params.activityId,
+        query.locale,
+      );
+      if (!detail) return { status: 404, body: { message: 'Activity not found' } };
+      return { status: 200, body: detail };
+    });
+  }
 }

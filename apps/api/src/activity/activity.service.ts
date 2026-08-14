@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { and, asc, eq, isNull, or, sql } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, isNull, or, sql } from 'drizzle-orm';
 import {
   activity,
   activityParticipant,
@@ -7,11 +7,15 @@ import {
   activityTagTranslation,
   festival,
   festivalActivityTag,
+  visitorProfile,
   type Database,
 } from '@quiks/db';
 import {
   resolveLocalized,
   type Activity,
+  type ActivityDetail,
+  type ActivityParticipant,
+  type ActivitySummary,
   type ActivityTag,
   type CreateActivityBody,
   type Locale,
@@ -20,6 +24,32 @@ import {
 
 import { DB } from '../db/db.module';
 import { postgresErrorOf } from '../db/postgres-error';
+import { foreignProfileColumns, pickForeignProfile, toIsoString } from '../friendship/visitor-projection';
+
+/**
+ * The row shape shared by `listForFestival`/`listMine`/`getDetail`'s first
+ * query (D-12, plan 10-04) — `tagId`/`tagSlug` are nullable because
+ * `activityTag` is LEFT-joined (an activity may have no tag), and
+ * `participantCount`/`joined` are correlated subqueries evaluated per row,
+ * never a post-hoc JS count (SEC-03: scope conditions belong in SQL).
+ */
+type ActivitySummaryRow = {
+  id: string;
+  festivalId: string;
+  creatorId: string;
+  subtitle: string | null;
+  description: string | null;
+  location: string | null;
+  title: string | null;
+  geoLat: number | null;
+  geoLng: number | null;
+  startTime: Date;
+  capacity: number | null;
+  tagId: string | null;
+  tagSlug: string | null;
+  participantCount: number;
+  joined: boolean;
+};
 
 export type CreateActivityResult =
   | { status: 'ok'; activity: Activity }
@@ -395,5 +425,226 @@ export class ActivityService {
 
     await this.db.delete(activity).where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)));
     return { status: 'removed' };
+  }
+
+  /**
+   * The select map shared by `listForFestival`, `listMine` and `getDetail`'s
+   * first query (D-12, plan 10-04). `participantCount`/`joined` are
+   * CORRELATED SUBQUERIES against `activity_participant`, evaluated per row —
+   * never a post-hoc JS count/filter (SEC-03: the scope conditions belong in
+   * SQL). `callerId` is interpolated as a Drizzle `sql` template value, i.e. a
+   * bound parameter, never string-concatenated into the query.
+   */
+  private summarySelect(callerId: string) {
+    return {
+      id: activity.id,
+      festivalId: activity.festivalId,
+      creatorId: activity.creatorId,
+      subtitle: activity.subtitle,
+      description: activity.description,
+      location: activity.location,
+      title: activity.title,
+      geoLat: activity.geoLat,
+      geoLng: activity.geoLng,
+      startTime: activity.startTime,
+      capacity: activity.capacity,
+      tagId: activityTag.id,
+      tagSlug: activityTag.slug,
+      participantCount: sql<number>`(select count(*)::int from ${activityParticipant} where ${activityParticipant.activityId} = ${activity.id})`,
+      joined: sql<boolean>`exists (select 1 from ${activityParticipant} where ${activityParticipant.activityId} = ${activity.id} and ${activityParticipant.visitorId} = ${callerId})`,
+    };
+  }
+
+  /**
+   * Turns a batch of {@link ActivitySummaryRow}s into `ActivitySummary[]`
+   * (D-12, plan 10-04) — tag-title resolution, ADR-017 auto-title, and the
+   * geo-pair collapse, shared by ALL THREE read methods so this shaping never
+   * stands three times side by side. `activity_tag_translation` is fetched in
+   * ONE second `inArray` query over the batch's distinct tag ids, the same
+   * two-query shape `FestivalService.listAll` and `listEffectiveTags` already
+   * use — not N+1 per row.
+   */
+  private async shapeSummaries(
+    rows: ActivitySummaryRow[],
+    requested: Locale | undefined,
+    festivalDefaultLocale: Locale,
+  ): Promise<ActivitySummary[]> {
+    const tagIds = [
+      ...new Set(rows.map((r) => r.tagId).filter((id): id is string => id !== null)),
+    ];
+
+    const titlesByTag = new Map<string, LocalizedText>();
+    if (tagIds.length > 0) {
+      const translations = await this.db
+        .select({
+          tagId: activityTagTranslation.tagId,
+          locale: activityTagTranslation.locale,
+          title: activityTagTranslation.title,
+        })
+        .from(activityTagTranslation)
+        .where(inArray(activityTagTranslation.tagId, tagIds));
+      for (const t of translations) {
+        const entry = titlesByTag.get(t.tagId) ?? {};
+        entry[t.locale] = t.title;
+        titlesByTag.set(t.tagId, entry);
+      }
+    }
+
+    const locale = requested ?? festivalDefaultLocale;
+    return rows.map((row) => {
+      const tag: ActivityTag | null =
+        row.tagId && row.tagSlug
+          ? {
+              id: row.tagId,
+              slug: row.tagSlug,
+              title: resolveLocalized(titlesByTag.get(row.tagId) ?? {}, locale, festivalDefaultLocale),
+            }
+          : null;
+      // ADR-017 auto-title: the explicit title wins when present, otherwise
+      // the resolved tag title — `activity_title_or_tag_chk` guarantees one
+      // of the two is always non-null.
+      const title = row.title ?? tag?.title ?? '';
+      const geo =
+        row.geoLat !== null && row.geoLng !== null ? { lat: row.geoLat, lng: row.geoLng } : null;
+      return {
+        id: row.id,
+        festivalId: row.festivalId,
+        creatorId: row.creatorId,
+        subtitle: row.subtitle,
+        description: row.description,
+        location: row.location,
+        tag,
+        title,
+        geo,
+        startTime: row.startTime.toISOString(),
+        capacity: row.capacity,
+        participantCount: row.participantCount,
+        joined: row.joined,
+      };
+    });
+  }
+
+  /**
+   * Public discovery (D-10, plan 10-04): activities whose `startTime` is
+   * still in the future, festival-scoped. A started activity disappears from
+   * this list for EVERY caller, participant or not — `listMine` is the one
+   * exception to that cutoff (D-11). Total, run-stable order: `startTime`
+   * ascending, `id` as the tie-break, so two activities sharing a start time
+   * still come back in the same sequence on every call.
+   *
+   * An unknown `festivalId` returns `[]`, not a thrown error — same
+   * "not an existence oracle" stance as `listEffectiveTags`/`friendsInFestival`.
+   */
+  async listForFestival(
+    callerId: string,
+    festivalId: string,
+    requested?: Locale,
+  ): Promise<ActivitySummary[]> {
+    const [fest] = await this.db
+      .select({ defaultLocale: festival.defaultLocale })
+      .from(festival)
+      .where(eq(festival.id, festivalId))
+      .limit(1);
+    if (!fest) return [];
+
+    const rows = await this.db
+      .select(this.summarySelect(callerId))
+      .from(activity)
+      .leftJoin(activityTag, eq(activityTag.id, activity.tagId))
+      .where(and(eq(activity.festivalId, festivalId), gt(activity.startTime, sql`now()`)))
+      .orderBy(asc(activity.startTime), asc(activity.id));
+
+    return this.shapeSummaries(rows, requested, fest.defaultLocale);
+  }
+
+  /**
+   * The caller's own activities in this festival (D-11) — deliberately NO
+   * time cutoff, so a participant (creator included) keeps reading their
+   * meeting point after `startTime`. Both scope conditions — the caller and
+   * the festival — sit in the JOIN/WHERE, never a post-hoc `.filter()`: the
+   * `innerJoin` on `activityParticipant` restricts to rows where THIS caller
+   * has a participant row, and there is no parameter through which a client
+   * could ask for a third party's participation (same guard `friendsInFestival`
+   * uses). Same total order as {@link listForFestival}.
+   */
+  async listMine(callerId: string, festivalId: string, requested?: Locale): Promise<ActivitySummary[]> {
+    const [fest] = await this.db
+      .select({ defaultLocale: festival.defaultLocale })
+      .from(festival)
+      .where(eq(festival.id, festivalId))
+      .limit(1);
+    if (!fest) return [];
+
+    const rows = await this.db
+      .select(this.summarySelect(callerId))
+      .from(activity)
+      .leftJoin(activityTag, eq(activityTag.id, activity.tagId))
+      .innerJoin(
+        activityParticipant,
+        and(eq(activityParticipant.activityId, activity.id), eq(activityParticipant.visitorId, callerId)),
+      )
+      .where(eq(activity.festivalId, festivalId))
+      .orderBy(asc(activity.startTime), asc(activity.id));
+
+    return this.shapeSummaries(rows, requested, fest.defaultLocale);
+  }
+
+  /**
+   * Activity detail (D-04/D-12/VIS-02, plan 10-04) — readable by ANY
+   * signed-in visitor within the festival, including after `startTime` and
+   * regardless of participation: D-10 cuts the public LIST and JOINING, not
+   * readability (ADR-014 — isolation is data-scoping, not an access gate).
+   * The tag is joined DIRECTLY by id via {@link shapeSummaries}'s second
+   * query, never through the effective-tag predicate — a tag disabled after
+   * this activity was created keeps its resolved title unchanged (D-04).
+   *
+   * The participant list is the ONE place a foreign profile is embedded here,
+   * and it goes ONLY through `foreignProfileColumns`/`pickForeignProfile` —
+   * importing them from `../friendship/visitor-projection` instead of
+   * re-declaring a select map is what keeps `projection-uniqueness.spec.ts`
+   * green (VIS-02: exactly one foreign-view select map and shaping function
+   * in the whole `apps/api/src` tree). Ordered by `username` ascending, which
+   * is unique via the functional index `visitor_profile_username_lower_unq`
+   * — a total, run-stable order.
+   */
+  async getDetail(
+    callerId: string,
+    festivalId: string,
+    activityId: string,
+    requested?: Locale,
+  ): Promise<ActivityDetail | null> {
+    const [fest] = await this.db
+      .select({ defaultLocale: festival.defaultLocale })
+      .from(festival)
+      .where(eq(festival.id, festivalId))
+      .limit(1);
+    if (!fest) return null;
+
+    const [row] = await this.db
+      .select(this.summarySelect(callerId))
+      .from(activity)
+      .leftJoin(activityTag, eq(activityTag.id, activity.tagId))
+      .where(and(eq(activity.id, activityId), eq(activity.festivalId, festivalId)))
+      .limit(1);
+    if (!row) return null;
+
+    const [summary] = await this.shapeSummaries([row], requested, fest.defaultLocale);
+    if (!summary) throw new Error('shapeSummaries returned no row for a row it was given');
+
+    const participantRows = await this.db
+      .select({ ...foreignProfileColumns, joinedAt: activityParticipant.joinedAt })
+      .from(activityParticipant)
+      .innerJoin(visitorProfile, eq(visitorProfile.accountId, activityParticipant.visitorId))
+      .where(
+        and(eq(activityParticipant.activityId, activityId), eq(activityParticipant.festivalId, festivalId)),
+      )
+      .orderBy(asc(visitorProfile.username));
+
+    const participants: ActivityParticipant[] = participantRows.map((r) => ({
+      profile: pickForeignProfile(r),
+      joinedAt: toIsoString(r.joinedAt),
+    }));
+
+    return { ...summary, participants };
   }
 }
