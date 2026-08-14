@@ -7,3 +7,5 @@ export * from './my-festival';
 export * from './friendship';
 export * from './friend-request';
 export * from './activity-tag';
+export * from './activity';
+export * from './activity-participant';
