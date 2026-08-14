@@ -155,7 +155,7 @@ placeholders, the Friends tab shows friends who saved this festival, and the glo
 finally named `start` everywhere
 **Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
 **Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
-**Plans**: 4/6 plans executed in 5 Wellen — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
+**Plans**: 5/6 plans executed in 5 Wellen — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
 `packages/contracts` + `apps/api`, null Dateiüberschneidung); ab Welle 2 ist die Kette sequenziell,
 weil `app/(festival)/f/[festivalSlug]/index.tsx`, `app/_layout.tsx` und die beiden Lingui-Kataloge
 geteilter Zustand sind
@@ -176,7 +176,7 @@ Plans:
 
 **Wave 4** *(blockiert auf 09-02 und 09-04)*
 
-- [ ] 09-05-PLAN.md — Festival-Friends-Tab (Schnittmenge, drei Leerzustände), `StatTile` + Crew-Kachel, „Freunde finden" als Push über dem Festival (FRND-07, D-11/D-15…D-18) · **nicht autonom** (Gerätecheck)
+- [x] 09-05-PLAN.md — Festival-Friends-Tab (Schnittmenge, drei Leerzustände), `StatTile` + Crew-Kachel, „Freunde finden" als Push über dem Festival (FRND-07, D-11/D-15…D-18) · **nicht autonom** (Gerätecheck)
 
 **Wave 5** *(blockiert auf 09-05)*
 

@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: Completed 09-04-PLAN.md (AppHeader app-wide, native headers replaced on all 11 screens; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries)
-last_updated: "2026-08-14T09:21:01.042Z"
+stopped_at: "Completed 09-05-PLAN.md (Festival Friends tab real content, FRND-07; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries #44/#45)"
+last_updated: "2026-08-14T09:40:12.058Z"
 last_activity: 2026-08-14
 last_activity_desc: Phase 09 Plan 03 (five-tab festival navigator, layout D-10 gate, PlaceholderScreen) completed, incl. mid-plan device-bug fix
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
   percent: 33
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 09 (festival-navigation-shell) — EXECUTING
-Plan: 5 of 6
+Plan: 6 of 6
 Status: Ready to execute (09-04 blocked on 09-03, unblocked; 09-03 done, device-verified after a mid-plan bugfix)
 Last activity: 2026-08-14 — 09-03 completed (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; Task 2 human-check still outstanding, WINDOWS #40)
 
@@ -206,6 +206,7 @@ was die naechsten Phasen konkret betrifft:
 
 - [Phase ?]: AppHeader mounts once at the authenticated-tree root and decides its own visibility per route via resolveHeaderContext (pure, fail-closed default) — T-09-13's mitigation lives in the derivation function, not a mount-site condition.
 - [Phase ?]: headerShown:false added explicitly on the profil/friends-qr root Stack.Screen registrations (app/_layout.tsx) ahead of Task 3's removal of their own header-options blocks, to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately excluded (keeps its own modal header).
+- [Phase ?]: Phase 09-05 (Festival Friends tab, FRND-07): friendKeys.inFestival(festivalId) is one shared query key read by both the Dashboard Crew StatTile and the Friends-tab list — one cache entry, one invalidation, so the two numbers can never disagree. Which of the two empty states shows is decided by the GLOBAL friend list's length (friendKeys.list), never the intersection's own length (D-17). friend-detail.tsx's cache read now also searches friendKeys.inFestival(*) entries, scope-filtered against friendKeys.requests/search to avoid false structural matches. app/friends-find.tsx re-exports the global Friends screen at a second push-over position (D-16) — one implementation, two navigation positions.
 
 ### Blockers/Concerns
 
@@ -301,8 +302,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T09:21:01.016Z
-Stopped at: Completed 09-04-PLAN.md (AppHeader app-wide, native headers replaced on all 11 screens; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries)
+Last session: 2026-08-14T09:40:12.036Z
+Stopped at: Completed 09-05-PLAN.md (Festival Friends tab real content, FRND-07; Task 2/3 human-checks deferred as WINDOWS.md unrun-verify entries #44/#45)
 Resume file: None
 
 ## Operator Next Steps
@@ -333,3 +334,4 @@ Resume file: None
 | Phase 09 P02 | ~12min | 2 tasks | 4 files |
 | Phase 09 P03 | ~55min (2 checkpoints) | 2 tasks | 16 files |
 | Phase 09 P04 | ~50min | 3 tasks | 24 files |
+| Phase 09 P05 | ~45min | 3 tasks | 12 files |

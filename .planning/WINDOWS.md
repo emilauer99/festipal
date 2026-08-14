@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 30
+open_count: 31
 waived_count: 3
-fixed_count: 10
-total_count: 43
-last_updated: 2026-08-14T09:18:39.478Z
+fixed_count: 11
+total_count: 45
+last_updated: 2026-08-14T09:37:10.171Z
 ---
 
 # Broken Windows Ledger
@@ -55,9 +55,11 @@ last_updated: 2026-08-14T09:18:39.478Z
 | 38 | 06 | unrun-verify | apps/mobile/app/(tabs)/mehr.tsx |  | 06-09 Task 3: Die Geraeteabnahme der GESAMTEN Phase 6 (18 Punkte: vier Tabs, Friends-Leerzustaende, Mehr inkl. echtem Dark-Mode ueber Force-Quit, SafeNow-Distanzierungssatz in DE+EN ungekuerzt, Abmelde-Rueckfrage, Profil-Sunset-Ring und Identitaetszeile, drei neue optionale Felder mit Datums-Picker, Sprachdurchlauf auf Englisch) ist NICHT gelaufen. Der node-env-Vitest-Runner rendert keine RN-Komponenten. Vorher noetig: 'npx expo run:android' aus apps/mobile (06-08 brachte @react-native-community/datetimepicker mit nativem Code). Schliessen, sobald der Checkpoint von 06-09 Task 3 abgenommen ist. | fixed |  | 2026-08-12T00:13:36.212Z | 2026-08-12T09:28:01.642Z |
 | 39 | 7 | deviation | apps/api/src/friendship/friendship.service.ts |  | 07-03: Akzeptanzkriterium verlangt grep -c db.transaction >= 3, tatsaechlich 2 — sealFriendship ist von accept und auto-accept geteilt; Absicht (drei atomare Uebergaenge) erfuellt, Zaehlung bewusst nicht | open |  | 2026-08-12T15:56:38.397Z |  |
 | 40 | 09 | unrun-verify | apps/mobile/components/PlaceholderScreen.tsx |  | 09-03 Task 2 human-check not run on device: icon/heading/body per tab, no spinner/badge/date-promise, max system font scale (scrolls not clips), EN locale strings, five-tab bar visual consistency. Deferred by explicit user instruction to complete the plan; automated verify (typecheck/lint/vitest/lingui) passed. | open |  | 2026-08-14T08:51:59.963Z |  |
-| 41 | 09 | stub | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05. | open |  | 2026-08-14T08:52:05.535Z |  |
+| 41 | 09 | stub | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05. | fixed |  | 2026-08-14T08:52:05.535Z | 2026-08-14T09:37:10.171Z |
 | 42 | 09 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | 09-04 Task 2 human-check not run on device: three header states visually distinct (global wordmark, festival title, push back+title), home/leave-festival/goToStart actions correct, avatar tap opens Profil, initials fallback, long festival name truncates, header absent on auth screens, cold-start-into-festival exit not a dead end. Automated verify (typecheck/lint/vitest/lingui compile) passed. | open |  | 2026-08-14T09:18:39.074Z |  |
 | 43 | 09 | unrun-verify | apps/mobile/app/(tabs)/start.tsx |  | 09-04 Task 3 human-check not run on device: no double header/native title bar above the glass on any of the 11 screens, content begins visibly under the header on notch and non-notch devices, max system font scale keeps the header single-line, festival name renders once (header only, not also on Dashboard). Automated verify passed. | open |  | 2026-08-14T09:18:39.478Z |  |
+| 44 | 09 | unrun-verify | apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx |  | 09-05 Task 2 human-check (9 device points: three empty states, no presence/location/chat surface, tap-through to friend-detail, error+retry, Crew tile parity, dark mode) not run on device this session | open |  | 2026-08-14T09:36:37.690Z |  |
+| 45 | 09 | unrun-verify | apps/mobile/app/friends-find.tsx |  | 09-05 Task 3 human-check (6 device points: pill visible in every state, push-over opens with back arrow + Friends title + no FloatingNav, search/requests/QR behave identically at the push position, Back returns to the festival Friends tab, unchanged global-tab behavior, max font scale on the pill) not run on device this session | open |  | 2026-08-14T09:36:44.120Z |  |
 
 ````json
 [
@@ -548,10 +550,10 @@ last_updated: 2026-08-14T09:18:39.478Z
     "file": "apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx",
     "line": null,
     "description": "Festival Friends tab is a registered route with a temporary 'This tab isn't built yet.' placeholder — real content (D-15..D-18, FRND-07 UI) lands in 09-05.",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-14T08:52:05.535Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-14T09:37:10.171Z"
   },
   {
     "id": 42,
@@ -575,6 +577,30 @@ last_updated: 2026-08-14T09:18:39.478Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-14T09:18:39.478Z",
+    "resolved_at": null
+  },
+  {
+    "id": 44,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/(festival)/f/[festivalSlug]/friends.tsx",
+    "line": null,
+    "description": "09-05 Task 2 human-check (9 device points: three empty states, no presence/location/chat surface, tap-through to friend-detail, error+retry, Crew tile parity, dark mode) not run on device this session",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:36:37.690Z",
+    "resolved_at": null
+  },
+  {
+    "id": 45,
+    "kind": "unrun-verify",
+    "phase": "09",
+    "file": "apps/mobile/app/friends-find.tsx",
+    "line": null,
+    "description": "09-05 Task 3 human-check (6 device points: pill visible in every state, push-over opens with back arrow + Friends title + no FloatingNav, search/requests/QR behave identically at the push position, Back returns to the festival Friends tab, unchanged global-tab behavior, max font scale on the pill) not run on device this session",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-14T09:36:44.120Z",
     "resolved_at": null
   }
 ]
