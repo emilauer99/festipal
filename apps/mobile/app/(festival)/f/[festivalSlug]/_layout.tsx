@@ -152,8 +152,12 @@ export default function FestivalTabsLayout() {
     );
   }
 
-  // DECLARATION ORDER IS THE TAB ORDER (same rule as (tabs)/_layout.tsx):
-  // Dashboard · Aktivitäten · Friends · Timetable · Lageplan, per ADR-014.
+  // DECLARATION ORDER IS THE TAB ORDER (same rule as (tabs)/_layout.tsx).
+  // The route names below (index/activities/friends/timetable/map) and
+  // their order are unchanged; what visitors READ is Live · quiks · Crew ·
+  // Timetable · Karte (09-07 gap closure, G-09-7) — the dated ADR-014
+  // change note (docs/DEVELOPMENT_DECISIONS.md) carries the "Crew" label
+  // decision, NAV-01/NAV-02 (REQUIREMENTS.md) enumerate the new names.
   return (
     <FestivalContextProvider value={festival}>
       <Tabs

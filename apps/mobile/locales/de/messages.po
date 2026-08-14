@@ -53,12 +53,12 @@ msgid "Account"
 msgstr "Konto"
 
 #: components/FloatingNav.tsx
-msgid "Activities"
-msgstr "Aktivitäten"
+#~ msgid "Activities"
+#~ msgstr "Aktivitäten"
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
 msgid "Activities are on the way"
-msgstr "Aktivitäten kommen noch"
+msgstr "quiks kommen noch"
 
 #: components/RelationAction.tsx
 msgid "Add"
@@ -227,13 +227,17 @@ msgstr "Konnte nicht gespeichert werden — versuch's nochmal."
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Dein Profil konnte nicht angelegt werden — tippe erneut auf „Weiter“, um es noch einmal zu versuchen."
 
+#: components/FloatingNav.tsx
+msgid "Crew"
+msgstr "Crew"
+
 #: app/(tabs)/mehr.tsx
 msgid "Dark mode"
 msgstr "Dunkler Modus"
 
 #: components/FloatingNav.tsx
-msgid "Dashboard"
-msgstr "Dashboard"
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
@@ -404,6 +408,10 @@ msgstr "Festival verlassen"
 msgid "Let the other person scan this code."
 msgstr "Lass dein Gegenüber diesen Code scannen."
 
+#: components/FloatingNav.tsx
+msgid "Live"
+msgstr "Live"
+
 #: app/cashless.tsx
 msgid "Loading Cashless…"
 msgstr "Lädt Cashless…"
@@ -457,7 +465,7 @@ msgstr "Abmelden?"
 
 #: components/FloatingNav.tsx
 msgid "Map"
-msgstr "Lageplan"
+msgstr "Karte"
 
 #: app/profil.tsx
 msgid "member since {year}"
@@ -525,7 +533,7 @@ msgstr "Noch keine gespeicherten Festivals"
 
 #: app/(festival)/f/[festivalSlug]/map.tsx
 msgid "No site map yet"
-msgstr "Noch kein Lageplan"
+msgstr "Noch keine Karte"
 
 #: app/(festival)/f/[festivalSlug]/timetable.tsx
 msgid "No timetable yet"
@@ -843,7 +851,7 @@ msgstr "Dieses Festival hat noch keinen Line-up eingetragen. Sobald sie loslegen
 
 #: app/(festival)/f/[festivalSlug]/map.tsx
 msgid "This festival hasn't added a site map yet. It'll show up here once they do."
-msgstr "Dieses Festival hat noch keinen Lageplan hinterlegt. Sobald sie loslegen, siehst du ihn hier."
+msgstr "Dieses Festival hat noch keine Karte hinterlegt. Sobald sie loslegen, siehst du sie hier."
 
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "This festival may have been removed or the link is out of date."
@@ -928,7 +936,7 @@ msgstr "Wir schicken dir gleich einen Code."
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
 msgid "We're building this at quiks — for every festival, not just this one."
-msgstr "Daran bauen wir gerade bei quiks — nicht nur für dieses Festival."
+msgstr "Daran bauen wir gerade — für jedes Festival, nicht nur für dieses."
 
 #: app/(auth)/welcome.tsx
 msgid "Welcome"

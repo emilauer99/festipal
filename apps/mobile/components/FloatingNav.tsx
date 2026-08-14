@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { BlurView } from 'expo-blur';
 import {
+  AudioLines,
   CalendarClock,
   Home,
-  LayoutDashboard,
   MapPin,
   Menu,
   Sparkles,
@@ -64,16 +64,18 @@ const GLOBAL_TAB_ICON: Record<GlobalRouteName, LucideIcon> = {
 };
 
 /**
- * 09-03 (D-01/D-14) — the festival-context item set. `Friends` here reuses
- * the SAME `Users` glyph as the global Friends tab on purpose (same
- * destination *kind*, different scope); `Dashboard` uses `LayoutDashboard`
- * rather than the design's `audio-lines`/`Home` glyphs — the former no
- * longer fits this phase's data-less Dashboard, the latter would read as a
- * second "you are here" alongside the global Start tab (09-UI-SPEC.md
- * § Festival Tab Bar Contract).
+ * 09-07 gap closure (G-09-7, UAT decision 2026-08-14) — the festival tab
+ * bar now follows the user's own screen designs
+ * (docs/concept/designs/quiks-v2/quiks-screens.template.html:2035) instead
+ * of the Phase-09 divergence 09-UI-SPEC.md documented: `AudioLines` replaces
+ * the data-less `LayoutDashboard` glyph at position 1. The other four
+ * glyphs already matched the designs and stay unchanged — in particular
+ * `Friends` here still reuses the SAME `Users` glyph as the global Friends
+ * tab on purpose (same destination *kind*, different scope), unaffected by
+ * the label rename below.
  */
 const FESTIVAL_TAB_ICON: Record<FestivalRouteName, LucideIcon> = {
-  index: LayoutDashboard,
+  index: AudioLines,
   activities: Sparkles,
   friends: Users,
   timetable: CalendarClock,
@@ -155,9 +157,15 @@ export function FloatingNav({
     mehr: t`More`,
   };
   const festivalTabLabel: Record<FestivalRouteName, string> = {
-    index: t`Dashboard`,
-    activities: t`Activities`,
-    friends: t`Friends`,
+    index: t`Live`,
+    // 09-07 (Brand & Design § quiks CI v1.0 / UAT-Entscheid 1, 2026-08-14) —
+    // the quiks brand noun, not a `t` macro call: it is never translated and
+    // renders identically in both languages, lowercase, with no trailing
+    // dot and no coloured character — a tab label is plain micro-role text
+    // like its four siblings; the coloured-dot wordmark form belongs to the
+    // header only.
+    activities: 'quiks',
+    friends: t`Crew`,
     timetable: t`Timetable`,
     map: t`Map`,
   };

@@ -53,8 +53,8 @@ msgid "Account"
 msgstr "Account"
 
 #: components/FloatingNav.tsx
-msgid "Activities"
-msgstr "Activities"
+#~ msgid "Activities"
+#~ msgstr "Activities"
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
 msgid "Activities are on the way"
@@ -227,13 +227,17 @@ msgstr "Couldn't save festival — try again."
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Couldn't set up your profile — tap Continue to try again."
 
+#: components/FloatingNav.tsx
+msgid "Crew"
+msgstr "Crew"
+
 #: app/(tabs)/mehr.tsx
 msgid "Dark mode"
 msgstr "Dark mode"
 
 #: components/FloatingNav.tsx
-msgid "Dashboard"
-msgstr "Dashboard"
+#~ msgid "Dashboard"
+#~ msgstr "Dashboard"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Date of birth"
@@ -403,6 +407,10 @@ msgstr "Leave festival"
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
 msgstr "Let the other person scan this code."
+
+#: components/FloatingNav.tsx
+msgid "Live"
+msgstr "Live"
 
 #: app/cashless.tsx
 msgid "Loading Cashless…"
