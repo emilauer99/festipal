@@ -155,7 +155,7 @@ placeholders, the Friends tab shows friends who saved this festival, and the glo
 finally named `start` everywhere
 **Depends on**: Phase 8 (friends must exist before "friends in this festival" means anything)
 **Requirements**: NAV-01, NAV-02, NAV-03, FRND-07
-**Plans**: 6/6 plans executed in 5 Wellen, dazu 1 Gap-Closure-Plan aus dem UAT (Welle 6) — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
+**Plans**: 7/7 plans executed in 5 Wellen, dazu 1 Gap-Closure-Plan aus dem UAT (Welle 6) — Welle 1 läuft echt parallel (Rename in `apps/mobile`, Endpunkt in
 `packages/contracts` + `apps/api`, null Dateiüberschneidung); ab Welle 2 ist die Kette sequenziell,
 weil `app/(festival)/f/[festivalSlug]/index.tsx`, `app/_layout.tsx` und die beiden Lingui-Kataloge
 geteilter Zustand sind
@@ -184,7 +184,7 @@ Plans:
 
 **Wave 6** *(Gap-Closure aus dem UAT, blockiert auf 09-06)*
 
-- [ ] 09-07-PLAN.md — G-09-2: nativer Header-Default an die Navigatoren (der ~80dp-Streifen hinter dem Glas) · G-09-7: Tab-Umbenennung auf Live · quiks · Crew · Timetable · Karte samt Glyph, Katalogen, deutscher Platzhalter-Copy und ADR-014-Änderungsnotiz (NAV-01/NAV-02)
+- [x] 09-07-PLAN.md — G-09-2: nativer Header-Default an die Navigatoren (der ~80dp-Streifen hinter dem Glas) · G-09-7: Tab-Umbenennung auf Live · quiks · Crew · Timetable · Karte samt Glyph, Katalogen, deutscher Platzhalter-Copy und ADR-014-Änderungsnotiz (NAV-01/NAV-02)
 
 **Success Criteria** (what must be TRUE):
 

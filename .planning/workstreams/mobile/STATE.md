@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 09
 current_phase_name: festival-navigation-shell
 status: executing
-stopped_at: Phase 10 context gathered
-last_updated: "2026-08-14T15:34:05.651Z"
+stopped_at: "Completed 09-07-PLAN.md (gap closure: G-09-2 header default, G-09-7 tab rename) — Phase 09 code-complete, device UAT pending"
+last_updated: "2026-08-14T19:33:40.254Z"
 last_activity: 2026-08-14
-last_activity_desc: Phase 09 Plan 03 (five-tab festival navigator, layout D-10 gate, PlaceholderScreen) completed, incl. mid-plan device-bug fix
+last_activity_desc: "Phase 09 Plan 07 (gap closure: G-09-2 header default moved to the navigator, G-09-7 festival tab rename to Live/quiks/Crew/Timetable/Karte) completed — Phase 09 is code-complete pending device UAT (WINDOWS.md unrun-verify entries)"
 progress:
   total_phases: 6
   completed_phases: 2
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
   percent: 33
 ---
 
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 09 (festival-navigation-shell) — EXECUTING
-Plan: 6 of 6
-Status: Ready to execute (09-04 blocked on 09-03, unblocked; 09-03 done, device-verified after a mid-plan bugfix)
-Last activity: 2026-08-14 — 09-03 completed (five-tab festival navigator, layout D-10 gate, PlaceholderScreen; Task 2 human-check still outstanding, WINDOWS #40)
+Phase: 09 (festival-navigation-shell) — CODE-COMPLETE (7/7 plans), device UAT pending
+Plan: 7 of 7
+Status: All plans executed; device UAT + phase.complete still open (see Operator Next Steps)
+Last activity: 2026-08-14 — Phase 09 Plan 07 (gap closure) completed
 
 ## Shipped
 
@@ -208,6 +208,9 @@ was die naechsten Phasen konkret betrifft:
 - [Phase ?]: headerShown:false added explicitly on the profil/friends-qr root Stack.Screen registrations (app/_layout.tsx) ahead of Task 3's removal of their own header-options blocks, to prevent a blank native header reappearing above AppHeader; friend-detail is deliberately excluded (keeps its own modal header).
 - [Phase ?]: Phase 09-05 (Festival Friends tab, FRND-07): friendKeys.inFestival(festivalId) is one shared query key read by both the Dashboard Crew StatTile and the Friends-tab list — one cache entry, one invalidation, so the two numbers can never disagree. Which of the two empty states shows is decided by the GLOBAL friend list's length (friendKeys.list), never the intersection's own length (D-17). friend-detail.tsx's cache read now also searches friendKeys.inFestival(*) entries, scope-filtered against friendKeys.requests/search to avoid false structural matches. app/friends-find.tsx re-exports the global Friends screen at a second push-over position (D-16) — one implementation, two navigation positions.
 - [Phase ?]: 09-06: Cashless ships as ADR-011 allows — hard-omitted tile unless festival.cashlessUrl resolves via resolveCashlessTarget (HTTPS-only, non-empty host), full-bleed WebView locked to its own origin via originWhitelist + onShouldStartLoadWithRequest (two independent locks), no injectedJavaScript/onMessage. react-native-webview@13.16.1 cleared through the manual package-legitimacy gate (T-09-SC) with registry.npmjs.org evidence verified by the orchestrator before install.
+- [Phase ?]: Header default moved to the navigator (screenOptions), not per-Stack.Screen — the same forgotten-option bug had recurred three times in phase 09
+- [Phase ?]: Crew is a NEW msgid at FloatingNav.tsx's festival variant, never a msgstr rewrite of the shared Friends entry (profil.tsx/AppHeader.tsx/global tab keep Friends)
+- [Phase ?]: ADR-014 Crew-as-UI-label prohibition amended via a dated 2026-08-14 change note (not rewritten) — the underlying data class/friend-graph rule stays explicitly in force
 
 ### Blockers/Concerns
 
@@ -303,16 +306,21 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-14T15:34:05.618Z
-Stopped at: Phase 10 context gathered
-Resume file: .planning/workstreams/mobile/phases/10-activities-backend/10-CONTEXT.md
+Last session: 2026-08-14T19:33:40.228Z
+Stopped at: Completed 09-07-PLAN.md (gap closure: G-09-2 header default, G-09-7 tab rename) — Phase 09 code-complete, device UAT pending
+Resume file: None
 
 ## Operator Next Steps
 
-- `/gsd-execute-phase 9 --ws mobile` — weiter mit 09-04 (app-weiter `AppHeader`, blockiert auf 09-03, jetzt frei)
-- Vor 09-04 optional: Task 2's ausstehenden Geraete-Human-Check aus 09-03 nachholen
-  (`WINDOWS.md` #40 — Icon/Ueberschrift/Fliesstext je Platzhalter, maximale Systemschrift,
-  EN-Locale) — nicht blockierend, aber offen.
+- **Phase 09 ist code-complete (7/7 Plaene, inkl. Gap-Closure 09-07).** Naechster Schritt ist die
+  Geraete-UAT-Runde — `npx expo run:android` aus `apps/mobile`, in Hell- UND Dunkelmodus — die
+  Task-1/Task-2-`<human-check>`-Bloecke aus `09-07-PLAN.md` nachfahren (Ruheabstand unter dem Glas,
+  keine Leiste auf den Anmeldeflaechen, Freund-Detailkarte weiterhin schliessbar, die fuenf neuen
+  Festival-Tab-Namen DE+EN, unveraenderte Friends-/Augenbraue-Flaechen). Danach `/gsd-progress` bzw.
+  die passende Phasen-Abschluss-Aktion, um Phase 09 formal zu schliessen.
+- Drei offene `unrun-verify`-Eintraege in `WINDOWS.md` fuer diese Geraeterunde (09-07 Task 1/2/3);
+  dazu weiterhin offen: `WINDOWS.md` #40 aus 09-03 (Icon/Ueberschrift/Fliesstext je Platzhalter,
+  maximale Systemschrift, EN-Locale).
 
 - Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
 - Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
@@ -337,3 +345,4 @@ Resume file: .planning/workstreams/mobile/phases/10-activities-backend/10-CONTEX
 | Phase 09 P04 | ~50min | 3 tasks | 24 files |
 | Phase 09 P05 | ~45min | 3 tasks | 12 files |
 | Phase 09 P06 | ~55min | 2 tasks | 12 files |
+| Phase 09 P07 | 25min | 3 tasks | 10 files |
