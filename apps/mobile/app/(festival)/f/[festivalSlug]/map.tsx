@@ -1,46 +1,37 @@
 import { useMemo } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Trans } from '@lingui/react/macro';
+import { MapPin } from 'lucide-react-native';
+import { useLingui } from '@lingui/react/macro';
 
-import { fontFamilyForRole } from '../../../../lib/fonts';
-import { useFontsReady } from '../../../../lib/fonts-context';
 import type { ThemeColors } from '../../../../lib/theme';
 import { useTheme } from '../../../../lib/theme-context';
+import { PlaceholderScreen } from '../../../../components/PlaceholderScreen';
 
 /**
- * Registered route stub (09-03 Task 1) — a real, navigable tab so NAV-01's
- * "no decorative tab" acceptance criterion holds from the first commit.
- * Task 2 (same plan) replaces this body with the shared `PlaceholderScreen`
- * component and this tab's final honest copy (D-13).
+ * D-12/D-13 — Lageplan waits on the FESTIVAL, which has to enter its own
+ * site map through the admin UI; this stays true even after the tab itself
+ * is fully built, if the festival never enters data. No date or phase
+ * number is named in either language (D-13, NAV-02).
  */
 export default function FestivalMapScreen() {
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const fontsReady = useFontsReady();
-  const bodyFont = fontFamilyForRole('body', fontsReady);
+  const { t } = useLingui();
 
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
-      <Text style={[styles.text, { fontFamily: bodyFont }]}>
-        <Trans>This tab isn't built yet.</Trans>
-      </Text>
+      <PlaceholderScreen
+        icon={MapPin}
+        heading={t`No site map yet`}
+        body={t`This festival hasn't added a site map yet. It'll show up here once they do.`}
+      />
     </SafeAreaView>
   );
 }
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    screen: {
-      flex: 1,
-      backgroundColor: colors.bgApp,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    text: {
-      fontSize: 15,
-      color: colors.textMuted,
-      textAlign: 'center',
-    },
+    screen: { flex: 1, backgroundColor: colors.bgApp },
   });
 }

@@ -55,6 +55,10 @@ msgstr "Konto"
 msgid "Activities"
 msgstr "Aktivitäten"
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Activities are on the way"
+msgstr "Aktivitäten kommen noch"
+
 #: components/RelationAction.tsx
 msgid "Add"
 msgstr "Hinzufügen"
@@ -489,6 +493,14 @@ msgstr "Noch niemand in deiner Crew. Füg jemanden über Suche, Code oder QR hin
 msgid "No saved festivals yet"
 msgstr "Noch keine gespeicherten Festivals"
 
+#: app/(festival)/f/[festivalSlug]/map.tsx
+msgid "No site map yet"
+msgstr "Noch kein Lageplan"
+
+#: app/(festival)/f/[festivalSlug]/timetable.tsx
+msgid "No timetable yet"
+msgstr "Noch kein Timetable"
+
 #: app/profil.tsx
 msgid "Not connected"
 msgstr "Nicht verbunden"
@@ -785,6 +797,14 @@ msgstr "Die Nachtschicht für deine Augen."
 msgid "This code is no longer valid."
 msgstr "Dieser Code ist nicht mehr gültig."
 
+#: app/(festival)/f/[festivalSlug]/timetable.tsx
+msgid "This festival hasn't added a lineup yet. It'll show up here once they do."
+msgstr "Dieses Festival hat noch keinen Line-up eingetragen. Sobald sie loslegen, siehst du ihn hier."
+
+#: app/(festival)/f/[festivalSlug]/map.tsx
+msgid "This festival hasn't added a site map yet. It'll show up here once they do."
+msgstr "Dieses Festival hat noch keinen Lageplan hinterlegt. Sobald sie loslegen, siehst du ihn hier."
+
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
 msgid "This festival may have been removed or the link is out of date."
 msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
@@ -793,10 +813,7 @@ msgstr "Es wurde möglicherweise entfernt oder der Link ist veraltet."
 msgid "This person no longer exists."
 msgstr "Diese Person gibt's nicht mehr."
 
-#: app/(festival)/f/[festivalSlug]/activities.tsx
 #: app/(festival)/f/[festivalSlug]/friends.tsx
-#: app/(festival)/f/[festivalSlug]/map.tsx
-#: app/(festival)/f/[festivalSlug]/timetable.tsx
 msgid "This tab isn't built yet."
 msgstr "Dieser Tab ist noch nicht fertig."
 
@@ -868,6 +885,10 @@ msgstr "Wir schicken dir einen 6-stelligen Code — kein Passwort nötig."
 #: app/(auth)/email.tsx
 msgid "We'll send you a code in a moment."
 msgstr "Wir schicken dir gleich einen Code."
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "We're building this at quiks — for every festival, not just this one."
+msgstr "Daran bauen wir gerade bei quiks — nicht nur für dieses Festival."
 
 #: app/(auth)/welcome.tsx
 msgid "Welcome"
