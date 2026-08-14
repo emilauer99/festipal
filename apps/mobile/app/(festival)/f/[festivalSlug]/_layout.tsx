@@ -8,6 +8,8 @@ import { tokens } from '@quiks/ui';
 
 import { apiClient } from '../../../../lib/api-client';
 import { festivalKeys, findCachedFestivalBySlug } from '../../../../lib/festival-queries';
+import { resolveFestivalGateState } from '../../../../lib/festival-gate';
+import { FestivalContextProvider } from '../../../../lib/festival-context';
 import {
   clearActiveFestivalSlug,
   getActiveFestivalSlug,
@@ -38,10 +40,15 @@ function normalizeSlug(raw: string | string[] | undefined): string {
  * `./index.tsx`).
  *
  * `findCachedFestivalBySlug` (moved to `lib/festival-queries.ts` in this same
- * plan) supplies the SAME instant-paint hint the Dashboard tab reads via the
- * SAME `festivalKeys.detail(slug)` query key — React Query dedupes both
- * subscribers into one network request, so this gate and the Dashboard tab
- * never fire two requests for one festival.
+ * plan) supplies the instant-paint hint the branching in
+ * `resolveFestivalGateState` (`lib/festival-gate.ts`) uses.
+ *
+ * 09-03 device-bug fix — the resolved `Festival` is provided to every tab
+ * screen via `FestivalContextProvider` (`lib/festival-context.ts`) instead
+ * of each tab re-running its OWN `useQuery` against the same key: this
+ * layout never unmounts across tab switches, so the context value can never
+ * desync from what gated the `Tabs` navigator open in the first place (see
+ * that module's doc comment for the full defect writeup).
  */
 export default function FestivalTabsLayout() {
   const params = useLocalSearchParams<{ festivalSlug?: string | string[] }>();
@@ -70,28 +77,27 @@ export default function FestivalTabsLayout() {
     enabled: festivalSlug.length > 0,
   });
 
-  // A 404 is a SUCCESSFUL React Query result, never `query.status === 'error'`
-  // (REVIEW 05-03 MEDIUM) — the contract models 404 as a real response.
-  const notFound = query.status === 'success' && query.data.status === 404;
+  const gateQueryState =
+    query.status === 'pending'
+      ? ({ status: 'pending' } as const)
+      : query.status === 'error'
+        ? ({ status: 'error' } as const)
+        : ({ status: 'success', data: query.data } as const);
+
+  const missingSlug = festivalSlug.length === 0;
+  const { showLoading, showTransportError, showNotFound, showTabs, festival, notFound } =
+    resolveFestivalGateState({ missingSlug, query: gateQueryState, cachedFestival });
 
   // A deleted/invalid slug must not keep re-pointing the D-06 cold-start
   // focus at a festival that no longer resolves — clear ONLY when the
-  // persisted slug is the one that actually 404'd.
+  // persisted slug is the one that actually 404'd (never for a missing
+  // slug, REVIEW 05-03 MEDIUM semantics, unchanged by the gate extraction).
   useEffect(() => {
     if (!notFound) return;
     if (getActiveFestivalSlug() === festivalSlug) {
       clearActiveFestivalSlug();
     }
   }, [notFound, festivalSlug]);
-
-  const festival =
-    query.status === 'success' && query.data.status === 200 ? query.data.body : cachedFestival;
-
-  const missingSlug = festivalSlug.length === 0;
-  const showLoading = !missingSlug && query.isPending && !cachedFestival;
-  const showTransportError = !missingSlug && query.isError;
-  const showNotFound = !showTransportError && (missingSlug || notFound);
-  const showTabs = !showTransportError && !showNotFound && festival !== undefined;
 
   if (!showTabs) {
     // D-10 / T-09-09 — this branch intentionally renders a plain block
@@ -144,17 +150,19 @@ export default function FestivalTabsLayout() {
   // DECLARATION ORDER IS THE TAB ORDER (same rule as (tabs)/_layout.tsx):
   // Dashboard · Aktivitäten · Friends · Timetable · Lageplan, per ADR-014.
   return (
-    <Tabs
-      initialRouteName="index"
-      tabBar={(props) => <FloatingNav {...props} variant="festival" />}
-      screenOptions={{ headerShown: false }}
-    >
-      <Tabs.Screen name="index" />
-      <Tabs.Screen name="activities" />
-      <Tabs.Screen name="friends" />
-      <Tabs.Screen name="timetable" />
-      <Tabs.Screen name="map" />
-    </Tabs>
+    <FestivalContextProvider value={festival}>
+      <Tabs
+        initialRouteName="index"
+        tabBar={(props) => <FloatingNav {...props} variant="festival" />}
+        screenOptions={{ headerShown: false }}
+      >
+        <Tabs.Screen name="index" />
+        <Tabs.Screen name="activities" />
+        <Tabs.Screen name="friends" />
+        <Tabs.Screen name="timetable" />
+        <Tabs.Screen name="map" />
+      </Tabs>
+    </FestivalContextProvider>
   );
 }
 

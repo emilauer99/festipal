@@ -1,15 +1,11 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams } from 'expo-router';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { CalendarClock, MapPin } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
-import type { Festival } from '@quiks/contracts';
 
-import { apiClient } from '../../../../lib/api-client';
 import { i18n } from '../../../../lib/i18n';
-import { festivalKeys, findCachedFestivalBySlug } from '../../../../lib/festival-queries';
+import { useFestivalContext } from '../../../../lib/festival-context';
 import { formatDateRange } from '../../../../lib/date-range';
 import { fontFamilyForRole } from '../../../../lib/fonts';
 import { useFontsReady } from '../../../../lib/fonts-context';
@@ -20,19 +16,14 @@ import { useTheme } from '../../../../lib/theme-context';
 // mode-invariant scales stay destructured at module scope.
 const { typeRoles, layout, spacingScale } = tokens;
 
-function normalizeSlug(raw: string | string[] | undefined): string {
-  const value = Array.isArray(raw) ? raw[0] : raw;
-  return (value ?? '').trim();
-}
-
 /**
  * The Dashboard tab (09-03 Task 1) — the former `f/[festivalSlug].tsx`
  * content, MINUS the D-10 gate logic that now lives one layer up in
- * `./_layout.tsx`. Reads the resolved festival from the SAME
- * `festivalKeys.detail(slug)` query key the layout gate already subscribes
- * to — React Query dedupes the two subscribers into a single network
- * request, so mounting this second `useQuery` does not fire a second
- * request.
+ * `./_layout.tsx`. Reads the resolved festival from
+ * `useFestivalContext()` (`lib/festival-context.ts`) rather than running its
+ * own `useQuery` — see that module's doc comment for why (09-03 device-bug
+ * fix: a second independent observer could transiently disagree with the
+ * layout gate's own state on tab re-focus, which blanked this screen).
  *
  * The four `ComingSoonTile`s from the pre-split screen are removed
  * ERSATZLOS (D-07): Timetable and Lageplan are now real tabs, Cashless and
@@ -45,8 +36,6 @@ function normalizeSlug(raw: string | string[] | undefined): string {
  * (Flagged Assumption 3, 09-03-PLAN.md).
  */
 export default function FestivalDashboardScreen() {
-  const params = useLocalSearchParams<{ festivalSlug?: string | string[] }>();
-  const festivalSlug = normalizeSlug(params.festivalSlug);
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const fontsReady = useFontsReady();
@@ -54,25 +43,14 @@ export default function FestivalDashboardScreen() {
   // matching styles set no numeric `fontWeight`.
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
   const nameFont = fontFamilyForRole('display2', fontsReady);
-  const queryClient = useQueryClient();
 
-  const cachedFestival = festivalSlug
-    ? findCachedFestivalBySlug(queryClient, festivalSlug)
-    : undefined;
-
-  const query = useQuery({
-    queryKey: festivalKeys.detail(festivalSlug),
-    queryFn: () => apiClient.getFestival({ params: { slug: festivalSlug } }),
-    enabled: festivalSlug.length > 0,
-  });
-
-  const festival: Festival | undefined =
-    query.status === 'success' && query.data.status === 200 ? query.data.body : cachedFestival;
+  const festival = useFestivalContext();
 
   // The layout gate (./_layout.tsx) has already handled every state where the
   // festival is unresolved (loading/error/404) — by the time this tab can
-  // mount at all, `festival` is defined by construction. This guard is a
-  // defensive no-op, not a second loading/error branch.
+  // mount and the context is populated at all, `festival` is defined by
+  // construction. This guard is a defensive no-op, not a second
+  // loading/error branch.
   if (!festival) return null;
 
   return (
