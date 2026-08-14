@@ -89,6 +89,7 @@ msgid "Appearance"
 msgstr "Darstellung"
 
 #: app/(auth)/email.tsx
+#: components/AppHeader.tsx
 msgid "Back"
 msgstr "Zurück"
 
@@ -288,9 +289,9 @@ msgstr "Stattdessen Handle eingeben"
 #~ msgid "Enter your code"
 #~ msgstr "Gib deinen Code ein"
 
-#: app/(festival)/f/[festivalSlug].tsx
-#~ msgid "Festival"
-#~ msgstr "Festival"
+#: components/AppHeader.tsx
+msgid "Festival"
+msgstr "Festival"
 
 #: app/(festival)/index.tsx
 #~ msgid "Festival home"
@@ -358,6 +359,10 @@ msgstr "Hol dir einen neuen Code."
 msgid "Get started"
 msgstr "Los geht's"
 
+#: components/AppHeader.tsx
+msgid "Go to Start"
+msgstr "Zu Start"
+
 #: app/profil.tsx
 msgid "Handle"
 msgstr "Handle"
@@ -373,6 +378,10 @@ msgstr "Sprache"
 #: app/(tabs)/mehr.tsx
 msgid "Language switching is coming soon."
 msgstr "Sprachumschalter kommt bald."
+
+#: components/AppHeader.tsx
+msgid "Leave festival"
+msgstr "Festival verlassen"
 
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
@@ -575,6 +584,7 @@ msgstr "Richte die Kamera auf den quiks-Code deines Gegenübers."
 
 #: app/(tabs)/mehr.tsx
 #: app/profil.tsx
+#: components/AppHeader.tsx
 msgid "Profile"
 msgstr "Profil"
 
@@ -587,6 +597,7 @@ msgid "Pronouns, age, gender and vibe are optional — your favourite artists sh
 msgstr "Pronomen, Alter, Geschlecht und Vibe sind optional — deine Lieblings-Acts erscheinen hier, sobald Spotify verbunden ist."
 
 #: app/friends-qr.tsx
+#: components/AppHeader.tsx
 msgid "QR code"
 msgstr "QR-Code"
 

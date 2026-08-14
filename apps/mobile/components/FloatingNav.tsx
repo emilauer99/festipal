@@ -33,7 +33,12 @@ const INACTIVE_STROKE = 2;
 // Tab bar contract) — expo-blur's `intensity` has no 1:1 px mapping to CSS
 // `backdrop-filter: blur()`, tuned by eye against the source design. Mode-
 // invariant: only the `tint` and the glass fill/border follow the theme.
-const BLUR_INTENSITY = 60;
+//
+// Exported (09-04) so `AppHeader` reuses this SAME constant for its own glass
+// overlay instead of a second, independently-tuned number — the App Header
+// Contract requires it ("reuse the pattern, do not reinvent a second blur
+// constant").
+export const BLUR_INTENSITY = 60;
 
 type GlobalRouteName = 'start' | 'festivals' | 'friends' | 'mehr';
 type FestivalRouteName = 'index' | 'activities' | 'friends' | 'timetable' | 'map';

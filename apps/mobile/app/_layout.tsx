@@ -27,6 +27,7 @@ import { ThemeProvider, useTheme } from '../lib/theme-context';
 import type { ThemeColors } from '../lib/theme';
 import { ToastProvider } from '../components/SoonToast';
 import { WordmarkGlyph } from '../components/WordmarkGlyph';
+import { AppHeader } from '../components/AppHeader';
 
 const { typeRoles } = tokens;
 
@@ -122,6 +123,12 @@ const AUTH_FLOW_PATHS = new Set(['welcome', 'email', 'verify', 'complete-profile
 // unavailable at runtime (e.g. a bare/unexpected config shape); matches
 // app.json's `expo.scheme` ("quiks", ADR-024).
 const APP_SCHEME_FALLBACK = 'quiks';
+
+// 09-04 (D-03) — mode-invariant (no colour), so this stays a module-level
+// StyleSheet unlike the theme-dependent styles elsewhere in this app.
+const rootStyles = StyleSheet.create({
+  authenticatedTree: { flex: 1 },
+});
 
 /**
  * D-01 (05.1) — the root is now a thin provider shell so that BOTH branches of
@@ -455,7 +462,16 @@ function RootNavigation() {
         <I18nProvider i18n={i18n}>
           <AuthStateContext.Provider value={authState}>
             <ColdStartTargetContext.Provider value={coldStartTarget}>
-              <Stack>
+              {/* 09-04 (D-03) — the `<Stack>` is now wrapped in a `flex: 1`
+                  `View` so `AppHeader` can render as its SIBLING, after it,
+                  and therefore visually above it. `AppHeader` decides its own
+                  visibility per route (`resolveHeaderContext`), so no extra
+                  condition is needed at this mount site — but the mount
+                  itself stays inside this same provider tree
+                  (`QueryClientProvider`/`I18nProvider`/`ThemeProvider`/
+                  `SafeAreaProvider`), which the header's own hooks need. */}
+              <View style={rootStyles.authenticatedTree}>
+                <Stack>
                 {/* first-login-unmatched-route (round 3) — `index` (app/index.tsx)
                       is the SINGLE owner of path `/` and is declared OUTSIDE every
                       Stack.Protected block, so it is mounted in ALL auth states.
@@ -486,11 +502,19 @@ function RootNavigation() {
                       T-06-01: it lives INSIDE this authenticated guard, never
                       beside it — `/profil` renders account data.
 
-                      Header/title are set by the SCREEN itself (`app/profil.tsx`'s
-                      own `<Stack.Screen options>`), matching every other screen in
-                      this app — `useLingui()` cannot be called here, since this
-                      component is the one that RENDERS `<I18nProvider>`. */}
-                  <Stack.Screen name="profil" />
+                      09-04 — its header/title are now `AppHeader`'s push state
+                      (`resolveHeaderContext`), not its own `<Stack.Screen
+                      options>` (Task 3 of 09-04-PLAN.md removes that block from
+                      `app/profil.tsx` itself). `headerShown: false` is set HERE,
+                      at this root registration, because a Native Stack screen
+                      with no explicit header option defaults to a VISIBLE
+                      (blank) native header — without this the removal in Task 3
+                      would leave a blank bar sitting above `AppHeader`.
+                      `friend-detail` below is deliberately NOT given this
+                      option: it keeps its own customized header (close button)
+                      via its own `<Stack.Screen options>`, unchanged by this
+                      phase (Flagged Assumption 1, 09-04-PLAN.md). */}
+                  <Stack.Screen name="profil" options={{ headerShown: false }} />
                   {/* 08-03 / D-09 — the friend detail modal, same root-level
                       sibling-of-`(tabs)` shape as `profil` above, registered
                       exhaustively for the same reason: an unregistered
@@ -508,9 +532,15 @@ function RootNavigation() {
                       deep-link capture path elsewhere in this file, the
                       same path that produced the Phase-5
                       first-login-unmatched-route bug. */}
-                  <Stack.Screen name="friends-qr" />
+                  {/* 09-04 — same reasoning as `profil` above: `headerShown:
+                      false` here is what keeps a blank native header from
+                      reappearing once Task 3 removes this screen's own
+                      `<Stack.Screen options>` block. */}
+                  <Stack.Screen name="friends-qr" options={{ headerShown: false }} />
                 </Stack.Protected>
-              </Stack>
+                </Stack>
+                <AppHeader />
+              </View>
             </ColdStartTargetContext.Provider>
           </AuthStateContext.Provider>
         </I18nProvider>
