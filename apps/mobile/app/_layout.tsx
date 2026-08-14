@@ -550,6 +550,21 @@ function RootNavigation() {
                       defaults to a visible blank native header, which would
                       sit above `AppHeader`'s own push-state title. */}
                   <Stack.Screen name="friends-find" options={{ headerShown: false }} />
+                  {/* 09-06 (D-09) — the Cashless WebView push screen, same
+                      root-level sibling-of-`(tabs)` shape as `profil`/
+                      `friends-qr`/`friends-find` above. Pushed ONLY from the
+                      Dashboard's Cashless tile (Task 2), which itself only
+                      renders when `resolveCashlessTarget(festival.cashlessUrl)`
+                      resolves — this registration exists regardless (an
+                      unregistered sibling dead-ends on Expo Router's
+                      Unmatched Route screen), but the SCREEN itself
+                      re-validates the address it receives (T-09-23) rather
+                      than trusting this registration to only ever be reached
+                      with a good one. `headerShown: false` for the same
+                      reason as the three screens above it. `cashless` is NOT
+                      a deep-link target — the deep-link capture path
+                      elsewhere in this file is untouched. */}
+                  <Stack.Screen name="cashless" options={{ headerShown: false }} />
                 </Stack.Protected>
                 </Stack>
                 <AppHeader />

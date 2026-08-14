@@ -58,6 +58,14 @@ describe('resolveHeaderContext (09-04, D-03 App Header Contract)', () => {
     });
   });
 
+  it('shows the push state with route "cashless" for the Cashless WebView screen (09-06, D-09)', () => {
+    expect(resolveHeaderContext(['cashless'])).toEqual({
+      visible: true,
+      kind: 'push',
+      route: 'cashless',
+    });
+  });
+
   it('hides on the welcome (auth) screen', () => {
     expect(resolveHeaderContext(['(auth)', 'welcome'])).toEqual({ visible: false });
   });

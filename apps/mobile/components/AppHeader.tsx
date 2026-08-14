@@ -134,6 +134,9 @@ export function AppHeader() {
     // position. Reuses the EXACT `Friends` msgid the tab bar/`profil.tsx`
     // stat row already use, not a new string.
     'friends-find': t`Friends`,
+    // 09-06 (D-09) — reuses the same `Cashless` msgid the Dashboard tile's
+    // eyebrow label uses (Task 2), not a second string.
+    cashless: t`Cashless`,
   };
 
   const festivalTitle =

@@ -31,10 +31,18 @@
  * `(tabs)/friends.tsx` screen the global Friends tab already mounts. Adding
  * it here is what gives that second mount position its push header/back
  * state instead of falling back to invisible.
+ *
+ * 09-06 (D-09) — `cashless` joins this set: the root-level push registration
+ * of `app/cashless.tsx`, the Cashless WebView screen.
  */
-export const PUSH_SCREEN_ROUTES = new Set(['profil', 'friends-qr', 'friends-find'] as const);
+export const PUSH_SCREEN_ROUTES = new Set([
+  'profil',
+  'friends-qr',
+  'friends-find',
+  'cashless',
+] as const);
 
-export type PushScreenRoute = 'profil' | 'friends-qr' | 'friends-find';
+export type PushScreenRoute = 'profil' | 'friends-qr' | 'friends-find' | 'cashless';
 
 /**
  * First segments over which the header NEVER appears, regardless of what
