@@ -51,6 +51,19 @@ path must work.
   microphone, and its decoded text never reaches a router, a `Linking.openURL` or a WebView —
   **Validated in Phase 8: Friends** (FRND-02, FRND-03, FRND-04, FRND-05, FRND-06, FRND-08)
 
+- ✓ Inside a festival there is a **real five-tab bar** (Live · quiks · Crew · Timetable · Karte —
+  renamed from Dashboard/Aktivitäten/Friends/Timetable/Lageplan per the user's screen designs, with
+  a dated ADR-014 change note that lifts only the UI-label rule, never the data rule), its two
+  content tabs are **honest placeholders** that name their precondition, the **Crew tab shows
+  friends who saved this festival** (intersection only — the endpoint selects zero `my_festival`
+  columns, so no presence signal exists to leak), and the global first tab is **`start` in route
+  and UI** (D-19 hard rename, no alias). The festival area is gated at layout level (D-10: no
+  resolved festival → no tabs at all), the `AppHeader` mounts once and decides visibility through
+  a pure fail-closed derivation, and **Cashless shipped early** as ADR-011 dictates: hard-omitted
+  tile unless an HTTPS address resolves, full-bleed WebView double-locked to its own origin, no JS
+  bridge in either direction. Device-verified across two UAT rounds (8 + 3 checks); 32/32 threats
+  closed — **Validated in Phase 9: Festival Navigation Shell** (NAV-01, NAV-02, NAV-03, FRND-07)
+
 ### Active
 
 <!-- v1.0 "Visitor Shell" shipped 2026-08-12 — every hypothesis of that cycle moved to Validated
@@ -70,9 +83,10 @@ path must work.
       through FRND-06 and FRND-08 are validated above. What ships **without** it is recorded, not
       papered over: **FRND-09 (block/report) is still absent**, so v1.1 lets strangers find and
       contact you with no way to stop them — schedule it before the first real user cohort.
-- [ ] Activities / connecting with friends (ADR-017) — the second differentiator
-- [ ] Tab route rename `home` → `start` (decided 2026-08-12; do it before new routes land — Phase 9
-      carries it as NAV-03, and it touches the deep-link capture path)
+- [ ] Activities / connecting with friends (ADR-017) — the second differentiator (Phases 10–12:
+      backend → UI → lobby chat)
+- [x] Tab route rename `home` → `start` — **shipped in Phase 9 (09-01, NAV-03)**: hard rename
+      without alias, deep-link capture path untouched, device-verified across six checks
 
 **Admin —** planned independently in `.planning/workstreams/admin/`, its own milestone track.
 
@@ -81,7 +95,7 @@ path must work.
 <!-- Explicit boundaries for THIS cycle. Part of the long-term quiks vision, just not now. -->
 
 - Deep content features — timetable, site map (MapLibre), news/updates — deferred to later phases; the shell only shows basic overview info
-- Cashless integration (embedded per-festival WebView) — later phase; not needed for entry/home
+- ~~Cashless integration (embedded per-festival WebView) — later phase; not needed for entry/home~~ → **shipped in Phase 9 (09-06)** exactly as ADR-011 bounds it: embedded origin-locked WebView, tile hard-omitted when no address is set, never a payment surface of our own
 - Swap marketplace (camping-spot / ticket swaps) — differentiator, later milestone
 - ~~Real Friends/social (search, requests, presence/map location) — placeholder only this cycle~~ → **moved into the next mobile milestone** (user decision 2026-08-12). "Who's here" (friends ∩ saved festival) still has no GPS, ever.
 - Profile editing + `socials[]` — first-login creation only; editing and socials deferred
@@ -153,6 +167,10 @@ path must work.
 | A scanned quiks code is **plain text, never a deep link** (Phase-7 D-17, enforced in T-08-19) | The decoded payload passes a pure parser and is discarded on `null`; it is never handed to the router, `Linking.openURL` or a WebView, so a forged code cannot reach a navigation or URL surface. The confirmation card (D-14) is what makes a forged handle harmless rather than the parser alone | ✓ Shipped Phase 8 |
 | `friend-detail` reads the friends **query cache** instead of fetching (D-04 consequence) | There is deliberately no foreign-profile *detail* endpoint — the four foreign paths from Phase 7 are the whole surface. Keying off the cache means the route param is only ever a local lookup key, so an unknown id closes the screen instead of probing a foreign identity | ✓ Shipped Phase 8 |
 | Two third-party packages (`qrcode-generator`, `expo-camera`) passed a **blocking legitimacy checkpoint before install** | With `research` off there is no automatic legitimacy audit, so both were treated as `[ASSUMED]` and verified by hand (publisher, repo, exact name, dependency tree) before the install command ran — the two `T-08-SC` entries in `08-SECURITY.md` carry the evidence | ✓ Shipped Phase 8 |
+| A layout that **gates** a nested navigator on an async resolution owns the data and provides it via Context; children never re-query it (09-03) | Two independent React Query observers of the same key can transiently disagree on tab re-focus — the Dashboard went blank on device from exactly that. The gating layout never unmounts across tab switches, so its context value cannot desync | ✓ Shipped Phase 9 |
+| Navigator-wide chrome defaults live in `screenOptions`, **never** per `Stack.Screen` (09-07) | The forgotten-option bug recurred three times in one phase; a navigator default fails closed for new screens, and the one modal that needs its native header opts back in locally | ✓ Shipped Phase 9 |
+| Cashless shipped **early and exactly as ADR-011 bounds it**: origin-double-locked WebView, hard-omitted entry, no JS bridge (09-06) | `originWhitelist` + `onShouldStartLoadWithRequest` are two independent locks on the configured origin; a visible-but-inert pay tile would be the most dishonest possible placeholder, so no address ⇒ no tile. `react-native-webview` passed the same blocking legitimacy gate as the Phase-8 packages (T-09-SC) | ✓ Shipped Phase 9 |
+| Tab labels renamed to the user's screen designs (Live · quiks · Crew · Timetable · Karte) via a **dated ADR-014 change note**, and the Live dot is **not** built without a live signal (09-07) | The amendment lifts only the language rule ("Crew" as a label), the data rule (no crew data model, no presence) stays in force; a static "live" dot would assert data that does not exist (NAV-02), so it ships only together with a real signal | ✓ Shipped Phase 9 |
 
 ## Evolution
 
@@ -172,9 +190,9 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-13 after Phase 8 (Friends) — 5/5 plans, six requirements validated (FRND-02/03/04/05/06/08). UAT 8/8 passed on device after the `expo-camera` native rebuild, including the four checkpoints no device had seen (full five-state relation mapping, the WR-01/WR-02 fixes, the confirmation card across all five relation values, and the denied-permission callout at the longest catalog string in DE and EN). Security: 24/24 threats closed, `threats_open: 0`, four of them `high` (presence-signal absence, camera runtime, decoded-payload handling, and two package-legitimacy gates). Next: Phase 9 (Festival Navigation Shell) — context already gathered.*
+*Last updated: 2026-08-15 after Phase 9 (Festival Navigation Shell) — 7/7 plans (6 + 1 gap closure), four requirements validated (NAV-01/NAV-02/NAV-03/FRND-07). Two device UAT rounds: round 1 found two gaps (G-09-2 header whitespace, G-09-7 tab rename to the screen designs), plan 09-07 closed both, round 2 re-verified them on device 3/3. Security: 32/32 threats closed across all seven plan registers, `threats_open: 0` (L1 short-circuit — registers authored at plan time, mitigations grep-verified + device-verified). All eight Phase-9 `WINDOWS.md` unrun-verify entries (#40, #42–#48) closed against the two UAT rounds. Next: Phase 10 (Activities Backend) — plans already written (5 plans, 5 waves).*
 
-*Previously: 2026-08-12 after Phase 7 (Profile Visibility & Friendship Backend) — 5/5 plans, VIS-01 and VIS-02 validated, T-06-06 discharged. The three judgment-tier UAT claims were confirmed by the user, one of them (VIS-01) after replaying the decline flow live against the dev API with three real accounts.*
+*Previously: 2026-08-13 after Phase 8 (Friends) — 5/5 plans, six requirements validated (FRND-02/03/04/05/06/08). UAT 8/8 passed on device after the `expo-camera` native rebuild, including the four checkpoints no device had seen (full five-state relation mapping, the WR-01/WR-02 fixes, the confirmation card across all five relation values, and the denied-permission callout at the longest catalog string in DE and EN). Security: 24/24 threats closed, `threats_open: 0`, four of them `high` (presence-signal absence, camera runtime, decoded-payload handling, and two package-legitimacy gates).*
 
 ---
 *Milestone v1.0 close (2026-08-12) — **"Rollout" (Visitor Shell) closed for the mobile workstream.** 7/7 phases, 50/50 plans, 116 tasks, 20/20 v1 requirements; every phase `phase_complete` with `verification_status: passed`, so this is a `verified_closeout`, not an override. Shipped over 15 days (2026-07-28 → 2026-08-12) as PRs #4–#13, `main` at `44e7914`. Delivered end to end: identity/tenancy schema that cannot drift, passwordless email-OTP behind a login-first guard with `festivalId` isolation, the Expo shell with i18n enforced from the first line of UI, the full visitor path signed off on real Android hardware, the quiks rebrand + CI v1.0, and the global tab bar with Profile/Friends/Mehr. Archived to `workstreams/mobile/milestones/v1.0-*`; `REQUIREMENTS.md` removed so the next milestone starts fresh.*

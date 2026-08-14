@@ -92,8 +92,8 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 | FRND-05 | Phase 8 | Complete |
 | FRND-06 | Phase 8 | Complete |
 | FRND-08 | Phase 8 | Complete |
-| FRND-07 | Phase 9 | Complete (09-02 backend + 09-05 UI shipped; device UAT pending, WINDOWS.md #44/#45) |
-| NAV-01 | Phase 9 | Complete (09-03 five-tab bar; 09-06 Cashless Dashboard entry — device UAT pending, WINDOWS.md #46) |
+| FRND-07 | Phase 9 | Complete (09-02 backend + 09-05 UI; device UAT passed 2026-08-14, WINDOWS.md #44/#45 closed) |
+| NAV-01 | Phase 9 | Complete (09-03 five-tab bar + 09-06 Cashless + 09-07 labels; device UAT rounds 1+2 passed, WINDOWS.md #46–#48 closed) |
 | NAV-02 | Phase 9 | Complete (09-03) |
 | NAV-03 | Phase 9 | Complete (09-01) |
 | SEC-03 | Phase 10 | Planned |

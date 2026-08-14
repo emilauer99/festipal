@@ -1,7 +1,7 @@
 ---
 phase: 09-festival-navigation-shell
 verified: 2026-08-14T20:45:00Z
-status: human_needed
+status: passed
 score: 12/14 must-haves verified
 behavior_unverified: 2 # G-09-2's rendered layout outcome — wiring guard-proven, pixel result device-only
 overrides_applied: 0
@@ -9,30 +9,37 @@ re_verification:
   previous_status: human_needed
   previous_score: 12/14
   gaps_closed:
+
     - "G-09-2: dead ~80dp paper strip between AppHeader glass and content — native-header default moved to the navigators (root/(auth)/(profile-setup)), friend-detail sole explicit exception; guarded by native-header-default.test.ts"
     - "G-09-7: festival tab bar renamed to Live · quiks · Crew · Timetable · Karte with the AudioLines glyph; guarded by festival-tab-naming.test.ts; ADR-014 change note + NAV-01/NAV-02 updated"
     - "Prior device-UAT resolution: WINDOWS #40/#43/#44/#45/#46 device checks PASSED in 09-UAT.md (tests 1, 3-6, 8) — the two prior PRESENT_BEHAVIOR_UNVERIFIED truths (festival Friends tab client rendering, cashless sandbox runtime) are now device-verified"
   gaps_remaining: []
   regressions: []
 behavior_unverified_items:
+
   - truth: "G-09-2 outcome: on every screen the content starts directly under the header glass — the resting gap is the designed narrow spacing, not the device-measured ~99dp strip; no route name ghosts through the glass; no white bar on welcome/email/code"
     test: "Device run per 09-07 Task 1 <human-check> (WINDOWS #47): light+dark, start tab + festival dashboard resting gap, all 9 tabs scroll under the glass, log out and inspect welcome/email/code, open friend-detail card (close button must survive), push screens, notch + max font scale"
     expected: "Narrow designed gap everywhere; no blank native bar; friend-detail still closable; no route-name text behind the glass"
     why_human: "The wiring guard (33/33, re-run by the verifier) proves headerShown:false is the navigator default in ALL 7 _layout.tsx files and friend-detail re-enables its own — but the rendered gap is pure native layout math with no node-env equivalent; the welcome-screen point is exactly where emulator and phone findings diverged before (plan demands explicit re-check)"
+
   - truth: "G-09-7 rendered result: the five festival tab labels render as Live · quiks · Crew · Timetable · Karte (EN: Map) with the AudioLines glyph, single-line/ellipsized at narrowest width and max font scale, and NO state dot on the Live tab"
     test: "Device run per 09-07 Task 2 <human-check> (WINDOWS #48): open a festival in DE and EN, check the five labels + glyph, verify global Friends tab / Profil push title / 'Freunde hier' eyebrow are unchanged, narrow-width truncation, no red dot"
     expected: "New names in the festival, old names everywhere else, eyebrow unchanged, no live-dot indicator"
     why_human: "Catalog values and FloatingNav wiring are fully test-pinned (verifier re-ran festival-tab-naming.test.ts, pass); the visual render, truncation behavior, and glyph appearance need eyes on a device"
 human_verification:
+
   - test: "09-07 Task 1 device check (WINDOWS #47) — see behavior_unverified item 1"
     expected: "Resting gap narrow, no route name behind glass, no bar on auth screens, friend-detail closable, notch + max font scale clean"
     why_human: "Rendered native layout has no node-env equivalent"
+
   - test: "09-07 Task 2 device check (WINDOWS #48) — see behavior_unverified item 2"
     expected: "Live · quiks · Crew · Timetable · Karte (EN Map), AudioLines glyph, untouched Friends/eyebrow surfaces, truncation holds, no state dot on Live"
     why_human: "Visual rendering of the pinned labels/glyph"
+
   - test: "09-07 Task 3 read-through: read the ADR-014 change note once — does it state WHAT is lifted (only the label rule for this one tab) and WHAT stays in force (no presence, no location, no retention)?"
     expected: "A later reader cannot conclude the data rule fell with the label. NOTE: verifier's non-authoritative read — the note explicitly separates 'Was aufgehoben ist' from 'Was ausdruecklich in Kraft bleibt' and restates the intersection definition — reads as PASS, but the plan classifies this as human judgment. Not logged in WINDOWS.md (SUMMARY claims three unrun-verify entries, only #47/#48 exist)."
     why_human: "Documentation-quality judgment on prose intent"
+
   - test: "Judgment-tier prohibitions (verification: manual, NON-AUTHORITATIVE code verdict rendered): (a) NAV-02 — the rename claims no capability: no navLiveDot, no content, no counts added; (b) NAV-01/FRND-07 — 'Crew' label adds no presence signal"
     expected: "Upheld on device as in code. Code evidence strong: commit a114834's footprint is exactly FloatingNav + catalogs + a layout comment + the guard test (no content file touched); FloatingNav contains no dot/badge element; the ADR note preserves the data rule verbatim"
     why_human: "Manual-tier prohibitions get a non-authoritative code-level verdict only; final resolution belongs to the end-of-phase human checkpoint (folded into device checks #47/#48)"
