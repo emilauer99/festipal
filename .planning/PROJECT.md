@@ -64,6 +64,19 @@ path must work.
   bridge in either direction. Device-verified across two UAT rounds (8 + 3 checks); 32/32 threats
   closed — **Validated in Phase 9: Festival Navigation Shell** (NAV-01, NAV-02, NAV-03, FRND-07)
 
+- ✓ The **whole activities substrate** exists behind the login-first guard, contract-first and
+  tenant-proven: `activity` / `activity_tag` / `festival_activity_tag` / `activity_participant`
+  with the effective-tag union (enabled global tags ∪ own festival tags; nullable
+  `activity_tag.festivalId` is the one deliberate exception, guarded by two partial unique
+  indexes), create-with-tag-or-title in one transaction, join/leave/delete with the capacity race
+  closed **in the database** (BEFORE-INSERT trigger + `SELECT … FOR UPDATE`), and the three read
+  paths (list, mine, detail) through **one** select+shape pair. Detail participants are exactly
+  the six-key foreign view + `joinedAt`. SEC-03 is discharged with two standing gates that later
+  phases inherit: a per-table cross-tenant behavioral proof and a structure spec
+  (`information_schema` tenant-column walk + a forbidden-key contract walk against client-set
+  actor/scope). 32/32 threats closed, human UAT 3/3 on the three prohibitions —
+  **Validated in Phase 10: Activities Backend** (SEC-03)
+
 ### Active
 
 <!-- v1.0 "Visitor Shell" shipped 2026-08-12 — every hypothesis of that cycle moved to Validated
@@ -83,8 +96,8 @@ path must work.
       through FRND-06 and FRND-08 are validated above. What ships **without** it is recorded, not
       papered over: **FRND-09 (block/report) is still absent**, so v1.1 lets strangers find and
       contact you with no way to stop them — schedule it before the first real user cohort.
-- [ ] Activities / connecting with friends (ADR-017) — the second differentiator (Phases 10–12:
-      backend → UI → lobby chat)
+- [ ] Activities / connecting with friends (ADR-017) — the second differentiator (Phase 10
+      backend ✅ 2026-08-15; Phases 11–12: UI → lobby chat)
 - [x] Tab route rename `home` → `start` — **shipped in Phase 9 (09-01, NAV-03)**: hard rename
       without alias, deep-link capture path untouched, device-verified across six checks
 
@@ -171,6 +184,9 @@ path must work.
 | Navigator-wide chrome defaults live in `screenOptions`, **never** per `Stack.Screen` (09-07) | The forgotten-option bug recurred three times in one phase; a navigator default fails closed for new screens, and the one modal that needs its native header opts back in locally | ✓ Shipped Phase 9 |
 | Cashless shipped **early and exactly as ADR-011 bounds it**: origin-double-locked WebView, hard-omitted entry, no JS bridge (09-06) | `originWhitelist` + `onShouldStartLoadWithRequest` are two independent locks on the configured origin; a visible-but-inert pay tile would be the most dishonest possible placeholder, so no address ⇒ no tile. `react-native-webview` passed the same blocking legitimacy gate as the Phase-8 packages (T-09-SC) | ✓ Shipped Phase 9 |
 | Tab labels renamed to the user's screen designs (Live · quiks · Crew · Timetable · Karte) via a **dated ADR-014 change note**, and the Live dot is **not** built without a live signal (09-07) | The amendment lifts only the language rule ("Crew" as a label), the data rule (no crew data model, no presence) stays in force; a static "live" dot would assert data that does not exist (NAV-02), so it ships only together with a real signal | ✓ Shipped Phase 9 |
+| Activity capacity is decided **in the database** — BEFORE-INSERT trigger with `SELECT … FOR UPDATE` on the activity row, never check-then-insert in the service (10-03) | Under READ COMMITTED a service-level check cannot be made race-free; the trigger's "already a participant" branch keeps `onConflictDoNothing` rejoin idempotency intact under the guard. Proven ≥10 rounds at DB level, ≥5 over HTTP | ✓ Shipped Phase 10 |
+| Tenant coupling of activity children is a **composite FK** on `(activity.id, activity.festivalId)`, and nullable `activity_tag.festivalId` is guarded by **two partial unique indexes** (global vs per-festival slug) (10-01/10-02) | A participant row pointing into a foreign festival becomes inexpressible in the schema instead of merely unchecked in the service; a single plain unique constraint would let two NULL-festivalId rows collide silently | ✓ Shipped Phase 10 |
+| SEC-03 ships as **standing mechanical gates**, not a one-time audit (10-05) | The forbidden-key contract walk (no client-set actor/scope) and the `information_schema` tenant-column spec make a Phase-11/12 violation break the suite instead of quietly landing — the same enforcement idiom as VIS-02's projection-uniqueness spec | ✓ Shipped Phase 10 |
 
 ## Evolution
 
@@ -190,9 +206,16 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-15 after Phase 9 (Festival Navigation Shell) — 7/7 plans (6 + 1 gap closure), four requirements validated (NAV-01/NAV-02/NAV-03/FRND-07). Two device UAT rounds: round 1 found two gaps (G-09-2 header whitespace, G-09-7 tab rename to the screen designs), plan 09-07 closed both, round 2 re-verified them on device 3/3. Security: 32/32 threats closed across all seven plan registers, `threats_open: 0` (L1 short-circuit — registers authored at plan time, mitigations grep-verified + device-verified). All eight Phase-9 `WINDOWS.md` unrun-verify entries (#40, #42–#48) closed against the two UAT rounds. Next: Phase 10 (Activities Backend) — plans already written (5 plans, 5 waves).*
+*Last updated: 2026-08-15 after Phase 10 (Activities Backend) — 5/5 plans, SEC-03 validated (per-table
+cross-tenant behavioral proof + structure spec with `information_schema` walk and forbidden-key
+contract walk). Backend-only phase: the ACT-01…ACT-06 requirements stay Planned for Phase 11, where
+they become user-observable. Human UAT 3/3 on the three prohibitions (no client-set actor/scope, no
+presence signal from activity data, participant payload strictly the six-key foreign view);
+`10-SECURITY.md` with 32/32 threats closed, `threats_open: 0` (L1 short-circuit — all five registers
+authored at plan time, mitigations grep-verified against implementation and specs). Next: Phase 11
+(Activities UI).*
 
-*Previously: 2026-08-13 after Phase 8 (Friends) — 5/5 plans, six requirements validated (FRND-02/03/04/05/06/08). UAT 8/8 passed on device after the `expo-camera` native rebuild, including the four checkpoints no device had seen (full five-state relation mapping, the WR-01/WR-02 fixes, the confirmation card across all five relation values, and the denied-permission callout at the longest catalog string in DE and EN). Security: 24/24 threats closed, `threats_open: 0`, four of them `high` (presence-signal absence, camera runtime, decoded-payload handling, and two package-legitimacy gates).*
+*Previously: 2026-08-15 after Phase 9 (Festival Navigation Shell) — 7/7 plans (6 + 1 gap closure), four requirements validated (NAV-01/NAV-02/NAV-03/FRND-07). Two device UAT rounds: round 1 found two gaps (G-09-2 header whitespace, G-09-7 tab rename to the screen designs), plan 09-07 closed both, round 2 re-verified them on device 3/3. Security: 32/32 threats closed across all seven plan registers, `threats_open: 0` (L1 short-circuit — registers authored at plan time, mitigations grep-verified + device-verified). All eight Phase-9 `WINDOWS.md` unrun-verify entries (#40, #42–#48) closed against the two UAT rounds.*
 
 ---
 *Milestone v1.0 close (2026-08-12) — **"Rollout" (Visitor Shell) closed for the mobile workstream.** 7/7 phases, 50/50 plans, 116 tasks, 20/20 v1 requirements; every phase `phase_complete` with `verification_status: passed`, so this is a `verified_closeout`, not an override. Shipped over 15 days (2026-07-28 → 2026-08-12) as PRs #4–#13, `main` at `44e7914`. Delivered end to end: identity/tenancy schema that cannot drift, passwordless email-OTP behind a login-first guard with `festivalId` isolation, the Expo shell with i18n enforced from the first line of UI, the full visitor path signed off on real Android hardware, the quiks rebrand + CI v1.0, and the global tab bar with Profile/Friends/Mehr. Archived to `workstreams/mobile/milestones/v1.0-*`; `REQUIREMENTS.md` removed so the next milestone starts fresh.*

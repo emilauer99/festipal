@@ -1,7 +1,7 @@
 ---
 phase: 10-activities-backend
 verified: 2026-08-15T00:45:00Z
-status: human_needed
+status: passed
 score: 41/41 must-haves verified
 behavior_unverified: 0
 overrides_applied: 0
@@ -14,6 +14,7 @@ prohibitions:
     human review recommended, never a silent pass. Two of the three carry wired
     deterministic enforcement (specs executed green in this verification run).
 human_verification:
+
   - test: >
       Prohibition P1 (10-01): "No activity or tag endpoint accepts the acting visitor's
       identity from a request body, query parameter or path segment — caller from the
@@ -29,6 +30,7 @@ human_verification:
       Part 2 (ran green, 8 routes walked, non-vacuum guard >= 7) and activity-create.spec.ts
       case 9, but per policy a flagged prohibition is never silently absorbed into a passed
       verdict. LLM-judge verdict: PASS (non-authoritative).
+
   - test: >
       Prohibition P2 (10-01): "No presence, location-watch or 'who is here' signal is
       derived from activity or tag data — ADR-014 excludes it; the ADR-017 §2 geo point
@@ -44,6 +46,7 @@ human_verification:
       signal?" is a semantic call. Codebase evidence: grep over apps/api/src/activity and
       the contracts found zero presence/watch/geolocation code paths; geo is written once
       at create and never updated. LLM-judge verdict: PASS (non-authoritative).
+
   - test: >
       Prohibition P3 (10-04): "The participant payload never carries a field outside the
       six-key foreign view — no birthDate, no e-mail, no my_festival value, no second

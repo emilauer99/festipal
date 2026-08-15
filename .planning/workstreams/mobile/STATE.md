@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 10
-current_phase_name: activities-backend
-status: verifying
-stopped_at: Completed 10-05-PLAN.md (SEC-03 cross-tenant proof pass — phase 10 complete)
-last_updated: "2026-08-15T00:23:57.499Z"
+current_phase: 11
+current_phase_name: Activities
+status: planning
+stopped_at: Phase 10 verified + secured (UAT 3/3, threats_open 0) — ready to ship
+last_updated: "2026-08-15T09:33:34.351Z"
 last_activity: 2026-08-15
-last_activity_desc: Phase 09 complete, transitioned to Phase 10
+last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
@@ -21,12 +21,12 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 9)
+See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 10)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 10 — activities-backend
+**Current focus:** Phase 11 — Activities (UI)
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–9 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 10 (activities-backend) — EXECUTING
-Plan: 5 of 5
-Status: Phase complete — ready for verification
-Last activity: 2026-08-15 — Phase 10 execution started
+Phase: 11 — Activities
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-08-15 — Phase 10 complete, transitioned to Phase 11
 
 ## Shipped
 
@@ -241,16 +241,34 @@ Phasen 10–12 direkt auf ihnen aufbauen:
   underlying data class/friend-graph rule stays explicitly in force. Kein statischer Live-Punkt am
   Live-Tab; er kommt erst mit einem echten Live-Signal (Deferred Follow-Up in `09-UAT.md`).
 
-- [Phase ?]: 10-01: nullable activity_tag.festivalId enforced with two partial unique indexes (global vs per-festival slug scope), not one plain constraint — A plain unique(festivalId, slug) would let two NULL-festivalId rows collide-free, silently allowing duplicate global tag slugs
-- [Phase ?]: 10-01: drop and create migrations generated in two separate drizzle-kit passes — Avoids drizzle-kit's interactive rename-detection prompt when a diff both drops tag/tag_translation and creates activity_tag in the same pass, which would hang an autonomous executor
-- [Phase ?]: 10-02: activity.tagId onDelete restrict, not set null — a title-less activity relies entirely on its tag for the auto-title; set null on tag deletion would silently violate activity_title_or_tag_chk, so deleting a used tag now fails loudly instead
-- [Phase ?]: 10-02: activity_capacity_positive_chk named distinctly from the planned activity_capacity_full_chk (10-03) — avoids a constraint_name collision when 10-03 adds the join-time capacity-full check
-- [Phase ?]: 10-03: activity capacity race closed via a BEFORE INSERT trigger with SELECT...FOR UPDATE on the parent activity row, not a check-then-insert in ActivityService — A service-level check cannot be made race-free under READ COMMITTED without this row lock; the trigger's 'already a participant' branch is required so onConflictDoNothing rejoin idempotency survives the capacity guard
-- [Phase ?]: 10-03: leave stays evidence-free (same 200 body always); delete ('Auflösen') deliberately is not, because activity existence is already public within its own festival — A silent 200 for a non-creator delete would desync their client from a still-live activity instead of protecting a secret
-- [Phase ?]: 10-04: tag on a list/detail row is joined DIRECTLY by id, never through effectiveTagWhere — same discipline loadActivityView already used, so a disabled tag leaves an existing activity's title unchanged (D-04)
-- [Phase ?]: 10-04: summarySelect()/shapeSummaries() is the ONE select+shape pair shared by listForFestival/listMine/getDetail — participantCount/joined as correlated SQL subqueries, never three parallel query implementations
-- [Phase ?]: 10-05: only two real OTP sign-ins suffice for the full cross-tenant proof spec — Discovery/detail carry no membership gate (ADR-014), so either visitor's session queries both festivals' paths
-- [Phase ?]: 10-05: activity_tag_translation's FK to activity_tag is asserted by column/foreign-table name via information_schema, never drizzle's auto-generated constraint name — a column rename would silently re-derive that name and make a hardcoded assertion brittle
+**Phase 10 (Activities Backend) — abgeschlossen 2026-08-15, UAT 3/3 (drei Prohibitions),
+`threats_open: 0` (32/32, `10-SECURITY.md`, L1-Short-Circuit).** Die dauerhaft bindenden
+Entscheidungen (DB-entschiedene Kapazität, zusammengesetzter Tenant-FK, SEC-03 als stehende Gates)
+stehen in der Key-Decisions-Tabelle von `.planning/PROJECT.md`; hier bleibt, was die Phasen 11–12
+direkt bindet:
+
+- **10-01:** Nullable `activity_tag.festivalId` wird von ZWEI partiellen Unique-Indexen bewacht
+  (globaler vs. per-Festival-Slug-Scope) — ein einfaches `unique(festivalId, slug)` ließe zwei
+  NULL-Zeilen kollisionfrei durch. Drop- und Create-Migrationen in zwei getrennten
+  drizzle-kit-Läufen generieren, sonst hängt der interaktive Rename-Prompt einen autonomen Executor.
+- **10-02:** `activity.tagId` ist `onDelete: restrict`, nicht `set null` — eine titellose Aktivität
+  hängt am Tag für den Auto-Titel; Löschen eines benutzten Tags schlägt laut fehl statt
+  `activity_title_or_tag_chk` still zu verletzen. Constraint-Namen kollisionsfrei benannt
+  (`activity_capacity_positive_chk` ≠ `activity_capacity_full_chk`).
+- **10-03:** Kapazitätsrennen im `BEFORE INSERT`-Trigger mit `SELECT … FOR UPDATE` gelöst; der
+  „already a participant"-Zweig ist nötig, damit `onConflictDoNothing`-Rejoin-Idempotenz den Guard
+  überlebt. `leave` bleibt evidence-free (immer gleiche 200); `delete` bewusst NICHT — Existenz der
+  Aktivität ist im eigenen Festival ohnehin öffentlich, eine stille 200 würde nur den Client desyncen.
+- **10-04:** Tag an einer List-/Detail-Zeile wird DIREKT per id gejoint, nie über
+  `effectiveTagWhere` — ein deaktivierter Tag lässt den Titel bestehender Aktivitäten unverändert
+  (D-04). `summarySelect()`/`shapeSummaries()` ist DAS eine Select+Shape-Paar für
+  `listForFestival`/`listMine`/`getDetail`; `participantCount`/`joined` als korrelierte
+  SQL-Subqueries, nie drei parallele Query-Implementierungen.
+- **10-05:** Zwei echte OTP-Sign-ins genügen für den vollen Cross-Tenant-Beweis (Discovery/Detail
+  sind gate-less, ADR-014). FKs werden per Spalten-/Fremdtabellen-Name über `information_schema`
+  asserted, nie über drizzles auto-generierten Constraint-Namen. **Der Verbotslisten-Contract-Walk
+  (kein client-gesetzter Actor/Scope) und der `information_schema`-Mandantenspalten-Walk sind
+  stehende Gates: Phase 11/12-Routen und -Tabellen laufen automatisch dagegen.**
 
 ### Blockers/Concerns
 
@@ -273,7 +291,10 @@ Phasen 10–12 direkt auf ihnen aufbauen:
 
 - **SEC-02 ist eine vererbte Pflicht:** festival-scoped Reads sind `festivalId`-isoliert
   (Baseline: `apps/api/test/festival-isolation.spec.ts`). Der Cross-Tenant-Test ist bei **jeder**
-  neuen tenant-scoped Tabelle neu zu ziehen.
+  neuen tenant-scoped Tabelle neu zu ziehen. **Seit Phase 10 mechanisch gestützt:**
+  `activity-tenant-structure.spec.ts` läuft als stehendes Gate über `information_schema` (jede neue
+  Tabelle braucht Mandantenspalte oder benannte Ausnahme) und über den Contract-Walk (keine neue
+  Route mit client-gesetztem Actor/Scope) — der Verhaltensbeweis pro Tabelle bleibt trotzdem Pflicht.
 
 - **Kein RN-Component-Test-Harness in `apps/mobile`.** Der Vitest-Runner ist node-env und deckt nur
   reine `lib/`-Logik. Jede Screen-Wahrheit haengt an On-Device-UAT — das ist die strukturelle
@@ -350,27 +371,25 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T00:23:57.475Z
-Stopped at: Completed 10-05-PLAN.md (SEC-03 cross-tenant proof pass — phase 10 complete)
+Last session: 2026-08-15T10:15:00Z
+Stopped at: Phase 10 complete (UAT 3/3, threats_open 0, VERIFICATION passed), ready to ship / plan Phase 11
 Resume file: None
 
 ## Operator Next Steps
 
-- **Phase 09 ist KOMPLETT (2026-08-15):** UAT Runde 2 3/3 am Geraet bestanden (Runde 1: 6/8 + zwei
-  per 09-07 geschlossene Gaps), `09-SECURITY.md` mit `threats_open: 0` (32/32), VERIFICATION
-  `passed`, ROADMAP/STATE/PROJECT/REQUIREMENTS nachgezogen, alle acht Phase-9-`WINDOWS.md`-Eintraege
-  geschlossen. Naechster Schritt: **`/gsd-ship 9 --ws mobile`** — Branch
-  `feat/mobile-phase-09-nav-shell` als PR gegen `main` (Review laeuft im Ship-Flow).
+- **Phase 10 ist KOMPLETT (2026-08-15):** UAT 3/3 (drei Prohibitions bestaetigt),
+  `10-SECURITY.md` mit `threats_open: 0` (32/32), VERIFICATION `passed`, Transition gelaufen
+  (ROADMAP/STATE/PROJECT nachgezogen; SEC-03 war schon in 10-05 in REQUIREMENTS.md abgehakt).
+  Naechster Schritt: **`/gsd-ship 10 --ws mobile`** — PR gegen `main` (Review laeuft im Ship-Flow).
 
-- Danach: **`/gsd-execute-phase 10 --ws mobile`** — die 5 Plaene (5 Wellen) fuer das
-  Activities-Backend liegen bereits; Kollisionsregel beachten (Schema-Abstimmung mit dem
-  `admin`-Stream: Activity-Tabellen landen aus DIESEM Stream, admin bleibt additiv).
+- Danach: **`/gsd-discuss-phase 11 --ws mobile`** — Activities-UI (ACT-01…ACT-06 werden dort
+  user-observable); kein CONTEXT.md vorhanden, also erst diskutieren, dann planen.
 
-- Fuer Phase 9 noch moeglich: `/gsd-ui-review 9 --ws mobile` (6-Saeulen-Audit der neuen
-  Navigation/Cashless-Screens).
+- Fuer Phase 12 (WS-Gateway + Redis): `research` einschalten — steht so in den
+  Milestone-Entscheidungen.
 
-- Fuer Phase 8 noch moeglich: `/gsd-ui-review 8 --ws mobile` (6-Saeulen-Audit der Friends-Screens)
-- Offen aus v1.0: `/gsd-ui-review 06 --ws mobile`.
+- Offene UI-Reviews (optional): `/gsd-ui-review 9 --ws mobile` (Navigation/Cashless),
+  `/gsd-ui-review 8 --ws mobile` (Friends), `/gsd-ui-review 06 --ws mobile` (aus v1.0).
 
 ## Performance Metrics
 
