@@ -5,8 +5,8 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: "Phase 10 shipped — PR #17"
-stopped_at: Phase 10 verified + secured (UAT 3/3, threats_open 0) — ready to ship
-last_updated: "2026-08-15T09:44:34.337Z"
+stopped_at: Phase 11 context gathered
+last_updated: "2026-08-15T10:09:51.087Z"
 last_activity: 2026-08-15
 progress:
   total_phases: 6
@@ -375,9 +375,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T10:15:00Z
-Stopped at: Phase 10 complete (UAT 3/3, threats_open 0, VERIFICATION passed), ready to ship / plan Phase 11
-Resume file: None
+Last session: 2026-08-15T10:09:51.057Z
+Stopped at: Phase 11 context gathered
+Resume file: .planning/workstreams/mobile/phases/11-activities/11-CONTEXT.md
 
 ## Operator Next Steps
 
