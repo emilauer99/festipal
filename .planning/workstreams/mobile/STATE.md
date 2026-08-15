@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: executing
-stopped_at: Completed 11-03-PLAN.md (activity-form.ts + Input/Chip/CapacityField/DayTimeField)
-last_updated: "2026-08-15T16:08:32.555Z"
+stopped_at: Completed 11-04-PLAN.md (activity-create screen, LocationCaptureBlock, useActivityMutations, chrome registration, tab CTA)
+last_updated: "2026-08-15T16:30:02.469Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 27
-  completed_plans: 25
+  completed_plans: 26
   percent: 67
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 11 (Activities) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 Status: Ready to execute
 Last activity: 2026-08-15 — Phase 11 execution started
 
@@ -278,6 +278,9 @@ direkt bindet:
 - [Phase ?]: Chip's selected state (fillBrandQuiet+borderBrand+primary text) extends past SegmentedControl.itemSelected's literal roles per UI-SPEC Color item 3 — SegmentedControl is followed for the fill role only
 - [Phase ?]: resolveJoinability checks joined before started/full so a joined-but-started activity still routes to Leave, not a disabled Join button
 - [Phase ?]: The two selection-error catalog strings (Choose a day./Choose a time.) are deferred to 11-04 — DayTimeField takes them as pre-built strings and owns no validation copy of its own
+- [Phase ?]: 11-04: useActivityMutations' onSuccess callback carries the raw mutation result alongside targetId (not just targetId) so the create screen can navigate using the freshly-created Activity's own id
+- [Phase ?]: 11-04: activity-create.tsx duplicates a small local Y/M/D date parser instead of exporting DayTimeField's parseDateOnlyLocal — DayTimeField.tsx is outside this plan's files_modified scope
+- [Phase ?]: 11-04: activity-create.tsx reads useFestivalContext() at root-level sibling position, following 11-01's activity-detail.tsx precedent — re-architecting festival-context propagation for root-level push screens is out of scope; worth a specific on-device UAT check since FestivalContextProvider technically only wraps the nested (festival) subtree
 
 ### Blockers/Concerns
 
@@ -380,8 +383,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T16:08:32.521Z
-Stopped at: Completed 11-03-PLAN.md (activity-form.ts + Input/Chip/CapacityField/DayTimeField)
+Last session: 2026-08-15T16:30:02.439Z
+Stopped at: Completed 11-04-PLAN.md (activity-create screen, LocationCaptureBlock, useActivityMutations, chrome registration, tab CTA)
 Resume file: None
 
 ## Operator Next Steps
@@ -428,3 +431,4 @@ Resume file: None
 | Phase 10 P05 | ~18min | 3 tasks | 3 files |
 | Phase 11 P02 | ~25min | 3 tasks | 7 files |
 | Phase 11 P03 | ~25min | 3 tasks | 8 files |
+| Phase 11 P04 | ~12min | 3 tasks | 10 files |

@@ -290,7 +290,7 @@ open an activity's location as a route in an external maps app
 presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
 user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
-**Plans**: 3/5 plans executed in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
+**Plans**: 4/5 plans executed in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
 kollidieren in keiner Datei), danach serialisiert die geteilte Lingui-Katalogdatei die drei
 UI-Scheiben
 
@@ -306,7 +306,7 @@ Plans:
 
 **Wave 3** *(blockiert auf 11-02 + 11-03)*
 
-- [ ] 11-04-PLAN.md — Create-/Klon-Screen, `LocationCaptureBlock` mit Drei-Zustands-Berechtigung, `useActivityMutations`, zweite Chrome-Registrierung, CTA im Tab (ACT-01/ACT-05/ACT-06, D-05…D-08, D-13)
+- [x] 11-04-PLAN.md — Create-/Klon-Screen, `LocationCaptureBlock` mit Drei-Zustands-Berechtigung, `useActivityMutations`, zweite Chrome-Registrierung, CTA im Tab (ACT-01/ACT-05/ACT-06, D-05…D-08, D-13)
 
 **Wave 4** *(blockiert auf 11-04)*
 
