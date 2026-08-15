@@ -182,6 +182,10 @@ msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WL
 msgid "Cancel"
 msgstr "Abbrechen"
 
+#: components/CapacityField.tsx
+msgid "Capacity"
+msgstr "Kapazität"
+
 #: app/(festival)/f/[festivalSlug]/index.tsx
 #: components/AppHeader.tsx
 msgid "Cashless"
@@ -210,6 +214,10 @@ msgstr "prüfe…"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Choose a date"
 msgstr "Datum wählen"
+
+#: components/DayTimeField.tsx
+msgid "Choose a time"
+msgstr "Uhrzeit wählen"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Choose photo"
@@ -268,6 +276,10 @@ msgstr "Geburtsdatum"
 #: app/(tabs)/friends.tsx
 msgid "Decline"
 msgstr "Ablehnen"
+
+#: components/CapacityField.tsx
+msgid "Decrease capacity"
+msgstr "Kapazität verringern"
 
 #: app/(auth)/verify.tsx
 #~ msgid "Didn't get a code? Resend"
@@ -329,6 +341,10 @@ msgstr "Stattdessen Handle eingeben"
 #: components/AppHeader.tsx
 msgid "Festival"
 msgstr "Festival"
+
+#: components/DayTimeField.tsx
+msgid "Festival dates aren't set yet, so no day can be chosen here."
+msgstr "Die Festivaltermine stehen noch nicht fest — hier lässt sich noch kein Tag wählen."
 
 #: app/(festival)/index.tsx
 #~ msgid "Festival home"
@@ -414,6 +430,10 @@ msgstr "Handle"
 msgid "In"
 msgstr "Dabei"
 
+#: components/CapacityField.tsx
+msgid "Increase capacity"
+msgstr "Kapazität erhöhen"
+
 #: app/profil.tsx
 msgid "Instagram, coming soon"
 msgstr "Instagram, kommt bald"
@@ -433,6 +453,10 @@ msgstr "Festival verlassen"
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
 msgstr "Lass dein Gegenüber diesen Code scannen."
+
+#: components/CapacityField.tsx
+msgid "Limit it"
+msgstr "Begrenzen"
 
 #: components/FloatingNav.tsx
 msgid "Live"
@@ -546,6 +570,10 @@ msgstr "Noch kein Festival gespeichert"
 #: app/(tabs)/festivals.tsx
 msgid "No festivals yet"
 msgstr "Noch keine Festivals"
+
+#: components/CapacityField.tsx
+msgid "No limit"
+msgstr "Ohne Limit"
 
 #: app/(tabs)/friends.tsx
 msgid "No one found. Check the @handle spelling."
@@ -691,6 +719,10 @@ msgstr "quiks empfehlen, kommt bald"
 #: app/(tabs)/mehr.tsx
 msgid "Recommending is coming soon."
 msgstr "Empfehlen kommt bald."
+
+#: components/CapacityField.tsx
+msgid "Remove limit"
+msgstr "Limit entfernen"
 
 #: app/(tabs)/friends.tsx
 #: components/RelationAction.tsx
@@ -989,6 +1021,10 @@ msgstr "Willkommen"
 #: app/index.tsx
 #~ msgid "Welcome to quiks"
 #~ msgstr "Willkommen bei quiks"
+
+#: components/DayTimeField.tsx
+msgid "When"
+msgstr "Wann"
 
 #: app/(tabs)/mehr.tsx
 msgid "When someone adds you to their crew."
