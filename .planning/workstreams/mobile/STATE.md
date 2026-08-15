@@ -4,16 +4,16 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
-status: "Phase 10 shipped — PR #17"
+status: executing
 stopped_at: Phase 11 UI-SPEC approved
-last_updated: "2026-08-15T11:37:50.395Z"
+last_updated: "2026-08-15T12:18:36.283Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 27
-  completed_plans: 22
+  completed_plans: 23
   percent: 67
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 10)
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 11 — Activities (UI)
+**Current focus:** Phase 11 — Activities
 6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–9 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 11 — Activities
-Plan: Not started
-Status: Phase 10 shipped — PR #17
-Last activity: 2026-08-15 — Phase 11 planning complete
+Phase: 11 (Activities) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
+Last activity: 2026-08-15 — Phase 11 execution started
 
 ## Shipped
 

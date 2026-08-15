@@ -290,14 +290,14 @@ open an activity's location as a route in an external maps app
 presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
 user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
-**Plans**: 5 plans in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
+**Plans**: 1/5 plans executed in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
 kollidieren in keiner Datei), danach serialisiert die geteilte Lingui-Katalogdatei die drei
 UI-Scheiben
 
 Plans:
 **Wave 1**
 
-- [ ] 11-01-PLAN.md — **Tracer**: Aktivitäten-Tab end-to-end — `activityKeys`, `ActivityCard`, beide Sektionen aus `listActivities`/`listMyActivities`, Detail-Push-Screen im Lesepfad plus seine Chrome-Registrierung (ACT-02, D-01…D-04)
+- [x] 11-01-PLAN.md — **Tracer**: Aktivitäten-Tab end-to-end — `activityKeys`, `ActivityCard`, beide Sektionen aus `listActivities`/`listMyActivities`, Detail-Push-Screen im Lesepfad plus seine Chrome-Registrierung (ACT-02, D-01…D-04)
 - [ ] 11-02-PLAN.md — `expo-location` durch das Paket-Legitimitäts-Gate (T-11-SC, blockierend), Berechtigungs-Begründung, nativer Rebuild, plus `buildRouteUri` als reiner Karten-Handoff (ACT-05, D-13/D-14)
 
 **Wave 2** *(blockiert auf 11-01 — geteilte Kataloge)*
