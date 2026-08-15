@@ -155,17 +155,23 @@ export default function FestivalActivitiesScreen() {
   );
   const listState = computeSectionState(listQuery.status, listQuery.data);
 
+  // Captured after the guard so the hoisted push closures below carry a
+  // definitely-typed slug.
+  const festivalSlug = festival.slug;
+
   // The one navigation both sections share (D-01/UI-SPEC E9) — a tap on
   // either section's card opens the SAME registered `/activity-detail` push
-  // screen (Task 3), keyed by `activityId`.
+  // screen (Task 3), keyed by `activityId`. Both pushes forward the slug:
+  // the root-Stack push screens sit OUTSIDE this layout's provider, so they
+  // re-resolve the festival from the gate's cache instead of this context.
   function openActivityDetail(activityId: string) {
-    router.push({ pathname: '/activity-detail', params: { activityId } });
+    router.push({ pathname: '/activity-detail', params: { activityId, festivalSlug } });
   }
 
   // 11-04 Task 3 — plain PUSH (not replace): the tab stays on the back
   // stack, so leaving the create form without submitting returns here.
   function openActivityCreate() {
-    router.push('/activity-create');
+    router.push({ pathname: '/activity-create', params: { festivalSlug } });
   }
 
   return (

@@ -9,6 +9,7 @@ import type { Activity, ActivityDetail, ActivityGeo, ActivityTag } from '@quiks/
 import { apiClient } from '../lib/api-client';
 import { activityKeys, unwrapOk } from '../lib/activity-queries';
 import { buildClonePrefill, canSubmitActivity } from '../lib/activity-form';
+import { findCachedFestivalBySlug } from '../lib/festival-queries';
 import { useFestivalContext } from '../lib/festival-context';
 import { CREATE_ACTIVITY_TARGET_ID, useActivityMutations } from '../lib/use-activity-mutations';
 import { fontFamilyForRole } from '../lib/fonts';
@@ -33,7 +34,7 @@ const PENDING_OPACITY = 0.45;
 
 const DATE_ONLY_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
 
-function normalizeCloneFromId(raw: string | string[] | undefined): string | undefined {
+function normalizeParam(raw: string | string[] | undefined): string | undefined {
   const value = Array.isArray(raw) ? raw[0] : raw;
   const trimmed = (value ?? '').trim();
   return trimmed.length > 0 ? trimmed : undefined;
@@ -88,13 +89,22 @@ export default function ActivityCreateScreen() {
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
   const buttonFont = fontFamilyForRole('title3', fontsReady);
 
-  // Same layout-gate-provides-context idiom `activity-detail.tsx` (11-01)
-  // already establishes for this same root-level sibling position — the
-  // screen never runs its own `festivalKeys.detail` query.
-  const festival = useFestivalContext();
+  // Root-Stack sibling position (same as `activity-detail.tsx`): the
+  // (festival) layout's provider does not wrap this screen, so the context
+  // read alone stays `undefined` here. The pushing sites forward the slug
+  // and the gate's cached resolution supplies the festival — the screen
+  // still never runs its own `festivalKeys.detail` query.
   const queryClient = useQueryClient();
-  const params = useLocalSearchParams<{ cloneFromId?: string | string[] }>();
-  const cloneFromId = normalizeCloneFromId(params.cloneFromId);
+  const params = useLocalSearchParams<{
+    cloneFromId?: string | string[];
+    festivalSlug?: string | string[];
+  }>();
+  const cloneFromId = normalizeParam(params.cloneFromId);
+  const festivalSlug = normalizeParam(params.festivalSlug);
+  const contextFestival = useFestivalContext();
+  const festival =
+    contextFestival ??
+    (festivalSlug ? findCachedFestivalBySlug(queryClient, festivalSlug) : undefined);
 
   // D-12/D-15 — read ONCE, at mount, from the query cache
   // (`activityKeys.detail`, the exact key `activity-detail.tsx`'s own

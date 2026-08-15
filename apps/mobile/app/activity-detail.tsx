@@ -2,13 +2,14 @@ import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
 import type { ActivityDetail } from '@quiks/contracts';
 
 import { apiClient } from '../lib/api-client';
 import { activityKeys, unwrapOk } from '../lib/activity-queries';
+import { findCachedFestivalBySlug } from '../lib/festival-queries';
 import { useFestivalContext } from '../lib/festival-context';
 import { i18n } from '../lib/i18n';
 import { fontFamilyForRole } from '../lib/fonts';
@@ -21,7 +22,7 @@ import { useHeaderClearance } from '../components/AppHeader';
 // mode-invariant scales stay destructured at module scope.
 const { typeRoles, layout, spacingScale } = tokens;
 
-function normalizeActivityId(raw: string | string[] | undefined): string {
+function normalizeParam(raw: string | string[] | undefined): string {
   const value = Array.isArray(raw) ? raw[0] : raw;
   return (value ?? '').trim();
 }
@@ -73,9 +74,22 @@ export default function ActivityDetailScreen() {
   const labelFont = fontFamilyForRole('label', fontsReady);
   const monoFont = fontFamilyForRole('mono', fontsReady);
 
-  const festival = useFestivalContext();
-  const params = useLocalSearchParams<{ activityId?: string | string[] }>();
-  const activityId = normalizeActivityId(params.activityId);
+  const queryClient = useQueryClient();
+  const params = useLocalSearchParams<{
+    activityId?: string | string[];
+    festivalSlug?: string | string[];
+  }>();
+  const activityId = normalizeParam(params.activityId);
+  const festivalSlug = normalizeParam(params.festivalSlug);
+  // Root-Stack sibling position: the (festival) layout's provider does NOT
+  // wrap this screen, so the context read alone stays `undefined` here. The
+  // pushing card forwards the slug and the gate's cached resolution supplies
+  // the festival — warm by construction, since a card can only be tapped
+  // after the gate resolved exactly this festival.
+  const contextFestival = useFestivalContext();
+  const festival =
+    contextFestival ??
+    (festivalSlug !== '' ? findCachedFestivalBySlug(queryClient, festivalSlug) : undefined);
 
   const detailQuery = useQuery({
     queryKey: activityKeys.detail(festival?.id ?? '', activityId),
