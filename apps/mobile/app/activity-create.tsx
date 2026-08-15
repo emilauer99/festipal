@@ -152,7 +152,13 @@ export default function ActivityCreateScreen() {
       // from the fresh detail screen returns to the tab, never to the
       // now-empty form (also closes the ACT-01 idempotency must_have: a
       // double-tap on the submit button can never re-open this screen).
-      router.replace({ pathname: '/activity-detail', params: { activityId: created.id } });
+      // The slug MUST ride along (CR-01): the detail screen is a root-Stack
+      // sibling too, and without it its festival resolution — and with it
+      // the whole detail query — never enables.
+      router.replace({
+        pathname: '/activity-detail',
+        params: { activityId: created.id, festivalSlug: festival?.slug ?? '' },
+      });
     },
   });
 
