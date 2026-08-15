@@ -1,10 +1,11 @@
 ---
 phase: 11
 slug: activities
-status: draft
+status: approved
 shadcn_initialized: false
 preset: none
 created: 2026-08-15
+reviewed_at: 2026-08-15
 ---
 
 # Phase 11 — UI Design Contract: Activities
@@ -414,28 +415,126 @@ export const activityKeys = {
 
 ## UI Considerations
 
-Applicable state considerations resolved: 15 covered, 3 backstop, 0 unresolved.
+Derived by the ui-consideration-probe over the 9 surfaces this phase introduces, then resolved
+against the contracts above. Element kinds were confirmed with the user (no `media` surface exists
+this phase — the photo block is deferred per D-06; participant avatars ride `PersonRow`, already
+covered by Phase 8).
 
-| Category | Element(s) | Status | Resolution / Reason |
-|----------|------------|--------|---------------------|
-| empty | "Deine Aktivitäten" section | ✅ covered | Sectional empty names its precondition + CTA (Copywriting Contract row "Empty — Deine Aktivitäten") — never `PlaceholderScreen` (too heavy for a sub-section) |
-| empty | "Wer kommt mit?" section | ✅ covered | Names the precondition + invites the visitor to be first (Copywriting Contract row) |
-| empty | Participant list (only the creator seated) | ✅ covered | "Noch niemand außer dir." row, never a bare empty list |
-| empty | Description field on detail (never set) | ✅ covered | Element is omitted entirely — no dash, no "not set" placeholder (`friend-detail.tsx` `identityLine` precedent) |
-| loading | List/detail/tags fetch | ✅ covered | Standard reused "Wird geladen…" — no skeleton introduced this phase (matches every other list screen's current treatment) |
-| error | Transport failure (list/detail/tags/mutations) | ✅ covered | Reused "Server nicht erreichbar…" / "Konnte nicht gespeichert werden…" copy — no new error vocabulary invented |
-| offline | Create/join/leave/dissolve while offline | ✅ covered | Mutation rejects, pending state clears, generic failure copy shows — explicitly no mutation queue (Query Key & Cache Contract, REQUIREMENTS Out of Scope) |
-| populated | `ActivityCard` in both sections | ✅ covered | Full field set specified (Component Inventory) |
-| zero-one-many | Tag chips (0 tags configured for a festival) | 🧪 backstop | `listActivityTags` can return `[]` (SEC-03 default) — the create form's tag row must render as an empty wrap without breaking layout when no tags exist; not device-verified until UAT |
-| zero-one-many | Participants (1 vs many) | ✅ covered | "N sind dabei" is a plural-safe ICU pattern (same shape as the existing `{friendCount, plural, ...}` msgids) |
-| overflow | Long activity title in `ActivityCard` / detail heading | ✅ covered | 1-line truncate on the card (`numberOfLines={1}`), unrestricted wrap on the detail heading (matches `title2` heading precedent — `PlaceholderScreen` deliberately never truncates its heading either) |
-| overflow | Long free-text location | ✅ covered | Same truncate-in-card / wrap-in-detail split as the title |
-| long-text | Description textarea (near the 2000-char contract max) | 🧪 backstop | No client-side character counter specified this phase — the field simply accepts up to the contract's `max(2000)` and the server 400s past it; a counter is a nice-to-have, not required by any ACT requirement — held out for UAT to flag if it reads as a trap |
-| long-text | Many joined activities in "Deine Aktivitäten" (10+) | 🧪 backstop | No pagination this phase (`REQUIREMENTS.md` Out of Scope: "Pagination"); the section is a plain scroll — acceptable for the expected activity count per visitor, but not device-verified at volume |
-| full/blocked | Join button when activity is full or started | ✅ covered | D-10 — real `disabled` state naming the exact reason before submit, 409 kept only as the race fallback |
-| destructive | Dissolve | ✅ covered | Native confirm dialog naming the exact consequence (participant count), matches `friend-detail.tsx` |
-| permission-denied | Location capture | ✅ covered | Graceful three-state pattern, activity fully usable without it (Native Capability Contract) |
-| partial | Activity with `capacity: null` | ✅ covered | Spots-hint half of the participants line is omitted entirely (D-03), never rendered as "∞" or a dash |
+**Coverage: 66 applicable — 53 resolved (explicit) · 6 resolved (backstop) · 7 dismissed · 0 unresolved.**
+
+Empty-state and error-state COPY is not restated here — it lives in `## Copywriting Contract` and is
+referenced by row. This section covers shape-rooted STATE coverage.
+
+### E1 — Activities tab (list screen) · list-collection, nav, interactive-control
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | Each section carries its own sectional empty copy (Copywriting rows "Empty — Deine Aktivitäten" / "Empty — Wer kommt mit?") — never `PlaceholderScreen` (full-screen only, too heavy for a sub-section), never a bare gap. The "Aktivität starten" CTA stays visible above both sections in every state. |
+| loading | ✅ resolved (explicit) | Reused "Wird geladen…" msgid; no skeleton introduced this phase (matches every other list screen). On cold start the persisted TanStack cache paints last-known content first, so this text is only reached on a genuinely first-ever fetch. |
+| error | ✅ resolved (explicit) | Reused transport-error msgid, which itself names the fix. The CTA stays tappable — a failed list read never blocks creating an activity. |
+| populated | ✅ resolved (explicit) | Two ordered sections of `ActivityCard` rows, "Deine Aktivitäten" first, "Wer kommt mit?" second (D-01); full field set per Component Inventory. |
+| partial | ✅ resolved (explicit) | The two sections resolve independently: `mine` present while `list` is still loading or failed paints the section that has data plus the state copy for the one that doesn't. No all-or-nothing screen state. |
+| overflow | ✅ resolved (explicit) | Plain vertical scroll, no pagination (`REQUIREMENTS.md` Out of Scope). `useHeaderClearance()` + `SafeAreaView edges={['bottom']}` keep the first and last row clear of the chrome. |
+| zero-one-many | 🧪 resolved (backstop) | "Deine Aktivitäten" at 10+ joined activities is an unbounded scroll with no pagination — acceptable for the expected per-visitor volume, but not device-verified at volume. *verification: backstop* |
+| long-text | ✅ resolved (explicit) | Section headings are static catalog strings; every variable-length string on this screen lives inside `ActivityCard` and follows E2's truncation rule. |
+
+### E2 — `ActivityCard` (shared list row) · list-collection, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ⛔ dismissed | A card only exists for an activity that exists. The zero-activity case is E1's sectional empty state, not a card state. |
+| loading | ⛔ dismissed | The card has no fetch of its own — it renders from the parent list query. In-flight join/leave is a per-control pending state on E3, not a card-level loading state. |
+| error | ⛔ dismissed | Same reason: no own fetch. Transport failure is handled once, at E1. |
+| populated | ✅ resolved (explicit) | Title (`bodyStrong`) + meta line (`countdown`, day·time) + tag chip + "Gestartet" fact-chip (own section only) + participants line + "Dabei" badge, on the `r-card`/`surfaceCard`/`borderSubtle` shell shared with `PersonRow`/`FestivalCard`. |
+| partial | ✅ resolved (explicit) | `capacity: null` omits the spots-hint half of the participants line entirely (D-03) — never "∞", never a dash. An absent subtitle or tag omits its element outright (`friend-detail.tsx` `identityLine` rule). |
+| overflow | ✅ resolved (explicit) | `numberOfLines={1}` truncation on both the title and the free-text location within the card. |
+| zero-one-many | ✅ resolved (explicit) | "{n} sind dabei" is a plural-safe ICU pattern (same shape as the existing `{friendCount, plural, …}` msgids). The zero-remaining edge has its own copy row ("Letzter Platz"). |
+| long-text | ✅ resolved (explicit) | Covered by the same 1-line truncate. The UGC title is never Lingui-wrapped (ADR-012/020) and never reflows to a second line on the card. |
+
+### E3 — Activity detail screen · list-collection, interactive-control, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | Absent optional fields (subtitle, description, free-text location) are omitted entirely — no dash, no "nicht gesetzt" placeholder. The only-creator-seated case renders "Noch niemand außer dir." rather than a bare empty list. |
+| loading | ✅ resolved (explicit) | Reused "Wird geladen…". On cold start the persisted cache paints the last-known seat count and joined-state instantly, then the screen's `useQuery` reconciles — Success Criterion 2's "survives an app restart", no new persistence code. |
+| error | ✅ resolved (explicit) | Reused transport-error copy for the detail fetch; reused generic mutation-failure copy for join/leave/dissolve; the 409 join race has its own specific row ("Der letzte Platz ist gerade weg…"). |
+| populated | ✅ resolved (explicit) | Content heading (UGC title) + optional subtitle/description + day·time + meeting-point block + exactly one prominent `mono` seat figure + `PersonRow` participant list in `joinedAt` order. |
+| partial | ✅ resolved (explicit) | `geo: null` → the meeting-point block renders the free-text location only, with no route affordance (D-16); both absent → the block renders nothing rather than claiming a location that isn't there. `capacity: null` → the unlimited seat-line variant. |
+| overflow | ✅ resolved (explicit) | The content heading wraps unrestricted (`title2` heading precedent — `PlaceholderScreen` deliberately never truncates its heading either); the participant list scrolls with the screen. |
+| zero-one-many | ✅ resolved (explicit) | Participants render in `participants` array order (`joinedAt` ascending), which puts the creator first by construction — no second sort key, no "creator" badge. The 1-participant case has its dedicated copy row; the seat line is plural-safe. |
+| long-text | ✅ resolved (explicit) | A long UGC description wraps freely on the detail screen — no clamp and no "mehr anzeigen" affordance this phase. The free-text location wraps here rather than truncating (the inverse of its card treatment). |
+
+### E4 — Activity create / clone form · form, list-collection, interactive-control, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | The unfilled form is the default state: labels + placeholders per the Copywriting Contract, submit ("Los, posten") disabled until `canSubmitActivity(form)` passes. A clone whose cached source is missing falls back to exactly this empty form — never a broken or crashing screen. |
+| loading | ✅ resolved (explicit) | The tag row's fetch shows the reused "Wird geladen…"; on submit the button takes the existing pending treatment (`PENDING_OPACITY`, control disabled) per the `useFriendMutations` idiom. No optimistic cache write — this phase is online-only for mutations (`REQUIREMENTS.md` Out of Scope). |
+| error | ✅ resolved (explicit) | Validation errors surface inline below their own field at submit-tap time, never on blur and never as a toast ("Gib einen Titel ein oder wähle ein Tag." / "Wähle einen Tag." / "Wähle eine Uhrzeit."). A failed POST shows the reused generic mutation-failure copy and clears the pending state — entered values are never discarded. |
+| populated | ✅ resolved (explicit) | Clone mode prefills `tag`/`title`/`subtitle`/`description`/`location`/`capacity` verbatim and deliberately drops `startTime` + `geo` (D-12/D-15). The prefilled state IS the clone signal — no banner, no "Cloned from…" copy (explicit scope decision, do not "fix" it back). |
+| partial | ✅ resolved (explicit) | The tag-or-title rule is the one partial-completeness gate: a selected tag makes the title optional and reveals the Subtitle field; clearing the tag makes the title required again. `canSubmitActivity` in `lib/activity-form.ts` is the single client-side home of that rule, mirroring (never duplicating) the contract's `createActivityBodySchema.refine`. |
+| overflow | ✅ resolved (explicit) | The form scrolls; the description textarea grows/scrolls inside its own field rather than pushing the submit button off-screen. |
+| zero-one-many | ✅ resolved (explicit) | Delegated — the form's only collections are the day chips (E7) and tag chips (E8), each covered there. |
+| long-text | 🧪 resolved (backstop) | The description accepts up to the contract's `max(2000)` with no client-side character counter this phase; the server 400s past it. No ACT requirement demands a counter — held out for UAT to flag if it reads as a trap. *verification: backstop* |
+
+### E5 — `LocationCaptureBlock` (Treffpunkt / geo capture, D-13) · form, interactive-control, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | The default state — no point captured, no text — renders the free-text input with its placeholder plus the "Standort anheften" button. A geo point is never required for a valid activity (ACT-05). |
+| loading | ✅ resolved (explicit) | The `pending` permission sub-state shows the standard "Wird geladen…". Permission is requested exactly once per mount via a `useRef` guard (the `CameraScanPanel` pattern) — never re-prompted on every render. |
+| error | 🧪 resolved (backstop) | A `getCurrentPositionAsync()` that rejects for a non-permission reason (no fix, timeout, location services off at OS level) is not separately specified: the block must fall back to the un-captured state and leave the free-text input fully usable rather than leaving a dead spinner. Verify on device at UAT. *verification: backstop* |
+| partial | ✅ resolved (explicit) | Free-text location without a geo point is a fully valid, fully supported state — it simply yields no route affordance on the detail screen. Denial is completely graceful; nothing in the form is blocked by it. |
+| overflow | ✅ resolved (explicit) | The captured-point chip carries the static "Standort angeheftet" label, never raw coordinates, so its width is bounded by catalog copy; the free-text input scrolls horizontally within its own field. |
+| long-text | ✅ resolved (explicit) | The denied-permission callout body is a deliberately long no-tracking sentence — it wraps fully inside its `r-card` callout and is never truncated. The ADR-017 §2 reassurance ("kein Tracking, keine Standortverfolgung") is the point of that state; clipping it would defeat it. |
+
+### E6 — `CapacityField` (D-08) · form, list-collection, interactive-control, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | The default is the "Ohne Limit" row plus a "Begrenzen" tap target — the field is never blank and never opens in the stepper state. |
+| loading | ⛔ dismissed | Purely local component state; no fetch exists to be in flight. |
+| error | ⛔ dismissed | The stepper's floor of 1 makes an invalid value unreachable — there is no error state to render. |
+| populated | ✅ resolved (explicit) | Stepper active = −/+ 36px circles around a `mono` value plus a "Limit entfernen" text link back to unlimited. |
+| partial | ✅ resolved (explicit) | Only a maximum exists. There is deliberately no minimum-participants stepper (D-06 — `minParticipants` is deferred), so a "max set, min unset" partial state cannot occur. |
+| overflow | ✅ resolved (explicit) | Fixed single-row layout in both states; the value is a small integer in `mono` with no growth path. |
+| zero-one-many | ✅ resolved (explicit) | The floor is 1, so 0 is unreachable. The `null` case is the "Ohne Limit" default, not a zero value. |
+| long-text | ⛔ dismissed | All copy is static catalog strings plus a small integer — no variable-length text passes through this component. |
+
+### E7 — `DayTimeField` (D-07) · form, list-collection, interactive-control
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | ✅ resolved (explicit) | Neither day nor time is preselected; each surfaces its own submit-time inline error. Clone mode deliberately arrives in exactly this empty state (D-15 — `startTime` is dropped on purpose, "Zeit geleert" is the intended signal). |
+| loading | ⛔ dismissed | The day range comes from `useFestivalContext()`, already resident in memory — no fetch of its own. |
+| error | ✅ resolved (explicit) | The two validation errors ("Wähle einen Tag." / "Wähle eine Uhrzeit."), inline below their own block at submit-tap time. |
+| populated | ✅ resolved (explicit) | One selected day chip (single-select) plus a chosen time in the already-installed `@react-native-community/datetimepicker` field — no new native package is needed for time. |
+| partial | ✅ resolved (explicit) | Day-without-time and time-without-day are both reachable intermediate states, and each blocks submit with its own specific message rather than one generic one. |
+| overflow | ✅ resolved (explicit) | The day chip row wraps onto further lines (no horizontal scroll), so a long festival's chips reflow rather than hide. |
+| zero-one-many | 🧪 resolved (backstop) | A single-day festival yields exactly one chip; a multi-week one yields many. The wrap must read correctly at both ends — not device-verified until UAT. *verification: backstop* |
+| long-text | ✅ resolved (explicit) | Day chip labels are `Intl`-formatted short dates, bounded by locale — no UGC reaches this component. |
+
+### E8 — Tag chip row (create form) · form, list-collection, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| empty | 🧪 resolved (backstop) | `listActivityTags` may legitimately return `[]` (SEC-03 default). The row must then render as an empty wrap without breaking the form's layout and without inventing "keine Tags" copy — leaving the title-required path (D-05) as the only route. Not device-verified until UAT. *verification: backstop* |
+| loading | ✅ resolved (explicit) | Reused "Wird geladen…" while the tags query is in flight; the rest of the form stays interactive throughout. |
+| error | ✅ resolved (explicit) | A failed tags fetch never blocks the form: the row is simply absent and the title-required path applies, identical to the zero-tags case. No new error vocabulary is introduced for it. |
+| populated | ✅ resolved (explicit) | Single-select `Chip` pills — selected uses the accent treatment, unselected `fillQuiet`/`textSecondary`; `r-pill` radius, `layout.hitMin` height floor. |
+| partial | ✅ resolved (explicit) | Selecting a tag is optional by design — the tag-or-title rule (D-05) makes "no tag selected" a fully valid submit state, not an incomplete one. |
+| overflow | ✅ resolved (explicit) | Wrapping row, same as the day chips: many tags reflow onto further lines rather than scrolling horizontally out of sight. |
+| zero-one-many | ✅ resolved (explicit) | Zero is the backstop row above; one and many share the same wrap layout with no special-casing. |
+| long-text | 🧪 resolved (backstop) | Tag labels are localized DB content of unbounded length — a long label must not blow out the pill or clip mid-word. No per-chip truncation rule is specified this phase; verify at UAT against the seeded tag set. *verification: backstop* |
+
+### E9 — Push-screen chrome (`activity-create`, `activity-detail`) · nav, static-content
+
+| Category | Status | Resolution / Reason |
+|---|---|---|
+| loading | ✅ resolved (explicit) | The header title is a static catalog string, available immediately — it never waits on the activity fetch. That is precisely why the detail header title is the fixed "Aktivität" and the UGC title renders as an in-content heading below it (the `friend-detail.tsx` split). |
+| error | ✅ resolved (explicit) | Both routes are registered explicitly in `app/_layout.tsx`'s authenticated `Stack.Protected` block. An unregistered sibling dead-ends on Expo Router's Unmatched Route screen — the same failure class as the resolved `first-login-unmatched-route` bug; explicit registration is the mitigation, and it is a plan-level acceptance item. |
+| overflow | ✅ resolved (explicit) | Both header titles are short static strings; the growing UGC title lives below the header where it wraps freely (E3). |
+| long-text | ✅ resolved (explicit) | No UGC ever reaches `AppHeader`'s `pushScreenTitle` map — it holds two static DE/EN entries only. |
 
 ---
 
@@ -456,11 +555,22 @@ already went through).
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS
+- [x] Dimension 3 Color: PASS
+- [x] Dimension 4 Typography: FLAG (non-blocking)
+- [x] Dimension 5 Spacing: FLAG (non-blocking)
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** APPROVED — gsd-ui-checker, 2026-08-15
+
+**Non-blocking recommendations carried into planning:**
+
+- *Typography (D4):* the usage table spans 5 sizes (10.5/13.5/15/19/26) and 4 weights
+  (400/500/600/700). Accepted because every one is an existing `typeRoles` entry from the binding
+  CI v1.0 token set — no new role is declared. The executor must not add a further role to this
+  phase's surfaces.
+- *Spacing (D5):* values 2/6/12/18/22/28/36/104 sit off the generic 4-multiple grid, but all resolve
+  from the brand ramp in `packages/ui/src/tokens.ts`, which carries an explicit "do not normalize
+  toward 4/8/16" warning (ADR-023). Zero new values are introduced. Keep the 36px stepper circle as
+  the single off-ramp value and introduce no ad-hoc pixel values.
