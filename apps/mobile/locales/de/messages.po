@@ -565,6 +565,10 @@ msgstr "Noch niemand gespeichert"
 msgid "Not connected"
 msgstr "Nicht verbunden"
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Nothing of your own yet — start an activity or join one below."
+msgstr "Noch nichts Eigenes — starte eine Aktivität oder werde bei einer dabei."
+
 #: app/(tabs)/mehr.tsx
 msgid "Notifications"
 msgstr "Benachrichtigungen"
@@ -995,6 +999,10 @@ msgstr "Ihr müsst euch danach erneut anfragen, um wieder Freunde zu werden."
 #: app/(auth)/email.tsx
 msgid "you@example.com"
 msgstr "du@beispiel.com"
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Your activities"
+msgstr "Deine Aktivitäten"
 
 #: app/profil.tsx
 msgid "Your code for adding"
