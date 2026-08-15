@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: executing
-stopped_at: Phase 11 UI-SPEC approved
-last_updated: "2026-08-15T12:18:36.283Z"
+stopped_at: Completed 11-02-PLAN.md (expo-location install + buildRouteUri)
+last_updated: "2026-08-15T15:47:45.323Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 27
-  completed_plans: 23
+  completed_plans: 24
   percent: 67
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 11 (Activities) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 Last activity: 2026-08-15 — Phase 11 execution started
 
@@ -274,6 +274,8 @@ direkt bindet:
   (kein client-gesetzter Actor/Scope) und der `information_schema`-Mandantenspalten-Walk sind
   stehende Gates: Phase 11/12-Routen und -Tabellen laufen automatisch dagegen.**
 
+- [Phase ?]: expo-location's plugin config must explicitly suppress locationAlwaysAndWhenInUsePermission/locationAlwaysPermission with false — its defaults otherwise silently add generic iOS Always-location usage descriptions even when only foreground use is intended
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -375,9 +377,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T10:36:40.841Z
-Stopped at: Phase 11 UI-SPEC approved
-Resume file: .planning/workstreams/mobile/phases/11-activities/11-UI-SPEC.md
+Last session: 2026-08-15T15:47:45.293Z
+Stopped at: Completed 11-02-PLAN.md (expo-location install + buildRouteUri)
+Resume file: None
 
 ## Operator Next Steps
 
@@ -421,3 +423,4 @@ Resume file: .planning/workstreams/mobile/phases/11-activities/11-UI-SPEC.md
 | Phase 10 P03 | 9min | 3 tasks | 9 files |
 | Phase 10 P04 | ~10min | 3 tasks | 5 files |
 | Phase 10 P05 | ~18min | 3 tasks | 3 files |
+| Phase 11 P02 | ~25min | 3 tasks | 7 files |
