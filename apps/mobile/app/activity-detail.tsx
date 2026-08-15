@@ -17,6 +17,7 @@ import { useFontsReady } from '../lib/fonts-context';
 import type { ThemeColors } from '../lib/theme';
 import { useTheme } from '../lib/theme-context';
 import { useHeaderClearance } from '../components/AppHeader';
+import { PersonRow } from '../components/PersonRow';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
@@ -133,7 +134,15 @@ export default function ActivityDetailScreen() {
             activity={detailQuery.data}
             startLine={startLine}
             styles={styles}
-            fonts={{ headingFont, subtitleFont, bodyFont, countdownFont, labelFont, monoFont }}
+            fonts={{
+              headingFont,
+              subtitleFont,
+              bodyFont,
+              bodySmFont,
+              countdownFont,
+              labelFont,
+              monoFont,
+            }}
           />
         ) : null}
       </ScrollView>
@@ -145,6 +154,7 @@ type Fonts = {
   headingFont: string | undefined;
   subtitleFont: string | undefined;
   bodyFont: string | undefined;
+  bodySmFont: string | undefined;
   countdownFont: string | undefined;
   labelFont: string | undefined;
   monoFont: string | undefined;
@@ -214,6 +224,33 @@ function ActivityDetailContent({
       ) : null}
 
       <Text style={[styles.seatLine, { fontFamily: fonts.monoFont }]}>{seatLine}</Text>
+
+      {/* UI-SPEC E3 zero-one-many / Copywriting Contract "No participants
+          yet" row — the list contains exactly the creator (creator always
+          joins in the SAME transaction the activity is created in, D-07)
+          renders "Nobody else yet." IN PLACE OF the list, per the plan's own
+          "stands instead of an empty list" wording. Two-or-more renders every
+          row in ARRAY order (`joinedAt` ascending per the contract), which
+          puts the creator first by construction — no `.sort()` call, no
+          second sort key, no creator badge anywhere in this file. */}
+      {activity.participants.length <= 1 ? (
+        <Text style={[styles.emptyParticipants, { fontFamily: fonts.bodySmFont }]}>
+          <Trans>Nobody else yet.</Trans>
+        </Text>
+      ) : (
+        <View style={styles.participantList}>
+          {activity.participants.map((participant) => {
+            const { displayName, username } = participant.profile;
+            return (
+              <PersonRow
+                key={participant.profile.accountId}
+                profile={participant.profile}
+                accessibilityLabel={t`${displayName}, @${username}`}
+              />
+            );
+          })}
+        </View>
+      )}
     </View>
   );
 }
@@ -274,6 +311,12 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.mono.size,
       lineHeight: typeRoles.mono.size * typeRoles.mono.lineHeight,
       color: colors.textPrimary,
+    },
+    participantList: { gap: spacingScale['sp-4'] },
+    emptyParticipants: {
+      fontSize: typeRoles.bodySm.size,
+      lineHeight: typeRoles.bodySm.size * typeRoles.bodySm.lineHeight,
+      color: colors.textMuted,
     },
   });
 }

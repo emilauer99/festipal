@@ -15,6 +15,7 @@ msgstr ""
 
 #: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/friends.tsx
+#: app/activity-detail.tsx
 msgid "{displayName}, @{username}"
 msgstr "{displayName}, @{username}"
 
@@ -650,6 +651,10 @@ msgstr "Noch keine Karte"
 #: app/(festival)/f/[festivalSlug]/timetable.tsx
 msgid "No timetable yet"
 msgstr "Noch kein Timetable"
+
+#: app/activity-detail.tsx
+msgid "Nobody else yet."
+msgstr "Noch niemand außer dir."
 
 #: app/(festival)/f/[festivalSlug]/index.tsx
 msgid "Nobody yet"
