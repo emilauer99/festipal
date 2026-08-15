@@ -112,16 +112,14 @@ describe('map placeholder copy follows the Karte rename (UAT-Entscheid 3, DE onl
   });
 });
 
-describe('activities placeholder copy follows the quiks rename (UAT-Entscheid 3, DE only)', () => {
-  it('heading: "Activities are on the way" -> "quiks kommen noch"', () => {
-    expect(deCatalog['Activities are on the way']).toBe('quiks kommen noch');
-  });
-
-  it('body drops the brand mention — the heading already carries it (Flagged Assumption 3)', () => {
-    const body = deCatalog["We're building this at quiks — for every festival, not just this one."];
-    expect(body).not.toContain('quiks');
-  });
-});
+// 11-01 — the Activities placeholder screen this describe block tested is
+// GONE (replaced by the real Activities tab, ACT-02): "Activities are on the
+// way" / "We're building this at quiks — for every festival, not just this
+// one." are no longer referenced by any source file, so `lingui extract`
+// marks both msgids obsolete (`#~`) and `parsePoCatalog` correctly drops
+// them. This is a direct, in-scope consequence of 11-01 Task 1's action
+// ("Ersetze … den PlaceholderScreen"), not a regression — the block is
+// removed rather than left asserting on dead catalog entries.
 
 describe('untouched surfaces stay untouched (D-11/D-14, both languages)', () => {
   it('the shared Friends msgid is unchanged', () => {
