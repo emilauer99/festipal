@@ -253,6 +253,10 @@ msgstr "Foto wählen"
 msgid "Clear search"
 msgstr "Suche leeren"
 
+#: app/activity-detail.tsx
+msgid "Clone"
+msgstr "Klonen"
+
 #: app/friend-detail.tsx
 msgid "Close"
 msgstr "Schließen"
@@ -729,6 +733,10 @@ msgstr "Nur am Gelände, nur mit Freunden."
 #: components/FestivalCard.tsx
 msgid "Open festival"
 msgstr "Festival öffnen"
+
+#: app/activity-detail.tsx
+msgid "Open route"
+msgstr "Route öffnen"
 
 #: app/(tabs)/mehr.tsx
 msgid "Open safenow.app"

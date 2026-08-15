@@ -1,16 +1,17 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Linking, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Trash2 } from 'lucide-react-native';
+import { Copy, Navigation, Trash2 } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 import type { ActivityDetail } from '@quiks/contracts';
 
 import { apiClient } from '../lib/api-client';
 import { activityKeys, unwrapOk } from '../lib/activity-queries';
 import { resolveJoinability } from '../lib/activity-form';
+import { buildRouteUri, type MapHandoffPlatform } from '../lib/geo-link';
 import { findCachedFestivalBySlug } from '../lib/festival-queries';
 import { useFestivalContext } from '../lib/festival-context';
 import { useActivityMutations } from '../lib/use-activity-mutations';
@@ -36,6 +37,9 @@ const PENDING_OPACITY = 0.45;
 // "Auflösen" row is styled after that exact analog (UI-SPEC § Component
 // Inventory).
 const DANGER_ICON_SIZE = 22;
+// "Klonen"/"Route öffnen" action-icon size — UI-SPEC § Design System names
+// 21–22 for section/action icons.
+const ACTION_ICON_SIZE = 20;
 
 function normalizeParam(raw: string | string[] | undefined): string {
   const value = Array.isArray(raw) ? raw[0] : raw;
@@ -213,6 +217,8 @@ export default function ActivityDetailScreen() {
             pendingTargetId={pendingTargetId}
             failedTargetId={failedTargetId}
             failedTargetStatus={failedTargetStatus}
+            router={router}
+            festivalSlug={festival?.slug ?? ''}
           />
         ) : null}
       </ScrollView>
@@ -251,6 +257,8 @@ function ActivityDetailContent({
   pendingTargetId,
   failedTargetId,
   failedTargetStatus,
+  router,
+  festivalSlug,
 }: {
   activity: ActivityDetail;
   startLine: string;
@@ -263,6 +271,8 @@ function ActivityDetailContent({
   pendingTargetId: string | undefined;
   failedTargetId: string | undefined;
   failedTargetStatus: number | undefined;
+  router: ReturnType<typeof useRouter>;
+  festivalSlug: string;
 }) {
   const { t } = useLingui();
   const { colors } = useTheme();
@@ -333,6 +343,30 @@ function ActivityDetailContent({
     );
   }
 
+  // ACT-04/D-12 — Klonen ist keine Serveroperation: stapelnde Navigation auf
+  // die Create-Route, die einzig die Kennung der Quellaktivität übergibt.
+  // Stapelnd (push), nicht ersetzend, damit der Zurück-Weg auf diesem
+  // Detail-Screen landet. Die eigentliche Vorbefüllung erledigt der
+  // Create-Screen über `buildClonePrefill` (11-04) — diese Datei baut kein
+  // Vorbefüll-Objekt selbst.
+  function handleClone() {
+    router.push({
+      pathname: '/activity-create',
+      params: { cloneFromId: activity.id, festivalSlug },
+    });
+  }
+
+  // ACT-05/D-14/T-11-01 — die Zieladresse kommt AUSSCHLIESSLICH aus
+  // `buildRouteUri`, direkt mit dem Aktivitäts-Geo-Objekt gefüttert; kein
+  // Zwischenobjekt aus separat gelesenen Zahlenwerten, kein Freitext, kein
+  // Navigationsparameter kann je in diese Adresse gelangen (die Signatur von
+  // `buildRouteUri` lässt es konstruktionsbedingt nicht zu).
+  function handleOpenRoute() {
+    if (!activity.geo) return;
+    const platform: MapHandoffPlatform = Platform.OS === 'ios' ? 'ios' : 'android';
+    void Linking.openURL(buildRouteUri(activity.geo, platform));
+  }
+
   return (
     <View style={styles.contentBlock}>
       <Text style={[styles.heading, { fontFamily: fonts.headingFont }]}>{activity.title}</Text>
@@ -351,14 +385,33 @@ function ActivityDetailContent({
 
       <Text style={[styles.startLine, { fontFamily: fonts.countdownFont }]}>{startLine}</Text>
 
-      {activity.location ? (
+      {/* ACT-05 partial states (UI-SPEC E3): geo present -> free text (if
+          any) plus Route öffnen; geo absent but location present -> free
+          text only, no route affordance; both absent -> the block renders
+          nothing rather than claiming a location that isn't there. */}
+      {activity.location || activity.geo ? (
         <View style={styles.meetingPointBlock}>
           <Text style={[styles.eyebrow, { fontFamily: fonts.labelFont }]}>
             <Trans>Meeting point</Trans>
           </Text>
-          <Text style={[styles.locationText, { fontFamily: fonts.bodyFont }]}>
-            {activity.location}
-          </Text>
+          {activity.location ? (
+            <Text style={[styles.locationText, { fontFamily: fonts.bodyFont }]}>
+              {activity.location}
+            </Text>
+          ) : null}
+          {activity.geo ? (
+            <Pressable
+              style={styles.routeButton}
+              onPress={handleOpenRoute}
+              accessibilityRole="button"
+              accessibilityLabel={t`Open route`}
+            >
+              <Navigation size={ACTION_ICON_SIZE} color={colors.primary} strokeWidth={2} />
+              <Text style={[styles.routeButtonText, { fontFamily: fonts.buttonFont }]}>
+                <Trans>Open route</Trans>
+              </Text>
+            </Pressable>
+          ) : null}
         </View>
       ) : null}
 
@@ -434,6 +487,22 @@ function ActivityDetailContent({
           </Pressable>
         )}
 
+        {/* ACT-04/D-12 — Klonen ist an JEDER sichtbaren Aktivität vorhanden,
+            unbedingt auf die Ersteller- oder Teilnehmer-Eigenschaft (auch
+            eine fremde Aktivität ist eine Vorlage). Sekundäre Gestaltung,
+            nicht in der Markenfarbe (UI-SPEC § Color "Never accent"). */}
+        <Pressable
+          style={styles.cloneButton}
+          onPress={handleClone}
+          accessibilityRole="button"
+          accessibilityLabel={t`Clone`}
+        >
+          <Copy size={ACTION_ICON_SIZE} color={colors.textSecondary} strokeWidth={2} />
+          <Text style={[styles.cloneButtonText, { fontFamily: fonts.buttonFont }]}>
+            <Trans>Clone</Trans>
+          </Text>
+        </Pressable>
+
         {targetFailed ? (
           <Text style={[styles.error, { fontFamily: fonts.bodySmFont }]}>
             {isJoinRace ? (
@@ -489,7 +558,7 @@ function createStyles(colors: ThemeColors) {
       lineHeight: typeRoles.countdown.size * typeRoles.countdown.lineHeight,
       color: colors.textSecondary,
     },
-    meetingPointBlock: { gap: spacingScale['sp-2'] },
+    meetingPointBlock: { gap: spacingScale['sp-4'] },
     eyebrow: {
       fontSize: typeRoles.label.size,
       lineHeight: typeRoles.label.size * typeRoles.label.lineHeight,
@@ -499,6 +568,25 @@ function createStyles(colors: ThemeColors) {
       fontSize: typeRoles.body.size,
       lineHeight: typeRoles.body.size * typeRoles.body.lineHeight,
       color: colors.textPrimary,
+    },
+    // UI-SPEC § Color item 4 — secondary-accent (fillBrandQuiet/borderBrand/
+    // primary), deliberately NOT a second solid-primary pill next to
+    // Beitreten/Verlassen.
+    routeButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      alignSelf: 'flex-start',
+      gap: spacingScale['sp-3'],
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-6'],
+      backgroundColor: colors.fillBrandQuiet,
+      borderRadius: radiiScale['r-pill'],
+      borderWidth: 1,
+      borderColor: colors.borderBrand,
+    },
+    routeButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.primary,
     },
     seatLine: {
       fontSize: typeRoles.mono.size,
@@ -555,6 +643,21 @@ function createStyles(colors: ThemeColors) {
     dangerLabel: {
       fontSize: typeRoles.title3.size,
       color: colors.dangerText,
+    },
+    // "Klonen" — never accent (UI-SPEC § Color "Never accent"), same neutral
+    // fill "Verlassen" uses.
+    cloneButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: spacingScale['sp-3'],
+      minHeight: layout.hitMin,
+      backgroundColor: colors.fillQuiet,
+      borderRadius: radiiScale['r-pill'],
+    },
+    cloneButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textPrimary,
     },
   });
 }
