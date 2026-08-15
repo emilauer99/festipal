@@ -51,6 +51,14 @@
           "microphonePermission": false
         }
       ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "quiks uses your location once to pin a meeting point when creating an activity — no tracking, no location watching.",
+          "locationAlwaysAndWhenInUsePermission": false,
+          "locationAlwaysPermission": false
+        }
+      ],
       "./plugins/with-windows-long-path-fix.js",
       "@react-native-community/datetimepicker"
     ],

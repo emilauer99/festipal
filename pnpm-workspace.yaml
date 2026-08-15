@@ -14,3 +14,6 @@ allowBuilds:
 # Allow these dependencies to run install/build scripts (pnpm blocks them by default).
 onlyBuiltDependencies:
   - esbuild
+
+minimumReleaseAgeExclude:
+  - expo-location@57.0.10
