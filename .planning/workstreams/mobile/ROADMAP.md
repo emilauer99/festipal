@@ -213,7 +213,7 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 3/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 4/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
@@ -232,7 +232,7 @@ Plans:
 
 **Wave 4** *(blockiert auf 10-03)*
 
-- [ ] 10-04-PLAN.md — Discovery: öffentliche Liste mit `startTime`-Schnitt, eigene `my-activities`-Sicht ohne Schnitt, Zahl + `joined` in der Liste, Teilnehmernamen nur im Detail über die eine Fremd-Projektion (SEC-03, D-04/D-10/D-11/D-12)
+- [x] 10-04-PLAN.md — Discovery: öffentliche Liste mit `startTime`-Schnitt, eigene `my-activities`-Sicht ohne Schnitt, Zahl + `joined` in der Liste, Teilnehmernamen nur im Detail über die eine Fremd-Projektion (SEC-03, D-04/D-10/D-11/D-12)
 
 **Wave 5** *(blockiert auf 10-04)*
 
