@@ -37,9 +37,12 @@
  *
  * 11-01 (Task 3) — `activity-detail` joins this set: the root-level push
  * registration of `app/activity-detail.tsx`, the Activity detail read
- * screen. `activity-create` deliberately does NOT join here — that route
- * does not exist until 11-04, and a Set entry with no matching screen file
- * would be a registration promising a route that dead-ends.
+ * screen.
+ *
+ * 11-04 (Task 3) — `activity-create` joins this set: the root-level push
+ * registration of `app/activity-create.tsx`, the Create-/Klon-Screen. This
+ * closes the tracer's last open route — the Aktivität-starten CTA
+ * (`activities.tsx`) finally has a registered destination to push to.
  */
 export const PUSH_SCREEN_ROUTES = new Set([
   'profil',
@@ -47,6 +50,7 @@ export const PUSH_SCREEN_ROUTES = new Set([
   'friends-find',
   'cashless',
   'activity-detail',
+  'activity-create',
 ] as const);
 
 export type PushScreenRoute =
@@ -54,7 +58,8 @@ export type PushScreenRoute =
   | 'friends-qr'
   | 'friends-find'
   | 'cashless'
-  | 'activity-detail';
+  | 'activity-detail'
+  | 'activity-create';
 
 /**
  * First segments over which the header NEVER appears, regardless of what

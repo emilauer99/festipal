@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -19,7 +19,33 @@ import { ActivityCard } from '../../../../components/ActivityCard';
 
 // 05.1 D-01: colour roles resolve per render through `useTheme()` — only the
 // mode-invariant scales stay destructured at module scope.
-const { typeRoles, layout, spacingScale } = tokens;
+const { typeRoles, layout, radiiScale, spacingScale } = tokens;
+
+/**
+ * The "Aktivität starten" CTA (11-04-PLAN Task 3) — accent-primary pill,
+ * same treatment `RelationAction`/`calloutPrimaryButton`/`heroCta` already
+ * establish (UI-SPEC § Color item 1). Rendered TWICE on this screen (once
+ * above both sections, once inside "Deine Aktivitäten"'s own empty state)
+ * from this one shared component so both instances stay in lock-step —
+ * never a second, drifting copy of the same button.
+ */
+function StartActivityButton({
+  onPress,
+  styles,
+  fontFamily,
+}: {
+  onPress: () => void;
+  styles: ReturnType<typeof createStyles>;
+  fontFamily: string | undefined;
+}) {
+  return (
+    <Pressable style={styles.startButton} onPress={onPress} accessibilityRole="button">
+      <Text style={[styles.startButtonText, { fontFamily }]}>
+        <Trans>Start an activity</Trans>
+      </Text>
+    </Pressable>
+  );
+}
 
 /**
  * The two-source, two-section state a single query can be in on this screen
@@ -88,6 +114,7 @@ export default function FestivalActivitiesScreen() {
   const headingFont = fontFamilyForRole('title2', fontsReady);
   const bodyFont = fontFamilyForRole('body', fontsReady);
   const bodySmFont = fontFamilyForRole('bodySm', fontsReady);
+  const buttonFont = fontFamilyForRole('title3', fontsReady);
 
   // `enabled` only once the layout gate has resolved a festival — declared
   // unconditionally (Rules of Hooks) even though the `!festival` guard below
@@ -135,6 +162,12 @@ export default function FestivalActivitiesScreen() {
     router.push({ pathname: '/activity-detail', params: { activityId } });
   }
 
+  // 11-04 Task 3 — plain PUSH (not replace): the tab stays on the back
+  // stack, so leaving the create form without submitting returns here.
+  function openActivityCreate() {
+    router.push('/activity-create');
+  }
+
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       <ScrollView
@@ -144,6 +177,12 @@ export default function FestivalActivitiesScreen() {
         ]}
         showsVerticalScrollIndicator={false}
       >
+        {/* 11-04 Task 3 — above BOTH sections, visible in every state
+            (including a failed list read on either query, UI-SPEC E1
+            error): a broken list read must never block starting an
+            activity. */}
+        <StartActivityButton onPress={openActivityCreate} styles={styles} fontFamily={buttonFont} />
+
         <View style={styles.section}>
           <Text style={[styles.heading, { fontFamily: headingFont }]}>
             <Trans>Your activities</Trans>
@@ -165,11 +204,18 @@ export default function FestivalActivitiesScreen() {
           ) : null}
 
           {mineState.kind === 'empty' ? (
-            <Text style={[styles.helper, { fontFamily: bodyFont }]}>
-              <Trans>
-                Nothing of your own yet — start an activity or join one below.
-              </Trans>
-            </Text>
+            <View style={styles.emptyBlock}>
+              <Text style={[styles.helper, { fontFamily: bodyFont }]}>
+                <Trans>
+                  Nothing of your own yet — start an activity or join one below.
+                </Trans>
+              </Text>
+              <StartActivityButton
+                onPress={openActivityCreate}
+                styles={styles}
+                fontFamily={buttonFont}
+              />
+            </View>
           ) : null}
 
           {mineState.kind === 'data' ? (
@@ -258,5 +304,23 @@ function createStyles(colors: ThemeColors) {
       color: colors.dangerText,
     },
     cardList: { gap: spacingScale['sp-5'] },
+    emptyBlock: { gap: spacingScale['sp-5'], alignItems: 'flex-start' },
+    // UI-SPEC § Color item 1 — the same accent-primary CTA treatment every
+    // other primary pill in this phase uses (RelationAction/
+    // calloutPrimaryButton/heroCta): solid `primary` fill, `textOnPrimary`
+    // text, `r-pill` radius, `hitMin` height floor.
+    startButton: {
+      alignSelf: 'flex-start',
+      minHeight: layout.hitMin,
+      paddingHorizontal: spacingScale['sp-8'],
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.primary,
+      borderRadius: radiiScale['r-pill'],
+    },
+    startButtonText: {
+      fontSize: typeRoles.title3.size,
+      color: colors.textOnPrimary,
+    },
   });
 }

@@ -595,9 +595,18 @@ function RootNavigation() {
                       `screenOptions` default (see the comment above the
                       `<Stack>` element) already keeps a blank native header
                       from appearing above `AppHeader`'s own push-state
-                      title. `activity-create` is deliberately NOT registered
-                      here — that route does not exist until 11-04. */}
+                      title. */}
                   <Stack.Screen name="activity-detail" />
+                  {/* 11-04 Task 3 — the Create-/Klon-Screen, same root-level
+                      sibling shape as every screen above it in this block.
+                      This is the registration the Aktivitäten-tab's
+                      "Aktivität starten" CTA and the detail screen's future
+                      "Klonen" action (11-05) both push to — an unregistered
+                      sibling here would dead-end on the Unmatched Route
+                      screen exactly like every other entry in this list. No
+                      `options` here either, same navigator default as
+                      `activity-detail` above. */}
+                  <Stack.Screen name="activity-create" />
                 </Stack.Protected>
                 </Stack>
                 <AppHeader />
