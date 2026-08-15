@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
-status: planning
+status: "Phase 10 shipped — PR #17"
 stopped_at: Phase 10 verified + secured (UAT 3/3, threats_open 0) — ready to ship
-last_updated: "2026-08-15T09:33:34.351Z"
+last_updated: "2026-08-15T09:44:34.337Z"
 last_activity: 2026-08-15
-last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 22
   completed_plans: 22
   percent: 67
+last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 ---
 
 # Project State — Workstream `mobile`
@@ -37,8 +37,8 @@ everything about their festival experience from one home screen.
 
 Phase: 11 — Activities
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-15 — Phase 10 complete, transitioned to Phase 11
+Status: Phase 10 shipped — PR #17
+Last activity: 2026-08-15
 
 ## Shipped
 
@@ -251,19 +251,23 @@ direkt bindet:
   (globaler vs. per-Festival-Slug-Scope) — ein einfaches `unique(festivalId, slug)` ließe zwei
   NULL-Zeilen kollisionfrei durch. Drop- und Create-Migrationen in zwei getrennten
   drizzle-kit-Läufen generieren, sonst hängt der interaktive Rename-Prompt einen autonomen Executor.
+
 - **10-02:** `activity.tagId` ist `onDelete: restrict`, nicht `set null` — eine titellose Aktivität
   hängt am Tag für den Auto-Titel; Löschen eines benutzten Tags schlägt laut fehl statt
   `activity_title_or_tag_chk` still zu verletzen. Constraint-Namen kollisionsfrei benannt
   (`activity_capacity_positive_chk` ≠ `activity_capacity_full_chk`).
+
 - **10-03:** Kapazitätsrennen im `BEFORE INSERT`-Trigger mit `SELECT … FOR UPDATE` gelöst; der
   „already a participant"-Zweig ist nötig, damit `onConflictDoNothing`-Rejoin-Idempotenz den Guard
   überlebt. `leave` bleibt evidence-free (immer gleiche 200); `delete` bewusst NICHT — Existenz der
   Aktivität ist im eigenen Festival ohnehin öffentlich, eine stille 200 würde nur den Client desyncen.
+
 - **10-04:** Tag an einer List-/Detail-Zeile wird DIREKT per id gejoint, nie über
   `effectiveTagWhere` — ein deaktivierter Tag lässt den Titel bestehender Aktivitäten unverändert
   (D-04). `summarySelect()`/`shapeSummaries()` ist DAS eine Select+Shape-Paar für
   `listForFestival`/`listMine`/`getDetail`; `participantCount`/`joined` als korrelierte
   SQL-Subqueries, nie drei parallele Query-Implementierungen.
+
 - **10-05:** Zwei echte OTP-Sign-ins genügen für den vollen Cross-Tenant-Beweis (Discovery/Detail
   sind gate-less, ADR-014). FKs werden per Spalten-/Fremdtabellen-Name über `information_schema`
   asserted, nie über drizzles auto-generierten Constraint-Namen. **Der Verbotslisten-Contract-Walk
