@@ -213,7 +213,7 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 4/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 5/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
@@ -236,7 +236,7 @@ Plans:
 
 **Wave 5** *(blockiert auf 10-04)*
 
-- [ ] 10-05-PLAN.md — SEC-03: Cross-Tenant-Verhaltensnachweis pro neuer Tabelle inkl. eigenem Block für den nullable-`activity_tag`-Sonderfall, strukturelle Invarianten gegen `information_schema` + Contract-Walk gegen client-gesetzten Scope, Requirements-Nachzug von Hand (SEC-03)
+- [x] 10-05-PLAN.md — SEC-03: Cross-Tenant-Verhaltensnachweis pro neuer Tabelle inkl. eigenem Block für den nullable-`activity_tag`-Sonderfall, strukturelle Invarianten gegen `information_schema` + Contract-Walk gegen client-gesetzten Scope, Requirements-Nachzug von Hand (SEC-03)
 
 **Also lands** (consumed by Phase 11): `activity` with tag-or-title, subtitle, description,
 location, `startTime`, `capacity`; the effective tag list (enabled global ∪ festival-own); the

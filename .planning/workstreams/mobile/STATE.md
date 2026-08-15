@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 10
 current_phase_name: activities-backend
-status: executing
-stopped_at: "Completed 10-04-PLAN.md (activity discovery & detail: D-10/D-11/D-12, VIS-02)"
-last_updated: "2026-08-15T00:05:22.391Z"
+status: verifying
+stopped_at: Completed 10-05-PLAN.md (SEC-03 cross-tenant proof pass — phase 10 complete)
+last_updated: "2026-08-15T00:23:57.499Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 09 complete, transitioned to Phase 10
 progress:
   total_phases: 6
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 22
-  completed_plans: 21
-  percent: 50
+  completed_plans: 22
+  percent: 67
 ---
 
 # Project State — Workstream `mobile`
@@ -37,7 +37,7 @@ everything about their festival experience from one home screen.
 
 Phase: 10 (activities-backend) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-15 — Phase 10 execution started
 
 ## Shipped
@@ -249,6 +249,8 @@ Phasen 10–12 direkt auf ihnen aufbauen:
 - [Phase ?]: 10-03: leave stays evidence-free (same 200 body always); delete ('Auflösen') deliberately is not, because activity existence is already public within its own festival — A silent 200 for a non-creator delete would desync their client from a still-live activity instead of protecting a secret
 - [Phase ?]: 10-04: tag on a list/detail row is joined DIRECTLY by id, never through effectiveTagWhere — same discipline loadActivityView already used, so a disabled tag leaves an existing activity's title unchanged (D-04)
 - [Phase ?]: 10-04: summarySelect()/shapeSummaries() is the ONE select+shape pair shared by listForFestival/listMine/getDetail — participantCount/joined as correlated SQL subqueries, never three parallel query implementations
+- [Phase ?]: 10-05: only two real OTP sign-ins suffice for the full cross-tenant proof spec — Discovery/detail carry no membership gate (ADR-014), so either visitor's session queries both festivals' paths
+- [Phase ?]: 10-05: activity_tag_translation's FK to activity_tag is asserted by column/foreign-table name via information_schema, never drizzle's auto-generated constraint name — a column rename would silently re-derive that name and make a hardcoded assertion brittle
 
 ### Blockers/Concerns
 
@@ -348,8 +350,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T00:05:22.362Z
-Stopped at: Completed 10-04-PLAN.md (activity discovery & detail: D-10/D-11/D-12, VIS-02)
+Last session: 2026-08-15T00:23:57.475Z
+Stopped at: Completed 10-05-PLAN.md (SEC-03 cross-tenant proof pass — phase 10 complete)
 Resume file: None
 
 ## Operator Next Steps
@@ -395,3 +397,4 @@ Resume file: None
 | Phase 10 P02 | ~25min | 3 tasks | 15 files |
 | Phase 10 P03 | 9min | 3 tasks | 9 files |
 | Phase 10 P04 | ~10min | 3 tasks | 5 files |
+| Phase 10 P05 | ~18min | 3 tasks | 3 files |
