@@ -106,9 +106,17 @@ msgstr "Add this person?"
 msgid "All"
 msgstr "All"
 
+#: app/activity-detail.tsx
+msgid "All {participantCount} participants will be removed too. This can't be undone."
+msgstr "All {participantCount} participants will be removed too. This can't be undone."
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Almost done"
 msgstr "Almost done"
+
+#: app/activity-detail.tsx
+msgid "Already started"
+msgstr "Already started"
 
 #: app/(tabs)/mehr.tsx
 msgid "App"
@@ -187,6 +195,7 @@ msgid "Can't reach the server — make sure your device is on the same Wi-Fi as 
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
 #: app/(tabs)/mehr.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Cancel"
@@ -262,6 +271,7 @@ msgstr "Close"
 
 #: app/(tabs)/friends.tsx
 #: app/activity-create.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 #: components/RelationAction.tsx
 msgid "Couldn't save — try again."
@@ -314,6 +324,14 @@ msgstr "Description · optional"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Display name"
 msgstr "Display name"
+
+#: app/activity-detail.tsx
+msgid "Dissolve"
+msgstr "Dissolve"
+
+#: app/activity-detail.tsx
+msgid "Dissolve this activity?"
+msgstr "Dissolve this activity?"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Done"
@@ -436,6 +454,10 @@ msgstr "Friends since {friendsSinceLabel}"
 msgid "From you"
 msgstr "From you"
 
+#: app/activity-detail.tsx
+msgid "Full — {fullJoined}/{fullCapacity} spots"
+msgstr "Full — {fullJoined}/{fullCapacity} spots"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Gender"
 msgstr "Gender"
@@ -472,6 +494,10 @@ msgstr "Increase capacity"
 msgid "Instagram, coming soon"
 msgstr "Instagram, coming soon"
 
+#: app/activity-detail.tsx
+msgid "Join"
+msgstr "Join"
+
 #: app/(tabs)/mehr.tsx
 msgid "Language"
 msgstr "Language"
@@ -479,6 +505,10 @@ msgstr "Language"
 #: app/(tabs)/mehr.tsx
 msgid "Language switching is coming soon."
 msgstr "Language switching is coming soon."
+
+#: app/activity-detail.tsx
+msgid "Leave"
+msgstr "Leave"
 
 #: components/AppHeader.tsx
 msgid "Leave festival"
@@ -986,6 +1016,10 @@ msgstr "That code is wrong or has expired."
 #: components/CameraScanPanel.tsx
 msgid "That's not a quiks code."
 msgstr "That's not a quiks code."
+
+#: app/activity-detail.tsx
+msgid "The last spot just went — the list has been refreshed."
+msgstr "The last spot just went — the list has been refreshed."
 
 #: app/(tabs)/mehr.tsx
 msgid "The night shift for your eyes."

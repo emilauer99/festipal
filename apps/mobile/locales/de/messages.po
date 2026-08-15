@@ -106,9 +106,17 @@ msgstr "Diese Person hinzufügen?"
 msgid "All"
 msgstr "Alle"
 
+#: app/activity-detail.tsx
+msgid "All {participantCount} participants will be removed too. This can't be undone."
+msgstr "Alle {participantCount} Teilnehmenden werden mit entfernt. Das kann nicht rückgängig gemacht werden."
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Almost done"
 msgstr "Fast fertig"
+
+#: app/activity-detail.tsx
+msgid "Already started"
+msgstr "Bereits gestartet"
 
 #: app/(tabs)/mehr.tsx
 msgid "App"
@@ -187,6 +195,7 @@ msgid "Can't reach the server — make sure your device is on the same Wi-Fi as 
 msgstr "Server nicht erreichbar — stelle sicher, dass dein Gerät im selben WLAN wie die Dev-API ist."
 
 #: app/(tabs)/mehr.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Abbrechen"
@@ -262,6 +271,7 @@ msgstr "Schließen"
 
 #: app/(tabs)/friends.tsx
 #: app/activity-create.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 #: components/RelationAction.tsx
 msgid "Couldn't save — try again."
@@ -314,6 +324,14 @@ msgstr "Beschreibung · optional"
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Display name"
 msgstr "Anzeigename"
+
+#: app/activity-detail.tsx
+msgid "Dissolve"
+msgstr "Auflösen"
+
+#: app/activity-detail.tsx
+msgid "Dissolve this activity?"
+msgstr "Aktivität auflösen?"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Done"
@@ -436,6 +454,10 @@ msgstr "Freunde seit {friendsSinceLabel}"
 msgid "From you"
 msgstr "Von dir"
 
+#: app/activity-detail.tsx
+msgid "Full — {fullJoined}/{fullCapacity} spots"
+msgstr "Voll — {fullJoined}/{fullCapacity} Plätze"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Gender"
 msgstr "Geschlecht"
@@ -472,6 +494,10 @@ msgstr "Kapazität erhöhen"
 msgid "Instagram, coming soon"
 msgstr "Instagram, kommt bald"
 
+#: app/activity-detail.tsx
+msgid "Join"
+msgstr "Beitreten"
+
 #: app/(tabs)/mehr.tsx
 msgid "Language"
 msgstr "Sprache"
@@ -479,6 +505,10 @@ msgstr "Sprache"
 #: app/(tabs)/mehr.tsx
 msgid "Language switching is coming soon."
 msgstr "Sprachumschalter kommt bald."
+
+#: app/activity-detail.tsx
+msgid "Leave"
+msgstr "Verlassen"
 
 #: components/AppHeader.tsx
 msgid "Leave festival"
@@ -986,6 +1016,10 @@ msgstr "Der Code ist falsch oder abgelaufen."
 #: components/CameraScanPanel.tsx
 msgid "That's not a quiks code."
 msgstr "Das ist kein quiks-Code."
+
+#: app/activity-detail.tsx
+msgid "The last spot just went — the list has been refreshed."
+msgstr "Der letzte Platz ist gerade weg — die Liste wurde aktualisiert."
 
 #: app/(tabs)/mehr.tsx
 msgid "The night shift for your eyes."
