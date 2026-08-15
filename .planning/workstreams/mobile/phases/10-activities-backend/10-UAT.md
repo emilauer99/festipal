@@ -1,21 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 10-activities-backend
 source: [10-VERIFICATION.md]
 started: 2026-08-15T00:50:00Z
-updated: 2026-08-15T00:50:00Z
+updated: 2026-08-15T10:00:00Z
 ---
 
 ## Current Test
 
-number: 1
-name: Prohibition P1 — kein client-gesetzter Actor/Scope
-expected: |
-  All 8 activity-shaped routes take the actor exclusively from the better-auth session;
-  festivalId comes from the path only. The forbidden-key walk (visitorId/creatorId/
-  callerId/accountId/userId/participantId/festivalId/activityId/sessionId in body/query)
-  stays the standing gate for later phases.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -28,7 +21,7 @@ expected: |
   apps/api/test/activity-tenant-structure.spec.ts Part 2 and confirm the forbidden key set
   matches your intent. Mechanically enforced (spec ran green, 8 routes walked, non-vacuum
   guard >= 7); LLM-judge verdict PASS (non-authoritative).
-result: [pending]
+result: pass
 
 ### 2. Prohibition P2 — kein Präsenz-/Ortssignal aus Aktivitätsdaten (10-01)
 
@@ -40,7 +33,7 @@ expected: |
   CHECKs) with no time series, watcher, or update endpoint. Skim
   packages/contracts/src/router.ts (activity routes) and packages/db/src/schema/activity.ts.
   LLM-judge verdict PASS (non-authoritative) — genuine semantic judgment call.
-result: [pending]
+result: pass
 
 ### 3. Prohibition P3 — Teilnehmer-Payload nur Sechs-Feld-Fremdsicht (10-04)
 
@@ -51,14 +44,14 @@ expected: |
   key EQUALITY in projection-uniqueness.spec.ts and activity-discovery.spec.ts case 4
   (both ran green). Confirm the projection-uniqueness gate covers the new
   `activityParticipantSchema` embedding to your satisfaction.
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 3
-passed: 0
+passed: 3
 issues: 0
-pending: 3
+pending: 0
 skipped: 0
 blocked: 0
 
