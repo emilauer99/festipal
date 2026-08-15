@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
 import { Trans } from '@lingui/react/macro';
 import { tokens } from '@quiks/ui';
@@ -78,6 +79,7 @@ function groupMineActivities(items: ActivitySummary[], nowIso: string): Activity
  * project has already paid for once).
  */
 export default function FestivalActivitiesScreen() {
+  const router = useRouter();
   const festival = useFestivalContext();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
@@ -126,6 +128,13 @@ export default function FestivalActivitiesScreen() {
   );
   const listState = computeSectionState(listQuery.status, listQuery.data);
 
+  // The one navigation both sections share (D-01/UI-SPEC E9) — a tap on
+  // either section's card opens the SAME registered `/activity-detail` push
+  // screen (Task 3), keyed by `activityId`.
+  function openActivityDetail(activityId: string) {
+    router.push({ pathname: '/activity-detail', params: { activityId } });
+  }
+
   return (
     <SafeAreaView style={styles.screen} edges={['bottom']}>
       <ScrollView
@@ -170,12 +179,7 @@ export default function FestivalActivitiesScreen() {
                   key={activity.id}
                   activity={activity}
                   started={activity.startTime < nowIso}
-                  // Task 3 of this plan wires the real `/activity-detail`
-                  // push once that route exists and is registered in
-                  // `app/_layout.tsx` — pushing an unregistered route here
-                  // first would be exactly the Unmatched-Route defect this
-                  // phase's tracer plan exists to avoid.
-                  onPress={() => {}}
+                  onPress={() => openActivityDetail(activity.id)}
                 />
               ))}
             </View>
@@ -217,12 +221,7 @@ export default function FestivalActivitiesScreen() {
                   key={activity.id}
                   activity={activity}
                   started={false}
-                  // Task 3 of this plan wires the real `/activity-detail`
-                  // push once that route exists and is registered in
-                  // `app/_layout.tsx` — pushing an unregistered route here
-                  // first would be exactly the Unmatched-Route defect this
-                  // phase's tracer plan exists to avoid.
-                  onPress={() => {}}
+                  onPress={() => openActivityDetail(activity.id)}
                 />
               ))}
             </View>

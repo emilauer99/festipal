@@ -66,6 +66,14 @@ describe('resolveHeaderContext (09-04, D-03 App Header Contract)', () => {
     });
   });
 
+  it('shows the push state with route "activity-detail" for the Activity detail screen (11-01)', () => {
+    expect(resolveHeaderContext(['activity-detail'])).toEqual({
+      visible: true,
+      kind: 'push',
+      route: 'activity-detail',
+    });
+  });
+
   it('hides on the welcome (auth) screen', () => {
     expect(resolveHeaderContext(['(auth)', 'welcome'])).toEqual({ visible: false });
   });

@@ -30,6 +30,14 @@ msgstr "{friendCount, plural, one {# Friend} other {# Friends}}"
 msgid "{participantCount, plural, one {# is in} other {# are in}}"
 msgstr "{participantCount, plural, one {# is in} other {# are in}}"
 
+#: app/activity-detail.tsx
+msgid "{participantCount} are in · no limit"
+msgstr "{participantCount} are in · no limit"
+
+#: app/activity-detail.tsx
+msgid "{participantCount}/{capacity} spots filled"
+msgstr "{participantCount}/{capacity} spots filled"
+
 #: components/ActivityCard.tsx
 msgid "{remaining, plural, one {Last spot} other {# spots left}}"
 msgstr "{remaining, plural, one {Last spot} other {# spots left}}"
@@ -67,6 +75,10 @@ msgstr "Account"
 #: app/(festival)/f/[festivalSlug]/activities.tsx
 #~ msgid "Activities are on the way"
 #~ msgstr "Activities are on the way"
+
+#: components/AppHeader.tsx
+msgid "Activity"
+msgstr "Activity"
 
 #: components/RelationAction.tsx
 msgid "Add"
@@ -158,6 +170,7 @@ msgstr "Can't load your profile — check your connection and try again."
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/start.tsx
+#: app/activity-detail.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 #: components/CameraScanPanel.tsx
@@ -457,6 +470,7 @@ msgstr "Loading your quiks code…"
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
 #: app/(festival)/f/[festivalSlug]/friends.tsx
+#: app/activity-detail.tsx
 #: components/CameraScanPanel.tsx
 msgid "Loading…"
 msgstr "Loading…"
@@ -480,6 +494,10 @@ msgstr "Log out?"
 #: components/FloatingNav.tsx
 msgid "Map"
 msgstr "Map"
+
+#: app/activity-detail.tsx
+msgid "Meeting point"
+msgstr "Meeting point"
 
 #: app/profil.tsx
 msgid "member since {year}"

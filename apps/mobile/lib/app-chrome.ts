@@ -34,15 +34,27 @@
  *
  * 09-06 (D-09) — `cashless` joins this set: the root-level push registration
  * of `app/cashless.tsx`, the Cashless WebView screen.
+ *
+ * 11-01 (Task 3) — `activity-detail` joins this set: the root-level push
+ * registration of `app/activity-detail.tsx`, the Activity detail read
+ * screen. `activity-create` deliberately does NOT join here — that route
+ * does not exist until 11-04, and a Set entry with no matching screen file
+ * would be a registration promising a route that dead-ends.
  */
 export const PUSH_SCREEN_ROUTES = new Set([
   'profil',
   'friends-qr',
   'friends-find',
   'cashless',
+  'activity-detail',
 ] as const);
 
-export type PushScreenRoute = 'profil' | 'friends-qr' | 'friends-find' | 'cashless';
+export type PushScreenRoute =
+  | 'profil'
+  | 'friends-qr'
+  | 'friends-find'
+  | 'cashless'
+  | 'activity-detail';
 
 /**
  * First segments over which the header NEVER appears, regardless of what
