@@ -1,4 +1,5 @@
 import {
+  activitySelectSchema,
   festivalSelectSchema,
   visitorProfileInsertSchema,
   visitorProfileSelectSchema,
@@ -33,13 +34,105 @@ export const festivalSchema = festivalSelectSchema
   });
 export type Festival = z.infer<typeof festivalSchema>;
 
-/** A tag/chip with its title already resolved to the requested locale server-side. */
-export const tagSchema = z.object({
+/**
+ * An activity tag/chip with its title already resolved to the requested
+ * locale server-side (D-02) — `title` is a plain resolved `string`, never a
+ * `LocalizedText` map, because the client never needs to pick a locale
+ * itself. Field scope ends at three columns (D-03): `id`/`slug`/`title`. This
+ * schema is deliberately unaware of `festivalId` (global vs. festival-own) —
+ * that distinction only matters server-side (SEC-03's nullable-tenant
+ * exception) and is never exposed on the wire.
+ */
+export const activityTagSchema = z.object({
   id: z.string().uuid(),
   slug: z.string(),
   title: z.string(),
 });
-export type Tag = z.infer<typeof tagSchema>;
+export type ActivityTag = z.infer<typeof activityTagSchema>;
+
+/** An activity's optional one-off geo point (ADR-017 §2) — both fields or neither. */
+export const activityGeoSchema = z.object({
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+});
+export type ActivityGeo = z.infer<typeof activityGeoSchema>;
+
+/**
+ * Drift-detection proof (D-07/D-08/D-04, ADR-017 auto-title rule): composed on
+ * `activitySelectSchema.pick(...)`, not a hand-mirrored `z.object` — a column
+ * rename on `activity` breaks this typecheck instead of drifting silently.
+ *
+ * Four deliberate deviations from the raw columns, each commented:
+ * - `title` is the RESOLVED display title (explicit title if set, otherwise
+ *   the localized tag title) — the ADR-017 auto-title rule is resolved
+ *   server-side so Phase 11 never has to rebuild it client-side.
+ * - `tag` is the joined tag object, not a bare column.
+ * - `geo` collapses the two nullable columns into one nullable object.
+ * - `startTime` travels as an ISO string, never a `Date` — the same wire
+ *   convention `friendsSince`/`festivalSchema.startDate` already use.
+ *
+ * `createdAt`/`updatedAt` are deliberately NOT picked: `projection-uniqueness
+ * .spec.ts` derives its owner-only key set from `visitorProfileSelectSchema`
+ * and both names appear there, so a route exposing either would turn that
+ * existing spec red. There is also deliberately NO embedded creator profile
+ * here — the creator is a participant, and the foreign-view profile only ever
+ * appears once, in the participant list of the detail response (plan 10-04).
+ */
+export const activitySchema = activitySelectSchema
+  .pick({
+    id: true,
+    festivalId: true,
+    creatorId: true,
+    subtitle: true,
+    description: true,
+    location: true,
+  })
+  .extend({
+    tag: activityTagSchema.nullable(),
+    title: z.string(),
+    geo: activityGeoSchema.nullable(),
+    startTime: z.string(),
+    capacity: z.number().int().nullable(),
+  });
+export type Activity = z.infer<typeof activitySchema>;
+
+/**
+ * `POST /festivals/:festivalId/activities` request body. Neither `creatorId`
+ * nor `festivalId` is a key here — the creator comes from `session.user.id`
+ * and the festival from the path, never from the body (ARCHITECTURE.md
+ * §Anti-Patterns "Client-Supplied Scope").
+ *
+ * The `.refine` is the client-side pre-emption of the `activity_title_or_tag
+ * _chk` DB CHECK (ADR-017 auto-title rule): without it, a request with
+ * neither `tagId` nor `title` would round-trip all the way to a 23514 driver
+ * error and come back as a 500 instead of a validation response — the same
+ * lesson `birthDate` in `visitor-profile.ts` already teaches.
+ */
+export const createActivityBodySchema = z
+  .object({
+    tagId: z.string().uuid().nullable().optional(),
+    title: z.string().max(80).nullable().optional(),
+    subtitle: z.string().max(120).nullable().optional(),
+    description: z.string().max(2000).nullable().optional(),
+    location: z.string().max(200).nullable().optional(),
+    geo: activityGeoSchema.nullable().optional(),
+    startTime: z.string().datetime(),
+    capacity: z.number().int().min(1).nullable().optional(),
+  })
+  .refine((body) => Boolean(body.tagId) || Boolean(body.title && body.title.trim().length > 0), {
+    message: 'either tagId or a non-empty title is required',
+    path: ['title'],
+  });
+export type CreateActivityBody = z.infer<typeof createActivityBodySchema>;
+
+/**
+ * `POST .../join` success (D-09, plan 10-03). Leave and delete reuse the
+ * existing `mutationResultSchema` (`{ result: 'removed' }`) — join is the
+ * only new answer, because "you are now a participant" is a distinct fact
+ * from "removed", not a second name for the same thing.
+ */
+export const activityJoinResultSchema = z.object({ result: z.literal('joined') });
+export type ActivityJoinResult = z.infer<typeof activityJoinResultSchema>;
 
 /**
  * Drift-detection proof (D-02, D-03): composed on the `@quiks/db` drizzle-zod
@@ -264,3 +357,45 @@ export type CompleteProfileBody = z.infer<typeof completeProfileBodySchema>;
 
 export const usernameAvailabilitySchema = z.object({ available: z.boolean() });
 export type UsernameAvailability = z.infer<typeof usernameAvailabilitySchema>;
+
+/**
+ * One row of `activityDetailSchema.participants` (D-12/VIS-02, plan 10-04) —
+ * the participant's identity plus when they joined. `profile` is bound to the
+ * ONE allowed foreign view, `visitorProfileForeignSchema`, never a
+ * hand-assembled "only what's needed" object: `projection-uniqueness.spec.ts`
+ * walks every route that embeds an object under a `profile` key and demands
+ * exactly these six field names, so a bespoke shape here would be exactly the
+ * second projection VIS-02 exists to catch. `joinedAt` travels as an ISO
+ * string, the same wire convention `friendsSince` already uses.
+ */
+export const activityParticipantSchema = z.object({
+  profile: visitorProfileForeignSchema,
+  joinedAt: z.string(),
+});
+export type ActivityParticipant = z.infer<typeof activityParticipantSchema>;
+
+/**
+ * One row of the discovery lists — `GET .../activities` and
+ * `GET .../my-activities` (D-10/D-11/D-12, plan 10-04). Extends `activitySchema`
+ * with the two caller-relative signals a list entry can carry WITHOUT rolling
+ * out the guest list: `participantCount` (the total seated, creator included
+ * per D-07) and `joined` — the CALLER's own status, never a third party's.
+ * Deliberately carries no `participants` key: names exist only on the detail
+ * response (D-12), so a list scroll can never dump every attendee of every
+ * meetup in one payload.
+ */
+export const activitySummarySchema = activitySchema.extend({
+  participantCount: z.number().int(),
+  joined: z.boolean(),
+});
+export type ActivitySummary = z.infer<typeof activitySummarySchema>;
+
+/**
+ * `GET .../activities/:activityId` response (D-12/VIS-02, plan 10-04) — the
+ * summary plus the full participant list, each entry embedding the one
+ * allowed foreign view via `activityParticipantSchema`.
+ */
+export const activityDetailSchema = activitySummarySchema.extend({
+  participants: z.array(activityParticipantSchema),
+});
+export type ActivityDetail = z.infer<typeof activityDetailSchema>;

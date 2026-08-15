@@ -33,7 +33,7 @@ Detail: [`milestones/v1.0-ROADMAP.md`](./milestones/v1.0-ROADMAP.md) · Summary:
 - [x] **Phase 7: Profile Visibility & Friendship Backend** — owner-view/friend-view projection split, user-global friendship + request model (completed 2026-08-12)
 - [x] **Phase 8: Friends** — the Phase-6 placeholder becomes real: add by handle, search, QR, requests, list (completed 2026-08-13)
 - [x] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename (completed 2026-08-15)
-- [ ] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation
+- [x] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation (completed 2026-08-15)
 - [ ] **Phase 11: Activities** — create, discover, join/leave, clone, route-opening location
 - [ ] **Phase 12: Activity Lobby Chat** — WS gateway + Redis, live group chat per activity
 
@@ -213,30 +213,30 @@ keeps that honest rather than hollow.
 enforced, and provably isolated between festivals
 **Depends on**: Phase 6 (festival scoping baseline); coordinate with `admin` on the tag tables
 **Requirements**: SEC-03
-**Plans**: 5 plans in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
+**Plans**: 5/5 plans executed in 5 Wellen — die Kette ist echt sequenziell, weil `packages/contracts/src/schemas.ts`,
 `router.ts` und `apps/api/src/activity/activity.service.ts` von jeder Scheibe geteilt werden (gleiche
 Lage wie in den Phasen 7 und 9); jede Migration baut zudem auf der vorigen auf
 
 Plans:
 **Wave 1**
 
-- [ ] 10-01-PLAN.md — **Tracer**: effektive Tag-Liste end-to-end — `tag`/`tag_translation`/`listTags` raus, `activity_tag` + `activity_tag_translation` + `festival_activity_tag` rein, Migrationen 0007/0008, 10 globale Seed-Tags DE+EN, neues `ActivityModule` (SEC-03, D-01…D-06)
+- [x] 10-01-PLAN.md — **Tracer**: effektive Tag-Liste end-to-end — `tag`/`tag_translation`/`listTags` raus, `activity_tag` + `activity_tag_translation` + `festival_activity_tag` rein, Migrationen 0007/0008, 10 globale Seed-Tags DE+EN, neues `ActivityModule` (SEC-03, D-01…D-06)
 
 **Wave 2** *(blockiert auf 10-01)*
 
-- [ ] 10-02-PLAN.md — Aktivität anlegen: `activity` + `activity_participant` mit zusammengesetztem Tenant-FK, Migration 0009, `createActivity` mit Creator-als-Teilnehmer in einer Transaktion, geteilter `postgresErrorOf` (SEC-03, D-04/D-07/D-08)
+- [x] 10-02-PLAN.md — Aktivität anlegen: `activity` + `activity_participant` mit zusammengesetztem Tenant-FK, Migration 0009, `createActivity` mit Creator-als-Teilnehmer in einer Transaktion, geteilter `postgresErrorOf` (SEC-03, D-04/D-07/D-08)
 
 **Wave 3** *(blockiert auf 10-02)*
 
-- [ ] 10-03-PLAN.md — Beitreten/Verlassen/Auflösen: Kapazitäts-Trigger als Custom-Migration 0010 (`FOR UPDATE` + `activity_capacity_full_chk`), Rennen-Beweis auf DB- und HTTP-Ebene, Creator-Leave 409 (SEC-03, D-08/D-09/D-10)
+- [x] 10-03-PLAN.md — Beitreten/Verlassen/Auflösen: Kapazitäts-Trigger als Custom-Migration 0010 (`FOR UPDATE` + `activity_capacity_full_chk`), Rennen-Beweis auf DB- und HTTP-Ebene, Creator-Leave 409 (SEC-03, D-08/D-09/D-10)
 
 **Wave 4** *(blockiert auf 10-03)*
 
-- [ ] 10-04-PLAN.md — Discovery: öffentliche Liste mit `startTime`-Schnitt, eigene `my-activities`-Sicht ohne Schnitt, Zahl + `joined` in der Liste, Teilnehmernamen nur im Detail über die eine Fremd-Projektion (SEC-03, D-04/D-10/D-11/D-12)
+- [x] 10-04-PLAN.md — Discovery: öffentliche Liste mit `startTime`-Schnitt, eigene `my-activities`-Sicht ohne Schnitt, Zahl + `joined` in der Liste, Teilnehmernamen nur im Detail über die eine Fremd-Projektion (SEC-03, D-04/D-10/D-11/D-12)
 
 **Wave 5** *(blockiert auf 10-04)*
 
-- [ ] 10-05-PLAN.md — SEC-03: Cross-Tenant-Verhaltensnachweis pro neuer Tabelle inkl. eigenem Block für den nullable-`activity_tag`-Sonderfall, strukturelle Invarianten gegen `information_schema` + Contract-Walk gegen client-gesetzten Scope, Requirements-Nachzug von Hand (SEC-03)
+- [x] 10-05-PLAN.md — SEC-03: Cross-Tenant-Verhaltensnachweis pro neuer Tabelle inkl. eigenem Block für den nullable-`activity_tag`-Sonderfall, strukturelle Invarianten gegen `information_schema` + Contract-Walk gegen client-gesetzten Scope, Requirements-Nachzug von Hand (SEC-03)
 
 **Also lands** (consumed by Phase 11): `activity` with tag-or-title, subtitle, description,
 location, `startTime`, `capacity`; the effective tag list (enabled global ∪ festival-own); the

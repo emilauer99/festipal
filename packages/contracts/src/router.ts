@@ -3,7 +3,13 @@ import { z } from 'zod';
 
 import { localeSchema } from './locale';
 import {
+  activityDetailSchema,
+  activityJoinResultSchema,
+  activitySchema,
+  activitySummarySchema,
+  activityTagSchema,
   completeProfileBodySchema,
+  createActivityBodySchema,
   festivalSchema,
   friendRequestListsSchema,
   friendRequestResultSchema,
@@ -11,7 +17,6 @@ import {
   friendSchema,
   meSchema,
   mutationResultSchema,
-  tagSchema,
   usernameAvailabilitySchema,
   visitorProfileOwnerSchema,
   visitorSearchQuerySchema,
@@ -40,14 +45,6 @@ export const contract = c.router(
       pathParams: z.object({ slug: z.string() }),
       responses: { 200: festivalSchema, 404: errorSchema },
       summary: 'Fetch a festival (tenant) by slug',
-    },
-    listTags: {
-      method: 'GET',
-      path: '/festivals/:festivalId/tags',
-      pathParams: z.object({ festivalId: z.string().uuid() }),
-      query: z.object({ locale: localeSchema.optional() }),
-      responses: { 200: z.array(tagSchema) },
-      summary: 'List a festival’s tags, titles resolved to the requested locale',
     },
     getMe: {
       method: 'GET',
@@ -190,6 +187,100 @@ export const contract = c.router(
       responses: { 200: z.array(friendSchema) },
       summary:
         'List the caller’s own friends who ALSO saved this festival — the intersection of `listFriends` and `listMyFestivals(festivalId)`. Caller from session only, festivalId from path only (SEC-02); carries no `my_festival` value (ADR-014, no presence signal). No friends or unsaved festival is `[]`, never 404',
+    },
+    // Replaces the removed `listTags` (D-01). Effective = enabled global
+    // (activity_tag.festivalId IS NULL, minus any festival_activity_tag
+    // enabled=false row) UNION this festival's own tags — titles resolved
+    // server-side to the requested (or festival default) locale (D-02). No
+    // 404 for an unknown festivalId — same "not an existence oracle" stance
+    // as `friendsInFestival`, `[]` instead.
+    listActivityTags: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activity-tags',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activityTagSchema) },
+      summary:
+        'The effective activity-tag catalog for a festival — activated global tags union the festival’s own, titles resolved to the requested locale (SEC-03: activity_tag.festivalId is the one deliberate nullable-tenant exception)',
+    },
+    // The first Activity write path (D-07): creator and activity participant
+    // row are written in ONE transaction, so no activity ever exists without
+    // its creator on the attendee list. `creatorId` comes from the session,
+    // `festivalId` from the path — the body declares neither. 404 for a
+    // festival or tag that does not resolve for THIS caller's path (a foreign
+    // or disabled tag gets the same 404 as a nonexistent one, SEC-03); 409 for
+    // a caller without a completed profile or a body the DB CHECKs reject.
+    createActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      body: createActivityBodySchema,
+      responses: { 201: activitySchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        'Create an activity in this festival. The caller becomes a participant in the same transaction (D-07); tagId must be a global tag or one owned/enabled by this festival (SEC-03)',
+    },
+    // The membership slice (D-08/D-09/D-10, plan 10-03). All three take
+    // `festivalId`/`activityId` from the path only — the actor always comes
+    // from the session, never from the body.
+    joinActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities/:activityId/join',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      body: z.object({}),
+      responses: { 200: activityJoinResultSchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        'Join an activity. Idempotent — joining twice is the same state (200 both times). 409 when the activity is full (capacity enforced by a DB trigger, D-07), has already started (D-10), or the caller has no completed profile; 404 for an activityId unknown in THIS festival',
+    },
+    leaveActivity: {
+      method: 'POST',
+      path: '/festivals/:festivalId/activities/:activityId/leave',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      body: z.object({}),
+      responses: { 200: mutationResultSchema, 409: errorSchema },
+      summary:
+        'Leave an activity. No 404 branch — like decline/withdraw/unfriend, this is evidence-free: the SAME 200 body whether a participation existed or the activityId is unknown in this festival. The only other outcome is 409 for the creator (D-09) — leaving can never remove the creator from their own activity',
+    },
+    deleteActivity: {
+      method: 'DELETE',
+      path: '/festivals/:festivalId/activities/:activityId',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      responses: { 200: mutationResultSchema, 404: errorSchema, 409: errorSchema },
+      summary:
+        '"Auflösen" — creator-only deletion of the activity plus ALL its participant rows (composite-FK cascade, D-09). Deliberately NOT evidence-free like leave: this is a visible state change a non-creator would otherwise wrongly render as gone. 200 for the creator, 409 for anyone else, 404 for an activityId unknown in this festival (the festival is already public within its own tenant, so there is no secret to protect here)',
+    },
+    // The Discovery/detail read slice (D-04/D-10/D-11/D-12, plan 10-04). All
+    // three take `festivalId`/`activityId` from the path only; the caller
+    // comes exclusively from the session (`my-activities`'s own participation,
+    // a list's `joined` flag). None of the three has a 404 branch for an
+    // unknown festivalId — same "not an existence oracle" stance as
+    // `friendsInFestival`/`listActivityTags`, `[]` instead.
+    listActivities: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activitySummarySchema) },
+      summary:
+        'Public activity discovery for a festival (D-10): activities whose startTime has already passed are excluded — a started activity disappears from this list even for a non-participant. Distinct from `listMyActivities` (caller-scoped, no time cutoff), same "browse vs mine" split as `listFestivals`/`listMyFestivals`. Each entry carries `participantCount` and the caller\'s own `joined` flag, never participant names (D-12)',
+    },
+    listMyActivities: {
+      method: 'GET',
+      path: '/festivals/:festivalId/my-activities',
+      pathParams: z.object({ festivalId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: z.array(activitySummarySchema) },
+      summary:
+        'The caller\'s own activities in this festival (D-11) — deliberately carries NO time cutoff, so a participant (including the creator) keeps reading their meeting point after `startTime`, unlike `listActivities`. The caller comes only from the session; there is no parameter to ask for a third party\'s participation (same "client-supplied scope" guard as `friendsInFestival`)',
+    },
+    getActivity: {
+      method: 'GET',
+      path: '/festivals/:festivalId/activities/:activityId',
+      pathParams: z.object({ festivalId: z.string().uuid(), activityId: z.string().uuid() }),
+      query: z.object({ locale: localeSchema.optional() }),
+      responses: { 200: activityDetailSchema, 404: errorSchema },
+      summary:
+        'Activity detail, readable by ANY signed-in visitor within the festival — including after `startTime` and regardless of participation. D-10 cuts the public LIST and JOINING, not readability: an activity is already publicly discoverable within its own tenant, so an extra read-gate here would be an access gate ADR-014 deliberately does not want. Carries the full participant list, each entry the one allowed foreign view (D-12/VIS-02). 404 for an activityId unknown in this festival (SEC-03)',
     },
   },
   { pathPrefix: '/api/v1' },

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { and, asc, eq, inArray, ne, or, sql, type SQL } from 'drizzle-orm';
-import { PostgresError } from 'postgres';
+import type { PostgresError } from 'postgres';
 import { friendRequest, friendship, myFestival, visitorProfile, type Database } from '@quiks/db';
 import type {
   Friend,
@@ -11,6 +11,7 @@ import type {
 } from '@quiks/contracts';
 
 import { DB } from '../db/db.module';
+import { postgresErrorOf } from '../db/postgres-error';
 import {
   canonicalPair,
   foreignProfileColumns,
@@ -70,24 +71,6 @@ const FRIENDSHIP_PAIR_PK = 'friendship_pair_pk';
 const FRIEND_REQUEST_LOWER_FK = 'friend_request_lower_id_visitor_profile_account_id_fk';
 const FRIEND_REQUEST_HIGHER_FK = 'friend_request_higher_id_visitor_profile_account_id_fk';
 const FRIEND_REQUEST_REQUESTER_FK = 'friend_request_requester_id_visitor_profile_account_id_fk';
-
-/**
- * Finds the driver error inside whatever drizzle threw. `me.service.ts` reads
- * `err.cause` directly, which is right for a bare statement — but a statement
- * that fails INSIDE a transaction travels back out through postgres.js's
- * `begin()` wrapper, so the depth is not guaranteed to stay 1. Walking a short
- * cause chain is a superset of the existing idiom: it still finds the driver
- * error at depth 1, and it does not silently degrade a known conflict into a 500
- * if a driver or ORM upgrade adds a layer.
- */
-function postgresErrorOf(err: unknown): PostgresError | null {
-  let current: unknown = err;
-  for (let depth = 0; depth < 5 && current; depth += 1) {
-    if (current instanceof PostgresError) return current;
-    current = (current as { cause?: unknown }).cause;
-  }
-  return null;
-}
 
 /** The whole-key match for one pair — both tables are keyed by exactly these two columns. */
 function friendRequestPair(pair: Pair): SQL | undefined {

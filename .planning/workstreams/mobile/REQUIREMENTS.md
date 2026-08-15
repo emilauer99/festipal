@@ -51,7 +51,7 @@ an endpoint serves a *foreign* profile, so the projection split is a prerequisit
 
 ### Security (SEC)
 
-- [ ] **SEC-03**: Every new festival-scoped table (`activity`, the tag junction, `activity_message`) is `festivalId`-isolated, each with its own cross-tenant test — the SEC-02 obligation inherited from v1.0
+- [x] **SEC-03**: Every new festival-scoped table (`activity`, the tag junction, `activity_message`) is `festivalId`-isolated, each with its own cross-tenant test — the SEC-02 obligation inherited from v1.0
 
 ## Future Requirements
 
@@ -96,7 +96,7 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 | NAV-01 | Phase 9 | Complete (09-03 five-tab bar + 09-06 Cashless + 09-07 labels; device UAT rounds 1+2 passed, WINDOWS.md #46–#48 closed) |
 | NAV-02 | Phase 9 | Complete (09-03) |
 | NAV-03 | Phase 9 | Complete (09-01) |
-| SEC-03 | Phase 10 | Planned |
+| SEC-03 | Phase 10 | Complete (10-05: activity-tenant-isolation.spec.ts Verhaltensnachweis pro Tabelle inkl. nullable-activity_tag-Ausnahme; activity-tenant-structure.spec.ts Mandantenspalte, zusammengesetzter FK und Contract-Walk gegen client-gesetzten Scope) |
 | ACT-01 | Phase 11 | Planned |
 | ACT-02 | Phase 11 | Planned |
 | ACT-03 | Phase 11 | Planned |

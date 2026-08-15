@@ -20,14 +20,6 @@ export class FestivalController {
     });
   }
 
-  @TsRestHandler(contract.listTags)
-  listTags() {
-    return tsRestHandler(contract.listTags, async ({ params, query }) => {
-      const tags = await this.festivals.listTags(params.festivalId, query.locale);
-      return { status: 200, body: tags };
-    });
-  }
-
   // Browse: session-required (no @AllowAnonymous — inherits the global
   // AuthGuard, SEC-01) but unscoped — ALL currently-seeded festivals, no
   // save-gated fields. Distinct contract from `GET /me/festivals` (Pitfall 4).
