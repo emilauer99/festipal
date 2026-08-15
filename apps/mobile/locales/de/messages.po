@@ -496,12 +496,21 @@ msgstr "Dein quiks-Code wird geladen…"
 #: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/activity-detail.tsx
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Loading…"
 msgstr "Wird geladen…"
 
 #: app/(tabs)/mehr.tsx
 msgid "Location & Safety"
 msgstr "Standort & Sicherheit"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location pinned"
+msgstr "Standort angeheftet"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location unavailable"
+msgstr "Standort nicht verfügbar"
 
 #: app/(auth)/index.tsx
 #~ msgid "Log in"
@@ -520,6 +529,7 @@ msgid "Map"
 msgstr "Karte"
 
 #: app/activity-detail.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Meeting point"
 msgstr "Treffpunkt"
 
@@ -534,6 +544,10 @@ msgstr "Meine"
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "Mehr"
+
+#: components/LocationCaptureBlock.tsx
+msgid "More specific, e.g. row 3 · optional"
+msgstr "Genauer, z. B. Reihe 3 · optional"
 
 #: app/friends-qr.tsx
 msgid "My code"
@@ -652,6 +666,7 @@ msgid "Open safenow.app"
 msgstr "safenow.app öffnen"
 
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Open Settings"
 msgstr "Einstellungen öffnen"
 
@@ -678,6 +693,10 @@ msgstr "Zahlungsmittel, kommt bald"
 #: app/(tabs)/friends.tsx
 #~ msgid "People you may know"
 #~ msgstr "Vielleicht kennst du"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Pin location"
+msgstr "Standort anheften"
 
 #: app/profil.tsx
 msgid "Placeholder mark, coming soon"
@@ -707,6 +726,10 @@ msgstr "QR-Code"
 #: components/CameraScanPanel.tsx
 msgid "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
 msgstr "quiks nutzt die Kamera, um den QR-Code einer Person zu scannen und Freundschaftsanfragen zu senden. Erlaub den Zugriff in den Einstellungen, um zu scannen."
+
+#: components/LocationCaptureBlock.tsx
+msgid "quiks uses your location once to pin a meeting point — no tracking, no location watching. Allow access in Settings, or just type the place instead."
+msgstr "quiks nutzt deinen Standort nur einmalig, um einen Treffpunkt zu setzen — kein Tracking, keine Standortverfolgung. Erlaube den Zugriff in den Einstellungen, oder gib den Ort einfach als Text ein."
 
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"

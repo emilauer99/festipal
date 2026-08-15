@@ -496,12 +496,21 @@ msgstr "Loading your quiks code…"
 #: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/activity-detail.tsx
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Loading…"
 msgstr "Loading…"
 
 #: app/(tabs)/mehr.tsx
 msgid "Location & Safety"
 msgstr "Location & Safety"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location pinned"
+msgstr "Location pinned"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location unavailable"
+msgstr "Location unavailable"
 
 #: app/(auth)/index.tsx
 #~ msgid "Log in"
@@ -520,6 +529,7 @@ msgid "Map"
 msgstr "Map"
 
 #: app/activity-detail.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Meeting point"
 msgstr "Meeting point"
 
@@ -534,6 +544,10 @@ msgstr "Mine"
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "More"
+
+#: components/LocationCaptureBlock.tsx
+msgid "More specific, e.g. row 3 · optional"
+msgstr "More specific, e.g. row 3 · optional"
 
 #: app/friends-qr.tsx
 msgid "My code"
@@ -652,6 +666,7 @@ msgid "Open safenow.app"
 msgstr "Open safenow.app"
 
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Open Settings"
 msgstr "Open Settings"
 
@@ -678,6 +693,10 @@ msgstr "Payment methods, coming soon"
 #: app/(tabs)/friends.tsx
 #~ msgid "People you may know"
 #~ msgstr "People you may know"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Pin location"
+msgstr "Pin location"
 
 #: app/profil.tsx
 msgid "Placeholder mark, coming soon"
@@ -707,6 +726,10 @@ msgstr "QR code"
 #: components/CameraScanPanel.tsx
 msgid "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
 msgstr "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
+
+#: components/LocationCaptureBlock.tsx
+msgid "quiks uses your location once to pin a meeting point — no tracking, no location watching. Allow access in Settings, or just type the place instead."
+msgstr "quiks uses your location once to pin a meeting point — no tracking, no location watching. Allow access in Settings, or just type the place instead."
 
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"
