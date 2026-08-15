@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
-status: executing
-stopped_at: Completed 11-04-PLAN.md (activity-create screen, LocationCaptureBlock, useActivityMutations, chrome registration, tab CTA)
-last_updated: "2026-08-15T16:30:02.469Z"
+status: verifying
+stopped_at: "Completed 11-05-PLAN.md (activity-detail actions: participant list, join/leave/dissolve, clone, route öffnen — Phase 11 content complete)"
+last_updated: "2026-08-15T16:58:32.059Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 27
-  completed_plans: 26
-  percent: 67
+  completed_plans: 27
+  percent: 83
 ---
 
 # Project State — Workstream `mobile`
@@ -37,7 +37,7 @@ everything about their festival experience from one home screen.
 
 Phase: 11 (Activities) — EXECUTING
 Plan: 5 of 5
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-08-15 — Phase 11 execution started
 
 ## Shipped
@@ -281,6 +281,7 @@ direkt bindet:
 - [Phase ?]: 11-04: useActivityMutations' onSuccess callback carries the raw mutation result alongside targetId (not just targetId) so the create screen can navigate using the freshly-created Activity's own id
 - [Phase ?]: 11-04: activity-create.tsx duplicates a small local Y/M/D date parser instead of exporting DayTimeField's parseDateOnlyLocal — DayTimeField.tsx is outside this plan's files_modified scope
 - [Phase ?]: 11-04: activity-create.tsx reads useFestivalContext() at root-level sibling position, following 11-01's activity-detail.tsx precedent — re-architecting festival-context propagation for root-level push screens is out of scope; worth a specific on-device UAT check since FestivalContextProvider technically only wraps the nested (festival) subtree
+- [Phase ?]: Phase 11 (Activities) Detail-Screen komplett (11-05): Teilnehmerliste, Beitreten/Verlassen mit resolveJoinability-Sperrgrund vor dem Absenden, Ersteller-Aufloesen-Fork ueber ['me']/getMe(), Klonen (stapelnd, mit festivalSlug) und Route oeffnen (buildRouteUri direkt mit activity.geo). ACT-03/ACT-04/ACT-05 user-observable; useActivityMutations/['me'] bewusst am immer-gemounteten Screen-Shell verankert, nicht in der query-status-gegateten Content-Komponente, damit die Aufloesen-Erfolgsnavigation die onSettled-Invalidierung ueberlebt.
 
 ### Blockers/Concerns
 
@@ -383,8 +384,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T16:30:02.439Z
-Stopped at: Completed 11-04-PLAN.md (activity-create screen, LocationCaptureBlock, useActivityMutations, chrome registration, tab CTA)
+Last session: 2026-08-15T16:58:32.033Z
+Stopped at: Completed 11-05-PLAN.md (activity-detail actions: participant list, join/leave/dissolve, clone, route öffnen — Phase 11 content complete)
 Resume file: None
 
 ## Operator Next Steps
@@ -432,3 +433,4 @@ Resume file: None
 | Phase 11 P02 | ~25min | 3 tasks | 7 files |
 | Phase 11 P03 | ~25min | 3 tasks | 8 files |
 | Phase 11 P04 | ~12min | 3 tasks | 10 files |
+| Phase 11 P05 | ~6min | 3 tasks | 3 files |

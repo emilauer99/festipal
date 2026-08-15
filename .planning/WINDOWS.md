@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 37
+open_count: 40
 waived_count: 3
 fixed_count: 11
-total_count: 51
-last_updated: 2026-08-15T16:05:59.784Z
+total_count: 54
+last_updated: 2026-08-15T16:55:38.634Z
 ---
 
 # Broken Windows Ledger
@@ -66,6 +66,9 @@ last_updated: 2026-08-15T16:05:59.784Z
 | 49 | 11 | unrun-verify | apps/mobile/components/Input.tsx |  | Input/Chip visual on-device verification deferred to 11-04 (no own screen surface in 11-03) | open |  | 2026-08-15T16:05:51.750Z |  |
 | 50 | 11 | unrun-verify | apps/mobile/components/CapacityField.tsx |  | CapacityField/DayTimeField visual on-device verification deferred to 11-04 (one-day festival = one chip, long festival wraps cleanly, capacity block starts unlimited, minus dead at 1) | open |  | 2026-08-15T16:05:59.369Z |  |
 | 51 | 11 | todo | apps/mobile/components/DayTimeField.tsx |  | 'Choose a day.'/'Choose a time.' validation-error catalog strings (Copywriting Contract) are not yet in messages.po — their t-macro call site is the 11-04 create screen, which must add and fill them when it maps canSubmitActivity's day/time reason markers to display text | open |  | 2026-08-15T16:05:59.784Z |  |
+| 52 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig | open |  | 2026-08-15T16:55:27.637Z |  |
+| 53 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab | open |  | 2026-08-15T16:55:38.143Z |  |
+| 54 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail | open |  | 2026-08-15T16:55:38.634Z |  |
 
 ````json
 [
@@ -679,6 +682,42 @@ last_updated: 2026-08-15T16:05:59.784Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-15T16:05:59.784Z",
+    "resolved_at": null
+  },
+  {
+    "id": 52,
+    "kind": "unrun-verify",
+    "phase": "11",
+    "file": "apps/mobile/app/activity-detail.tsx",
+    "line": null,
+    "description": "11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-15T16:55:27.637Z",
+    "resolved_at": null
+  },
+  {
+    "id": 53,
+    "kind": "unrun-verify",
+    "phase": "11",
+    "file": "apps/mobile/app/activity-detail.tsx",
+    "line": null,
+    "description": "11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-15T16:55:38.143Z",
+    "resolved_at": null
+  },
+  {
+    "id": 54,
+    "kind": "unrun-verify",
+    "phase": "11",
+    "file": "apps/mobile/app/activity-detail.tsx",
+    "line": null,
+    "description": "11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-15T16:55:38.634Z",
     "resolved_at": null
   }
 ]
