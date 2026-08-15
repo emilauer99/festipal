@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: executing
-stopped_at: Completed 11-02-PLAN.md (expo-location install + buildRouteUri)
-last_updated: "2026-08-15T15:47:45.323Z"
+stopped_at: Completed 11-03-PLAN.md (activity-form.ts + Input/Chip/CapacityField/DayTimeField)
+last_updated: "2026-08-15T16:08:32.555Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 4
   total_plans: 27
-  completed_plans: 24
+  completed_plans: 25
   percent: 67
 ---
 
@@ -36,7 +36,7 @@ everything about their festival experience from one home screen.
 ## Current Position
 
 Phase: 11 (Activities) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 Last activity: 2026-08-15 — Phase 11 execution started
 
@@ -275,6 +275,9 @@ direkt bindet:
   stehende Gates: Phase 11/12-Routen und -Tabellen laufen automatisch dagegen.**
 
 - [Phase ?]: expo-location's plugin config must explicitly suppress locationAlwaysAndWhenInUsePermission/locationAlwaysPermission with false — its defaults otherwise silently add generic iOS Always-location usage descriptions even when only foreground use is intended
+- [Phase ?]: Chip's selected state (fillBrandQuiet+borderBrand+primary text) extends past SegmentedControl.itemSelected's literal roles per UI-SPEC Color item 3 — SegmentedControl is followed for the fill role only
+- [Phase ?]: resolveJoinability checks joined before started/full so a joined-but-started activity still routes to Leave, not a disabled Join button
+- [Phase ?]: The two selection-error catalog strings (Choose a day./Choose a time.) are deferred to 11-04 — DayTimeField takes them as pre-built strings and owns no validation copy of its own
 
 ### Blockers/Concerns
 
@@ -377,8 +380,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T15:47:45.293Z
-Stopped at: Completed 11-02-PLAN.md (expo-location install + buildRouteUri)
+Last session: 2026-08-15T16:08:32.521Z
+Stopped at: Completed 11-03-PLAN.md (activity-form.ts + Input/Chip/CapacityField/DayTimeField)
 Resume file: None
 
 ## Operator Next Steps
@@ -424,3 +427,4 @@ Resume file: None
 | Phase 10 P04 | ~10min | 3 tasks | 5 files |
 | Phase 10 P05 | ~18min | 3 tasks | 3 files |
 | Phase 11 P02 | ~25min | 3 tasks | 7 files |
+| Phase 11 P03 | ~25min | 3 tasks | 8 files |

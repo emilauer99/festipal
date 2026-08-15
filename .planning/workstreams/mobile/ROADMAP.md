@@ -290,7 +290,7 @@ open an activity's location as a route in an external maps app
 presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
 user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
-**Plans**: 2/5 plans executed in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
+**Plans**: 3/5 plans executed in 4 Wellen — Welle 1 läuft zweigleisig (Durchstich und native Zulieferung
 kollidieren in keiner Datei), danach serialisiert die geteilte Lingui-Katalogdatei die drei
 UI-Scheiben
 
@@ -302,7 +302,7 @@ Plans:
 
 **Wave 2** *(blockiert auf 11-01 — geteilte Kataloge)*
 
-- [ ] 11-03-PLAN.md — Formular-Primitive `Input`/`Chip`/`CapacityField`/`DayTimeField` plus `activity-form.ts` mit `canSubmitActivity`/`resolveJoinability`/`buildClonePrefill` (ACT-01/ACT-04, D-05…D-08, D-12/D-15)
+- [x] 11-03-PLAN.md — Formular-Primitive `Input`/`Chip`/`CapacityField`/`DayTimeField` plus `activity-form.ts` mit `canSubmitActivity`/`resolveJoinability`/`buildClonePrefill` (ACT-01/ACT-04, D-05…D-08, D-12/D-15)
 
 **Wave 3** *(blockiert auf 11-02 + 11-03)*
 
