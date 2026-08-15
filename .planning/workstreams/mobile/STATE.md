@@ -5,8 +5,8 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: "Phase 10 shipped — PR #17"
-stopped_at: Phase 11 context gathered
-last_updated: "2026-08-15T10:09:51.087Z"
+stopped_at: Phase 11 UI-SPEC approved
+last_updated: "2026-08-15T10:36:40.880Z"
 last_activity: 2026-08-15
 progress:
   total_phases: 6
@@ -375,9 +375,9 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T10:09:51.057Z
-Stopped at: Phase 11 context gathered
-Resume file: .planning/workstreams/mobile/phases/11-activities/11-CONTEXT.md
+Last session: 2026-08-15T10:36:40.841Z
+Stopped at: Phase 11 UI-SPEC approved
+Resume file: .planning/workstreams/mobile/phases/11-activities/11-UI-SPEC.md
 
 ## Operator Next Steps
 
