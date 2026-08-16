@@ -170,8 +170,7 @@ wrapped in a Lingui macro** (ADR-012/020, same rule as `username`/`displayName`)
 | Create-form screen title (AppHeader push title) | Aktivität erstellen | Create activity |
 | Detail screen title (AppHeader push title, static — see Screens Contract) | Aktivität | Activity |
 | Title field label | Was habt ihr vor? | What's the plan? |
-| Title field placeholder — no tag selected | z. B. Beerpong am Pavillon | e.g. beer pong by the pavilion |
-| Title field placeholder — tag selected (D-05 live preview of the auto-title) | {tag.label} (wird automatisch als Titel verwendet) | {tag.label} (used as the title automatically) |
+| Title field placeholder | z. B. Beerpong am Pavillon | e.g. beer pong by the pavilion |
 | Title validation error (neither tag nor title on submit) | Gib einen Titel ein oder wähle ein Tag. | Enter a title or choose a tag. |
 | Subtitle field label (visible only once a tag is selected, D-05) | Untertitel · optional | Subtitle · optional |
 | Description field label | Beschreibung · optional | Description · optional |
@@ -261,7 +260,7 @@ component harness exists):
 |---|---|
 | `lib/activity-queries.ts` | `activityKeys` factory (mirrors `friendKeys`/`festivalKeys`) |
 | `lib/use-activity-mutations.ts` | `useActivityMutations` (mirrors `useFriendMutations` exactly — shared `pendingTargetId`/`failedTargetId`/`failedTargetStatus`, `onSettled` invalidates `activityKeys.all(festivalId)`) |
-| `lib/activity-form.ts` | Pure: `canSubmitActivity(form)` (D-05 tag-or-title rule), `resolveJoinability(activity, now)` (D-10's three-way disabled reason), `buildClonePrefill(source)` (D-12/D-15 — drops `startTime` and `geo`, keeps everything else) |
+| `lib/activity-form.ts` | Pure: `canSubmitActivity(form)` (D-05 tag-or-title rule), `resolveJoinability(activity, now)` (D-10's three-way disabled reason), `buildClonePrefill(source)` (D-12/D-15 — drops `startTime` and `geo`, keeps everything else), `resolveTitleOnTagChange(args)` (G-11-3 — writes the selected tag's label into the title field as real, editable text without ever clobbering user-typed text), `resolveSubmittedTitle(title, selectedTag)` (G-11-3 — nulls the submitted title when it still exactly equals the selected tag's label, so the server's per-locale auto-title resolution is preserved) |
 | `lib/geo-link.ts` | Pure: `buildRouteUri(geo, platform)` — `geo:{lat},{lng}` (Android) / `https://maps.apple.com/?ll={lat},{lng}` (iOS), per D-14 |
 
 ---
@@ -395,10 +394,17 @@ export const activityKeys = {
   (`lib/activity-form.ts`) is the one place the "tagId OR non-empty title" rule lives
   client-side, mirroring (never duplicating logic from) the contract's own
   `createActivityBodySchema.refine`.
-- Live rule (D-05): selecting a tag makes the title field optional (its placeholder switches
-  to the tag-label preview copy above) and reveals the Subtitle field; clearing the tag makes
-  the title required again. Validation surfaces at submit-tap time, not on blur — inline error
-  text below the title field, never a toast.
+- Live rule (D-05, amended by G-11-3 — see 11-CONTEXT.md's dated change note): selecting a tag
+  writes that tag's label into the title field as a real, editable VALUE (via
+  `resolveTitleOnTagChange`) whenever the field is empty or still holds exactly the previously
+  selected tag's label — a user-typed title is never overwritten. Selecting a tag also makes the
+  title optional and reveals the Subtitle field; deselecting the tag clears an unchanged label
+  back out and makes the title required again, but leaves a user-typed title standing. If the
+  title still equals the selected tag's label at submit time, it rides as `null` in the request
+  body (`resolveSubmittedTitle`) so the server's per-locale auto-title resolution is preserved
+  (10-04/ADR-012); once the user edits it, it rides as the explicit, trimmed title. Validation
+  surfaces at submit-tap time, not on blur — inline error text below the title field, never a
+  toast.
 - Clone prefill (D-12/D-15): `buildClonePrefill(source: ActivityDetail)` copies
   `tag`/`title`/`subtitle`/`description`/`location`/`capacity` verbatim and **explicitly
   drops** `startTime` and `geo` — both must be re-entered. This is a deliberate, user-chosen

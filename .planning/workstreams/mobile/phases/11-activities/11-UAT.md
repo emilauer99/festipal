@@ -19,7 +19,7 @@ result: pass
 
 ### 2. Push-Routen-Regression (11-01 T3)
 
-expected: Karten-Tap öffnet /activity-detail als Push mit statischem „Activity"-Header und Zurück-Pfeil; Zurück landet am Tab; App-Kill + Relaunch vom Detail-Screen zeigt NIE Expo Routers Unmatched-Route-Screen.
+expected: Karten-Tap öffnet /activity-detail als Push mit statischem, lokalisiertem Header-Titel — auf einem deutschen Gerät „Aktivität", auf einem englischen „Activity" — und Zurück-Pfeil; Zurück landet am Tab; App-Kill + Relaunch vom Detail-Screen zeigt NIE Expo Routers Unmatched-Route-Screen.
 result: issue
 reported: "pass. aber im header schreib Aktivität (quiks)"
 severity: minor
@@ -27,7 +27,7 @@ note: Routing-Verhalten bestätigt (Push, Zurück, Kill+Relaunch ohne Unmatched)
 
 ### 3. Create-Flow end-to-end inkl. D-05-Live-Regel und Idempotenz (SC1)
 
-expected: Leer abschicken → Inline-Fehler unter Titel + Wann-Block (kein Toast); Tag wählen → Titel optional, Placeholder zeigt Tag-Label, Untertitel-Feld erscheint (Abwählen kehrt es um); Tag+Zeit → Submit → Aktivität erscheint in „Deine Aktivitäten"; Doppel-Tap auf Submit erzeugt GENAU eine Aktivität; Flugmodus + Submit → Fehlertext, Eingaben bleiben erhalten. Nach Submit landet der Detail-Screen (kein ewiges Loading — CR-01-Fix).
+expected: Leer abschicken → Inline-Fehler unter Titel + Wann-Block (kein Toast); Tag wählen → Tag-Label steht als echter, editierbarer Text im Titel-Feld, Titel bleibt optional, Untertitel-Feld erscheint (Abwählen leert einen unveränderten Titel wieder); Tag+Zeit → Submit → Aktivität erscheint in „Deine Aktivitäten"; Doppel-Tap auf Submit erzeugt GENAU eine Aktivität; Flugmodus + Submit → Fehlertext, Eingaben bleiben erhalten. Nach Submit landet der Detail-Screen (kein ewiges Loading — CR-01-Fix).
 result: issue
 reported: "pass. aber ich will dass wenn man ein Tag will dieser dann als echter text im titel input steht und nicht nur wie aktuell als placeholder. und die anmerkung in den klammern bitte weggeben"
 severity: minor

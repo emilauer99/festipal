@@ -68,6 +68,14 @@ Klonen deckt „gleiche Idee, andere Zeit"), Offizielle Events, jede Form von Pr
   das optionale Untertitel-Feld erscheint. Ohne Tag ist der Titel Pflicht — Inline-Validierung
   am Submit-Button, nicht erst die Server-Antwort. (Der Server löst den Auto-Titel ohnehin
   auf; `activitySchema.title` ist immer gefüllt.)
+
+  > **Änderungsnotiz 2026-08-16 (UAT G-11-3):** Die Tag→Titel-Kopplung ist von
+  > Platzhalter-Vorschau auf einen echten, editierbaren Titel-WERT gewechselt — ein
+  > gewähltes Tag schreibt sein Label als Text ins Titel-Feld (statt es nur im Platzhalter
+  > zu zeigen), user-getippter Text wird dabei nie überschrieben, und der Klammerzusatz
+  > („… wird automatisch als Titel verwendet") entfällt ersatzlos. Die Präsenzregel „Tag
+  > oder Titel" (D-05 oben) bleibt unverändert in Kraft — es ändert sich nur, WIE das
+  > Tag-Label im Titel-Feld ankommt.
 - **D-06 — Die vier Design-Blöcke ohne Contract-Feld entfallen:** Tag-Chips werden
   Single-Select (Contract: ein `tagId`), Mindest-Teilnehmer-Stepper, „Sichtbar für"-Segment
   und Foto-Upload fehlen schlicht (D-02-Muster). Der User wollte Mindest-Teilnehmer zunächst
