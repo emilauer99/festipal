@@ -1,17 +1,29 @@
 import { describe, expect, it } from 'vitest';
-import type { ActivityDetail } from '@quiks/contracts';
+import type { ActivityDetail, ActivityTag } from '@quiks/contracts';
 
 import {
   buildClonePrefill,
   canSubmitActivity,
   resolveJoinability,
+  resolveSubmittedTitle,
+  resolveTitleOnTagChange,
   type ActivityFormState,
 } from '../activity-form';
 
 const FESTIVAL_ID = '11111111-1111-1111-1111-111111111111';
 const ACTIVITY_ID = '22222222-2222-2222-2222-222222222222';
 const TAG_ID = '33333333-3333-3333-3333-333333333333';
+const OTHER_TAG_ID = '55555555-5555-5555-5555-555555555555';
 const CREATOR_ID = '44444444-4444-4444-4444-444444444444';
+
+function activityTag(overrides: Partial<ActivityTag> = {}): ActivityTag {
+  return {
+    id: TAG_ID,
+    slug: 'sport',
+    title: 'Sport',
+    ...overrides,
+  };
+}
 
 function formState(overrides: Partial<ActivityFormState> = {}): ActivityFormState {
   return {
@@ -280,5 +292,129 @@ describe('buildClonePrefill (ACT-04/D-12/D-15 — literal field carry-over, star
     const source = activityDetail({ tag: null });
     const prefill = buildClonePrefill(source);
     expect(prefill.tag).toBeNull();
+  });
+});
+
+describe('resolveTitleOnTagChange (G-11-3 — tag selection writes the title, typed text always survives)', () => {
+  it('writes the new tag label when the title field is empty', () => {
+    const nextTag = activityTag();
+    const result = resolveTitleOnTagChange({ previousTag: null, nextTag, currentTitle: '' });
+    expect(result).toBe(nextTag.title);
+  });
+
+  it('writes the new tag label when the title field holds only whitespace', () => {
+    const nextTag = activityTag();
+    const result = resolveTitleOnTagChange({ previousTag: null, nextTag, currentTitle: '   ' });
+    expect(result).toBe(nextTag.title);
+  });
+
+  it('leaves a user-typed title unchanged when a tag is selected', () => {
+    const nextTag = activityTag();
+    const result = resolveTitleOnTagChange({
+      previousTag: null,
+      nextTag,
+      currentTitle: 'Beerpong am Pavillon',
+    });
+    expect(result).toBe('Beerpong am Pavillon');
+  });
+
+  it('replaces the title with the new label when it still exactly matches the previous tag label, on a tag switch', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const nextTag = activityTag({ id: OTHER_TAG_ID, slug: 'musik', title: 'Musik' });
+    const result = resolveTitleOnTagChange({
+      previousTag,
+      nextTag,
+      currentTitle: 'Sport',
+    });
+    expect(result).toBe('Musik');
+  });
+
+  it('clears the title when it still exactly matches the previous tag label and the tag is deselected', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const result = resolveTitleOnTagChange({
+      previousTag,
+      nextTag: null,
+      currentTitle: 'Sport',
+    });
+    expect(result).toBe('');
+  });
+
+  it('leaves a user-typed title unchanged when the tag is deselected', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const result = resolveTitleOnTagChange({
+      previousTag,
+      nextTag: null,
+      currentTitle: 'Beerpong am Pavillon',
+    });
+    expect(result).toBe('Beerpong am Pavillon');
+  });
+
+  it('does NOT treat a case- or whitespace-only difference from the previous label as a match', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const nextTag = activityTag({ id: OTHER_TAG_ID, slug: 'musik', title: 'Musik' });
+    const result = resolveTitleOnTagChange({
+      previousTag,
+      nextTag,
+      currentTitle: ' sport ',
+    });
+    expect(result).toBe(' sport ');
+  });
+
+  it('clone-mount case: previousTag set and currentTitle equal to its label (buildClonePrefill mount) — deselect clears, switch replaces, the rule does not break', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const nextTag = activityTag({ id: OTHER_TAG_ID, slug: 'musik', title: 'Musik' });
+
+    const onDeselect = resolveTitleOnTagChange({
+      previousTag,
+      nextTag: null,
+      currentTitle: previousTag.title,
+    });
+    expect(onDeselect).toBe('');
+
+    const onSwitch = resolveTitleOnTagChange({
+      previousTag,
+      nextTag,
+      currentTitle: previousTag.title,
+    });
+    expect(onSwitch).toBe(nextTag.title);
+  });
+
+  it('clone case with an explicit title differing from the label: deselect leaves it standing', () => {
+    const previousTag = activityTag({ title: 'Sport' });
+    const result = resolveTitleOnTagChange({
+      previousTag,
+      nextTag: null,
+      currentTitle: 'Beerpong am Pavillon',
+    });
+    expect(result).toBe('Beerpong am Pavillon');
+  });
+});
+
+describe('resolveSubmittedTitle (G-11-3 — what rides as `title` in the request body)', () => {
+  it('returns null for an empty title', () => {
+    expect(resolveSubmittedTitle('', null)).toBeNull();
+  });
+
+  it('returns null for a whitespace-only title', () => {
+    expect(resolveSubmittedTitle('   ', activityTag())).toBeNull();
+  });
+
+  it('returns null when the title exactly equals the selected tag label, so the server-resolved per-locale auto-title is preserved', () => {
+    const tag = activityTag({ title: 'Sport' });
+    expect(resolveSubmittedTitle('Sport', tag)).toBeNull();
+  });
+
+  it('returns null when the title equals the tag label but was typed with surrounding whitespace (comparison runs on the trimmed value)', () => {
+    const tag = activityTag({ title: 'Sport' });
+    expect(resolveSubmittedTitle('  Sport  ', tag)).toBeNull();
+  });
+
+  it('returns the trimmed text when the title is the label plus something extra', () => {
+    const tag = activityTag({ title: 'Sport' });
+    expect(resolveSubmittedTitle('Sport am Pavillon ', tag)).toBe('Sport am Pavillon');
+  });
+
+  it('returns the trimmed text when no tag is selected and a title is set', () => {
+    expect(resolveSubmittedTitle(' Beerpong am Pavillon ', null)).toBe('Beerpong am Pavillon');
   });
 });

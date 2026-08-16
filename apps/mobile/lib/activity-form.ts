@@ -153,3 +153,75 @@ export function buildClonePrefill(source: ActivityDetail): ActivityClonePrefill 
     geo: null,
   };
 }
+
+/**
+ * 11-06-PLAN Task 1 (G-11-3) — the create screen's tag-chip handler passes
+ * its previous tag, its next tag and the title field's CURRENT value; this
+ * returns what the title field should hold after the tag interaction.
+ */
+export type ResolveTitleOnTagChangeArgs = {
+  previousTag: ActivityTag | null;
+  nextTag: ActivityTag | null;
+  currentTitle: string;
+};
+
+/**
+ * G-11-3 — writes the newly selected tag's label into the title field as
+ * real, editable text (replacing the old placeholder-only preview), while
+ * making exactly one promise to the caller: user-typed text survives every
+ * tag interaction. It only ever touches the title in two situations —
+ * the field is empty (trimmed length zero), or it still holds EXACTLY the
+ * `previousTag`'s label — and in both cases returns the `nextTag`'s label
+ * (the empty string on deselect). Every other title value passes through
+ * unchanged.
+ *
+ * The match against `previousTag.title` is STRICT equality on the raw
+ * value — no trim, no case-fold, no substring test. Any softened comparison
+ * is a path where typed text is silently lost, which is exactly what the
+ * old placeholder-only design was replaced for.
+ *
+ * The clone mount (D-12/D-15) needs no special branch: `buildClonePrefill`
+ * copies the server-resolved display title, which for a titleless source
+ * IS the tag's label — so a clone mount is indistinguishable from a
+ * freshly-prefilled title, and the same two rules (deselect clears,
+ * tag-switch replaces) apply to it correctly.
+ */
+export function resolveTitleOnTagChange({
+  previousTag,
+  nextTag,
+  currentTitle,
+}: ResolveTitleOnTagChangeArgs): string {
+  const isEmpty = currentTitle.trim().length === 0;
+  const matchesPreviousLabel = previousTag !== null && currentTitle === previousTag.title;
+
+  if (isEmpty || matchesPreviousLabel) {
+    return nextTag?.title ?? '';
+  }
+  return currentTitle;
+}
+
+/**
+ * 11-06-PLAN Task 1 (G-11-3) — what the create screen's submit path should
+ * send as `title` in the request body, given the field's current value and
+ * the currently selected tag.
+ *
+ * The null-on-exact-match branch is THIS PLAN'S decision (a technical
+ * default, called out here rather than left implicit): the server resolves
+ * a tag-carried activity's title per the viewer's locale (10-04/ADR-012). If
+ * the prefilled label rode along unchanged as an explicit title, the
+ * activity's title would freeze in the creator's own locale, and every
+ * viewer with a different locale would lose the translation they get today.
+ * The prefill is a display improvement — it must not invert the data
+ * semantics. Only once the user actually edits the title does it become an
+ * explicit one.
+ */
+export function resolveSubmittedTitle(title: string, selectedTag: ActivityTag | null): string | null {
+  const trimmed = title.trim();
+  if (trimmed.length === 0) {
+    return null;
+  }
+  if (selectedTag !== null && trimmed === selectedTag.title) {
+    return null;
+  }
+  return trimmed;
+}
