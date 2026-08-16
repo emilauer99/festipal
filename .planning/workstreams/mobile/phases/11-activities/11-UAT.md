@@ -1,14 +1,22 @@
 ---
-status: diagnosed
+status: testing
 phase: 11-activities
 source: [11-VERIFICATION.md]
 started: 2026-08-15T17:30:00Z
-updated: "2026-08-16T16:50:09Z"
+updated: "2026-08-16T17:50:48Z"
 ---
 
 ## Current Test
 
-[testing complete]
+number: 9
+name: Sechs-Fälle Tag/Titel-Prefill (Re-Test nach Gap-Closure 11-06, G-11-3)
+expected: |
+  Create-Form öffnen: Placeholder zeigt den Beispieltext OHNE Klammer-Anmerkung. Tag antippen →
+  Label steht als echter, editierbarer Text im Titel-Feld. Zweites Tag antippen → Titel folgt.
+  Titel editieren, dann Tag wechseln → getippter Text bleibt. Abwählen solange Titel == Label →
+  Feld leert sich. Abwählen nach Editieren → Text bleibt. Submit mit unverändertem Label + Zeit →
+  Aktivität erscheint in „Deine Aktivitäten" mit dem erwarteten (locale-aufgelösten) Titel.
+awaiting: user response
 
 ## Tests
 
@@ -59,12 +67,22 @@ result: pass
 expected: Ein-Tages-Festival = genau ein Tages-Chip; langes Festival wrappt die Chip-Reihe; Kapazität startet „no limit", Minus tot bei 1; lange Tag-Labels sprengen die Pille nicht; leere Tag-Liste lässt Layout intakt (Titel-Pflicht-Pfad); Gerät auf EN wechselt alle Chrome-Texte, user-eingegebene Titel/Beschreibungen bleiben wörtlich (ADR-012/020); Location-Fehler ohne Permission-Grund fällt sauber auf Freitext zurück.
 result: pass
 
+### 9. Sechs-Fälle Tag/Titel-Prefill (Re-Test nach Gap-Closure 11-06 — WINDOWS.md #55, G-11-3)
+
+expected: Create-Form: Placeholder zeigt den Beispieltext OHNE Klammer-Anmerkung. Tag antippen → Label steht als echter, editierbarer Text im Titel-Feld. Zweites Tag antippen → Titel folgt. Titel editieren, dann Tag wechseln → getippter Text bleibt. Abwählen solange Titel == Label → Feld leert sich. Abwählen nach Editieren → Text bleibt. Submit mit unverändertem Label + Zeit → Aktivität erscheint in „Deine Aktivitäten" mit dem erwarteten (locale-aufgelösten) Titel.
+result: [pending]
+
+### 10. G-11-2 DE-Header-Falsifikation mit kaltem Metro-Cache (WINDOWS.md #56)
+
+expected: Gerät auf Deutsch, `cd apps/mobile && npx expo start -c`, App neu laden, Aktivitäts-Karte öffnen → Detail-Header zeigt „Aktivität" (nicht „Activity"); Gegenprobe auf EN-Gerät zeigt „Activity". Bleibt auf DE „Activity", ist der stale kompilierte Dev-Client-Katalog als Ursache bestätigt und der Cache-Clear-Lauf selbst der Fix — beide Ausgänge schließen G-11-2 ohne Code-Änderung.
+result: [pending]
+
 ## Summary
 
-total: 8
+total: 10
 passed: 6
 issues: 2
-pending: 0
+pending: 2
 skipped: 0
 blocked: 0
 
