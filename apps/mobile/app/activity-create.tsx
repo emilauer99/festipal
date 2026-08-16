@@ -8,7 +8,12 @@ import type { Activity, ActivityDetail, ActivityGeo, ActivityTag } from '@quiks/
 
 import { apiClient } from '../lib/api-client';
 import { activityKeys, unwrapOk } from '../lib/activity-queries';
-import { buildClonePrefill, canSubmitActivity } from '../lib/activity-form';
+import {
+  buildClonePrefill,
+  canSubmitActivity,
+  resolveSubmittedTitle,
+  resolveTitleOnTagChange,
+} from '../lib/activity-form';
 import { findCachedFestivalBySlug } from '../lib/festival-queries';
 import { useFestivalContext } from '../lib/festival-context';
 import { CREATE_ACTIVITY_TARGET_ID, useActivityMutations } from '../lib/use-activity-mutations';
@@ -174,13 +179,11 @@ export default function ActivityCreateScreen() {
   const reasons = submitResult.canSubmit ? null : submitResult.reasons;
   const showErrors = attemptedSubmit && reasons !== null;
 
-  // D-05 — named local variable before the `t` macro call, so Lingui derives
-  // a readable named ICU placeholder instead of a positional one (the exact
-  // lesson 11-01's Deviations section documents).
-  const tagLabel = selectedTag?.title ?? '';
-  const titlePlaceholder = selectedTag
-    ? t`${tagLabel} (used as the title automatically)`
-    : t`e.g. beer pong by the pavilion`;
+  // G-11-3 — the placeholder no longer branches on `selectedTag`: a selected
+  // tag's label now lands in the title field as real, editable VALUE text
+  // via `resolveTitleOnTagChange` (the tag-chip handler below), so the
+  // placeholder never needs to preview it anymore.
+  const titlePlaceholder = t`e.g. beer pong by the pavilion`;
 
   function handleSubmit() {
     setAttemptedSubmit(true);
@@ -198,7 +201,6 @@ export default function ActivityCreateScreen() {
     // validation path.
     if (!festival || selectedDay === null || selectedTime === null) return;
 
-    const trimmedTitle = title.trim();
     const trimmedSubtitle = subtitle.trim();
     const trimmedDescription = description.trim();
     const trimmedLocation = locationText.trim();
@@ -208,7 +210,7 @@ export default function ActivityCreateScreen() {
     // auslösen, solange diese eine noch läuft.
     createActivity(festival.id, {
       tagId: selectedTag?.id ?? null,
-      title: trimmedTitle.length > 0 ? trimmedTitle : null,
+      title: resolveSubmittedTitle(title, selectedTag),
       subtitle: trimmedSubtitle.length > 0 ? trimmedSubtitle : null,
       description: trimmedDescription.length > 0 ? trimmedDescription : null,
       location: trimmedLocation.length > 0 ? trimmedLocation : null,
@@ -246,9 +248,20 @@ export default function ActivityCreateScreen() {
                 key={tag.id}
                 label={tag.title}
                 selected={selectedTag?.id === tag.id}
-                onPress={() =>
-                  setSelectedTag((current) => (current?.id === tag.id ? null : tag))
-                }
+                onPress={() => {
+                  // G-11-3 — the next tag is computed exactly ONCE and fed
+                  // into both state writes below, so the tag and title
+                  // states can never diverge from each other.
+                  const nextTag = selectedTag?.id === tag.id ? null : tag;
+                  setTitle((current) =>
+                    resolveTitleOnTagChange({
+                      previousTag: selectedTag,
+                      nextTag,
+                      currentTitle: current,
+                    }),
+                  );
+                  setSelectedTag(nextTag);
+                }}
               />
             ))}
           </View>

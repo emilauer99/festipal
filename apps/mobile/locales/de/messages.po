@@ -44,8 +44,8 @@ msgid "{remaining, plural, one {Last spot} other {# spots left}}"
 msgstr "{remaining, plural, one {Letzter Platz} other {# Plätze frei}}"
 
 #: app/activity-create.tsx
-msgid "{tagLabel} (used as the title automatically)"
-msgstr "{tagLabel} (wird automatisch als Titel verwendet)"
+#~ msgid "{tagLabel} (used as the title automatically)"
+#~ msgstr "{tagLabel} (wird automatisch als Titel verwendet)"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "@{username} is already taken."

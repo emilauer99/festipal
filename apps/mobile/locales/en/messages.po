@@ -44,8 +44,8 @@ msgid "{remaining, plural, one {Last spot} other {# spots left}}"
 msgstr "{remaining, plural, one {Last spot} other {# spots left}}"
 
 #: app/activity-create.tsx
-msgid "{tagLabel} (used as the title automatically)"
-msgstr "{tagLabel} (used as the title automatically)"
+#~ msgid "{tagLabel} (used as the title automatically)"
+#~ msgstr "{tagLabel} (used as the title automatically)"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "@{username} is already taken."
