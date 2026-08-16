@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 40
+open_count: 42
 waived_count: 3
 fixed_count: 11
-total_count: 54
-last_updated: 2026-08-15T16:55:38.634Z
+total_count: 56
+last_updated: 2026-08-16T17:29:25.840Z
 ---
 
 # Broken Windows Ledger
@@ -69,6 +69,8 @@ last_updated: 2026-08-15T16:55:38.634Z
 | 52 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig | open |  | 2026-08-15T16:55:27.637Z |  |
 | 53 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab | open |  | 2026-08-15T16:55:38.143Z |  |
 | 54 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail | open |  | 2026-08-15T16:55:38.634Z |  |
+| 55 | 11 | unrun-verify | apps/mobile/app/activity-create.tsx |  | Task 2 human-check not run by executor (no device): six-case tag/title prefill behavior (placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label, deselect keeps edited text, submit posts and shows expected title) | open |  | 2026-08-16T17:29:25.181Z |  |
+| 56 | 11 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | Task 3 human-check not run by executor (no device): DE-locale cold-Metro-cache falsification test for G-11-2 header title ('Aktivitaet' expected) plus EN gegenprobe | open |  | 2026-08-16T17:29:25.840Z |  |
 
 ````json
 [
@@ -718,6 +720,30 @@ last_updated: 2026-08-15T16:55:38.634Z
     "status": "open",
     "reason": "",
     "recorded_at": "2026-08-15T16:55:38.634Z",
+    "resolved_at": null
+  },
+  {
+    "id": 55,
+    "kind": "unrun-verify",
+    "phase": "11",
+    "file": "apps/mobile/app/activity-create.tsx",
+    "line": null,
+    "description": "Task 2 human-check not run by executor (no device): six-case tag/title prefill behavior (placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label, deselect keeps edited text, submit posts and shows expected title)",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-16T17:29:25.181Z",
+    "resolved_at": null
+  },
+  {
+    "id": 56,
+    "kind": "unrun-verify",
+    "phase": "11",
+    "file": "apps/mobile/components/AppHeader.tsx",
+    "line": null,
+    "description": "Task 3 human-check not run by executor (no device): DE-locale cold-Metro-cache falsification test for G-11-2 header title ('Aktivitaet' expected) plus EN gegenprobe",
+    "status": "open",
+    "reason": "",
+    "recorded_at": "2026-08-16T17:29:25.840Z",
     "resolved_at": null
   }
 ]
