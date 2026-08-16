@@ -290,7 +290,7 @@ open an activity's location as a route in an external maps app
 presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
 user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
-**Plans**: 6 plans (5/5 Inhalt executed in 4 Wellen + 1 Gap-Closure-Plan in Welle 5) — Welle 1 läuft
+**Plans**: 6/6 plans executed (5/5 Inhalt executed in 4 Wellen + 1 Gap-Closure-Plan in Welle 5) — Welle 1 läuft
 zweigleisig (Durchstich und native Zulieferung kollidieren in keiner Datei), danach serialisiert die
 geteilte Lingui-Katalogdatei die drei UI-Scheiben
 
@@ -314,7 +314,7 @@ Plans:
 
 **Wave 5** *(Gap-Closure aus 11-UAT.md — blockiert auf 11-03/11-04/11-05)*
 
-- [ ] 11-06-PLAN.md — **Gap-Closure G-11-2 + G-11-3**: Tag-Auswahl schreibt das Label als echten Titel-Wert (`resolveTitleOnTagChange`/`resolveSubmittedTitle`), Klammerzusatz entfällt, plus DE-Header-Verifikation und Spec/UAT-Wording (ACT-01/ACT-02, D-05 amendiert)
+- [x] 11-06-PLAN.md — **Gap-Closure G-11-2 + G-11-3**: Tag-Auswahl schreibt das Label als echten Titel-Wert (`resolveTitleOnTagChange`/`resolveSubmittedTitle`), Klammerzusatz entfällt, plus DE-Header-Verifikation und Spec/UAT-Wording (ACT-01/ACT-02, D-05 amendiert)
 
 ### Phase 12: Activity Lobby Chat
 

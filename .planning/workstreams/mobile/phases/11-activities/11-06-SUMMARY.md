@@ -169,3 +169,11 @@ None - no external service configuration required.
 ---
 *Phase: 11-activities*
 *Completed: 2026-08-16*
+
+## Self-Check: PASSED
+
+- FOUND: apps/mobile/lib/activity-form.ts
+- FOUND: apps/mobile/lib/__tests__/activity-form.test.ts
+- FOUND: apps/mobile/app/activity-create.tsx
+- FOUND: .planning/workstreams/mobile/phases/11-activities/11-06-SUMMARY.md
+- FOUND: d6a47f6, f011382, 7d52ba3, 679ba50

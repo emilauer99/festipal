@@ -5,15 +5,15 @@ milestone_name: Activities & Friends
 current_phase: 11
 current_phase_name: Activities
 status: verifying
-stopped_at: "Completed 11-05-PLAN.md (activity-detail actions: participant list, join/leave/dissolve, clone, route öffnen — Phase 11 content complete)"
-last_updated: "2026-08-15T16:58:32.059Z"
+stopped_at: Completed 11-06-PLAN.md (gap closure G-11-2/G-11-3 — Phase 11 content + gap closure complete, two device human-checks still open in WINDOWS.md)
+last_updated: "2026-08-16T17:31:12.275Z"
 last_activity: 2026-08-15
 last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 27
-  completed_plans: 27
+  total_plans: 28
+  completed_plans: 28
   percent: 83
 ---
 
@@ -282,6 +282,8 @@ direkt bindet:
 - [Phase ?]: 11-04: activity-create.tsx duplicates a small local Y/M/D date parser instead of exporting DayTimeField's parseDateOnlyLocal — DayTimeField.tsx is outside this plan's files_modified scope
 - [Phase ?]: 11-04: activity-create.tsx reads useFestivalContext() at root-level sibling position, following 11-01's activity-detail.tsx precedent — re-architecting festival-context propagation for root-level push screens is out of scope; worth a specific on-device UAT check since FestivalContextProvider technically only wraps the nested (festival) subtree
 - [Phase ?]: Phase 11 (Activities) Detail-Screen komplett (11-05): Teilnehmerliste, Beitreten/Verlassen mit resolveJoinability-Sperrgrund vor dem Absenden, Ersteller-Aufloesen-Fork ueber ['me']/getMe(), Klonen (stapelnd, mit festivalSlug) und Route oeffnen (buildRouteUri direkt mit activity.geo). ACT-03/ACT-04/ACT-05 user-observable; useActivityMutations/['me'] bewusst am immer-gemounteten Screen-Shell verankert, nicht in der query-status-gegateten Content-Komponente, damit die Aufloesen-Erfolgsnavigation die onSettled-Invalidierung ueberlebt.
+- [Phase ?]: G-11-3: resolveTitleOnTagChange/resolveSubmittedTitle pure rules write the tag label into the title as real editable text, matching strictly to never clobber typed text; submit nulls an unchanged label to preserve the server's per-locale auto-title
+- [Phase ?]: G-11-2: closed as diagnosis-confirmed-by-elimination — the header's Lingui/DE-catalog chain was already correct; only 11-UAT.md's wording cited the English msgid as the DE expectation, now fixed. On-device DE cold-cache confirmation still open (WINDOWS.md)
 
 ### Blockers/Concerns
 
@@ -384,8 +386,8 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T16:58:32.033Z
-Stopped at: Completed 11-05-PLAN.md (activity-detail actions: participant list, join/leave/dissolve, clone, route öffnen — Phase 11 content complete)
+Last session: 2026-08-16T17:31:12.239Z
+Stopped at: Completed 11-06-PLAN.md (gap closure G-11-2/G-11-3 — Phase 11 content + gap closure complete, two device human-checks still open in WINDOWS.md)
 Resume file: None
 
 ## Operator Next Steps
@@ -434,3 +436,4 @@ Resume file: None
 | Phase 11 P03 | ~25min | 3 tasks | 8 files |
 | Phase 11 P04 | ~12min | 3 tasks | 10 files |
 | Phase 11 P05 | ~6min | 3 tasks | 3 files |
+| Phase 11 P06 | ~20min | 3 tasks | 8 files |
