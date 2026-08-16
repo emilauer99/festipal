@@ -1,9 +1,9 @@
 ---
-status: complete
+status: diagnosed
 phase: 11-activities
 source: [11-VERIFICATION.md]
 started: 2026-08-15T17:30:00Z
-updated: "2026-08-16T16:38:00Z"
+updated: "2026-08-16T16:50:09Z"
 ---
 
 ## Current Test
@@ -76,8 +76,22 @@ blocked: 0
   reason: "User reported: pass. aber im header schreib Aktivität (quiks)"
   severity: minor
   test: 2
-  artifacts: []
-  missing: []
+  root_cause: "Kein Code-Defekt in der Lokalisierungskette: Header-Titel hat genau eine Quelle (pushScreenTitle-Map, AppHeader.tsx L145, Lingui t-Macro) und de/messages.po L84–86 enthält msgid \"Activity\" → msgstr \"Aktivität\" seit Commit 5e5c74c (vor UAT-Beginn). Katalog-Maschinerie nachweislich funktional (Test 1 zeigte deutsche Phase-11-Strings, Test 8 bestätigte DE↔EN-Switch). Das gesehene „Activity" ist die englische Source-Copy — plausibelste Rest-Hypothesen: stale Metro-kompilierter de-Katalog im Dev-Client (gleiche Dev-Artefakt-Klasse wie first-login-unmatched-route) oder Gerät kurzzeitig auf EN; zusätzlich zitierte der UAT-Erwartungstext selbst den englischen msgid. Entscheidbar nur per On-Device-Check mit expo start -c."
+  artifacts:
+
+    - path: "apps/mobile/components/AppHeader.tsx"
+      issue: "L145 bereits korrekt (Lingui t`Activity`) — keine Code-Änderung erwartet"
+
+    - path: "apps/mobile/locales/de/messages.po"
+      issue: "L84–86: Übersetzung „Aktivität" bereits vorhanden — nur editieren, falls User abweichende Copy will"
+
+    - path: ".planning/workstreams/mobile/phases/11-activities/11-UAT.md"
+      issue: "Test-2-Erwartungstext schreibt „Activity"-Header vor (englischer msgid) — Wording auf lokalisierten Titel korrigieren"
+  missing:
+
+    - "On-Device-Falsifikationstest auf DE-Gerät mit kaltem Metro-Cache (expo start -c) → „Aktivität" schließt den Gap ohne Code-Änderung; bleibt „Activity", ist der stale kompilierte Katalog die Ursache (Cache-Clear/Recompile = Fix)"
+    - "UAT-/Spec-Wording auf den lokalisierten Titel („Aktivität" auf DE) statt des englischen msgid korrigieren"
+  debug_session: ".planning/debug/activity-detail-header-title.md"
 
 - gap_id: G-11-3
   truth: "Bei Tag-Auswahl steht das Tag-Label als echter Text (Value) im Titel-Input — editierbar, nicht nur Placeholder; die Klammer-Anmerkung im Titel-Feld entfällt"
@@ -85,8 +99,30 @@ blocked: 0
   reason: "User reported: pass. aber ich will dass wenn man ein Tag will dieser dann als echter text im titel input steht und nicht nur wie aktuell als placeholder. und die anmerkung in den klammern bitte weggeben"
   severity: minor
   test: 3
-  artifacts: []
-  missing: []
+  root_cause: "Works-as-designed (11-UI-SPEC.md L174): Tag→Titel-Kopplung ist placeholder-only in activity-create.tsx (L180–183, 228) — der title-State wird beim Tag-Toggle (L244–253) nie geschrieben; die Klammer-Anmerkung ist der Suffix des Placeholder-msgids in locales/{en,de}/messages.po L47. Validierung (canSubmitActivity, D-05) und Contract (createActivityBodySchema akzeptiert tagId+title) brauchen keine Änderung."
+  artifacts:
+
+    - path: "apps/mobile/app/activity-create.tsx"
+      issue: "Placeholder-only-Kopplung (L180–183, 228); Tag-Chip-Handler (L244–253) schreibt title-State nicht"
+
+    - path: "apps/mobile/lib/activity-form.ts"
+      issue: "Ziel für neue pure Tag-Wechsel→Titel-Regel (node-testbar); buildClonePrefill mountet bereits Tag+Titel gleichzeitig — Regel muss title === Tag-Label beim Mount tolerieren"
+
+    - path: "apps/mobile/locales/en/messages.po"
+      issue: "Annotation-msgid (L47) nach Entfernen der Usage via lingui extract droppen"
+
+    - path: "apps/mobile/locales/de/messages.po"
+      issue: "Annotation-msgid (L47) nach Entfernen der Usage via lingui extract droppen"
+
+    - path: ".planning/workstreams/mobile/phases/11-activities/11-UI-SPEC.md"
+      issue: "Copy-Tabelle L174 (D-05-Placeholder-Preview) an neues Prefill-Verhalten anpassen"
+  missing:
+
+    - "Pure Helper in activity-form.ts: Tag-Select schreibt tag.title als title-Value nur wenn Feld leer oder noch exakt gleich dem Label des vorherigen Tags (User-Text nie überschreiben); Deselect/Switch ersetzt/leert nur bei exaktem Match"
+    - "Tag-selected-Placeholder-Branch entfernen — Placeholder bleibt unconditional „e.g. beer pong by the pavilion"; Klammer-Anmerkung entfällt ersatzlos"
+    - "Default (ADR-012-erhaltend, im Plan ausweisen): beim Submit title auf null setzen, wenn er noch exakt selectedTag.title entspricht → per-locale Server-Auto-Titel (10-04) bleibt erhalten"
+    - "Test: Clone-Mount mit title === Tag-Label bricht die Prefill-Regel nicht"
+  debug_session: ".planning/debug/create-title-tag-prefill.md"
 
 ## Deferred Follow-Ups
 
