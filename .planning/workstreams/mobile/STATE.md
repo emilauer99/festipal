@@ -4,17 +4,17 @@ milestone: v1.1
 milestone_name: Activities & Friends
 current_phase: 12
 current_phase_name: Activity Lobby Chat
-status: planning
+status: "Phase 11 shipped — PR #18"
 stopped_at: Phase 11 verified complete (UAT 10/10, VERIFICATION passed, transition run) — next ship Phase 11, then plan Phase 12
-last_updated: "2026-08-17T08:48:30.855Z"
+last_updated: "2026-08-17T09:10:23.981Z"
 last_activity: 2026-08-17
-last_activity_desc: Phase 11 complete, transitioned to Phase 12
 progress:
   total_phases: 6
   completed_phases: 5
   total_plans: 28
   completed_plans: 28
   percent: 83
+last_activity_desc: Phase 11 complete, transitioned to Phase 12
 ---
 
 # Project State — Workstream `mobile`
@@ -37,8 +37,8 @@ everything about their festival experience from one home screen.
 
 Phase: 12 — Activity Lobby Chat
 Plan: Not started
-Status: Ready to plan
-Last activity: 2026-08-17 — Phase 11 complete, transitioned to Phase 12
+Status: Phase 11 shipped — PR #18
+Last activity: 2026-08-17
 
 ## Shipped
 
@@ -283,22 +283,27 @@ Key-Decisions-Tabelle von `.planning/PROJECT.md`; hier bleibt, was die naechsten
 - **expo-location:** Plugin-Config muss `locationAlwaysAndWhenInUsePermission`/`locationAlwaysPermission`
   explizit mit `false` unterdruecken — die Defaults fuegen sonst still generische iOS-Always-Location-
   Beschreibungen hinzu, auch wenn nur Foreground gemeint ist.
+
 - **resolveJoinability** prueft `joined` VOR started/full — eine beigetretene, aber bereits
   gestartete Aktivitaet routet weiter auf Leave, nie auf einen deaktivierten Join-Button.
+
 - **useActivityMutations** reicht im onSuccess das rohe Mutationsergebnis neben `targetId` durch
   (der Create-Screen navigiert mit der frisch erzeugten Activity-id); Hook + `['me']` sind am
   immer-gemounteten Screen-Shell verankert, nicht im query-status-gegateten Content — die
   Aufloesen-Erfolgsnavigation ueberlebt so die onSettled-Invalidierung (11-05).
+
 - **activity-create.tsx** liest `useFestivalContext()` an Root-Level-Sibling-Position
   (11-01-Praezedenz activity-detail.tsx; per UAT-Create-Flow am Geraet bestaetigt) und dupliziert
   einen kleinen lokalen Y/M/D-Parser statt DayTimeFields `parseDateOnlyLocal` zu exportieren.
   DayTimeField nimmt Validierungs-Copy als fertige Strings und besitzt keine eigene; Chips
   Selected-State folgt SegmentedControl nur in der Fill-Rolle (UI-SPEC Color item 3).
+
 - **G-11-3-Regelwerk:** `resolveTitleOnTagChange`/`resolveSubmittedTitle` schreiben das Tag-Label
   als echten editierbaren Text; ersetzt/geleert wird nur bei exaktem Match mit dem vorherigen Label
   (User-Text nie ueberschreiben); Submit nullt ein unveraendertes Label → der per-locale
   Server-Auto-Titel (10-04) bleibt erhalten. Clone-Mount mit title == Tag-Label bricht die Regel
   nicht (getestet).
+
 - **G-11-2-Lehre:** Der Header-„Bug" war KEIN Code-Defekt — die Lingui/DE-Kette war durchgehend
   korrekt, der UAT-Erwartungstext selbst zitierte die EN-msgid. Am Geraet per kaltem Metro-Cache
   falsifiziert (UAT Test 10: DE zeigt „Aktivitaet"). Spec-/UAT-Wording muss die locale-aufgeloeste
