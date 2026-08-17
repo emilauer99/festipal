@@ -29,3 +29,44 @@ export const AuthStateContext = createContext<AuthState>({ status: 'loading' });
 export function useAuthState(): AuthState {
   return useContext(AuthStateContext);
 }
+
+/** What `app/_layout.tsx`'s resolve effect should do next. */
+export type AuthResolveStep =
+  /** Nothing to go on yet — stay 'loading' (the cold-start timeout is the backstop). */
+  | 'wait'
+  /** No credential exists — route to (auth). */
+  | 'unauthenticated'
+  /** A credential exists — ask `GET /me`, the real authority, what it is worth. */
+  | 'ask-me';
+
+/**
+ * otp-login-stuck-code-screen — the guard must NOT depend on better-auth's
+ * session atom alone.
+ *
+ * That atom is a single point of failure: it has exactly one subscriber app-wide,
+ * and a nanostores lazy-mount re-entrancy (documented in `lib/auth-client.ts`) can
+ * leave it permanently unable to refetch, so a successful OTP sign-in never
+ * produced a session and the guard never moved off `/verify`.
+ *
+ * `authClient.getCookie()` is the earlier and stronger signal: `@better-auth/expo`
+ * writes the session cookie into SecureStore SYNCHRONOUSLY, before it notifies the
+ * atom, and reads it back synchronously — the device log confirmed the cookie is
+ * already present the moment `signIn.emailOtp()` resolves. Treating it as a valid
+ * credential and letting `GET /me` adjudicate mirrors the existing
+ * `forceUnauthenticated()` precedent (better-auth only broadcasts on a SUCCESSFUL
+ * logout, so logout already needed an app-level backstop — login was simply missing
+ * its counterpart).
+ *
+ * `sessionPending` is only allowed to hold the decision when there is no cookie at
+ * all; a corrupted atom can leave `isPending` true forever, and gating on it in the
+ * has-cookie case would strand a logged-in visitor on the splash.
+ */
+export function nextAuthResolveStep(input: {
+  hasSession: boolean;
+  sessionPending: boolean;
+  hasSessionCookie: boolean;
+}): AuthResolveStep {
+  if (input.hasSessionCookie || input.hasSession) return 'ask-me';
+  if (input.sessionPending) return 'wait';
+  return 'unauthenticated';
+}
