@@ -1,7 +1,7 @@
 ---
 phase: 11-activities
 verified: 2026-08-16T17:55:00Z
-status: human_needed
+status: passed
 score: 5/6 must-haves verified
 behavior_unverified: 1 # SC1's NEW tag→title coupling (11-06/G-11-3): rules unit-proven + wired, but the changed on-screen interaction postdates the UAT pass and has no RN harness — device-only truth (WINDOWS.md #55)
 overrides_applied: 0
@@ -9,19 +9,23 @@ re_verification:
   previous_status: human_needed # 2026-08-15 initial verification (2/6 machine-verified); gaps G-11-2/G-11-3 were raised by the subsequent UAT round (11-UAT.md, 6 passed / 2 issues), closed by plan 11-06 (d6a47f6, f011382, 7d52ba3)
   previous_score: 2/6
   gaps_closed:
+
     - "G-11-3 — tag selection now writes its label as real, editable text into the title field (resolveTitleOnTagChange), the parenthetical placeholder annotation is gone from screen and both catalogs, and an unchanged prefilled label submits as null to preserve the server's per-locale auto-title (resolveSubmittedTitle) — 17 new unit cases, 39/39 green, wiring verified in activity-create.tsx"
     - "G-11-2 — closed as diagnosis-confirmed-by-elimination, no code defect: header chain AppHeader.tsx:145 (Lingui t`Activity`) → de/messages.po:85-86 (msgstr \"Aktivität\") verified intact; UAT/UI-SPEC expectation wording corrected from the English msgid to the localized title; the DE cold-Metro-cache device falsification test remains as a human item (WINDOWS.md #56)"
   gaps_remaining: []
   regressions: []
 behavior_unverified_items:
+
   - truth: "SC1 (changed by 11-06) — selecting a tag writes its label as real, editable text into the title field; typed text survives every tag interaction; an unchanged label submits as null"
     test: "Open create form: placeholder shows the example text with NO parenthetical note. Tap a tag → its label appears as real editable text in the title field. Tap a second tag → title follows. Edit the title, then switch tags → typed text stays. Deselect while title still equals the label → field empties. Deselect after editing → text stays. Submit with unchanged label + time → activity appears in 'Deine Aktivitäten' with the expected (locale-resolved) title."
     expected: "Six-case prefill behavior per 11-06 Task 2 human-check (WINDOWS.md #55)"
     why_human: "The two pure rules are unit-proven (17 cases incl. clone-mount) and the wiring is verified in code (nextTag computed once, functional setTitle updater, submit via resolveSubmittedTitle only), but the UAT pass for Test 3 predates this behavior change and there is no RN component harness (STATE.md structural limitation) — the on-screen interaction is device-only truth"
 human_verification:
+
   - test: "Six-case tag/title prefill behavior (11-06 Task 2 human-check — WINDOWS.md #55; covers the changed SC1 interaction)"
     expected: "See behavior_unverified_items — placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label / keeps edited text, submit posts with the expected title"
     why_human: "No RN component harness; the changed interaction postdates the UAT round"
+
   - test: "G-11-2 DE cold-Metro-cache header falsification (11-06 Task 3 human-check — WINDOWS.md #56): device on German, `cd apps/mobile && npx expo start -c`, reload, open an activity card"
     expected: "Detail-screen header shows 'Aktivität' (not 'Activity'); EN cross-check on an English device shows 'Activity'. If 'Activity' persists on DE, the stale compiled dev-client catalog is confirmed as cause and the cache-clear run itself is the fix — either outcome closes G-11-2 without a code change"
     why_human: "Diagnosis found the localization chain already correct by elimination; only a physical DE-locale device with a cold Metro cache can falsify the stale-compiled-catalog hypothesis"

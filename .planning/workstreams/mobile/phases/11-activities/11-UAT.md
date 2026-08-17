@@ -1,22 +1,14 @@
 ---
-status: testing
+status: complete
 phase: 11-activities
 source: [11-VERIFICATION.md]
 started: 2026-08-15T17:30:00Z
-updated: "2026-08-16T17:50:48Z"
+updated: "2026-08-17T08:47:23Z"
 ---
 
 ## Current Test
 
-number: 9
-name: Sechs-Fälle Tag/Titel-Prefill (Re-Test nach Gap-Closure 11-06, G-11-3)
-expected: |
-  Create-Form öffnen: Placeholder zeigt den Beispieltext OHNE Klammer-Anmerkung. Tag antippen →
-  Label steht als echter, editierbarer Text im Titel-Feld. Zweites Tag antippen → Titel folgt.
-  Titel editieren, dann Tag wechseln → getippter Text bleibt. Abwählen solange Titel == Label →
-  Feld leert sich. Abwählen nach Editieren → Text bleibt. Submit mit unverändertem Label + Zeit →
-  Aktivität erscheint in „Deine Aktivitäten" mit dem erwarteten (locale-aufgelösten) Titel.
-awaiting: user response
+[testing complete]
 
 ## Tests
 
@@ -28,18 +20,14 @@ result: pass
 ### 2. Push-Routen-Regression (11-01 T3)
 
 expected: Karten-Tap öffnet /activity-detail als Push mit statischem, lokalisiertem Header-Titel — auf einem deutschen Gerät „Aktivität", auf einem englischen „Activity" — und Zurück-Pfeil; Zurück landet am Tab; App-Kill + Relaunch vom Detail-Screen zeigt NIE Expo Routers Unmatched-Route-Screen.
-result: issue
-reported: "pass. aber im header schreib Aktivität (quiks)"
-severity: minor
-note: Routing-Verhalten bestätigt (Push, Zurück, Kill+Relaunch ohne Unmatched) — Issue betrifft nur den Header-Titeltext.
+result: pass
+note: Routing-Verhalten in Runde 1 bestätigt (Push, Zurück, Kill+Relaunch ohne Unmatched). Ursprünglicher Header-Titel-Issue (reported: „pass. aber im header schreib Aktivität (quiks)", G-11-2, minor) durch 11-06 geschlossen und in Test 10 on-device re-verifiziert: DE-Header zeigt „Aktivität" nach kaltem Metro-Cache.
 
 ### 3. Create-Flow end-to-end inkl. D-05-Live-Regel und Idempotenz (SC1)
 
 expected: Leer abschicken → Inline-Fehler unter Titel + Wann-Block (kein Toast); Tag wählen → Tag-Label steht als echter, editierbarer Text im Titel-Feld, Titel bleibt optional, Untertitel-Feld erscheint (Abwählen leert einen unveränderten Titel wieder); Tag+Zeit → Submit → Aktivität erscheint in „Deine Aktivitäten"; Doppel-Tap auf Submit erzeugt GENAU eine Aktivität; Flugmodus + Submit → Fehlertext, Eingaben bleiben erhalten. Nach Submit landet der Detail-Screen (kein ewiges Loading — CR-01-Fix).
-result: issue
-reported: "pass. aber ich will dass wenn man ein Tag will dieser dann als echter text im titel input steht und nicht nur wie aktuell als placeholder. und die anmerkung in den klammern bitte weggeben"
-severity: minor
-note: Flow selbst bestätigt (Validierung, Idempotenz, Offline-Fehler, CR-01-Navigation) — Issue betrifft das Titel-Prefill-Verhalten bei Tag-Auswahl.
+result: pass
+note: Flow in Runde 1 bestätigt (Validierung, Idempotenz, Offline-Fehler, CR-01-Navigation). Ursprünglicher Titel-Prefill-Issue (reported: „pass. aber ich will dass wenn man ein Tag will dieser dann als echter text im titel input steht und nicht nur wie aktuell als placeholder. und die anmerkung in den klammern bitte weggeben", G-11-3, minor) durch 11-06 geschlossen und in Test 9 on-device re-verifiziert (Sechs-Fälle-Prefill).
 
 ### 4. Location-Capture Permission-Lifecycle (11-04 T2)
 
@@ -70,19 +58,19 @@ result: pass
 ### 9. Sechs-Fälle Tag/Titel-Prefill (Re-Test nach Gap-Closure 11-06 — WINDOWS.md #55, G-11-3)
 
 expected: Create-Form: Placeholder zeigt den Beispieltext OHNE Klammer-Anmerkung. Tag antippen → Label steht als echter, editierbarer Text im Titel-Feld. Zweites Tag antippen → Titel folgt. Titel editieren, dann Tag wechseln → getippter Text bleibt. Abwählen solange Titel == Label → Feld leert sich. Abwählen nach Editieren → Text bleibt. Submit mit unverändertem Label + Zeit → Aktivität erscheint in „Deine Aktivitäten" mit dem erwarteten (locale-aufgelösten) Titel.
-result: [pending]
+result: pass
 
 ### 10. G-11-2 DE-Header-Falsifikation mit kaltem Metro-Cache (WINDOWS.md #56)
 
 expected: Gerät auf Deutsch, `cd apps/mobile && npx expo start -c`, App neu laden, Aktivitäts-Karte öffnen → Detail-Header zeigt „Aktivität" (nicht „Activity"); Gegenprobe auf EN-Gerät zeigt „Activity". Bleibt auf DE „Activity", ist der stale kompilierte Dev-Client-Katalog als Ursache bestätigt und der Cache-Clear-Lauf selbst der Fix — beide Ausgänge schließen G-11-2 ohne Code-Änderung.
-result: [pending]
+result: pass
 
 ## Summary
 
 total: 10
-passed: 6
-issues: 2
-pending: 2
+passed: 10
+issues: 0
+pending: 0
 skipped: 0
 blocked: 0
 
@@ -90,7 +78,9 @@ blocked: 0
 
 - gap_id: G-11-2
   truth: "Detail-Screen-Header zeigt „Aktivität" als Titel statt des englischen „Activity" (quiks, deutscher Chrome-Text)"
-  status: failed
+  status: resolved
+  resolved_by: 11-06-PLAN.md
+  resolved_at: 2026-08-17
   reason: "User reported: pass. aber im header schreib Aktivität (quiks)"
   severity: minor
   test: 2
@@ -113,7 +103,9 @@ blocked: 0
 
 - gap_id: G-11-3
   truth: "Bei Tag-Auswahl steht das Tag-Label als echter Text (Value) im Titel-Input — editierbar, nicht nur Placeholder; die Klammer-Anmerkung im Titel-Feld entfällt"
-  status: failed
+  status: resolved
+  resolved_by: 11-06-PLAN.md
+  resolved_at: 2026-08-17
   reason: "User reported: pass. aber ich will dass wenn man ein Tag will dieser dann als echter text im titel input steht und nicht nur wie aktuell als placeholder. und die anmerkung in den klammern bitte weggeben"
   severity: minor
   test: 3
