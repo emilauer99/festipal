@@ -6,6 +6,7 @@ import { AlertCircle } from 'lucide-react-native';
 import { tokens } from '@quiks/ui';
 
 import { authClient } from '../../lib/auth-client';
+import { refreshAuthState } from '../_layout';
 import { mapOtpError, type OtpErrorInput, type OtpErrorKind } from '../../lib/otp-error';
 import { NETWORK_TIMEOUT_MS, withTimeout } from '../../lib/with-timeout';
 import { fontFamilyForRole } from '../../lib/fonts';
@@ -81,9 +82,23 @@ export default function VerifyScreen() {
         setErrorKind(mapOtpError(verifyError as OtpErrorInput));
         return;
       }
-      // Success updates authClient's session atom; the root layout's guard
-      // (app/_layout.tsx) re-resolves and routes forward on its own — no
-      // manual navigation from here.
+      // otp-login-stuck-code-screen — the LOGIN counterpart to logout's
+      // `forceUnauthenticated()`. This screen still performs no navigation (the
+      // root guard owns that), but it must no longer rely on better-auth's
+      // session atom to notice the sign-in: that atom broadcasts through a
+      // `$sessionSignal` subscription that a nanostores lazy-mount re-entrancy
+      // can silently drop for the whole JS context (see lib/auth-client.ts), and
+      // when it does, nothing else ever re-triggers the guard — the visitor sat
+      // on this screen with a perfectly valid session on the server.
+      //
+      // By the time this await resolves, @better-auth/expo has ALREADY written
+      // the session cookie to SecureStore (synchronously, inside its onSuccess
+      // fetch hook, before it notifies), so `refreshAuthState()` re-runs the root
+      // resolve against a credential that is guaranteed to be readable. It asks
+      // `GET /me` rather than forcing 'authenticated' — /me is what distinguishes
+      // a returning visitor from a brand-new account that still needs
+      // (profile-setup)/complete-profile.
+      refreshAuthState();
     } catch {
       // Phase-4 UAT fix — a timed-out/unreachable request surfaces the same
       // localized network error instead of leaving the boxes stuck disabled.

@@ -19,7 +19,7 @@ import { capturePendingDestination, consumePendingDestination } from '../lib/pen
 import { getActiveFestivalSlug } from '../lib/active-festival-storage';
 import { coldStartRedirectHref, resolveColdStartRedirect } from '../lib/cold-start-redirect';
 import { ColdStartTargetContext } from '../lib/cold-start-target';
-import { type AuthState, AuthStateContext } from '../lib/auth-state';
+import { type AuthState, AuthStateContext, nextAuthResolveStep } from '../lib/auth-state';
 import { isIgnorableDeepLinkRoute, reconstructDeepLinkRoute } from '../lib/deep-link';
 import { fontFamilyForRole, useAppFonts } from '../lib/fonts';
 import { FontsReadyProvider, useFontsReady } from '../lib/fonts-context';
@@ -287,13 +287,23 @@ function RootNavigation() {
     let cancelled = false;
 
     async function resolveAuthState() {
-      if (sessionPending) return; // still reading SecureStore — stay 'loading'
-      if (!session) {
+      // otp-login-stuck-code-screen — the credential, not better-auth's session
+      // atom, decides whether there is anything to resolve. See
+      // `nextAuthResolveStep` for why (the atom can go permanently silent).
+      const step = nextAuthResolveStep({
+        hasSession: !!session,
+        sessionPending,
+        hasSessionCookie: authClient.getCookie().length > 0,
+      });
+      if (step === 'wait') return; // still reading SecureStore — stay 'loading'
+      if (step === 'unauthenticated') {
         if (!cancelled) setAuthState({ status: 'unauthenticated' });
         return;
       }
-      // Session cookie present — resolve the THIRD dimension (profile
-      // presence) via GET /me before deciding where the guard routes.
+      // Credential present — resolve the THIRD dimension (profile presence) via
+      // GET /me before deciding where the guard routes. GET /me is also what
+      // rejects a cookie the server no longer honours (the `else` branch below),
+      // so trusting the cookie here cannot strand anyone as falsely authenticated.
       const me = await apiClient.getMe();
       if (cancelled) return;
       if (me.status === 200) {
