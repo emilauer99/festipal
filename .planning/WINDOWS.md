@@ -1,10 +1,10 @@
 ---
 schema_version: 1
-open_count: 42
+open_count: 34
 waived_count: 3
-fixed_count: 11
+fixed_count: 19
 total_count: 56
-last_updated: 2026-08-16T17:29:25.840Z
+last_updated: 2026-08-17T08:50:56.804Z
 ---
 
 # Broken Windows Ledger
@@ -63,14 +63,14 @@ last_updated: 2026-08-16T17:29:25.840Z
 | 46 | 09 | unrun-verify | apps/mobile/app/cashless.tsx |  | 09-06 Task 2 human-check (8 device points: two tiles when the festival has a cashless address vs. exactly one tile when it doesn't, tapping Cashless opens a full-bleed WebView under the header with a Back arrow and 'Cashless' title, loading copy shows then clears, a foreign-origin link inside the page is blocked both in-page and externally, airplane-mode load shows error+retry and the retry reloads in place, no native balance element/booking list/pay QR/browser chrome anywhere on the screen, a blank-but-successful load leaves a plain empty frame with Back always reachable) not run on device this session. Requires a native rebuild (npx expo run:android from apps/mobile, never the repo root) before device testing — react-native-webview ships native code not present in the currently-installed APK. `gsd-tools windows append` returned no output/no write this session (recorded manually, matching this project's documented requirements.mark-complete workstream-path workaround). | open |  | 2026-08-14T12:05:00.000Z |  |
 | 47 | 09 | unrun-verify | apps/mobile/app/_layout.tsx |  | 09-07 Task 1 device human-check (resting gap under glass, no route name on auth screens, friend-detail close button, notch/max-font) not yet run on device | open |  | 2026-08-14T19:31:12.678Z |  |
 | 48 | 09 | unrun-verify | apps/mobile/components/FloatingNav.tsx |  | 09-07 Task 2 device human-check (five new tab labels/icon, DE+EN, untouched Friends/eyebrow surfaces, narrow-width truncation, no state dot on Live) not yet run on device | open |  | 2026-08-14T19:31:13.132Z |  |
-| 49 | 11 | unrun-verify | apps/mobile/components/Input.tsx |  | Input/Chip visual on-device verification deferred to 11-04 (no own screen surface in 11-03) | open |  | 2026-08-15T16:05:51.750Z |  |
-| 50 | 11 | unrun-verify | apps/mobile/components/CapacityField.tsx |  | CapacityField/DayTimeField visual on-device verification deferred to 11-04 (one-day festival = one chip, long festival wraps cleanly, capacity block starts unlimited, minus dead at 1) | open |  | 2026-08-15T16:05:59.369Z |  |
-| 51 | 11 | todo | apps/mobile/components/DayTimeField.tsx |  | 'Choose a day.'/'Choose a time.' validation-error catalog strings (Copywriting Contract) are not yet in messages.po — their t-macro call site is the 11-04 create screen, which must add and fill them when it maps canSubmitActivity's day/time reason markers to display text | open |  | 2026-08-15T16:05:59.784Z |  |
-| 52 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig | open |  | 2026-08-15T16:55:27.637Z |  |
-| 53 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab | open |  | 2026-08-15T16:55:38.143Z |  |
-| 54 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail | open |  | 2026-08-15T16:55:38.634Z |  |
-| 55 | 11 | unrun-verify | apps/mobile/app/activity-create.tsx |  | Task 2 human-check not run by executor (no device): six-case tag/title prefill behavior (placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label, deselect keeps edited text, submit posts and shows expected title) | open |  | 2026-08-16T17:29:25.181Z |  |
-| 56 | 11 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | Task 3 human-check not run by executor (no device): DE-locale cold-Metro-cache falsification test for G-11-2 header title ('Aktivitaet' expected) plus EN gegenprobe | open |  | 2026-08-16T17:29:25.840Z |  |
+| 49 | 11 | unrun-verify | apps/mobile/components/Input.tsx |  | Input/Chip visual on-device verification deferred to 11-04 (no own screen surface in 11-03) | fixed |  | 2026-08-15T16:05:51.750Z | 2026-08-17T08:50:53.845Z |
+| 50 | 11 | unrun-verify | apps/mobile/components/CapacityField.tsx |  | CapacityField/DayTimeField visual on-device verification deferred to 11-04 (one-day festival = one chip, long festival wraps cleanly, capacity block starts unlimited, minus dead at 1) | fixed |  | 2026-08-15T16:05:59.369Z | 2026-08-17T08:50:54.257Z |
+| 51 | 11 | todo | apps/mobile/components/DayTimeField.tsx |  | 'Choose a day.'/'Choose a time.' validation-error catalog strings (Copywriting Contract) are not yet in messages.po — their t-macro call site is the 11-04 create screen, which must add and fill them when it maps canSubmitActivity's day/time reason markers to display text | fixed |  | 2026-08-15T16:05:59.784Z | 2026-08-17T08:50:54.676Z |
+| 52 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig | fixed |  | 2026-08-15T16:55:27.637Z | 2026-08-17T08:50:55.082Z |
+| 53 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab | fixed |  | 2026-08-15T16:55:38.143Z | 2026-08-17T08:50:55.489Z |
+| 54 | 11 | unrun-verify | apps/mobile/app/activity-detail.tsx |  | 11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail | fixed |  | 2026-08-15T16:55:38.634Z | 2026-08-17T08:50:55.888Z |
+| 55 | 11 | unrun-verify | apps/mobile/app/activity-create.tsx |  | Task 2 human-check not run by executor (no device): six-case tag/title prefill behavior (placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label, deselect keeps edited text, submit posts and shows expected title) | fixed |  | 2026-08-16T17:29:25.181Z | 2026-08-17T08:50:56.303Z |
+| 56 | 11 | unrun-verify | apps/mobile/components/AppHeader.tsx |  | Task 3 human-check not run by executor (no device): DE-locale cold-Metro-cache falsification test for G-11-2 header title ('Aktivitaet' expected) plus EN gegenprobe | fixed |  | 2026-08-16T17:29:25.840Z | 2026-08-17T08:50:56.804Z |
 
 ````json
 [
@@ -657,10 +657,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/components/Input.tsx",
     "line": null,
     "description": "Input/Chip visual on-device verification deferred to 11-04 (no own screen surface in 11-03)",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:05:51.750Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:53.845Z"
   },
   {
     "id": 50,
@@ -669,10 +669,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/components/CapacityField.tsx",
     "line": null,
     "description": "CapacityField/DayTimeField visual on-device verification deferred to 11-04 (one-day festival = one chip, long festival wraps cleanly, capacity block starts unlimited, minus dead at 1)",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:05:59.369Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:54.257Z"
   },
   {
     "id": 51,
@@ -681,10 +681,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/components/DayTimeField.tsx",
     "line": null,
     "description": "'Choose a day.'/'Choose a time.' validation-error catalog strings (Copywriting Contract) are not yet in messages.po — their t-macro call site is the 11-04 create screen, which must add and fill them when it maps canSubmitActivity's day/time reason markers to display text",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:05:59.784Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:54.676Z"
   },
   {
     "id": 52,
@@ -693,10 +693,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/app/activity-detail.tsx",
     "line": null,
     "description": "11-05 Task 1 human-check not run headless: mehrere Teilnehmende zeigen Ersteller zuerst in Beitrittsreihenfolge, frische Aktivitaet zeigt Noch-niemand-ausser-dir statt leerer Liste, unbegrenzte vs bezifferte Sitzplatzzeile, lange Beschreibung umbricht vollstaendig",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:55:27.637Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:55.082Z"
   },
   {
     "id": 53,
@@ -705,10 +705,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/app/activity-detail.tsx",
     "line": null,
     "description": "11-05 Task 2 human-check not run headless: Zwei-Konten-Ablauf — B beitritt sofort sichtbar + ueberlebt Kill+Neustart, C sieht deaktivierten Beitreten-Knopf mit beziffertem Voll-Grund, vergangene Startzeit zeigt Bereits-gestartet, B verlaesst wieder, A sieht statt Verlassen die rote Aufloesen-Aktion mit bestaetigtem Dialog und landet danach im Aktivitaeten-Tab",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:55:38.143Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:55.489Z"
   },
   {
     "id": 54,
@@ -717,10 +717,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/app/activity-detail.tsx",
     "line": null,
     "description": "11-05 Task 3 human-check not run headless: Aktivitaet mit Geo-Punkt zeigt Route-oeffnen im Treffpunkt-Block und oeffnet die Karten-App; ohne Geo-Punkt nur Freitext; ohne beides gar nichts; Klonen an einer FREMDEN Aktivitaet oeffnet vorbefuelltes Formular mit geleerter Zeit und ohne Standort, Zurueck landet wieder auf dem Quell-Detail",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-15T16:55:38.634Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:55.888Z"
   },
   {
     "id": 55,
@@ -729,10 +729,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/app/activity-create.tsx",
     "line": null,
     "description": "Task 2 human-check not run by executor (no device): six-case tag/title prefill behavior (placeholder unconditional, tag-select writes editable label, typed text survives switch, deselect clears unchanged label, deselect keeps edited text, submit posts and shows expected title)",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-16T17:29:25.181Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:56.303Z"
   },
   {
     "id": 56,
@@ -741,10 +741,10 @@ last_updated: 2026-08-16T17:29:25.840Z
     "file": "apps/mobile/components/AppHeader.tsx",
     "line": null,
     "description": "Task 3 human-check not run by executor (no device): DE-locale cold-Metro-cache falsification test for G-11-2 header title ('Aktivitaet' expected) plus EN gegenprobe",
-    "status": "open",
+    "status": "fixed",
     "reason": "",
     "recorded_at": "2026-08-16T17:29:25.840Z",
-    "resolved_at": null
+    "resolved_at": "2026-08-17T08:50:56.804Z"
   }
 ]
 ````
