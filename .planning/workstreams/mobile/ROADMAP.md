@@ -34,7 +34,7 @@ Detail: [`milestones/v1.0-ROADMAP.md`](./milestones/v1.0-ROADMAP.md) · Summary:
 - [x] **Phase 8: Friends** — the Phase-6 placeholder becomes real: add by handle, search, QR, requests, list (completed 2026-08-13)
 - [x] **Phase 9: Festival Navigation Shell** — five-tab festival bar, honest placeholders, friends-in-this-festival, `home` → `start` rename (completed 2026-08-15)
 - [x] **Phase 10: Activities Backend** — `activity`, tag resolution, attendees with capacity, tenant isolation (completed 2026-08-15)
-- [ ] **Phase 11: Activities** — create, discover, join/leave, clone, route-opening location
+- [x] **Phase 11: Activities** — create, discover, join/leave, clone, route-opening location (completed 2026-08-17)
 - [ ] **Phase 12: Activity Lobby Chat** — WS gateway + Redis, live group chat per activity
 
 **Cut deliberately homogeneous** (root `CLAUDE.md`, Phase & Gate Economy): backend slices are
@@ -290,6 +290,31 @@ open an activity's location as a route in an external maps app
 presence tracking (ADR-017 §2 vs ADR-014). Do not introduce a location watcher. Activity content is
 user-generated: it goes through the same no-translate rule as `username`/`displayName`.
 **UI hint**: yes
+**Plans**: 6/6 plans executed (5/5 Inhalt executed in 4 Wellen + 1 Gap-Closure-Plan in Welle 5) — Welle 1 läuft
+zweigleisig (Durchstich und native Zulieferung kollidieren in keiner Datei), danach serialisiert die
+geteilte Lingui-Katalogdatei die drei UI-Scheiben
+
+Plans:
+**Wave 1**
+
+- [x] 11-01-PLAN.md — **Tracer**: Aktivitäten-Tab end-to-end — `activityKeys`, `ActivityCard`, beide Sektionen aus `listActivities`/`listMyActivities`, Detail-Push-Screen im Lesepfad plus seine Chrome-Registrierung (ACT-02, D-01…D-04)
+- [x] 11-02-PLAN.md — `expo-location` durch das Paket-Legitimitäts-Gate (T-11-SC, blockierend), Berechtigungs-Begründung, nativer Rebuild, plus `buildRouteUri` als reiner Karten-Handoff (ACT-05, D-13/D-14)
+
+**Wave 2** *(blockiert auf 11-01 — geteilte Kataloge)*
+
+- [x] 11-03-PLAN.md — Formular-Primitive `Input`/`Chip`/`CapacityField`/`DayTimeField` plus `activity-form.ts` mit `canSubmitActivity`/`resolveJoinability`/`buildClonePrefill` (ACT-01/ACT-04, D-05…D-08, D-12/D-15)
+
+**Wave 3** *(blockiert auf 11-02 + 11-03)*
+
+- [x] 11-04-PLAN.md — Create-/Klon-Screen, `LocationCaptureBlock` mit Drei-Zustands-Berechtigung, `useActivityMutations`, zweite Chrome-Registrierung, CTA im Tab (ACT-01/ACT-05/ACT-06, D-05…D-08, D-13)
+
+**Wave 4** *(blockiert auf 11-04)*
+
+- [x] 11-05-PLAN.md — Detail vollständig: Teilnehmerliste, Beitreten/Verlassen, Auflösen, Klonen, Route öffnen (ACT-02/ACT-03/ACT-04/ACT-05, D-09…D-12, D-16)
+
+**Wave 5** *(Gap-Closure aus 11-UAT.md — blockiert auf 11-03/11-04/11-05)*
+
+- [x] 11-06-PLAN.md — **Gap-Closure G-11-2 + G-11-3**: Tag-Auswahl schreibt das Label als echten Titel-Wert (`resolveTitleOnTagChange`/`resolveSubmittedTitle`), Klammerzusatz entfällt, plus DE-Header-Verifikation und Spec/UAT-Wording (ACT-01/ACT-02, D-05 amendiert)
 
 ### Phase 12: Activity Lobby Chat
 

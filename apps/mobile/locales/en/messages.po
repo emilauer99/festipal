@@ -15,6 +15,7 @@ msgstr ""
 
 #: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(tabs)/friends.tsx
+#: app/activity-detail.tsx
 msgid "{displayName}, @{username}"
 msgstr "{displayName}, @{username}"
 
@@ -25,6 +26,26 @@ msgstr "{festivalCount, plural, one {# Festival} other {# Festivals}}"
 #: app/profil.tsx
 msgid "{friendCount, plural, one {# Friend} other {# Friends}}"
 msgstr "{friendCount, plural, one {# Friend} other {# Friends}}"
+
+#: components/ActivityCard.tsx
+msgid "{participantCount, plural, one {# is in} other {# are in}}"
+msgstr "{participantCount, plural, one {# is in} other {# are in}}"
+
+#: app/activity-detail.tsx
+msgid "{participantCount} are in · no limit"
+msgstr "{participantCount} are in · no limit"
+
+#: app/activity-detail.tsx
+msgid "{participantCount}/{capacity} spots filled"
+msgstr "{participantCount}/{capacity} spots filled"
+
+#: components/ActivityCard.tsx
+msgid "{remaining, plural, one {Last spot} other {# spots left}}"
+msgstr "{remaining, plural, one {Last spot} other {# spots left}}"
+
+#: app/activity-create.tsx
+#~ msgid "{tagLabel} (used as the title automatically)"
+#~ msgstr "{tagLabel} (used as the title automatically)"
 
 #: app/(profile-setup)/complete-profile.tsx
 msgid "@{username} is already taken."
@@ -57,8 +78,12 @@ msgstr "Account"
 #~ msgstr "Activities"
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
-msgid "Activities are on the way"
-msgstr "Activities are on the way"
+#~ msgid "Activities are on the way"
+#~ msgstr "Activities are on the way"
+
+#: components/AppHeader.tsx
+msgid "Activity"
+msgstr "Activity"
 
 #: components/RelationAction.tsx
 msgid "Add"
@@ -81,9 +106,17 @@ msgstr "Add this person?"
 msgid "All"
 msgstr "All"
 
+#: app/activity-detail.tsx
+msgid "All {participantCount} participants will be removed too. This can't be undone."
+msgstr "All {participantCount} participants will be removed too. This can't be undone."
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Almost done"
 msgstr "Almost done"
+
+#: app/activity-detail.tsx
+msgid "Already started"
+msgstr "Already started"
 
 #: app/(tabs)/mehr.tsx
 msgid "App"
@@ -101,6 +134,10 @@ msgstr "Back"
 #: app/(festival)/index.tsx
 #~ msgid "Back to festivals"
 #~ msgstr "Back to festivals"
+
+#: app/activity-create.tsx
+msgid "Briefly, what to expect"
+msgstr "Briefly, what to expect"
 
 #: app/(tabs)/start.tsx
 msgid "Browse all festivals and save your first one."
@@ -144,11 +181,13 @@ msgstr "Can't load your profile — check your connection and try again."
 #: app/(auth)/email.tsx
 #: app/(auth)/verify.tsx
 #: app/(festival)/f/[festivalSlug]/_layout.tsx
+#: app/(festival)/f/[festivalSlug]/activities.tsx
 #: app/(festival)/f/[festivalSlug]/friends.tsx
 #: app/(profile-setup)/complete-profile.tsx
 #: app/(tabs)/festivals.tsx
 #: app/(tabs)/friends.tsx
 #: app/(tabs)/start.tsx
+#: app/activity-detail.tsx
 #: app/friends-qr.tsx
 #: app/profil.tsx
 #: components/CameraScanPanel.tsx
@@ -156,9 +195,14 @@ msgid "Can't reach the server — make sure your device is on the same Wi-Fi as 
 msgstr "Can't reach the server — make sure your device is on the same Wi-Fi as the dev API."
 
 #: app/(tabs)/mehr.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 msgid "Cancel"
 msgstr "Cancel"
+
+#: components/CapacityField.tsx
+msgid "Capacity"
+msgstr "Capacity"
 
 #: app/(festival)/f/[festivalSlug]/index.tsx
 #: components/AppHeader.tsx
@@ -189,6 +233,18 @@ msgstr "Checking…"
 msgid "Choose a date"
 msgstr "Choose a date"
 
+#: app/activity-create.tsx
+msgid "Choose a day."
+msgstr "Choose a day."
+
+#: components/DayTimeField.tsx
+msgid "Choose a time"
+msgstr "Choose a time"
+
+#: app/activity-create.tsx
+msgid "Choose a time."
+msgstr "Choose a time."
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Choose photo"
 msgstr "Choose photo"
@@ -196,6 +252,10 @@ msgstr "Choose photo"
 #: app/(tabs)/friends.tsx
 msgid "Clear search"
 msgstr "Clear search"
+
+#: app/activity-detail.tsx
+msgid "Clone"
+msgstr "Clone"
 
 #: app/friend-detail.tsx
 msgid "Close"
@@ -214,6 +274,8 @@ msgstr "Close"
 #~ msgstr "Couldn't complete your profile — tap Done to try again."
 
 #: app/(tabs)/friends.tsx
+#: app/activity-create.tsx
+#: app/activity-detail.tsx
 #: app/friend-detail.tsx
 #: components/RelationAction.tsx
 msgid "Couldn't save — try again."
@@ -226,6 +288,10 @@ msgstr "Couldn't save festival — try again."
 #: app/(profile-setup)/complete-profile.tsx
 #~ msgid "Couldn't set up your profile — tap Continue to try again."
 #~ msgstr "Couldn't set up your profile — tap Continue to try again."
+
+#: components/AppHeader.tsx
+msgid "Create activity"
+msgstr "Create activity"
 
 #: components/FloatingNav.tsx
 msgid "Crew"
@@ -247,6 +313,14 @@ msgstr "Date of birth"
 msgid "Decline"
 msgstr "Decline"
 
+#: components/CapacityField.tsx
+msgid "Decrease capacity"
+msgstr "Decrease capacity"
+
+#: app/activity-create.tsx
+msgid "Description · optional"
+msgstr "Description · optional"
+
 #: app/(auth)/verify.tsx
 #~ msgid "Didn't get a code? Resend"
 #~ msgstr "Didn't get a code? Resend"
@@ -255,9 +329,21 @@ msgstr "Decline"
 msgid "Display name"
 msgstr "Display name"
 
+#: app/activity-detail.tsx
+msgid "Dissolve"
+msgstr "Dissolve"
+
+#: app/activity-detail.tsx
+msgid "Dissolve this activity?"
+msgstr "Dissolve this activity?"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Done"
 msgstr "Done"
+
+#: app/activity-create.tsx
+msgid "e.g. beer pong by the pavilion"
+msgstr "e.g. beer pong by the pavilion"
 
 #: app/profil.tsx
 msgid "Editing is coming soon."
@@ -284,6 +370,10 @@ msgstr "End this friendship?"
 msgid "English"
 msgstr "English"
 
+#: app/activity-create.tsx
+msgid "Enter a title or choose a tag."
+msgstr "Enter a title or choose a tag."
+
 #: app/(auth)/verify.tsx
 msgid "Enter code"
 msgstr "Enter code"
@@ -307,6 +397,10 @@ msgstr "Enter handle instead"
 #: components/AppHeader.tsx
 msgid "Festival"
 msgstr "Festival"
+
+#: components/DayTimeField.tsx
+msgid "Festival dates aren't set yet, so no day can be chosen here."
+msgstr "Festival dates aren't set yet, so no day can be chosen here."
 
 #: app/(festival)/index.tsx
 #~ msgid "Festival home"
@@ -364,6 +458,10 @@ msgstr "Friends since {friendsSinceLabel}"
 msgid "From you"
 msgstr "From you"
 
+#: app/activity-detail.tsx
+msgid "Full — {fullJoined}/{fullCapacity} spots"
+msgstr "Full — {fullJoined}/{fullCapacity} spots"
+
 #: app/(profile-setup)/complete-profile.tsx
 msgid "Gender"
 msgstr "Gender"
@@ -388,9 +486,21 @@ msgstr "Go to Start"
 msgid "Handle"
 msgstr "Handle"
 
+#: components/ActivityCard.tsx
+msgid "In"
+msgstr "In"
+
+#: components/CapacityField.tsx
+msgid "Increase capacity"
+msgstr "Increase capacity"
+
 #: app/profil.tsx
 msgid "Instagram, coming soon"
 msgstr "Instagram, coming soon"
+
+#: app/activity-detail.tsx
+msgid "Join"
+msgstr "Join"
 
 #: app/(tabs)/mehr.tsx
 msgid "Language"
@@ -400,6 +510,10 @@ msgstr "Language"
 msgid "Language switching is coming soon."
 msgstr "Language switching is coming soon."
 
+#: app/activity-detail.tsx
+msgid "Leave"
+msgstr "Leave"
+
 #: components/AppHeader.tsx
 msgid "Leave festival"
 msgstr "Leave festival"
@@ -407,6 +521,10 @@ msgstr "Leave festival"
 #: app/friends-qr.tsx
 msgid "Let the other person scan this code."
 msgstr "Let the other person scan this code."
+
+#: components/CapacityField.tsx
+msgid "Limit it"
+msgstr "Limit it"
 
 #: components/FloatingNav.tsx
 msgid "Live"
@@ -442,14 +560,26 @@ msgstr "Loading your crew…"
 msgid "Loading your quiks code…"
 msgstr "Loading your quiks code…"
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
 #: app/(festival)/f/[festivalSlug]/friends.tsx
+#: app/activity-create.tsx
+#: app/activity-detail.tsx
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Loading…"
 msgstr "Loading…"
 
 #: app/(tabs)/mehr.tsx
 msgid "Location & Safety"
 msgstr "Location & Safety"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location pinned"
+msgstr "Location pinned"
+
+#: components/LocationCaptureBlock.tsx
+msgid "Location unavailable"
+msgstr "Location unavailable"
 
 #: app/(auth)/index.tsx
 #~ msgid "Log in"
@@ -467,6 +597,11 @@ msgstr "Log out?"
 msgid "Map"
 msgstr "Map"
 
+#: app/activity-detail.tsx
+#: components/LocationCaptureBlock.tsx
+msgid "Meeting point"
+msgstr "Meeting point"
+
 #: app/profil.tsx
 msgid "member since {year}"
 msgstr "member since {year}"
@@ -478,6 +613,10 @@ msgstr "Mine"
 #: components/FloatingNav.tsx
 msgid "More"
 msgstr "More"
+
+#: components/LocationCaptureBlock.tsx
+msgid "More specific, e.g. row 3 · optional"
+msgstr "More specific, e.g. row 3 · optional"
 
 #: app/friends-qr.tsx
 msgid "My code"
@@ -503,6 +642,10 @@ msgstr "New festivals will show up here."
 #~ msgid "News"
 #~ msgstr "News"
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "No activities in this festival yet. Be the first to start one."
+msgstr "No activities in this festival yet. Be the first to start one."
+
 #: app/(tabs)/start.tsx
 msgid "No festival saved yet"
 msgstr "No festival saved yet"
@@ -510,6 +653,10 @@ msgstr "No festival saved yet"
 #: app/(tabs)/festivals.tsx
 msgid "No festivals yet"
 msgstr "No festivals yet"
+
+#: components/CapacityField.tsx
+msgid "No limit"
+msgstr "No limit"
 
 #: app/(tabs)/friends.tsx
 msgid "No one found. Check the @handle spelling."
@@ -539,6 +686,10 @@ msgstr "No site map yet"
 msgid "No timetable yet"
 msgstr "No timetable yet"
 
+#: app/activity-detail.tsx
+msgid "Nobody else yet."
+msgstr "Nobody else yet."
+
 #: app/(festival)/f/[festivalSlug]/index.tsx
 msgid "Nobody yet"
 msgstr "Nobody yet"
@@ -546,6 +697,10 @@ msgstr "Nobody yet"
 #: app/profil.tsx
 msgid "Not connected"
 msgstr "Not connected"
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Nothing of your own yet — start an activity or join one below."
+msgstr "Nothing of your own yet — start an activity or join one below."
 
 #: app/(tabs)/mehr.tsx
 msgid "Notifications"
@@ -579,11 +734,16 @@ msgstr "Only on the festival grounds, only with friends."
 msgid "Open festival"
 msgstr "Open festival"
 
+#: app/activity-detail.tsx
+msgid "Open route"
+msgstr "Open route"
+
 #: app/(tabs)/mehr.tsx
 msgid "Open safenow.app"
 msgstr "Open safenow.app"
 
 #: components/CameraScanPanel.tsx
+#: components/LocationCaptureBlock.tsx
 msgid "Open Settings"
 msgstr "Open Settings"
 
@@ -611,6 +771,10 @@ msgstr "Payment methods, coming soon"
 #~ msgid "People you may know"
 #~ msgstr "People you may know"
 
+#: components/LocationCaptureBlock.tsx
+msgid "Pin location"
+msgstr "Pin location"
+
 #: app/profil.tsx
 msgid "Placeholder mark, coming soon"
 msgstr "Placeholder mark, coming soon"
@@ -618,6 +782,10 @@ msgstr "Placeholder mark, coming soon"
 #: components/CameraScanPanel.tsx
 msgid "Point the camera at the other person's quiks code."
 msgstr "Point the camera at the other person's quiks code."
+
+#: app/activity-create.tsx
+msgid "Post it"
+msgstr "Post it"
 
 #: app/(tabs)/mehr.tsx
 #: components/AppHeader.tsx
@@ -640,6 +808,10 @@ msgstr "QR code"
 msgid "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
 msgstr "quiks uses the camera to scan a person's QR code and send friend requests. Allow access in Settings to scan."
 
+#: components/LocationCaptureBlock.tsx
+msgid "quiks uses your location once to pin a meeting point — no tracking, no location watching. Allow access in Settings, or just type the place instead."
+msgstr "quiks uses your location once to pin a meeting point — no tracking, no location watching. Allow access in Settings, or just type the place instead."
+
 #: app/(tabs)/mehr.tsx
 msgid "Recommend quiks"
 msgstr "Recommend quiks"
@@ -651,6 +823,10 @@ msgstr "Recommend quiks, coming soon"
 #: app/(tabs)/mehr.tsx
 msgid "Recommending is coming soon."
 msgstr "Recommending is coming soon."
+
+#: components/CapacityField.tsx
+msgid "Remove limit"
+msgstr "Remove limit"
 
 #: app/(tabs)/friends.tsx
 #: components/RelationAction.tsx
@@ -801,9 +977,21 @@ msgstr "Spotify, coming soon"
 msgid "Start"
 msgstr "Start"
 
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Start an activity"
+msgstr "Start an activity"
+
+#: components/ActivityCard.tsx
+msgid "Started"
+msgstr "Started"
+
 #: app/(tabs)/mehr.tsx
 msgid "Stay safe"
 msgstr "Stay safe"
+
+#: app/activity-create.tsx
+msgid "Subtitle · optional"
+msgstr "Subtitle · optional"
 
 #: app/(tabs)/festivals.tsx
 msgid "Switch to 'All' and save one with a tap."
@@ -836,6 +1024,10 @@ msgstr "That code is wrong or has expired."
 #: components/CameraScanPanel.tsx
 msgid "That's not a quiks code."
 msgstr "That's not a quiks code."
+
+#: app/activity-detail.tsx
+msgid "The last spot just went — the list has been refreshed."
+msgstr "The last spot just went — the list has been refreshed."
 
 #: app/(tabs)/mehr.tsx
 msgid "The night shift for your eyes."
@@ -935,8 +1127,8 @@ msgid "We'll send you a code in a moment."
 msgstr "We'll send you a code in a moment."
 
 #: app/(festival)/f/[festivalSlug]/activities.tsx
-msgid "We're building this at quiks — for every festival, not just this one."
-msgstr "We're building this at quiks — for every festival, not just this one."
+#~ msgid "We're building this at quiks — for every festival, not just this one."
+#~ msgstr "We're building this at quiks — for every festival, not just this one."
 
 #: app/(auth)/welcome.tsx
 msgid "Welcome"
@@ -946,9 +1138,21 @@ msgstr "Welcome"
 #~ msgid "Welcome to quiks"
 #~ msgstr "Welcome to quiks"
 
+#: app/activity-create.tsx
+msgid "What's the plan?"
+msgstr "What's the plan?"
+
+#: components/DayTimeField.tsx
+msgid "When"
+msgstr "When"
+
 #: app/(tabs)/mehr.tsx
 msgid "When someone adds you to their crew."
 msgstr "When someone adds you to their crew."
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Who's coming?"
+msgstr "Who's coming?"
 
 #: app/(tabs)/friends.tsx
 msgid "Withdraw"
@@ -969,6 +1173,10 @@ msgstr "You'll need to send a new request to become friends again."
 #: app/(auth)/email.tsx
 msgid "you@example.com"
 msgstr "you@example.com"
+
+#: app/(festival)/f/[festivalSlug]/activities.tsx
+msgid "Your activities"
+msgstr "Your activities"
 
 #: app/profil.tsx
 msgid "Your code for adding"

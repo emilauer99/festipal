@@ -8,6 +8,17 @@
 import type { QueryClient } from '@tanstack/react-query';
 import type { Festival } from '@quiks/contracts';
 
+/**
+ * Minimal structural narrowing for a cached single-festival body — `slug` is
+ * the one field every caller of {@link findCachedFestivalBySlug} matches on,
+ * so its presence (as a string) is the load-bearing check.
+ */
+function isFestivalShaped(body: unknown): body is Festival {
+  return (
+    typeof body === 'object' && body !== null && typeof (body as { slug?: unknown }).slug === 'string'
+  );
+}
+
 /** Query-key factory — the single source for these keys across screens. */
 export const festivalKeys = {
   all: ['festivals'] as const,
@@ -31,6 +42,18 @@ export function findCachedFestivalBySlug(
   queryClient: QueryClient,
   slug: string,
 ): Festival | undefined {
+  // The layout gate's own `getFestival(slug)` entry is checked first: on a
+  // cold start that redirects straight into a saved festival, the two list
+  // caches below were never populated — but the gate must have resolved this
+  // exact key before any screen inside (or pushed from) the festival area can
+  // exist. Same narrowing discipline as the list branch: the entry is a full
+  // ts-rest `{ status, body }` response, and a malformed one is a miss.
+  const detail = queryClient.getQueryData<{ status: number; body: unknown }>(
+    festivalKeys.detail(slug),
+  );
+  if (detail?.status === 200 && isFestivalShaped(detail.body) && detail.body.slug === slug) {
+    return detail.body;
+  }
   for (const key of [festivalKeys.all, festivalKeys.mine]) {
     const cached = queryClient.getQueryData<{ status: number; body: unknown }>(key);
     if (cached?.status === 200 && Array.isArray(cached.body)) {

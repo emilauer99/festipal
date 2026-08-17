@@ -77,6 +77,23 @@ path must work.
   actor/scope). 32/32 threats closed, human UAT 3/3 on the three prohibitions —
   **Validated in Phase 10: Activities Backend** (SEC-03)
 
+- ✓ **Activities are user-observable end to end**: inside a festival the Activities tab shows two
+  real sections („Deine Aktivitäten" / „Wer kommt mit?", independent in loading/error/empty); a
+  visitor creates an activity through the full form — tag OR title, with the tag label prefilled
+  as **real editable text** (strict-match rules never clobber typed text; an unchanged label
+  submits as `null` so the server's per-locale auto-title stays authoritative), day/time chips,
+  capacity stepper, free-text location plus a one-shot opt-in geo pin whose deny path shows the
+  full non-tracking rationale and keeps the activity postable; joins/leaves up to capacity with
+  the DB-decided full/started/joined states rendered honestly (truly disabled Join with numbered
+  reason, creator sees the red dissolve with participant-count confirm and lands back on the tab);
+  clones a foreign activity (fields prefilled, startTime and geo cleared, free-text location kept —
+  D-15) and opens a route to a pinned geo point in the external maps app. Push routes survive
+  kill+relaunch without an Unmatched screen (static localized header), double-tap submit creates
+  exactly one activity (idempotency), and offline submit fails with inputs preserved. Device UAT
+  10/10 across two rounds — round 1 found G-11-2/G-11-3, gap-closure plan 11-06 closed both, tests
+  9+10 re-verified them on device with a cold Metro cache; WINDOWS.md #49–#56 closed —
+  **Validated in Phase 11: Activities** (ACT-01, ACT-02, ACT-03, ACT-04, ACT-05, ACT-06)
+
 ### Active
 
 <!-- v1.0 "Visitor Shell" shipped 2026-08-12 — every hypothesis of that cycle moved to Validated
@@ -97,7 +114,8 @@ path must work.
       papered over: **FRND-09 (block/report) is still absent**, so v1.1 lets strangers find and
       contact you with no way to stop them — schedule it before the first real user cohort.
 - [ ] Activities / connecting with friends (ADR-017) — the second differentiator (Phase 10
-      backend ✅ 2026-08-15; Phases 11–12: UI → lobby chat)
+      backend ✅ 2026-08-15; Phase 11 Activities UI ✅ 2026-08-17, ACT-01…ACT-06 validated;
+      remaining: Phase 12 lobby chat = CHAT-01…CHAT-03)
 - [x] Tab route rename `home` → `start` — **shipped in Phase 9 (09-01, NAV-03)**: hard rename
       without alias, deep-link capture path untouched, device-verified across six checks
 
@@ -187,6 +205,8 @@ path must work.
 | Activity capacity is decided **in the database** — BEFORE-INSERT trigger with `SELECT … FOR UPDATE` on the activity row, never check-then-insert in the service (10-03) | Under READ COMMITTED a service-level check cannot be made race-free; the trigger's "already a participant" branch keeps `onConflictDoNothing` rejoin idempotency intact under the guard. Proven ≥10 rounds at DB level, ≥5 over HTTP | ✓ Shipped Phase 10 |
 | Tenant coupling of activity children is a **composite FK** on `(activity.id, activity.festivalId)`, and nullable `activity_tag.festivalId` is guarded by **two partial unique indexes** (global vs per-festival slug) (10-01/10-02) | A participant row pointing into a foreign festival becomes inexpressible in the schema instead of merely unchecked in the service; a single plain unique constraint would let two NULL-festivalId rows collide silently | ✓ Shipped Phase 10 |
 | SEC-03 ships as **standing mechanical gates**, not a one-time audit (10-05) | The forbidden-key contract walk (no client-set actor/scope) and the `information_schema` tenant-column spec make a Phase-11/12 violation break the suite instead of quietly landing — the same enforcement idiom as VIS-02's projection-uniqueness spec | ✓ Shipped Phase 10 |
+| Selecting a tag writes its label into the title as **real, editable text** — replaced/cleared only while the title still exactly equals the previous tag's label, and a submit whose title still equals the selected label sends `null` (11-06/G-11-3) | Placeholder-only prefill read as "empty field" to the user; strict-match replacement keeps typed text sacred, and nulling the unchanged label preserves the server's per-locale auto-title (ADR-012) instead of freezing one locale's string into the row | ✓ Shipped Phase 11 |
+| Mutation hooks and the `['me']` query anchor on the **always-mounted screen shell**, never inside query-status-gated content (11-05) | The dissolve-success navigation unmounts the gated content mid-flight; an onSettled invalidation owned by an unmounted component is lost — anchoring on the shell survives the navigation | ✓ Shipped Phase 11 |
 
 ## Evolution
 
@@ -206,16 +226,20 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-08-15 after Phase 10 (Activities Backend) — 5/5 plans, SEC-03 validated (per-table
-cross-tenant behavioral proof + structure spec with `information_schema` walk and forbidden-key
-contract walk). Backend-only phase: the ACT-01…ACT-06 requirements stay Planned for Phase 11, where
-they become user-observable. Human UAT 3/3 on the three prohibitions (no client-set actor/scope, no
-presence signal from activity data, participant payload strictly the six-key foreign view);
-`10-SECURITY.md` with 32/32 threats closed, `threats_open: 0` (L1 short-circuit — all five registers
-authored at plan time, mitigations grep-verified against implementation and specs). Next: Phase 11
-(Activities UI).*
+*Last updated: 2026-08-17 after Phase 11 (Activities) — 6/6 plans (5 + 1 gap closure 11-06),
+ACT-01…ACT-06 validated. Device UAT 10/10 across two rounds: round 1 found G-11-3 (tag label only a
+placeholder, bracket annotation) and G-11-2 (header title seen as "Activity" on DE); 11-06 closed
+both, tests 9+10 re-verified them on device. G-11-2's root cause was **no code defect**: the
+localization chain was correct all along and the UAT expectation text itself cited the EN msgid —
+lesson recorded: spec/UAT wording must quote the locale-resolved copy, and dev-client catalog checks
+need a cold Metro cache (`expo start -c`). `11-SECURITY.md` `threats_open: 0`; WINDOWS.md #49–#56
+closed against the UAT. Next: Phase 12 (Activity Lobby Chat — turn `research` on: WS gateway +
+Redis, per the milestone decision).*
 
-*Previously: 2026-08-15 after Phase 9 (Festival Navigation Shell) — 7/7 plans (6 + 1 gap closure), four requirements validated (NAV-01/NAV-02/NAV-03/FRND-07). Two device UAT rounds: round 1 found two gaps (G-09-2 header whitespace, G-09-7 tab rename to the screen designs), plan 09-07 closed both, round 2 re-verified them on device 3/3. Security: 32/32 threats closed across all seven plan registers, `threats_open: 0` (L1 short-circuit — registers authored at plan time, mitigations grep-verified + device-verified). All eight Phase-9 `WINDOWS.md` unrun-verify entries (#40, #42–#48) closed against the two UAT rounds.*
+*Previously: 2026-08-15 after Phase 10 (Activities Backend) — 5/5 plans, SEC-03 validated (per-table
+cross-tenant behavioral proof + structure spec with `information_schema` walk and forbidden-key
+contract walk). Backend-only phase; human UAT 3/3 on the three prohibitions; `10-SECURITY.md` with
+32/32 threats closed, `threats_open: 0`.*
 
 ---
 *Milestone v1.0 close (2026-08-12) — **"Rollout" (Visitor Shell) closed for the mobile workstream.** 7/7 phases, 50/50 plans, 116 tasks, 20/20 v1 requirements; every phase `phase_complete` with `verification_status: passed`, so this is a `verified_closeout`, not an override. Shipped over 15 days (2026-07-28 → 2026-08-12) as PRs #4–#13, `main` at `44e7914`. Delivered end to end: identity/tenancy schema that cannot drift, passwordless email-OTP behind a login-first guard with `festivalId` isolation, the Expo shell with i18n enforced from the first line of UI, the full visitor path signed off on real Android hardware, the quiks rebrand + CI v1.0, and the global tab bar with Profile/Friends/Mehr. Archived to `workstreams/mobile/milestones/v1.0-*`; `REQUIREMENTS.md` removed so the next milestone starts fresh.*

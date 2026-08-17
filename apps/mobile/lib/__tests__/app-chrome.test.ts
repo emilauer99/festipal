@@ -66,6 +66,22 @@ describe('resolveHeaderContext (09-04, D-03 App Header Contract)', () => {
     });
   });
 
+  it('shows the push state with route "activity-detail" for the Activity detail screen (11-01)', () => {
+    expect(resolveHeaderContext(['activity-detail'])).toEqual({
+      visible: true,
+      kind: 'push',
+      route: 'activity-detail',
+    });
+  });
+
+  it('shows the push state with route "activity-create" for the Create-/Klon-Screen (11-04)', () => {
+    expect(resolveHeaderContext(['activity-create'])).toEqual({
+      visible: true,
+      kind: 'push',
+      route: 'activity-create',
+    });
+  });
+
   it('hides on the welcome (auth) screen', () => {
     expect(resolveHeaderContext(['(auth)', 'welcome'])).toEqual({ visible: false });
   });

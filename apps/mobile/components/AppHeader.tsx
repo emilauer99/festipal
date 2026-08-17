@@ -137,6 +137,16 @@ export function AppHeader() {
     // 09-06 (D-09) — reuses the same `Cashless` msgid the Dashboard tile's
     // eyebrow label uses (Task 2), not a second string.
     cashless: t`Cashless`,
+    // 11-01 Task 3 — a STATIC catalog string, deliberately never the
+    // activity's own (user-generated) title: it is available immediately,
+    // never waiting on the detail fetch (UI-SPEC E9 loading). The UGC title
+    // renders as an in-content heading below this header, the same split
+    // `friend-detail.tsx` uses for its own name/handle vs. this header.
+    'activity-detail': t`Activity`,
+    // 11-04 Task 3 — the Create-/Klon-Screen's own static push title,
+    // available immediately for the same reason as `activity-detail` above
+    // (E9): it never waits on the tag fetch or clone-cache lookup.
+    'activity-create': t`Create activity`,
   };
 
   const festivalTitle =

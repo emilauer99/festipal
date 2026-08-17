@@ -2,32 +2,32 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Activities & Friends
-current_phase: 11
-current_phase_name: Activities
-status: "Phase 10 shipped — PR #17"
-stopped_at: Phase 10 verified + secured (UAT 3/3, threats_open 0) — ready to ship
-last_updated: "2026-08-15T09:44:34.337Z"
-last_activity: 2026-08-15
+current_phase: 12
+current_phase_name: Activity Lobby Chat
+status: "Phase 11 shipped — PR #18"
+stopped_at: Phase 11 verified complete (UAT 10/10, VERIFICATION passed, transition run) — next ship Phase 11, then plan Phase 12
+last_updated: "2026-08-17T09:10:23.981Z"
+last_activity: 2026-08-17
 progress:
   total_phases: 6
-  completed_phases: 4
-  total_plans: 22
-  completed_plans: 22
-  percent: 67
-last_activity_desc: Phase 10 complete (UAT 3/3, SECURITY 32/32 closed), transitioned to Phase 11
+  completed_phases: 5
+  total_plans: 28
+  completed_plans: 28
+  percent: 83
+last_activity_desc: Phase 11 complete, transitioned to Phase 12
 ---
 
 # Project State — Workstream `mobile`
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-08-15 — nach Phase 10)
+See: .planning/PROJECT.md (updated 2026-08-17 — nach Phase 11)
 
 **Core value:** A festival visitor can get into the app, connect to their festival, and reach
 everything about their festival experience from one home screen.
 
-**Current focus:** Phase 11 — Activities (UI)
-6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–9 sind durch.
+**Current focus:** Phase 12 — Activity Lobby Chat
+6 Phasen (7–12), Nummerierung laeuft aus v1.0 weiter. Phasen 7–11 sind durch.
 
 > Die beiden Workstreams laufen **unabhaengig**. `admin` wird in einer eigenen, parallelen Session
 > geplant und hat einen eigenen Milestone-Track — `mobile` wartet nicht auf `admin` und umgekehrt.
@@ -35,10 +35,10 @@ everything about their festival experience from one home screen.
 
 ## Current Position
 
-Phase: 11 — Activities
+Phase: 12 — Activity Lobby Chat
 Plan: Not started
-Status: Phase 10 shipped — PR #17
-Last activity: 2026-08-15
+Status: Phase 11 shipped — PR #18
+Last activity: 2026-08-17
 
 ## Shipped
 
@@ -274,6 +274,41 @@ direkt bindet:
   (kein client-gesetzter Actor/Scope) und der `information_schema`-Mandantenspalten-Walk sind
   stehende Gates: Phase 11/12-Routen und -Tabellen laufen automatisch dagegen.**
 
+**Phase 11 (Activities) — abgeschlossen 2026-08-17, Device-UAT 10/10 in zwei Runden (R1 fand
+G-11-2/G-11-3, Gap-Closure 11-06 schloss beide, Tests 9+10 re-verifizierten am Geraet),
+`threats_open: 0` (`11-SECURITY.md`), WINDOWS.md #49–#56 mit UAT-Evidenz geschlossen.** Die dauerhaft
+bindenden Entscheidungen (Tag→Titel-Prefill als echter Text, Always-mounted-Anchor) stehen in der
+Key-Decisions-Tabelle von `.planning/PROJECT.md`; hier bleibt, was die naechsten Phasen direkt bindet:
+
+- **expo-location:** Plugin-Config muss `locationAlwaysAndWhenInUsePermission`/`locationAlwaysPermission`
+  explizit mit `false` unterdruecken — die Defaults fuegen sonst still generische iOS-Always-Location-
+  Beschreibungen hinzu, auch wenn nur Foreground gemeint ist.
+
+- **resolveJoinability** prueft `joined` VOR started/full — eine beigetretene, aber bereits
+  gestartete Aktivitaet routet weiter auf Leave, nie auf einen deaktivierten Join-Button.
+
+- **useActivityMutations** reicht im onSuccess das rohe Mutationsergebnis neben `targetId` durch
+  (der Create-Screen navigiert mit der frisch erzeugten Activity-id); Hook + `['me']` sind am
+  immer-gemounteten Screen-Shell verankert, nicht im query-status-gegateten Content — die
+  Aufloesen-Erfolgsnavigation ueberlebt so die onSettled-Invalidierung (11-05).
+
+- **activity-create.tsx** liest `useFestivalContext()` an Root-Level-Sibling-Position
+  (11-01-Praezedenz activity-detail.tsx; per UAT-Create-Flow am Geraet bestaetigt) und dupliziert
+  einen kleinen lokalen Y/M/D-Parser statt DayTimeFields `parseDateOnlyLocal` zu exportieren.
+  DayTimeField nimmt Validierungs-Copy als fertige Strings und besitzt keine eigene; Chips
+  Selected-State folgt SegmentedControl nur in der Fill-Rolle (UI-SPEC Color item 3).
+
+- **G-11-3-Regelwerk:** `resolveTitleOnTagChange`/`resolveSubmittedTitle` schreiben das Tag-Label
+  als echten editierbaren Text; ersetzt/geleert wird nur bei exaktem Match mit dem vorherigen Label
+  (User-Text nie ueberschreiben); Submit nullt ein unveraendertes Label → der per-locale
+  Server-Auto-Titel (10-04) bleibt erhalten. Clone-Mount mit title == Tag-Label bricht die Regel
+  nicht (getestet).
+
+- **G-11-2-Lehre:** Der Header-„Bug" war KEIN Code-Defekt — die Lingui/DE-Kette war durchgehend
+  korrekt, der UAT-Erwartungstext selbst zitierte die EN-msgid. Am Geraet per kaltem Metro-Cache
+  falsifiziert (UAT Test 10: DE zeigt „Aktivitaet"). Spec-/UAT-Wording muss die locale-aufgeloeste
+  Copy zitieren; Katalog-Checks im Dev-Client brauchen `expo start -c`.
+
 ### Blockers/Concerns
 
 - ~~**T-06-06 (BLOCKIEREND fuer das naechste Milestone)**~~ — **ERLEDIGT in Phase 07-01.** Die
@@ -309,9 +344,10 @@ direkt bindet:
 - **`.planning/WINDOWS.md` hat 26 offene Eintraege**, ueberwiegend veraltete `unrun-verify`-Punkte
   aus Phase 4/5, die die Phase-5/6-UATs faktisch abgedeckt haben. Der Ledger ueberzeichnet die
   Schuld; Gate ist aus (`windows_enforce: false`). Braucht einen Abgleich. **Alle acht
-  Phase-9-Eintraege (#40, #42–#48) sind seit 2026-08-15 mit Evidenz aus den UAT-Runden 1+2
-  geschlossen** — offen bleiben aus juengerer Zeit nur #30/#31 (05.1 Themed Icons / Outfit-Tracking
-  am Geraet) und #39 (07-03 Deviation-Notiz).
+  Phase-9-Eintraege (#40, #42–#48) sind seit 2026-08-15 geschlossen, alle acht Phase-11-Eintraege
+  (#49–#56) seit 2026-08-17 mit Evidenz aus den UAT-Runden 1+2** — offen bleiben aus juengerer Zeit
+  nur #30/#31 (05.1 Themed Icons / Outfit-Tracking am Geraet), #36/#37 (Phase-6-Stubs, durch
+  Phase 8/9 groesstenteils aufgeloest) und #39 (07-03 Deviation-Notiz).
 
 - **LOW (aus 06-10-REVIEW):** `lib/__tests__/intl-polyfill.test.ts` matcht Quelltext als String
   inklusive Kommentaren und zaehlt die Imports in `index.js` nicht — faengt weder einen
@@ -375,22 +411,26 @@ Verzeichnisse unter `.planning/quick/`.
 
 ## Session Continuity
 
-Last session: 2026-08-15T10:15:00Z
-Stopped at: Phase 10 complete (UAT 3/3, threats_open 0, VERIFICATION passed), ready to ship / plan Phase 11
+Last session: 2026-08-17
+Stopped at: Phase 11 complete (UAT 10/10, transition run), ready to ship Phase 11 and plan Phase 12
 Resume file: None
 
 ## Operator Next Steps
 
-- **Phase 10 ist KOMPLETT (2026-08-15):** UAT 3/3 (drei Prohibitions bestaetigt),
-  `10-SECURITY.md` mit `threats_open: 0` (32/32), VERIFICATION `passed`, Transition gelaufen
-  (ROADMAP/STATE/PROJECT nachgezogen; SEC-03 war schon in 10-05 in REQUIREMENTS.md abgehakt).
-  Naechster Schritt: **`/gsd-ship 10 --ws mobile`** — PR gegen `main` (Review laeuft im Ship-Flow).
+- **Phase 11 ist KOMPLETT (2026-08-17):** Device-UAT 10/10 in zwei Runden (G-11-2/G-11-3 durch
+  11-06 geschlossen und am Geraet re-verifiziert), `11-SECURITY.md` mit `threats_open: 0`,
+  VERIFICATION `passed`, Transition gelaufen (ROADMAP/STATE/PROJECT nachgezogen; ACT-01…ACT-06
+  in REQUIREMENTS.md abgehakt, WINDOWS.md #49–#56 geschlossen). Naechster Schritt:
+  **`/gsd-ship 11 --ws mobile`** — PR gegen `main` vom Branch `feat/mobile-phase-11-activities`.
 
-- Danach: **`/gsd-discuss-phase 11 --ws mobile`** — Activities-UI (ACT-01…ACT-06 werden dort
-  user-observable); kein CONTEXT.md vorhanden, also erst diskutieren, dann planen.
+- Danach: **`/gsd-discuss-phase 12 --ws mobile`** — Activity Lobby Chat (CHAT-01…CHAT-03,
+  WS-Gateway + Redis). Vorher `research` einschalten (Milestone-Entscheidung):
+  `workflow.research: true` fuer diese Phase.
 
-- Fuer Phase 12 (WS-Gateway + Redis): `research` einschalten — steht so in den
-  Milestone-Entscheidungen.
+- **Offener Debug ausserhalb des Phase-Scopes:** `.planning/debug/otp-login-stuck-code-screen.md`
+  (status: investigating, 2026-08-16) plus drei uncommittete Aenderungen in
+  `apps/mobile/app/{(auth)/verify,_layout,index}.tsx` aus dieser Debug-Session — vor dem Ship
+  von Phase 11 klaeren (gehoert nicht in den Phase-11-PR).
 
 - Offene UI-Reviews (optional): `/gsd-ui-review 9 --ws mobile` (Navigation/Cashless),
   `/gsd-ui-review 8 --ws mobile` (Friends), `/gsd-ui-review 06 --ws mobile` (aus v1.0).
@@ -421,3 +461,8 @@ Resume file: None
 | Phase 10 P03 | 9min | 3 tasks | 9 files |
 | Phase 10 P04 | ~10min | 3 tasks | 5 files |
 | Phase 10 P05 | ~18min | 3 tasks | 3 files |
+| Phase 11 P02 | ~25min | 3 tasks | 7 files |
+| Phase 11 P03 | ~25min | 3 tasks | 8 files |
+| Phase 11 P04 | ~12min | 3 tasks | 10 files |
+| Phase 11 P05 | ~6min | 3 tasks | 3 files |
+| Phase 11 P06 | ~20min | 3 tasks | 8 files |

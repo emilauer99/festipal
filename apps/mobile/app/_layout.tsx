@@ -583,6 +583,30 @@ function RootNavigation() {
                       target — the deep-link capture path elsewhere in this
                       file is untouched. */}
                   <Stack.Screen name="cashless" />
+                  {/* 11-01 Task 3 — the Activity detail read screen, same
+                      root-level sibling-of-`(tabs)` shape as `profil`/
+                      `friends-qr`/`friends-find`/`cashless` above. This
+                      registration is what closes the tracer's riskiest step
+                      (UI-SPEC E9): an unregistered sibling here dead-ends on
+                      Expo Router's Unmatched Route screen, the same failure
+                      class as the resolved `first-login-unmatched-route`
+                      bug, and it was forgotten three times in a row in
+                      Phase 09. No `options` here — the navigator's
+                      `screenOptions` default (see the comment above the
+                      `<Stack>` element) already keeps a blank native header
+                      from appearing above `AppHeader`'s own push-state
+                      title. */}
+                  <Stack.Screen name="activity-detail" />
+                  {/* 11-04 Task 3 — the Create-/Klon-Screen, same root-level
+                      sibling shape as every screen above it in this block.
+                      This is the registration the Aktivitäten-tab's
+                      "Aktivität starten" CTA and the detail screen's future
+                      "Klonen" action (11-05) both push to — an unregistered
+                      sibling here would dead-end on the Unmatched Route
+                      screen exactly like every other entry in this list. No
+                      `options` here either, same navigator default as
+                      `activity-detail` above. */}
+                  <Stack.Screen name="activity-create" />
                 </Stack.Protected>
                 </Stack>
                 <AppHeader />

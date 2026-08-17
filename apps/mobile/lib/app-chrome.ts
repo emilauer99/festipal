@@ -34,15 +34,32 @@
  *
  * 09-06 (D-09) — `cashless` joins this set: the root-level push registration
  * of `app/cashless.tsx`, the Cashless WebView screen.
+ *
+ * 11-01 (Task 3) — `activity-detail` joins this set: the root-level push
+ * registration of `app/activity-detail.tsx`, the Activity detail read
+ * screen.
+ *
+ * 11-04 (Task 3) — `activity-create` joins this set: the root-level push
+ * registration of `app/activity-create.tsx`, the Create-/Klon-Screen. This
+ * closes the tracer's last open route — the Aktivität-starten CTA
+ * (`activities.tsx`) finally has a registered destination to push to.
  */
 export const PUSH_SCREEN_ROUTES = new Set([
   'profil',
   'friends-qr',
   'friends-find',
   'cashless',
+  'activity-detail',
+  'activity-create',
 ] as const);
 
-export type PushScreenRoute = 'profil' | 'friends-qr' | 'friends-find' | 'cashless';
+export type PushScreenRoute =
+  | 'profil'
+  | 'friends-qr'
+  | 'friends-find'
+  | 'cashless'
+  | 'activity-detail'
+  | 'activity-create';
 
 /**
  * First segments over which the header NEVER appears, regardless of what

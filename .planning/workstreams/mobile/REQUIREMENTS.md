@@ -30,12 +30,12 @@ an endpoint serves a *foreign* profile, so the projection split is a prerequisit
 
 ### Activities (ACT)
 
-- [ ] **ACT-01**: A visitor can create an activity with either a tag or a title, plus optional subtitle and description, a location, a start time, and a capacity
-- [ ] **ACT-02**: A visitor can discover the activities of the festival they are in
-- [ ] **ACT-03**: A visitor can join and leave an activity up to its capacity; the creator is an attendee from the start
-- [ ] **ACT-04**: A visitor can clone an existing activity — fields prefilled, only time and place changed
-- [ ] **ACT-05**: An activity's location is free text plus an optional one-off geo point that opens a route in an external maps app (explicitly not presence tracking, ADR-017)
-- [ ] **ACT-06**: The selectable tag list is the festival's enabled global tags ∪ its own custom tags
+- [x] **ACT-01**: A visitor can create an activity with either a tag or a title, plus optional subtitle and description, a location, a start time, and a capacity
+- [x] **ACT-02**: A visitor can discover the activities of the festival they are in
+- [x] **ACT-03**: A visitor can join and leave an activity up to its capacity; the creator is an attendee from the start
+- [x] **ACT-04**: A visitor can clone an existing activity — fields prefilled, only time and place changed
+- [x] **ACT-05**: An activity's location is free text plus an optional one-off geo point that opens a route in an external maps app (explicitly not presence tracking, ADR-017)
+- [x] **ACT-06**: The selectable tag list is the festival's enabled global tags ∪ its own custom tags
 
 ### Lobby Chat (CHAT)
 
@@ -97,12 +97,12 @@ Every v1.1 requirement maps to exactly one phase. 20/20 covered.
 | NAV-02 | Phase 9 | Complete (09-03) |
 | NAV-03 | Phase 9 | Complete (09-01) |
 | SEC-03 | Phase 10 | Complete (10-05: activity-tenant-isolation.spec.ts Verhaltensnachweis pro Tabelle inkl. nullable-activity_tag-Ausnahme; activity-tenant-structure.spec.ts Mandantenspalte, zusammengesetzter FK und Contract-Walk gegen client-gesetzten Scope) |
-| ACT-01 | Phase 11 | Planned |
-| ACT-02 | Phase 11 | Planned |
-| ACT-03 | Phase 11 | Planned |
-| ACT-04 | Phase 11 | Planned |
-| ACT-05 | Phase 11 | Planned |
-| ACT-06 | Phase 11 | Planned |
+| ACT-01 | Phase 11 | Complete (11-03/11-04 Create-Flow; UAT Tests 3+9 device-verified 2026-08-16/17, G-11-3 Tag/Titel-Prefill via 11-06; WINDOWS.md #51/#55 closed) |
+| ACT-02 | Phase 11 | Complete (11-01 Activities-Tab, zwei Sektionen mit echten Daten; UAT Test 1) |
+| ACT-03 | Phase 11 | Complete (11-05 Join/Leave/Voll/Gestartet/Auflösen, Zwei-Account-Ablauf; UAT Test 5, WINDOWS.md #53 closed) |
+| ACT-04 | Phase 11 | Complete (11-05 Klonen prefilled, Zeit+Geo geleert, D-15-Lesart bestätigt; UAT Test 7, WINDOWS.md #54 closed) |
+| ACT-05 | Phase 11 | Complete (11-04 Location-Capture-Lifecycle + 11-05 „Open route"-Handoff; UAT Tests 4+7) |
+| ACT-06 | Phase 11 | Complete (11-02/11-03 Tag-Pillen aus effektiver Festival-Tag-Liste; UAT Tests 3+8) |
 | CHAT-01 | Phase 12 | Planned |
 | CHAT-02 | Phase 12 | Planned |
 | CHAT-03 | Phase 12 | Planned |
